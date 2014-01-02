@@ -1,0 +1,8 @@
+*~
+build/
+scratch/
+/libraries/
+CMakeFiles/
+CMakeCache.txt
+.o
+benchmarks/
