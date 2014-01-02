@@ -1,0 +1,36 @@
+; Syntax file for ini files - contributed by Brodie Thiesfield
+; 
+; Suggested Colors:
+;   Comments (;#)   Comments, Comments 2        Green
+;   Sections        Characters                  Red
+;   Values          Strings                     Blue
+
+C=1
+
+[Syntax]
+Namespace1 = 6
+IgnoreCase = Yes
+KeyWordLength = 1
+BracketChars =
+OperatorChars =
+PreprocStart = 
+SyntaxStart =
+SyntaxEnd =
+HexPrefix =
+CommentStart = 
+CommentEnd = 
+CommentStartAlt = 
+CommentEndAlt = 
+SingleComment = #
+SingleCommentCol =
+SingleCommentAlt = ;
+SingleCommentColAlt =
+SingleCommentEsc =
+StringsSpanLines = No
+StringStart = 
+StringEnd = 
+StringAlt = =
+StringEsc = 
+CharStart = [
+CharEnd = ]
+CharEsc =
