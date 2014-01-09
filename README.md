@@ -66,7 +66,9 @@ Where:
    OpenAlpr Command Line Utility
 ```
 
-For example, the following output is created by analyzing the plate image at this URL: http://www.openalpr.com/images/demoscreenshots/plate3.png
+For example, the following output is created by analyzing this image: 
+![Plate Image](http://www.openalpr.com/images/demoscreenshots/plate3.png "Input image")
+
 
 The library is told that this is a Missouri (MO) license plate which validates the plate letters against a regional template.
 
@@ -101,13 +103,13 @@ After cloning this GitHub repository, you should download and extract Tesseract 
 
 Update the src/CMakeLists.txt file in the OpenALPR project.  Update the following lines to match the directories of your libraries on your system:
 
-    * SET(OpenCV_DIR "../libraries/opencv/")
-    * SET(Tesseract_DIR "/home/mhill/projects/alpr/libraries/tesseract-ocr")
+    - SET(OpenCV_DIR "../libraries/opencv/")
+    - SET(Tesseract_DIR "/home/mhill/projects/alpr/libraries/tesseract-ocr")
 
 Finally, in the src directory, execute the following commands:
 
-    * cmake ./
-    * make
+    - cmake ./
+    - make
 
 If all went well, there should be an executable named *alpr* along with *libopenalpr.a* that can be linked into your project.
 
