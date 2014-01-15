@@ -96,7 +96,7 @@ Where:
 Compiling
 -----------
 
-OpenALPR has been compiled successfully on Linux, however other operating systems should also work.
+OpenALPR compiles and runs on Linux, Mac OSX and Windows.
 
 OpenALPR requires the following additional libraries:
 
