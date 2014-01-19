@@ -8,7 +8,33 @@ Check out a live online demo here: http://www.openalpr.com/demo.html
 User Guide
 -----------
 
+
 OpenALPR includes a command line utility.  Simply typing "alpr [image file path]" is enough to get started recognizing license plate images.
+
+For example, the following output is created by analyzing this image: 
+![Plate Image](http://www.openalpr.com/images/demoscreenshots/plate3.png "Input image")
+
+
+The library is told that this is a Missouri (MO) license plate which validates the plate letters against a regional template.
+
+```
+user@linux:~/openalpr$ alpr ./samplecar.png -t mo -r ~/openalpr/runtime_dir/
+
+plate0: top 10 results -- Processing Time = 58.1879ms.
+    - PE3R2X     confidence: 88.9371	 template_match: 1
+    - PE32X      confidence: 78.1385	 template_match: 0
+    - PE3R2      confidence: 77.5444	 template_match: 0
+    - PE3R2Y     confidence: 76.1448	 template_match: 1
+    - P63R2X     confidence: 72.9016	 template_match: 0
+    - FE3R2X     confidence: 72.1147	 template_match: 1
+    - PE32       confidence: 66.7458	 template_match: 0
+    - PE32Y      confidence: 65.3462	 template_match: 0
+    - P632X      confidence: 62.1031	 template_match: 0
+    - P63R2      confidence: 61.5089	 template_match: 0
+
+```
+
+Detailed command line usage:
 
 ```
 user@linux:~/openalpr$ alpr --help
@@ -66,31 +92,11 @@ Where:
    OpenAlpr Command Line Utility
 ```
 
-For example, the following output is created by analyzing the plate image at this URL: http://www.openalpr.com/images/demoscreenshots/plate3.png
-
-The library is told that this is a Missouri (MO) license plate which validates the plate letters against a regional template.
-
-```
-user@linux:~/openalpr$ alpr ./samplecar.png -t mo -r ~/openalpr/runtime_dir/
-
-plate0: top 10 results -- Processing Time = 58.1879ms.
-    - PE3R2X     confidence: 88.9371	 template_match: 1
-    - PE32X      confidence: 78.1385	 template_match: 0
-    - PE3R2      confidence: 77.5444	 template_match: 0
-    - PE3R2Y     confidence: 76.1448	 template_match: 1
-    - P63R2X     confidence: 72.9016	 template_match: 0
-    - FE3R2X     confidence: 72.1147	 template_match: 1
-    - PE32       confidence: 66.7458	 template_match: 0
-    - PE32Y      confidence: 65.3462	 template_match: 0
-    - P632X      confidence: 62.1031	 template_match: 0
-    - P63R2      confidence: 61.5089	 template_match: 0
-
-```
 
 Compiling
 -----------
 
-OpenALPR has been compiled successfully on Linux, however other operating systems should also work.
+OpenALPR compiles and runs on Linux, Mac OSX and Windows.
 
 OpenALPR requires the following additional libraries:
 
@@ -101,13 +107,13 @@ After cloning this GitHub repository, you should download and extract Tesseract 
 
 Update the src/CMakeLists.txt file in the OpenALPR project.  Update the following lines to match the directories of your libraries on your system:
 
-    * SET(OpenCV_DIR "../libraries/opencv/")
-    * SET(Tesseract_DIR "/home/mhill/projects/alpr/libraries/tesseract-ocr")
+    - SET(OpenCV_DIR "../libraries/opencv/")
+    - SET(Tesseract_DIR "/home/mhill/projects/alpr/libraries/tesseract-ocr")
 
 Finally, in the src directory, execute the following commands:
 
-    * cmake ./
-    * make
+    - cmake ./
+    - make
 
 If all went well, there should be an executable named *alpr* along with *libopenalpr.a* that can be linked into your project.
 
