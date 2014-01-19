@@ -33,6 +33,8 @@
 #include "cjson.h"
 
 #include <opencv2/core/core.hpp>
+#include "opencv2/ocl/ocl.hpp"
+   
 
 
 #define DEFAULT_TOPN 25

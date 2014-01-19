@@ -70,6 +70,8 @@ Config::~Config()
 
 void Config::loadValues(string country)
 {
+  
+  opencl_enabled = getBoolean("common", "opencl_enabled", false);
   maxPlateWidthPercent = getFloat("common", "max_plate_width_percent", 100);
   maxPlateHeightPercent = getFloat("common", "max_plate_height_percent", 100);
 

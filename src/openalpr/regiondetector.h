@@ -30,7 +30,8 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/ml/ml.hpp"
- #include "opencv2/highgui/highgui.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/ocl/ocl.hpp"
 
 #include "utility.h"
 #include "support/timing.h"
@@ -54,8 +55,8 @@ class RegionDetector
     Config* config;
     
     float scale_factor;
-    CascadeClassifier plate_cascade;
-    CvSVM* svmClassifier;
+    CascadeClassifier* plate_cascade;
+    
     bool loaded;
     
     vector<Rect> doCascade(Mat frame);

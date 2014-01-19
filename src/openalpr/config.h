@@ -43,6 +43,8 @@ class Config
 
     string country;
     
+    bool opencl_enabled;
+    
     float maxPlateWidthPercent;
     float maxPlateHeightPercent;
     
