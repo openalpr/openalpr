@@ -56,17 +56,58 @@ void VerticalHistogram::analyzeImage(Mat inputImage, Mat mask)
       }
       
 
-      for (; columnCount > 0; columnCount--)
-	histoImg.at<uchar>(inputImage.rows - columnCount, col) = 255;
-    
       this->colHeights.push_back(columnCount);
       
       if (columnCount < lowestValley)
 	lowestValley = columnCount;
       if (columnCount > highestPeak)
 	highestPeak = columnCount;
+      
+      
+      for (; columnCount > 0; columnCount--)
+	histoImg.at<uchar>(inputImage.rows - columnCount, col) = 255;
+    
     }
     
+}
+
+int VerticalHistogram::getLocalMinimum(int leftX, int rightX)
+{
+  int minimum = histoImg.rows + 1;
+  int lowestX = leftX;
+  
+  for (int i = leftX; i <= rightX; i++)
+  {
+    if (colHeights[i] < minimum)
+    {
+      lowestX = i;
+      minimum = colHeights[i];
+    }
+  }
+  
+  return lowestX;
+}
+
+int VerticalHistogram::getLocalMaximum(int leftX, int rightX)
+{
+  int maximum = -1;
+  int highestX = leftX;
+  
+  for (int i = leftX; i <= rightX; i++)
+  {
+    if (colHeights[i] > maximum)
+    {
+      highestX = i;
+      maximum = colHeights[i];
+    }
+  }
+  
+  return highestX;  
+}
+
+int VerticalHistogram::getHeightAt(int x)
+{
+    return colHeights[x];
 }
 
 void VerticalHistogram::findValleys()

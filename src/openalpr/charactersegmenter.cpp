@@ -292,9 +292,36 @@ vector<Rect> CharacterSegmenter::getHistogramBoxes(VerticalHistogram histogram, 
     {      
       charBoxes.push_back(allBoxes[i]); 
     }
-    else if (allBoxes[i].width > MAX_SEGMENT_WIDTH && allBoxes[i].height > MIN_HISTOGRAM_HEIGHT)
+    else if (allBoxes[i].width > avgCharWidth * 2 && allBoxes[i].width < MAX_SEGMENT_WIDTH * 2 && allBoxes[i].height > MIN_HISTOGRAM_HEIGHT)
     {
+  //    rectangle(histogram.histoImg, allBoxes[i], Scalar(255, 0, 0) );
+  //    drawAndWait(&histogram.histoImg);
+      // Try to split up doubles into two good char regions, check for a break between 40% and 60%
+      int leftEdge = allBoxes[i].x + (int) (((float) allBoxes[i].width) * 0.4f);
+      int rightEdge = allBoxes[i].x + (int) (((float) allBoxes[i].width) * 0.6f);
       
+      int minX = histogram.getLocalMinimum(leftEdge, rightEdge);
+      int maxXChar1 = histogram.getLocalMaximum(allBoxes[i].x, minX);
+      int maxXChar2 = histogram.getLocalMaximum(minX, allBoxes[i].x + allBoxes[i].width);
+      int minHeight = histogram.getHeightAt(minX);
+      
+      int maxHeightChar1 = histogram.getHeightAt(maxXChar1);
+      int maxHeightChar2 = histogram.getHeightAt(maxXChar2);
+      
+      if (maxHeightChar1 > MIN_HISTOGRAM_HEIGHT && minHeight < (0.25 * ((float) maxHeightChar1)))
+      {
+	cout << "GOODY GOODY LEFT" << endl;
+	  // Add a box for Char1
+	  Point botRight = Point(minX - 1, allBoxes[i].y + allBoxes[i].height);
+	  charBoxes.push_back(Rect(allBoxes[i].tl(), botRight) );
+      }
+      if (maxHeightChar2 > MIN_HISTOGRAM_HEIGHT && minHeight < (0.25 * ((float) maxHeightChar2)))
+      {
+	cout << "GOODY GOODY RIGHT" << endl;
+	  // Add a box for Char2
+	  Point topLeft = Point(minX + 1, allBoxes[i].y);
+	  charBoxes.push_back(Rect(topLeft, allBoxes[i].br()) );
+      }
     }
     
   }

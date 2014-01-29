@@ -46,6 +46,12 @@ class VerticalHistogram
 
     Mat histoImg;
     
+    // Returns the lowest X position between two points.
+    int getLocalMinimum(int leftX, int rightX);
+    // Returns the highest X position between two points.
+    int getLocalMaximum(int leftX, int rightX);
+    
+    int getHeightAt(int x);
     
   private:
     vector<int> colHeights;
