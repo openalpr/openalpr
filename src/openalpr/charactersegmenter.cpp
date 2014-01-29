@@ -37,7 +37,7 @@ CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* con
   
   Mat img_gray(img.size(), CV_8U);
   cvtColor( img, img_gray, CV_BGR2GRAY );
-  //normalize(img_gray, img_gray, 0, 255, CV_MINMAX );
+
   medianBlur(img_gray, img_gray, 3);
   
   if (invertedColors)
@@ -46,7 +46,7 @@ CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* con
   
   charAnalysis = new CharacterAnalysis(img_gray, config);
   charAnalysis->analyze();
-  
+
   
   
   if (this->config->debugCharSegmenter)
@@ -288,7 +288,7 @@ vector<Rect> CharacterSegmenter::getHistogramBoxes(Mat histogram, float avgCharW
   {
     
     if (allBoxes[i].width >= config->segmentationMinBoxWidthPx && allBoxes[i].width <= MAX_SEGMENT_WIDTH &&
-        allBoxes[i].area() > MIN_HISTOGRAM_HEIGHT   )
+        allBoxes[i].height > MIN_HISTOGRAM_HEIGHT )
     {      
       charBoxes.push_back(allBoxes[i]); 
     }
@@ -364,7 +364,9 @@ vector<Rect> CharacterSegmenter::getBestCharBoxes(Mat img, vector<Rect> charBoxe
 	  
 	  validBoxes.push_back(allBoxes[boxidx]);
 	}
+
     }
+    
     
     
     if (rowScore > bestRowScore)
