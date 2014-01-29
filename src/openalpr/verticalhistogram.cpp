@@ -29,7 +29,7 @@ VerticalHistogram::VerticalHistogram(Mat inputImage, Mat mask)
 
 VerticalHistogram::~VerticalHistogram()
 {
-  debugImg.release();
+  histoImg.release();
   colHeights.clear();
 }
 
@@ -40,7 +40,7 @@ void VerticalHistogram::analyzeImage(Mat inputImage, Mat mask)
     lowestValley = inputImage.rows;
     
     
-    debugImg = Mat::zeros(inputImage.size(), CV_8U);
+    histoImg = Mat::zeros(inputImage.size(), CV_8U);
     
     int columnCount;
     
@@ -57,7 +57,7 @@ void VerticalHistogram::analyzeImage(Mat inputImage, Mat mask)
       
 
       for (; columnCount > 0; columnCount--)
-	debugImg.at<uchar>(inputImage.rows - columnCount, col) = 255;
+	histoImg.at<uchar>(inputImage.rows - columnCount, col) = 255;
     
       this->colHeights.push_back(columnCount);
       

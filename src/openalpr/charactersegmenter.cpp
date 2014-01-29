@@ -142,15 +142,15 @@ CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* con
 
       if (this->config->debugCharSegmenter)
       {
-	Mat histoCopy(vertHistogram.debugImg.size(), vertHistogram.debugImg.type());
+	Mat histoCopy(vertHistogram.histoImg.size(), vertHistogram.histoImg.type());
 	//vertHistogram.copyTo(histoCopy);
-	cvtColor(vertHistogram.debugImg, histoCopy, CV_GRAY2RGB);
+	cvtColor(vertHistogram.histoImg, histoCopy, CV_GRAY2RGB);
 	allHistograms.push_back(histoCopy);
       }
 
 //       
       float score = 0;
-      vector<Rect> charBoxes = getHistogramBoxes(vertHistogram.debugImg, avgCharWidth, avgCharHeight, &score); 
+      vector<Rect> charBoxes = getHistogramBoxes(vertHistogram, avgCharWidth, avgCharHeight, &score); 
       
       
       if (this->config->debugCharSegmenter)
@@ -271,7 +271,7 @@ CharacterSegmenter::~CharacterSegmenter()
 
 // Given a histogram and the horizontal line boundaries, respond with an array of boxes where the characters are
 // Scores the histogram quality as well based on num chars, char volume, and even separation
-vector<Rect> CharacterSegmenter::getHistogramBoxes(Mat histogram, float avgCharWidth, float avgCharHeight, float* score)
+vector<Rect> CharacterSegmenter::getHistogramBoxes(VerticalHistogram histogram, float avgCharWidth, float avgCharHeight, float* score)
 {
   float MIN_HISTOGRAM_HEIGHT = avgCharHeight * config->segmentationMinCharHeightPercent;
   
@@ -282,7 +282,7 @@ vector<Rect> CharacterSegmenter::getHistogramBoxes(Mat histogram, float avgCharW
   int pxLeniency = 2;
   
   vector<Rect> charBoxes;
-  vector<Rect> allBoxes = get1DHits(histogram, pxLeniency);
+  vector<Rect> allBoxes = get1DHits(histogram.histoImg, pxLeniency);
   
   for (int i = 0; i < allBoxes.size(); i++)
   {
@@ -291,6 +291,10 @@ vector<Rect> CharacterSegmenter::getHistogramBoxes(Mat histogram, float avgCharW
         allBoxes[i].height > MIN_HISTOGRAM_HEIGHT )
     {      
       charBoxes.push_back(allBoxes[i]); 
+    }
+    else if (allBoxes[i].width > MAX_SEGMENT_WIDTH && allBoxes[i].height > MIN_HISTOGRAM_HEIGHT)
+    {
+      
     }
     
   }

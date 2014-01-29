@@ -44,7 +44,7 @@ class VerticalHistogram
     VerticalHistogram(Mat inputImage, Mat mask);
     virtual ~VerticalHistogram();
 
-    Mat debugImg;
+    Mat histoImg;
     
     
   private:

@@ -82,7 +82,7 @@ class CharacterSegmenter
     void removeSmallContours(vector<Mat> thresholds, vector<vector<vector<Point > > > allContours, float avgCharWidth, float avgCharHeight);
     
     Mat getVerticalHistogram(Mat img, Mat mask);
-    vector<Rect> getHistogramBoxes(Mat histogram, float avgCharWidth, float avgCharHeight, float* score);
+    vector<Rect> getHistogramBoxes(VerticalHistogram histogram, float avgCharWidth, float avgCharHeight, float* score);
     vector<Rect> getBestCharBoxes(Mat img, vector<Rect> charBoxes, float avgCharWidth);
     vector<Rect> combineCloseBoxes( vector<Rect> charBoxes, float avgCharWidth);
     
