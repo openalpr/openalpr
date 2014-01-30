@@ -93,28 +93,30 @@ CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* con
     imgDbgGeneral.push_back(bordered);
   }
   
-  // Figure out the average character width
-  float totalCharWidth = 0;
-  float totalCharHeight = 0;
+
   
   if (charAnalysis->linePolygon.size() > 0)
   {
     this->top = LineSegment(charAnalysis->linePolygon[0].x, charAnalysis->linePolygon[0].y, charAnalysis->linePolygon[1].x, charAnalysis->linePolygon[1].y);
     this->bottom = LineSegment(charAnalysis->linePolygon[3].x, charAnalysis->linePolygon[3].y, charAnalysis->linePolygon[2].x, charAnalysis->linePolygon[2].y);
     
+    vector<int> charWidths;
+    vector<int> charHeights;
+    
     for (int i = 0; i < charAnalysis->bestContours.size(); i++)
     {
 	if (charAnalysis->bestCharSegments[i] == false)
 	  continue;
 	
+	
 	Rect mr = boundingRect(charAnalysis->bestContours[i]);
-	totalCharWidth += mr.width;
-	totalCharHeight += mr.height;
+
+	charWidths.push_back(mr.width);
+	charHeights.push_back(mr.height);
     }
     
-    int numSamples = charAnalysis->bestCharSegmentsCount;
-    float avgCharWidth = totalCharWidth / numSamples;
-    float avgCharHeight = totalCharHeight / numSamples;
+    float avgCharWidth = median(charWidths.data(), charWidths.size());
+    float avgCharHeight = median(charHeights.data(), charHeights.size());
   
     removeSmallContours(charAnalysis->thresholds, charAnalysis->allContours, avgCharWidth, avgCharHeight);
   
