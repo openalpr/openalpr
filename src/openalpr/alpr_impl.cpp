@@ -214,7 +214,7 @@ string AlprImpl::toJson(const vector< AlprResult > results)
 
 cJSON* AlprImpl::createJsonObj(const AlprResult* result)
 {
-  cJSON *root, *coords;
+  cJSON *root, *coords, *candidates;
   
   root=cJSON_CreateObject();	
   
@@ -236,6 +236,19 @@ cJSON* AlprImpl::createJsonObj(const AlprResult* result)
     cJSON_AddNumberToObject(coords_object, "y",  result->plate_points[i].y);
 
     cJSON_AddItemToArray(coords, coords_object);
+  }
+  
+  
+  cJSON_AddItemToObject(root, "candidates", 		candidates=cJSON_CreateArray());
+  for (int i = 0; i < result->topNPlates.size(); i++)
+  {
+    cJSON *candidate_object;
+    candidate_object = cJSON_CreateObject();
+    cJSON_AddStringToObject(candidate_object, "plate",  result->topNPlates[i].characters.c_str());
+    cJSON_AddNumberToObject(candidate_object, "confidence",  result->topNPlates[i].overall_confidence);
+    cJSON_AddNumberToObject(candidate_object, "matches_template",  result->topNPlates[i].matches_template);
+
+    cJSON_AddItemToArray(candidates, candidate_object);
   }
   
   return root;
