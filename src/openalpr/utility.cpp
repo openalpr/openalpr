@@ -176,7 +176,11 @@ vector<Mat> produceThresholds(const Mat img_gray, Config* config)
   
 }
 
-
+double median(int array[], int arraySize)
+{
+  std::sort(&array[0], &array[arraySize]);
+  return arraySize % 2 ? array[arraySize / 2] : (array[arraySize / 2 - 1] + array[arraySize / 2]) / 2;
+}
 
 
 Mat equalizeBrightness(Mat img)

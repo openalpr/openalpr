@@ -90,7 +90,7 @@ class LineSegment
     
 };
 
-
+  double median(int array[], int arraySize);
 
   vector<Mat> produceThresholds(const Mat img_gray, Config* config);
   
