@@ -170,14 +170,16 @@ CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* con
     }
     
 
-    float biggestCharWidth = avgCharWidth;
+    float medianCharWidth = avgCharWidth;
+    vector<int> widthValues;
     // Compute largest char width
     for (int i = 0; i < allBoxes.size(); i++)
     {
-      if (allBoxes[i].width > biggestCharWidth)
-	biggestCharWidth = allBoxes[i].width;
+      widthValues.push_back(allBoxes[i].width);
     }
-      
+    
+    medianCharWidth = median(widthValues.data(), widthValues.size());
+    
 
     if (config->debugTiming)
     {
@@ -187,7 +189,7 @@ CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* con
     }
     
     //ColorFilter colorFilter(img, charAnalysis->getCharacterMask());    
-    vector<Rect> candidateBoxes = getBestCharBoxes(charAnalysis->thresholds[0], allBoxes, biggestCharWidth);
+    vector<Rect> candidateBoxes = getBestCharBoxes(charAnalysis->thresholds[0], allBoxes, medianCharWidth);
     
     
     if (this->config->debugCharSegmenter)
@@ -210,11 +212,11 @@ CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* con
     
     getTime(&startTime);
     
-    filterEdgeBoxes(charAnalysis->thresholds, candidateBoxes, biggestCharWidth, avgCharHeight);
+    filterEdgeBoxes(charAnalysis->thresholds, candidateBoxes, medianCharWidth, avgCharHeight);
     
     candidateBoxes = filterMostlyEmptyBoxes(charAnalysis->thresholds, candidateBoxes);
  
-    candidateBoxes = combineCloseBoxes(candidateBoxes, biggestCharWidth);
+    candidateBoxes = combineCloseBoxes(candidateBoxes, medianCharWidth);
 
     cleanCharRegions(charAnalysis->thresholds, candidateBoxes);
     cleanMostlyFullBoxes(charAnalysis->thresholds, candidateBoxes);
@@ -310,14 +312,12 @@ vector<Rect> CharacterSegmenter::getHistogramBoxes(VerticalHistogram histogram, 
       
       if (maxHeightChar1 > MIN_HISTOGRAM_HEIGHT && minHeight < (0.25 * ((float) maxHeightChar1)))
       {
-	cout << "GOODY GOODY LEFT" << endl;
 	  // Add a box for Char1
 	  Point botRight = Point(minX - 1, allBoxes[i].y + allBoxes[i].height);
 	  charBoxes.push_back(Rect(allBoxes[i].tl(), botRight) );
       }
       if (maxHeightChar2 > MIN_HISTOGRAM_HEIGHT && minHeight < (0.25 * ((float) maxHeightChar2)))
       {
-	cout << "GOODY GOODY RIGHT" << endl;
 	  // Add a box for Char2
 	  Point topLeft = Point(minX + 1, allBoxes[i].y);
 	  charBoxes.push_back(Rect(topLeft, allBoxes[i].br()) );
@@ -360,6 +360,7 @@ vector<Rect> CharacterSegmenter::getBestCharBoxes(Mat img, vector<Rect> charBoxe
       histoImg.at<uchar>(histoImg.rows -  columnCount, col) = 255;
   }
   
+  VerticalHistogram histogram(histoImg, Mat::ones(histoImg.size(), CV_8U));
   
   // Go through each row in the histoImg and score it.  Try to find the single line that gives me the most right-sized character regions (based on avgCharWidth)
   
@@ -395,7 +396,33 @@ vector<Rect> CharacterSegmenter::getBestCharBoxes(Mat img, vector<Rect> charBoxe
 	  
 	  validBoxes.push_back(allBoxes[boxidx]);
 	}
-
+	else if (w > avgCharWidth * 2  && w <= MAX_SEGMENT_WIDTH * 2 )
+	{
+	  // Try to split up doubles into two good char regions, check for a break between 40% and 60%
+	  int leftEdge = allBoxes[boxidx].x + (int) (((float) allBoxes[boxidx].width) * 0.4f);
+	  int rightEdge = allBoxes[boxidx].x + (int) (((float) allBoxes[boxidx].width) * 0.6f);
+	  
+	  int minX = histogram.getLocalMinimum(leftEdge, rightEdge);
+	  int maxXChar1 = histogram.getLocalMaximum(allBoxes[boxidx].x, minX);
+	  int maxXChar2 = histogram.getLocalMaximum(minX, allBoxes[boxidx].x + allBoxes[boxidx].width);
+	  int minHeight = histogram.getHeightAt(minX);
+	  
+	  int maxHeightChar1 = histogram.getHeightAt(maxXChar1);
+	  int maxHeightChar2 = histogram.getHeightAt(maxXChar2);
+	  
+	  if (  minHeight < (0.25 * ((float) maxHeightChar1)))
+	  {
+	      // Add a box for Char1
+	      Point botRight = Point(minX - 1, allBoxes[boxidx].y + allBoxes[boxidx].height);
+	      validBoxes.push_back(Rect(allBoxes[boxidx].tl(), botRight) );
+	  }
+	  if (  minHeight < (0.25 * ((float) maxHeightChar2)))
+	  {
+	      // Add a box for Char2
+	      Point topLeft = Point(minX + 1, allBoxes[boxidx].y);
+	      validBoxes.push_back(Rect(topLeft, allBoxes[boxidx].br()) );
+	  }
+	}
     }
     
     
