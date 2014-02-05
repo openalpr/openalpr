@@ -31,7 +31,7 @@ OCR::OCR(Config* config)
    tesseract=new TessBaseAPI();
 
    // Tesseract requires the prefix directory to be set as an env variable
-   vector<char> tessdataPrefix(config->getTessdataPrefix().size());
+   vector<char> tessdataPrefix(config->getTessdataPrefix().size() + 1);
 
    strcpy(tessdataPrefix.data(), config->getTessdataPrefix().c_str());
    putenv(tessdataPrefix.data());
