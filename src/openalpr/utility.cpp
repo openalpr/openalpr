@@ -22,9 +22,6 @@
 
 #include "utility.h"
 
-#ifndef __APPLE__ // CLang++ does not have yet implementet OpenMP
-#include <omp.h>
-#endif
 
 Rect expandRect(Rect original, int expandXPixels, int expandYPixels, int maxX, int maxY)
 {
