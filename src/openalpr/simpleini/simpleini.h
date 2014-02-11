@@ -212,6 +212,7 @@
 # pragma warning (disable: 4127 4503 4702 4786)
 #endif
 
+#include <cstdlib>
 #include <cstring>
 #include <string>
 #include <map>
