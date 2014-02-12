@@ -17,11 +17,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
- #include "opencv2/highgui/highgui.hpp"
- #include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 
- #include <iostream>
- #include <stdio.h>
+#include <iostream>
+#include <stdio.h>
 #include <sys/stat.h>
 
 #include "regiondetector.h"
@@ -37,6 +37,18 @@
 // Given a directory full of lp images (named [statecode]#.png) crop out the alphanumeric characters.
 // These will be used to train the OCR
 
+#ifdef __APPLE__
+const int LEFT_ARROW_KEY = 2;
+const int RIGHT_ARROW_KEY = 3;
+const int SPACE_KEY = 32;
+const int ENTER_KEY = 13;
+const int ESCAPE_KEY = 27;
+ 
+const int DOWN_ARROW_KEY = 1;
+const int UP_ARROW_KEY= 0;
+const int DASHBOARD_COLUMNS = 9;
+
+#else
 const int LEFT_ARROW_KEY = 81;
 const int RIGHT_ARROW_KEY = 83;
 const int SPACE_KEY = 32;
@@ -46,6 +58,9 @@ const int ESCAPE_KEY = 27;
 const int DOWN_ARROW_KEY = 84;
 const int UP_ARROW_KEY= 82;
 const int DASHBOARD_COLUMNS = 3;
+
+#endif
+
 
 void showDashboard(vector<Mat> images, vector<bool> selectedImages, int selectedIndex);
 vector<char> showCharSelection(Mat image, vector<Rect> charRegions, string state);
