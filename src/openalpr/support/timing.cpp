@@ -1,11 +1,10 @@
 #include "timing.h"
 
 
-#ifdef WINDOWS
-
-
 timespec diff(timespec start, timespec end);
 
+
+#ifdef WINDOWS
 
 // Windows timing code
 LARGE_INTEGER getFILETIMEoffset()
