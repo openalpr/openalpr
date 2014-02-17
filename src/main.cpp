@@ -20,6 +20,7 @@
 
 
  #include <iostream>
+#include <valarray>
  #include <stdio.h>
  #include <sys/stat.h>
 
@@ -139,32 +140,46 @@
   }
   else if (hasEnding(filename, ".avi") || hasEnding(filename, ".mp4") || hasEnding(filename, ".webm") || hasEnding(filename, ".flv"))
   {
-    int framenum = 0;
-    
-    cv::VideoCapture cap=cv::VideoCapture();
-    cap.open(filename);
-    cap.set(CV_CAP_PROP_POS_MSEC, seektoms);
-    
-    while (cap.read(frame) == true)
+    if (fileExists(filename.c_str()))
     {
-      if (SAVE_LAST_VIDEO_STILL == true)
-      {
-	cv::imwrite(LAST_VIDEO_STILL_LOCATION, frame);
-      }
-      std::cout << "Frame: " << framenum << std::endl;
+      int framenum = 0;
       
-      detectandshow( &alpr, frame, "", outputJson);
-	//create a 1ms delay
-	cv::waitKey(1);
-	framenum++;
+      cv::VideoCapture cap=cv::VideoCapture();
+      cap.open(filename);
+      cap.set(CV_CAP_PROP_POS_MSEC, seektoms);
+      
+      while (cap.read(frame) == true)
+      {
+	if (SAVE_LAST_VIDEO_STILL == true)
+	{
+	  cv::imwrite(LAST_VIDEO_STILL_LOCATION, frame);
+	}
+	std::cout << "Frame: " << framenum << std::endl;
+	
+	detectandshow( &alpr, frame, "", outputJson);
+	  //create a 1ms delay
+	  cv::waitKey(1);
+	  framenum++;
+      }
+    }
+    else
+    {
+      std::cerr << "Video file not found: " << filename << std::endl;
     }
      
   }
   else if (hasEnding(filename, ".png") || hasEnding(filename, ".jpg") || hasEnding(filename, ".gif"))
   {
-    frame = cv::imread( filename );
+    if (fileExists(filename.c_str()))
+    {
+      frame = cv::imread( filename );
     
       detectandshow( &alpr, frame, "", outputJson);
+    }
+    else
+    {
+      std::cerr << "Image file not found: " << filename << std::endl;
+    }
       
       
   }
