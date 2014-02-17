@@ -3,10 +3,17 @@
 
 #include <iostream>
 
+// Support for OS X
+#ifdef __MACH__
+#include <mach/clock.h>
+#include <mach/mach.h>
+#endif
 
+// Support for Windows
 #ifdef WINDOWS
-	// Mock this out for Windows
-	#define timespec int
+	#include <windows.h>
+
+	#define timespec timeval
 #endif
 
   void getTime(timespec* time);
