@@ -177,7 +177,7 @@ double median(int array[], int arraySize)
   }
   
   std::sort(&array[0], &array[arraySize]);
-  return arraySize % 2 ? array[arraySize / 2] : (array[max(0, arraySize / 2 - 1)] + array[arraySize / 2]) / 2;
+  return arraySize % 2 ? array[arraySize / 2] : (array[arraySize / 2 - 1] + array[arraySize / 2]) / 2;
 }
 
 
