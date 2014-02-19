@@ -112,7 +112,7 @@ void displayImage(Config* config, string windowName, cv::Mat frame)
 
 vector<Mat> produceThresholds(const Mat img_gray, Config* config)
 {
-  const int THRESHOLD_COUNT = 10;
+  const int THRESHOLD_COUNT = 4;
   //Mat img_equalized = equalizeBrightness(img_gray);
   
   timespec startTime;
@@ -120,44 +120,37 @@ vector<Mat> produceThresholds(const Mat img_gray, Config* config)
 
   vector<Mat> thresholds;
   
-  //#pragma omp parallel for 
   for (int i = 0; i < THRESHOLD_COUNT; i++)
     thresholds.push_back(Mat(img_gray.size(), CV_8U));
   
+  int i = 0;
   
-  for (int i = 0; i < THRESHOLD_COUNT; i++)
-  {
-
-    
-    if (i <= 2)		//0-2
-    {
-      int k = ((i%3) * 5) + 7;  // 7, 12, 17
-      if (k==12) k = 13;	// change 12 to 13
-      //#pragma omp ordered
-      adaptiveThreshold(img_gray, thresholds[i], 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY_INV , k, 3);
-    }
-    else if (i <= 6)	//3-6
-    {
-      int k = i%2;		// 0 or 1
-      int win = 18 + (k * 4);	// 18 or 22
-      //#pragma omp ordered
-      NiblackSauvolaWolfJolion (img_gray, thresholds[i], WOLFJOLION, win, win, 0.05 + (k * 0.35));
-      bitwise_not(thresholds[i], thresholds[i]);
-
-    }
-    else if (i <= 9)	//7-9
-    {
-      int k = (i%3) + 1;	// 1,2,3
-      //#pragma omp ordered
-      NiblackSauvolaWolfJolion (img_gray, thresholds[i], SAUVOLA, 12, 12, 0.18 * k);
-      bitwise_not(thresholds[i], thresholds[i]);
-
-    }
-    
-
-    
-
-  }
+  // Adaptive
+  //adaptiveThreshold(img_gray, thresholds[i++], 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY_INV , 7, 3);
+  //adaptiveThreshold(img_gray, thresholds[i++], 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY_INV , 13, 3);
+  //adaptiveThreshold(img_gray, thresholds[i++], 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY_INV , 17, 3);
+  
+  // Wolf
+  int k = 0, win=18;
+  //NiblackSauvolaWolfJolion (img_gray, thresholds[i++], WOLFJOLION, win, win, 0.05 + (k * 0.35));
+  //bitwise_not(thresholds[i-1], thresholds[i-1]);
+  NiblackSauvolaWolfJolion (img_gray, thresholds[i++], WOLFJOLION, win, win, 0.05 + (k * 0.35));
+  bitwise_not(thresholds[i-1], thresholds[i-1]);
+  
+  k = 1; win = 22;
+  NiblackSauvolaWolfJolion (img_gray, thresholds[i++], WOLFJOLION, win, win, 0.05 + (k * 0.35));
+  bitwise_not(thresholds[i-1], thresholds[i-1]);
+  //NiblackSauvolaWolfJolion (img_gray, thresholds[i++], WOLFJOLION, win, win, 0.05 + (k * 0.35));
+  //bitwise_not(thresholds[i-1], thresholds[i-1]);
+  
+  // Sauvola
+  k = 1;
+  NiblackSauvolaWolfJolion (img_gray, thresholds[i++], SAUVOLA, 12, 12, 0.18 * k);
+  bitwise_not(thresholds[i-1], thresholds[i-1]);
+  k=2;
+  NiblackSauvolaWolfJolion (img_gray, thresholds[i++], SAUVOLA, 12, 12, 0.18 * k);
+  bitwise_not(thresholds[i-1], thresholds[i-1]);
+ 
   
   
   
