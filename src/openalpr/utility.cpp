@@ -177,6 +177,12 @@ vector<Mat> produceThresholds(const Mat img_gray, Config* config)
 
 double median(int array[], int arraySize)
 {
+  if (arraySize == 0)
+  {
+    //std::cerr << "Median calculation requested on empty array" << endl;
+    return 0;
+  }
+  
   std::sort(&array[0], &array[arraySize]);
   return arraySize % 2 ? array[arraySize / 2] : (array[arraySize / 2 - 1] + array[arraySize / 2]) / 2;
 }
