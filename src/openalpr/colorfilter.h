@@ -21,6 +21,7 @@
 #ifndef COLORFILTER_H
 #define COLORFILTER_H
 
+#include <iomanip>
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
