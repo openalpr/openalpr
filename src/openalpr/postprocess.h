@@ -106,6 +106,11 @@ class PostProcess
     
     
     vector<PPResult> allPossibilities;
+    
+    // Functions used to prune the list of letters (based on topn) to improve performance
+    vector<int> getMaxDepth(int topn);
+    int getPermutationCount(vector<int> depth);
+    int getNextLeastDrop(vector<int> depth);
 };
 
 /*
