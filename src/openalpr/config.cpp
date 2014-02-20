@@ -72,7 +72,7 @@ void Config::loadValues(string country)
 {
   
   opencl_enabled = getBoolean("common", "opencl_enabled", false);
-  multithreading_cores = getInt("common", "multhreading_cores", 1);
+  multithreading_cores = getInt("common", "multithreading_cores", 1);
   
   maxPlateWidthPercent = getFloat("common", "max_plate_width_percent", 100);
   maxPlateHeightPercent = getFloat("common", "max_plate_height_percent", 100);
