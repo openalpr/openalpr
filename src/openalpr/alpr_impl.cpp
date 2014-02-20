@@ -19,6 +19,8 @@
 
 #include "alpr_impl.h"
 
+void plateAnalysisThread(void* arg);
+
 
 AlprImpl::AlprImpl(const std::string country, const std::string runtimeDir)
 {
@@ -73,21 +75,96 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
 {
   timespec startTime;
   getTime(&startTime);
-  
-  vector<AlprResult> response;
-  
 
+  
+  // Find all the candidate regions
   vector<Rect> plateRegions = plateDetector->detect(img);
 
+  // Get the number of threads specified and make sure the value is sane (cannot be greater than CPU cores or less than 1)
+  int numThreads = config->multithreading_cores;
+  if (numThreads > tthread::thread::hardware_concurrency())
+    numThreads = tthread::thread::hardware_concurrency();
+  if (numThreads <= 0)
+    numThreads = 1;
 
-  // Recognize.
-
-  for (int i = 0; i < plateRegions.size(); i++)
+  
+  PlateDispatcher dispatcher(plateRegions, &img, 
+			     config, stateIdentifier, ocr, 
+			     topN, detectRegion, defaultRegion);
+    
+  // Spawn n threads to process all of the candidate regions and recognize
+  list<tthread::thread*> threads;
+  for (int i = 0; i < numThreads; i++)
   {
+    tthread::thread * t = new tthread::thread(plateAnalysisThread, (void *) &dispatcher);
+    threads.push_back(t);
+  }
+  
+  // Wait for all threads to finish
+  for(list<tthread::thread *>::iterator i = threads.begin(); i != threads.end(); ++ i)
+  {
+    tthread::thread* t = *i;
+    t->join();
+    delete t;
+  }
+
+  if (config->debugTiming)
+  {
+    timespec endTime;
+    getTime(&endTime);
+    cout << "Total Time to process image: " << diffclock(startTime, endTime) << "ms." << endl;
+  }
+  
+  if (config->debugGeneral && config->debugShowImages)
+  {
+    displayImage(config, "Main Image", img);
+    // Pause indefinitely until they press a key
+    while ((char) cv::waitKey(50) == -1)
+      {}
+  }
+  
+  //	if (config->debugGeneral)
+//	{
+//	  rectangle(img, plateRegion, Scalar(0, 255, 0), 2);
+//	  for (int z = 0; z < 4; z++)
+//	    line(img, lp.plateCorners[z], lp.plateCorners[(z + 1) % 4], Scalar(255,0,255), 2);
+//	}
+
+//	if (config->debugGeneral)
+//	  rectangle(img, plateRegion, Scalar(0, 0, 255), 2);
+  
+  return dispatcher.getRecognitionResults();
+}
+
+void plateAnalysisThread(void* arg)
+{
+  PlateDispatcher* dispatcher = (PlateDispatcher*) arg;
+  if (dispatcher->config->debugGeneral)
+    cout << "Thread: " << tthread::this_thread::get_id() << " Initialized" << endl;
+  
+  int loop_count = 0;
+  while (true)
+  {
+    
+    if (dispatcher->hasPlate() == false)
+      break;
+    
+    // Synchronized section
+    if (dispatcher->config->debugGeneral)
+      cout << "Thread: " << tthread::this_thread::get_id() << " loop " << ++loop_count << endl;
+    
+    // Get a single plate region from the queue
+    Rect plateRegion = dispatcher->nextPlate();
+    
+    Mat img = dispatcher->getImageCopy();
+
+  
+    // Parallel section
+  
       timespec platestarttime;
       getTime(&platestarttime);
       
-      LicensePlateCandidate lp(img, plateRegions[i], config);
+      LicensePlateCandidate lp(img, plateRegion, dispatcher->config);
       
       lp.recognize();
 
@@ -95,7 +172,7 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
       if (lp.confidence > 10)
       {
 	AlprResult plateResult;
-	plateResult.region = defaultRegion;
+	plateResult.region = dispatcher->defaultRegion;
 	plateResult.regionConfidence = 0;
 	
 	for (int pointidx = 0; pointidx < 4; pointidx++)
@@ -104,37 +181,37 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
 	  plateResult.plate_points[pointidx].y = (int) lp.plateCorners[pointidx].y;
 	}
 	
-	if (detectRegion)
+	if (dispatcher->detectRegion)
 	{
 	  char statecode[4];
-	  plateResult.regionConfidence = stateIdentifier->recognize(img, plateRegions[i], statecode);
+	  plateResult.regionConfidence = dispatcher->stateIdentifier->recognize(img, plateRegion, statecode);
 	  if (plateResult.regionConfidence > 0)
 	  {
 	    plateResult.region = statecode;
 	  }
-	}
+	} 
     
     
-	ocr->performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
+	dispatcher->ocr->performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
 	
-	ocr->postProcessor->analyze(plateResult.region, topN);
+	dispatcher->ocr->postProcessor->analyze(plateResult.region, dispatcher->topN);
 
 	//plateResult.characters = ocr->postProcessor->bestChars;
-	const vector<PPResult> ppResults = ocr->postProcessor->getResults();
+	const vector<PPResult> ppResults = dispatcher->ocr->postProcessor->getResults();
 	
 	int bestPlateIndex = 0;
 	
 	for (int pp = 0; pp < ppResults.size(); pp++)
 	{
-	  if (pp >= topN)
+	  if (pp >= dispatcher->topN)
 	    break;
 	  
 	  // Set our "best plate" match to either the first entry, or the first entry with a postprocessor template match
 	  if (bestPlateIndex == 0 && ppResults[pp].matchesTemplate)
 	    bestPlateIndex = pp;
 	  
-	  if (ppResults[pp].letters.size() >= config->postProcessMinCharacters &&
-	    ppResults[pp].letters.size() <= config->postProcessMaxCharacters)
+	  if (ppResults[pp].letters.size() >= dispatcher->config->postProcessMinCharacters &&
+	    ppResults[pp].letters.size() <= dispatcher->config->postProcessMaxCharacters)
 	  {
 	    AlprPlate aplate;
 	    aplate.characters = ppResults[pp].letters;
@@ -153,40 +230,26 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
 	plateResult.processing_time_ms = diffclock(platestarttime, plateEndTime);
 	
 	if (plateResult.result_count > 0)
-	  response.push_back(plateResult);
-	
-	if (config->debugGeneral)
 	{
-	  rectangle(img, plateRegions[i], Scalar(0, 255, 0), 2);
-	  for (int z = 0; z < 4; z++)
-	    line(img, lp.plateCorners[z], lp.plateCorners[(z + 1) % 4], Scalar(255,0,255), 2);
+	  // Synchronized section
+	  dispatcher->addResult(plateResult);
+	  
 	}
 	
 	
       }
-      else
-      {
-	if (config->debugGeneral)
-	  rectangle(img, plateRegions[i], Scalar(0, 0, 255), 2);
-      }
       
-  }
+      if (dispatcher->config->debugTiming)
+      {
+	timespec plateEndTime;
+	getTime(&plateEndTime);
+	cout << "Thread: " << tthread::this_thread::get_id() << " Finished loop " << loop_count << " in " << diffclock(platestarttime, plateEndTime) << "ms." << endl;
+      }
 
-  if (config->debugTiming)
-  {
-    timespec endTime;
-    getTime(&endTime);
-    cout << "Total Time to process image: " << diffclock(startTime, endTime) << "ms." << endl;
   }
   
-  if (config->debugGeneral && config->debugShowImages)
-  {
-    displayImage(config, "Main Image", img);
-    // Pause indefinitely until they press a key
-    while ((char) cv::waitKey(50) == -1)
-      {}
-  }
-  return response;
+  if (dispatcher->config->debugGeneral)
+    cout << "Thread: " << tthread::this_thread::get_id() << " Complete" << endl;
 }
 
 string AlprImpl::toJson(const vector< AlprResult > results)
