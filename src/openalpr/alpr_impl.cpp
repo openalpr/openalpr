@@ -29,6 +29,8 @@ AlprImpl::AlprImpl(const std::string country, const std::string runtimeDir)
   stateIdentifier = new StateIdentifier(config);
   ocr = new OCR(config);
   
+  setNumThreads(0);
+  
   this->detectRegion = DEFAULT_DETECT_REGION;
   this->topN = DEFAULT_TOPN;
   this->defaultRegion = "";
