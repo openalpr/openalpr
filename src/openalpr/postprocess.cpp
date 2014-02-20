@@ -357,9 +357,10 @@ vector<int> PostProcess::getMaxDepth(int topn)
   int nextLeastDropCharPos = getNextLeastDrop(depth);
   while (nextLeastDropCharPos != -1)
   {
-    depth[nextLeastDropCharPos] = depth[nextLeastDropCharPos] + 1;
-    if (getPermutationCount(depth) > topn)
+    if (getPermutationCount(depth) >= topn)
       break;
+    
+    depth[nextLeastDropCharPos] = depth[nextLeastDropCharPos] + 1;
     
     nextLeastDropCharPos = getNextLeastDrop(depth);
   }
