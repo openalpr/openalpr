@@ -44,6 +44,7 @@ class Config
     string country;
     
     bool opencl_enabled;
+    int multithreading_cores;
     
     float maxPlateWidthPercent;
     float maxPlateHeightPercent;
