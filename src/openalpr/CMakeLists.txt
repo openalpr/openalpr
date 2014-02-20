@@ -32,3 +32,4 @@ add_library(openalpr ${lpr_source_files})
 
 add_subdirectory(simpleini)
 add_subdirectory(support)
+add_subdirectory(tinythread)
