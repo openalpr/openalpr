@@ -42,13 +42,16 @@
 
 float calcLocalStats (Mat &im, Mat &map_m, Mat &map_s, int winx, int winy) {
 
-	float m,s,max_s, sum, sum_sq, foo;
+	float m,s,max_s;
+	long sum, sum_sq;
+	uchar foo;
 	int wxh	= winx/2;
 	int wyh	= winy/2;
 	int x_firstth= wxh;
 	int y_lastth = im.rows-wyh-1;
 	int y_firstth= wyh;
 	float winarea = winx*winy;
+
 
 	max_s = 0;
 	for	(int j = y_firstth ; j<=y_lastth; j++) 
@@ -61,8 +64,8 @@ float calcLocalStats (Mat &im, Mat &map_m, Mat &map_s, int winx, int winy) {
 				sum    += foo;
 				sum_sq += foo*foo;
 			}
-		m  = sum / winarea;
-		s  = sqrt ((sum_sq - (sum*sum)/winarea)/winarea);
+		m  = ((float)sum) / winarea;
+		s  = sqrt ((((float)sum_sq) - ((float)(sum*sum))/winarea)/winarea);
 		if (s > max_s)
 			max_s = s;
 		map_m.fset(x_firstth, j, m);
@@ -80,8 +83,8 @@ float calcLocalStats (Mat &im, Mat &map_m, Mat &map_s, int winx, int winy) {
 				sum    += foo;
 				sum_sq += foo*foo;
 			}
-			m  = sum / winarea;
-			s  = sqrt ((sum_sq - (sum*sum)/winarea)/winarea);
+			m  = ((float)sum) / winarea;
+			s  = sqrt ((((float)sum_sq) - ((float) (sum*sum))/winarea)/winarea);
 			if (s > max_s)
 				max_s = s;
 			map_m.fset(i+wxh, j, m);
