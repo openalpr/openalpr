@@ -24,6 +24,7 @@ ADD_EXECUTABLE( benchmark  benchmark.cpp )
 TARGET_LINK_LIBRARIES(benchmark 
     openalpr
     support
+    tinythread
     ${OpenCV_LIBS} 
     tesseract
   )
@@ -36,3 +37,12 @@ TARGET_LINK_LIBRARIES(prepcharsfortraining
   )
   
   
+
+ADD_EXECUTABLE( findnegatives  findnegatives.cpp  )
+TARGET_LINK_LIBRARIES(findnegatives 
+    openalpr
+    support
+    tinythread
+    ${OpenCV_LIBS} 
+    tesseract
+  )
