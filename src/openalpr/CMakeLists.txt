@@ -23,13 +23,13 @@ set(lpr_source_files
  verticalhistogram.cpp
  trex.c
  cjson.c
+ tinythread/tinythread.cpp
 )
 
  
 
 add_subdirectory(simpleini)
 add_subdirectory(support)
-add_subdirectory(tinythread)
 
 
 add_library(openalpr ${lpr_source_files})
