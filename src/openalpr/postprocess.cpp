@@ -206,7 +206,7 @@ void PostProcess::analyze(string templateregion, int topn)
   if (allPossibilities.size() < topn)
     numelements = allPossibilities.size() - 1;
   
-  partial_sort( allPossibilities.begin(), allPossibilities.begin() + numelements, allPossibilities.end() - 1, wordCompare );
+  partial_sort( allPossibilities.begin(), allPossibilities.begin() + numelements, allPossibilities.end(), wordCompare );
   
   if (config->debugTiming)
   {
