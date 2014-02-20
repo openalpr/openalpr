@@ -180,6 +180,19 @@ void PostProcess::analyze(string templateregion, int topn)
       sort(letters[i].begin(), letters[i].end(), letterCompare);
   }
   
+  
+  
+  if (this->config->debugPostProcess)
+  {
+    
+    // Print all letters
+    for (int i = 0; i < letters.size(); i++)
+    {
+      for (int j = 0; j < letters[i].size(); j++)
+	cout << "PostProcess Letter: " << letters[i][j].charposition << " " << letters[i][j].letter << " -- score: " << letters[i][j].totalscore << " -- occurences: " << letters[i][j].occurences << endl;
+    }
+    
+  }
 
   // Prune the letters based on the topN value.
   // If our topN value is 3, for example, we can get rid of a lot of low scoring letters
@@ -281,12 +294,6 @@ void PostProcess::analyze(string templateregion, int topn)
   if (this->config->debugPostProcess)
   {
     
-    // Print all letters
-    for (int i = 0; i < letters.size(); i++)
-    {
-      for (int j = 0; j < letters[i].size(); j++)
-	cout << "PostProcess Letter: " << letters[i][j].charposition << " " << letters[i][j].letter << " -- score: " << letters[i][j].totalscore << " -- occurences: " << letters[i][j].occurences << endl;
-    }
     
     // Print top words
     for (int i = 0; i < allPossibilities.size(); i++)
