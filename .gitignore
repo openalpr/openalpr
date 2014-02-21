@@ -6,3 +6,8 @@ CMakeFiles/
 CMakeCache.txt
 .o
 benchmarks/
+.kdev/
+*.kdev4
+website/
+utilities/
+samples/
