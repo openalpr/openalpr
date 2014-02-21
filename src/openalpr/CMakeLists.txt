@@ -25,11 +25,13 @@ set(lpr_source_files
  cjson.c
  tinythread/tinythread.cpp
 )
-
- 
-
 add_subdirectory(simpleini)
 add_subdirectory(support)
 
-
+ 
 add_library(openalpr ${lpr_source_files})
+
+
+
+# Add definition for default runtime dir
+add_definitions(-DDEFAULT_RUNTIME_DIR="${CMAKE_SOURCE_DIR}/../runtime_data/")

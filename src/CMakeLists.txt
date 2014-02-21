@@ -3,32 +3,23 @@ project(src)
 
 cmake_minimum_required (VERSION 2.6) 
 
+SET(OpenCV_DIR "${CMAKE_SOURCE_DIR}/../libraries/opencv/")
+SET(Tesseract_DIR "${CMAKE_SOURCE_DIR}/../libraries/tesseract-ocr")
+	
+include_directories(
+	${Tesseract_DIR}/api
+	${Tesseract_DIR}/ccutil/
+	${Tesseract_DIR}/ccstruct/
+	${Tesseract_DIR}/ccmain/
+)
+	
 IF (WIN32)
 	add_definitions( -DWINDOWS)
 	add_definitions( -DNOMINMAX)
 	
-	SET(OpenCV_DIR "C:\\projects\\openalpr\\libraries\\opencv")
-	SET(Tesseract_DIR "C:\\projects\\openalpr\\libraries\\tesseract-ocr")
-	
-	include_directories(
-		${Tesseract_DIR}/api
-		${Tesseract_DIR}/ccutil/
-		${Tesseract_DIR}/ccstruct/
-		${Tesseract_DIR}/ccmain/
-	)
 	link_directories( ${Tesseract_DIR}/vs2008/LIB_Release/ ) 
 ELSE()
 
-	SET(OpenCV_DIR "../libraries/opencv/")
-	SET(Tesseract_DIR "/home/mhill/projects/alpr/libraries/tesseract-ocr")
-		
-	include_directories(
-		${Tesseract_DIR}/api
-		${Tesseract_DIR}/ccutil/
-		${Tesseract_DIR}/ccstruct/
-		${Tesseract_DIR}/ccmain/
-		
-	)
 	link_directories( ${Tesseract_DIR}/api/.libs/ ) 
 ENDIF()
 
