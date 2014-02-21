@@ -24,7 +24,7 @@
 #include <iostream>
 #include <vector>
 
-#define OPENALPR_VERSION "0.3"
+#define OPENALPR_VERSION "1.0"
 
 struct AlprPlate
 {
