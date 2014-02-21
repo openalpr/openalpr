@@ -22,7 +22,6 @@
 #ifndef CHARACTERSEGMENTER_H
 #define CHARACTERSEGMENTER_H
 
-#include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "constants.h"
 #include "binarize_wolf.h"

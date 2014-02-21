@@ -25,7 +25,7 @@
 #include "simpleini/simpleini.h"
 #include "support/filesystem.h"
 
-#include "linux_dev.h"
+#include "constants.h"
 
 #include <stdio.h>
 #include <iostream>

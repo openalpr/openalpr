@@ -26,7 +26,6 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "utility.h"
 #include "binarize_wolf.h"
-//#include "lswms.h"
 #include "config.h"
 
 using namespace cv;
