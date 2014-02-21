@@ -22,7 +22,6 @@
 #ifndef CHARACTERANALYSIS_H
 #define CHARACTERANALYSIS_H
 
-#include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "constants.h"
 #include "utility.h"

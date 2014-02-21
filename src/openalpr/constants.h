@@ -17,5 +17,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "linux_dev.h"
+#define CONFIG_FILE 		"/openalpr.conf"
+#define KEYPOINTS_DIR		"/keypoints"
+#define CASCADE_DIR		"/region/"
+#define POSTPROCESS_DIR		"/postprocess"
 
+#ifndef DEFAULT_RUNTIME_DIR
+  #define DEFAULT_RUNTIME_DIR 	"/default_runtime_data_dir/"
+#endif
+
+#define ENV_VARIABLE_RUNTIME_DIR "OPENALPR_RUNTIME_DIR"

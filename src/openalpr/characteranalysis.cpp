@@ -18,7 +18,6 @@
 */
 
 #include "characteranalysis.h"
-#include <math.h>
 
 CharacterAnalysis::CharacterAnalysis(Mat img, Config* config)
 {
