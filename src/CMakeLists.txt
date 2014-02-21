@@ -26,7 +26,7 @@ ENDIF()
 
 # Opencv Package
 FIND_PACKAGE( OpenCV REQUIRED )
-IF (${OpenCV_VERSION} VERSION_LESS 2.3.0)
+IF (${OpenCV_VERSION} VERSION_LESS 2.4.8)
 	MESSAGE(FATAL_ERROR "OpenCV version is not compatible : ${OpenCV_VERSION}")
 ENDIF()
 
