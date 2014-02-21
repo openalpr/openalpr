@@ -23,7 +23,6 @@ set(lpr_source_files
  verticalhistogram.cpp
  trex.c
  cjson.c
- tinythread/tinythread.cpp
 )
 
  
