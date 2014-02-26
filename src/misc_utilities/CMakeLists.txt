@@ -35,12 +35,3 @@ TARGET_LINK_LIBRARIES(prepcharsfortraining
     ${OpenCV_LIBS} 
   )
   
-  
-
-ADD_EXECUTABLE( findnegatives  findnegatives.cpp  )
-TARGET_LINK_LIBRARIES(findnegatives 
-    openalpr
-    support
-    ${OpenCV_LIBS} 
-    tesseract
-  )
