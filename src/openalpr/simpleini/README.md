@@ -78,14 +78,14 @@ ini.GetAllKeys("section-name", keys);
 
 ```c++
 // get the value of a key
-const char * pszValue = ini.GetValue("section-name", 
+const char * pszValue = ini.GetValue("section-name",
     "key-name", NULL /*default*/);
 
-// get the value of a key which may have multiple 
-// values. If bHasMultipleValues is true, then just 
+// get the value of a key which may have multiple
+// values. If bHasMultipleValues is true, then just
 // one value has been returned
 bool bHasMultipleValues;
-pszValue = ini.GetValue("section-name", "key-name", 
+pszValue = ini.GetValue("section-name", "key-name",
     NULL /*default*/, &amp;bHasMultipleValues);
 
 // get all values of a key with multiple values
@@ -97,7 +97,7 @@ values.sort(CSimpleIniA::Entry::LoadOrder());
 
 // output all of the items
 CSimpleIniA::TNamesDepend::const_iterator i;
-for (i = values.begin(); i != values.end(); ++i) { 
+for (i = values.begin(); i != values.end(); ++i) {
     printf("key-name = '%s'\n", i->pItem);
 }
 ```
@@ -108,20 +108,20 @@ for (i = values.begin(); i != values.end(); ++i) {
 // adding a new section
 rc = ini.SetValue("new-section", NULL, NULL);
 if (rc < 0) return false;
-printf("section: %s\n", rc == SI_INSERTED ? 
+printf("section: %s\n", rc == SI_INSERTED ?
     "inserted" : "updated");
 
-// adding a new key ("new-section" will be added 
+// adding a new key ("new-section" will be added
 // automatically if it doesn't already exist)
 rc = ini.SetValue("new-section", "new-key", "value");
 if (rc < 0) return false;
-printf("key: %s\n", rc == SI_INSERTED ? 
+printf("key: %s\n", rc == SI_INSERTED ?
     "inserted" : "updated");
 
 // changing the value of a key
 rc = ini.SetValue("section", "key", "updated-value");
 if (rc < 0) return false;
-printf("key: %s\n", rc == SI_INSERTED ? 
+printf("key: %s\n", rc == SI_INSERTED ?
     "inserted" : "updated");
 ```
 
@@ -130,7 +130,7 @@ printf("key: %s\n", rc == SI_INSERTED ?
 ```c++
 // deleting a key from a section. Optionally the entire
 // section may be deleted if it is now empty.
-ini.Delete("section-name", "key-name", 
+ini.Delete("section-name", "key-name",
     true /*delete the section if empty*/);
 
 // deleting an entire section and all keys in it

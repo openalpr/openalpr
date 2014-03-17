@@ -76,8 +76,8 @@ double diffclock(timespec time1,timespec time2)
 {
     timespec delta = diff(time1,time2);
     double milliseconds = (delta.tv_sec * 1000) +  (((double) delta.tv_usec) / 1000.0);
-    
-    
+
+
     return milliseconds;
 }
 
@@ -116,13 +116,13 @@ void getTime(timespec* time)
 }
 double diffclock(timespec time1,timespec time2)
 {
-  
+
     timespec delta = diff(time1,time2);
     double milliseconds = (delta.tv_sec * 1000) +  (((double) delta.tv_nsec) / 1000000.0);
-    
-    
+
+
     return milliseconds;
-	
+
 
 }
 

@@ -5,11 +5,11 @@
 
 	Copyright (C) 2003-2006 Alberto Demichelis
 
-	This software is provided 'as-is', without any express 
-	or implied warranty. In no event will the authors be held 
+	This software is provided 'as-is', without any express
+	or implied warranty. In no event will the authors be held
 	liable for any damages arising from the use of this software.
 
-	Permission is granted to anyone to use this software for 
+	Permission is granted to anyone to use this software for
 	any purpose, including commercial applications, and to alter
 	it and redistribute it freely, subject to the following restrictions:
 
@@ -30,13 +30,13 @@
 #ifdef _UNICODE
 #define TRexChar unsigned short
 #define MAX_CHAR 0xFFFF
-#define _TREXC(c) L##c 
+#define _TREXC(c) L##c
 #define trex_strlen wcslen
 #define trex_printf wprintf
 #else
 #define TRexChar char
 #define MAX_CHAR 0xFF
-#define _TREXC(c) (c) 
+#define _TREXC(c) (c)
 #define trex_strlen strlen
 #define trex_printf printf
 #endif

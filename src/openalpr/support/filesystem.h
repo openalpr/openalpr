@@ -23,8 +23,8 @@
   bool DirectoryExists( const char* pzPath );
   bool fileExists( const char* pzPath );
   std::vector<std::string> getFilesInDir(const char* dirPath);
-  
+
   bool stringCompare( const std::string &left, const std::string &right );
-  
-  
+
+
 #endif // FILESYSTEM_H

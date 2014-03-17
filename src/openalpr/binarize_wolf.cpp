@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2013 New Designs Unlimited, LLC
  * Opensource Automated License Plate Recognition [http://www.openalpr.com]
- * 
+ *
  * This file is part of OpenAlpr.
- * 
+ *
  * OpenAlpr is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License 
- * version 3 as published by the Free Software Foundation 
- * 
+ * it under the terms of the GNU Affero General Public License
+ * version 3 as published by the Free Software Foundation
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
@@ -54,7 +54,7 @@ float calcLocalStats (Mat &im, Mat &map_m, Mat &map_s, int winx, int winy) {
 
 
 	max_s = 0;
-	for	(int j = y_firstth ; j<=y_lastth; j++) 
+	for	(int j = y_firstth ; j<=y_lastth; j++)
 	{
 		// Calculate the initial window at the beginning of the line
 		sum = sum_sq = 0;
@@ -91,7 +91,7 @@ float calcLocalStats (Mat &im, Mat &map_m, Mat &map_s, int winx, int winy) {
 			map_s.fset(i+wxh, j, s);
 		}
 	}
-	
+
 	return max_s;
 }
 
@@ -103,9 +103,9 @@ float calcLocalStats (Mat &im, Mat &map_m, Mat &map_s, int winx, int winy) {
 
 void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
 	int winx, int winy, float k) {
-  
+
 	float dR = BINARIZEWOLF_DEFAULTDR;
-	
+
 	float m, s, max_s;
 	float th=0;
 	double min_I, max_I;
@@ -121,11 +121,11 @@ void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
 	Mat map_m = Mat::zeros (im.rows, im.cols, CV_32F);
 	Mat map_s = Mat::zeros (im.rows, im.cols, CV_32F);
 	max_s = calcLocalStats (im, map_m, map_s, winx, winy);
-	
+
 	minMaxLoc(im, &min_I, &max_I);
-			
+
 	Mat thsurf (im.rows, im.cols, CV_32F);
-			
+
 	// Create the threshold surface, including border processing
 	// ----------------------------------------------------
 
@@ -151,12 +151,12 @@ void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
     			case WOLFJOLION:
     				th = m + k * (s/max_s-1) * (m-min_I);
     				break;
-    				
+
     			default:
     				cerr << "Unknown threshold type in ImageThresholder::surfaceNiblackImproved()\n";
     				exit (1);
     		}
-    		
+
     		thsurf.fset(i+wxh,j,th);
 
     		if (i==0) {
@@ -205,10 +205,10 @@ void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
 				thsurf.fset(i,u,th);
 	}
 
-	
-	
-	for	(int y=0; y<im.rows; ++y) 
-	for	(int x=0; x<im.cols; ++x) 
+
+
+	for	(int y=0; y<im.rows; ++y)
+	for	(int x=0; x<im.cols; ++x)
 	{
     	if (im.uget(x,y) >= thsurf.fget(x,y))
     	{
