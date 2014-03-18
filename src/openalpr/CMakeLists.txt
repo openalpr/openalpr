@@ -25,7 +25,7 @@ set(lpr_source_files
  cjson.c
 )
 
- 
+
 
 add_subdirectory(simpleini)
 add_subdirectory(support)

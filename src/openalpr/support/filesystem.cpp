@@ -22,7 +22,7 @@ bool DirectoryExists( const char* pzPath )
 
     if (pDir != NULL)
     {
-        bExists = true;    
+        bExists = true;
         (void) closedir (pDir);
     }
 
@@ -34,7 +34,7 @@ bool fileExists( const char* pzPath )
     if (pzPath == NULL) return false;
 
     bool fExists = false;
-    std::ifstream f(pzPath); 
+    std::ifstream f(pzPath);
     fExists = f.is_open();
     f.close();
     return fExists;
@@ -43,9 +43,9 @@ bool fileExists( const char* pzPath )
 std::vector<std::string> getFilesInDir(const char* dirPath)
 {
   DIR *dir;
-  
+
   std::vector<std::string> files;
-  
+
   struct dirent *ent;
   if ((dir = opendir (dirPath)) != NULL) {
     /* print all the files and directories within directory */
@@ -59,7 +59,7 @@ std::vector<std::string> getFilesInDir(const char* dirPath)
     perror ("");
     return files;
   }
-  
+
   return files;
 }
 

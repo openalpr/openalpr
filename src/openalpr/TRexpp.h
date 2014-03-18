@@ -5,11 +5,11 @@
 
 	Copyright (C) 2003-2004 Alberto Demichelis
 
-	This software is provided 'as-is', without any express 
-	or implied warranty. In no event will the authors be held 
+	This software is provided 'as-is', without any express
+	or implied warranty. In no event will the authors be held
 	liable for any damages arising from the use of this software.
 
-	Permission is granted to anyone to use this software for 
+	Permission is granted to anyone to use this software for
 	any purpose, including commercial applications, and to alter
 	it and redistribute it freely, subject to the following restrictions:
 
@@ -38,28 +38,28 @@ public:
 	TRexpp() { _exp = (TRex *)0; }
 	~TRexpp() { CleanUp(); }
 	// compiles a regular expression
-	void Compile(const TRexChar *pattern) { 
+	void Compile(const TRexChar *pattern) {
 		const TRexChar *error;
 		CleanUp();
 		if(!(_exp = trex_compile(pattern,&error)))
 			throw TRexParseException(error);
 	}
 	// return true if the given text match the expression
-	bool Match(const TRexChar* text) { 
-		return _exp?(trex_match(_exp,text) != 0):false; 
+	bool Match(const TRexChar* text) {
+		return _exp?(trex_match(_exp,text) != 0):false;
 	}
 	// Searches for the first match of the expression in a zero terminated string
-	bool Search(const TRexChar* text, const TRexChar** out_begin, const TRexChar** out_end) { 
-		return _exp?(trex_search(_exp,text,out_begin,out_end) != 0):false; 
+	bool Search(const TRexChar* text, const TRexChar** out_begin, const TRexChar** out_end) {
+		return _exp?(trex_search(_exp,text,out_begin,out_end) != 0):false;
 	}
 	// Searches for the first match of the expression in a string sarting at text_begin and ending at text_end
-	bool SearchRange(const TRexChar* text_begin,const TRexChar* text_end,const TRexChar** out_begin, const TRexChar** out_end) { 
-		return _exp?(trex_searchrange(_exp,text_begin,text_end,out_begin,out_end) != 0):false; 
+	bool SearchRange(const TRexChar* text_begin,const TRexChar* text_end,const TRexChar** out_begin, const TRexChar** out_end) {
+		return _exp?(trex_searchrange(_exp,text_begin,text_end,out_begin,out_end) != 0):false;
 	}
 	bool GetSubExp(int n, const TRexChar** out_begin, int *out_len)
 	{
 		TRexMatch match;
-		TRexBool res = _exp?(trex_getsubexp(_exp,n,&match)):TRex_False; 
+		TRexBool res = _exp?(trex_getsubexp(_exp,n,&match)):TRex_False;
 		if(res) {
 			*out_begin = match.begin;
 			*out_len = match.len;

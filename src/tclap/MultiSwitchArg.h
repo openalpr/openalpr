@@ -1,5 +1,5 @@
 
-/****************************************************************************** 
+/******************************************************************************
 *
 *  file:  MultiSwitchArg.h
 *
@@ -61,12 +61,12 @@ class MultiSwitchArg : public SwitchArg
 		 * used as a long flag on the command line.
 		 * \param desc - A description of what the argument is for or
 		 * does.
-		 * \param init - Optional. The initial/default value of this Arg. 
+		 * \param init - Optional. The initial/default value of this Arg.
 		 * Defaults to 0.
 		 * \param v - An optional visitor.  You probably should not
 		 * use this unless you have a very good reason.
 		 */
-		MultiSwitchArg(const std::string& flag, 
+		MultiSwitchArg(const std::string& flag,
 				const std::string& name,
 				const std::string& desc,
 				int init = 0,
@@ -82,12 +82,12 @@ class MultiSwitchArg : public SwitchArg
 		 * \param desc - A description of what the argument is for or
 		 * does.
 		 * \param parser - A CmdLine parser object to add this Arg to
-		 * \param init - Optional. The initial/default value of this Arg. 
+		 * \param init - Optional. The initial/default value of this Arg.
 		 * Defaults to 0.
 		 * \param v - An optional visitor.  You probably should not
 		 * use this unless you have a very good reason.
 		 */
-		MultiSwitchArg(const std::string& flag, 
+		MultiSwitchArg(const std::string& flag,
 				const std::string& name,
 				const std::string& desc,
 				CmdLineInterface& parser,
@@ -103,7 +103,7 @@ class MultiSwitchArg : public SwitchArg
 		 * \param args - Mutable list of strings. Passed
 		 * in from main().
 		 */
-		virtual bool processArg(int* i, std::vector<std::string>& args); 
+		virtual bool processArg(int* i, std::vector<std::string>& args);
 
 		/**
 		 * Returns int, the number of times the switch has been set.
@@ -119,7 +119,7 @@ class MultiSwitchArg : public SwitchArg
 		 * Returns the longID for this Arg.
 		 */
 		std::string longID(const std::string& val) const;
-		
+
 		void reset();
 
 };
@@ -138,15 +138,15 @@ _default( init )
 { }
 
 inline MultiSwitchArg::MultiSwitchArg(const std::string& flag,
-					const std::string& name, 
-					const std::string& desc, 
+					const std::string& name,
+					const std::string& desc,
 					CmdLineInterface& parser,
 					int init,
 					Visitor* v )
 : SwitchArg(flag, name, desc, false, v),
 _value( init ),
 _default( init )
-{ 
+{
 	parser.add( this );
 }
 
@@ -178,7 +178,7 @@ inline bool MultiSwitchArg::processArg(int *i, std::vector<std::string>& args)
 		++_value;
 
 		// Check for more in argument and increment value.
-		while ( combinedSwitchesMatch( args[*i] ) ) 
+		while ( combinedSwitchesMatch( args[*i] ) )
 			++_value;
 
 		_checkWithVisitor();
@@ -189,13 +189,13 @@ inline bool MultiSwitchArg::processArg(int *i, std::vector<std::string>& args)
 		return false;
 }
 
-inline std::string 
+inline std::string
 MultiSwitchArg::shortID(const std::string& val) const
 {
 	return Arg::shortID(val) + " ... ";
 }
 
-inline std::string 
+inline std::string
 MultiSwitchArg::longID(const std::string& val) const
 {
 	return Arg::longID(val) + "  (accepted multiple times)";

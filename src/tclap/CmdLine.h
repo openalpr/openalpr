@@ -452,7 +452,7 @@ inline void CmdLine::parse(std::vector<std::string>& args)
 
 		int requiredCount = 0;
 
-		for (int i = 0; static_cast<unsigned int>(i) < args.size(); i++) 
+		for (int i = 0; static_cast<unsigned int>(i) < args.size(); i++)
 		{
 			bool matched = false;
 			for (ArgListIterator it = _argList.begin();
@@ -619,7 +619,7 @@ inline void CmdLine::reset()
 {
 	for( ArgListIterator it = _argList.begin(); it != _argList.end(); it++ )
 		(*it)->reset();
-	
+
 	_progName.clear();
 }
 

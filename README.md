@@ -11,7 +11,7 @@ User Guide
 
 OpenALPR includes a command line utility.  Simply typing "alpr [image file path]" is enough to get started recognizing license plate images.
 
-For example, the following output is created by analyzing this image: 
+For example, the following output is created by analyzing this image:
 ![Plate Image](http://www.openalpr.com/images/demoscreenshots/plate3.png "Input image")
 
 
@@ -39,7 +39,7 @@ Detailed command line usage:
 ```
 user@linux:~/openalpr$ alpr --help
 
-USAGE: 
+USAGE:
 
    alpr  [-t <region code>] [-r <runtime_dir>] [-n <topN>]
          [--seek <integer_ms>] [-c <country_code>]
@@ -47,7 +47,7 @@ USAGE:
          <image_file_path>
 
 
-Where: 
+Where:
 
    -t <region code>,  --template_region <region code>
      Attempt to match the plate number against a region template (e.g., md
@@ -63,11 +63,11 @@ Where:
      Seek to the specied millisecond in a video file. Default=0
 
    -c <country_code>,  --country <country_code>
-     Country code to identify (either us for USA or eu for Europe). 
+     Country code to identify (either us for USA or eu for Europe).
      Default=us
 
    --clock
-     Measure/print the total time to process image and all plates. 
+     Measure/print the total time to process image and all plates.
      Default=off
 
    -d,  --detect_region
@@ -100,7 +100,7 @@ OpenALPR compiles and runs on Linux, Mac OSX and Windows.
 
 OpenALPR requires the following additional libraries:
 
-    - Tesseract OCR v3.x (https://code.google.com/p/tesseract-ocr/) 
+    - Tesseract OCR v3.x (https://code.google.com/p/tesseract-ocr/)
     - OpenCV v2.4.x (http://opencv.org/)
 
 After cloning this GitHub repository, you should download and extract Tesseract and OpenCV source code into their own directories.  Compile both libraries.
@@ -127,5 +127,3 @@ License
 
 Affero GPLv3
 http://www.gnu.org/licenses/agpl-3.0.html
-
-

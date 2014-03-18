@@ -18,6 +18,6 @@
 
   void getTime(timespec* time);
   double diffclock(timespec time1,timespec time2);
-  
-  
+
+
 #endif
