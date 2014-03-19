@@ -17,48 +17,45 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
- #include "opencv2/highgui/highgui.hpp"
- #include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 
- #include <iostream>
- #include <stdio.h>
+#include <iostream>
+#include <stdio.h>
 #include <fstream>
 #include <sys/stat.h>
 #include "support/filesystem.h"
 
- using namespace std;
- using namespace cv;
-
-
+using namespace std;
+using namespace cv;
 
 // Takes a directory full of single char images, and plops them on a big tif files
 // Also creates a box file so Tesseract can recognize it
 int main( int argc, const char** argv )
 {
 
-   string inDir;
-
+  string inDir;
 
   //Check if user specify image to process
   if(argc == 2)
   {
-        inDir = argv[1];
+    inDir = argv[1];
 
-  }else{
-      printf("Use:\n\t%s input dir \n",argv[0]);
-      return 0;
   }
-
+  else
+  {
+    printf("Use:\n\t%s input dir \n",argv[0]);
+    return 0;
+  }
 
   if (DirectoryExists(inDir.c_str()) == false)
   {
-      printf("Output dir does not exist\n");
-      return 0;
+    printf("Output dir does not exist\n");
+    return 0;
   }
 
   cout << "Usage: " << endl;
   cout << "\tinputdir	-- input dir for benchmark data" << endl;
-
 
   if (DirectoryExists(inDir.c_str()))
   {
@@ -74,97 +71,92 @@ int main( int argc, const char** argv )
     const int TILE_HEIGHT = 70;
     const int CHAR_VERT_OFFSET = 48;
 
-      vector<string> files = getFilesInDir(inDir.c_str());
+    vector<string> files = getFilesInDir(inDir.c_str());
 
-      sort( files.begin(), files.end(), stringCompare );
+    sort( files.begin(), files.end(), stringCompare );
 
+    int tiles_per_row = ((float) (HORIZONTAL_RESOLUTION - (PAGE_MARGIN_X * 2))) / ((float) TILE_WIDTH);
+    int lines = files.size() / (tiles_per_row);
+    int vertical_resolution = (lines * TILE_HEIGHT) + (PAGE_MARGIN_Y * 2) ;
+    cout << tiles_per_row <<   " : " << vertical_resolution << endl;
 
-      int tiles_per_row = ((float) (HORIZONTAL_RESOLUTION - (PAGE_MARGIN_X * 2))) / ((float) TILE_WIDTH);
-      int lines = files.size() / (tiles_per_row);
-      int vertical_resolution = (lines * TILE_HEIGHT) + (PAGE_MARGIN_Y * 2) ;
-      cout << tiles_per_row <<   " : " << vertical_resolution << endl;
+    Mat bigTif = Mat::zeros(Size(HORIZONTAL_RESOLUTION, vertical_resolution), CV_8U);
+    bitwise_not(bigTif, bigTif);
 
-      Mat bigTif = Mat::zeros(Size(HORIZONTAL_RESOLUTION, vertical_resolution), CV_8U);
-      bitwise_not(bigTif, bigTif);
+    stringstream boxFileOut;
 
-      stringstream boxFileOut;
+    for (int i = 0; i< files.size(); i++)
+    {
+      int col = i % tiles_per_row;
+      int line = i / tiles_per_row;
 
-      for (int i = 0; i< files.size(); i++)
+      int xPos = (col * TILE_WIDTH) + PAGE_MARGIN_X;
+      int yPos = (line * TILE_HEIGHT) + PAGE_MARGIN_Y;
+
+      if (hasEnding(files[i], ".png") || hasEnding(files[i], ".jpg"))
       {
-	int col = i % tiles_per_row;
-	int line = i / tiles_per_row;
+        string fullpath = inDir + "/" + files[i];
 
-	int xPos = (col * TILE_WIDTH) + PAGE_MARGIN_X;
-	int yPos = (line * TILE_HEIGHT) + PAGE_MARGIN_Y;
+        cout << "Processing file: " << (i + 1) << " of " << files.size() << endl;
 
-	if (hasEnding(files[i], ".png") || hasEnding(files[i], ".jpg"))
-	{
-	  string fullpath = inDir + "/" + files[i];
+        char charcode = files[i][0];
 
-	  cout << "Processing file: " << (i + 1) << " of " << files.size() << endl;
+        Mat characterImg = imread(fullpath);
+        Mat charImgCopy = Mat::zeros(Size(150, 150), characterImg.type());
+        bitwise_not(charImgCopy, charImgCopy);
 
-	  char charcode = files[i][0];
+        characterImg.copyTo(charImgCopy(Rect(X_OFFSET, Y_OFFSET, characterImg.cols, characterImg.rows)));
+        cvtColor(charImgCopy, charImgCopy, CV_BGR2GRAY);
+        bitwise_not(charImgCopy, charImgCopy);
 
-	  Mat characterImg = imread(fullpath);
-	  Mat charImgCopy = Mat::zeros(Size(150, 150), characterImg.type());
-	  bitwise_not(charImgCopy, charImgCopy);
+        vector<vector<Point> > contours;
 
-	  characterImg.copyTo(charImgCopy(Rect(X_OFFSET, Y_OFFSET, characterImg.cols, characterImg.rows)));
-	  cvtColor(charImgCopy, charImgCopy, CV_BGR2GRAY);
-	  bitwise_not(charImgCopy, charImgCopy);
+        //imshow("copy", charImgCopy);
+        findContours(charImgCopy, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 
-	  vector<vector<Point> > contours;
+        Rect tallestRect(0, 0, 0, 0);
+        for (int c = 0; c < contours.size(); c++)
+        {
+          Rect tmpRect = boundingRect(contours[c]);
+          if (tmpRect.height > tallestRect.height)
+            tallestRect = tmpRect;
+        }
 
-	  //imshow("copy", charImgCopy);
-	  findContours(charImgCopy, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+        //cout << tallestRect.x << ":" << tallestRect.y << " -- " << tallestRect.width << ":" << tallestRect.height << endl;
 
-	  Rect tallestRect(0, 0, 0, 0);
-	  for (int c = 0; c < contours.size(); c++)
-	  {
-	    Rect tmpRect = boundingRect(contours[c]);
-	    if (tmpRect.height > tallestRect.height)
-	      tallestRect = tmpRect;
-	  }
+        Rect cropRect(0, tallestRect.y - Y_OFFSET, tallestRect.width, tallestRect.height);
 
-	  //cout << tallestRect.x << ":" << tallestRect.y << " -- " << tallestRect.width << ":" << tallestRect.height << endl;
+        //cout << "Cropped: " << cropRect.x << ":" << cropRect.y << " -- " << cropRect.width << ":" << cropRect.height << endl;
+        Mat cropped(characterImg, cropRect);
+        cvtColor(cropped, cropped, CV_BGR2GRAY);
 
-	  Rect cropRect(0, tallestRect.y - Y_OFFSET, tallestRect.width, tallestRect.height);
+        Rect destinationRect(xPos + (CHAR_HORIZ_OFFSET - tallestRect.width), yPos + (CHAR_VERT_OFFSET - tallestRect.height), tallestRect.width, tallestRect.height);
 
+        //cout << "1" << endl;
 
-	  //cout << "Cropped: " << cropRect.x << ":" << cropRect.y << " -- " << cropRect.width << ":" << cropRect.height << endl;
-	  Mat cropped(characterImg, cropRect);
-	  cvtColor(cropped, cropped, CV_BGR2GRAY);
+        cropped.copyTo(bigTif(destinationRect));
 
-	  Rect destinationRect(xPos + (CHAR_HORIZ_OFFSET - tallestRect.width), yPos + (CHAR_VERT_OFFSET - tallestRect.height), tallestRect.width, tallestRect.height);
+        int x1= destinationRect.x - 2;
+        int y1 = (vertical_resolution - destinationRect.y - destinationRect.height) - 2;
+        int x2 = (destinationRect.x + destinationRect.width) + 2;
+        int y2 = (vertical_resolution - destinationRect.y) + 2;
+        //0 70 5602 85 5636 0
+        boxFileOut << charcode << " " << x1 << " " << y1 << " ";
+        boxFileOut << x2 << " " << y2 ;
+        boxFileOut << " 0" << endl;
 
-	  //cout << "1" << endl;
+        //rectangle(characterImg, tallestRect, Scalar(0, 255, 0));
+        //imshow("characterImg", cropped);
 
-	  cropped.copyTo(bigTif(destinationRect));
-
-
-	  int x1= destinationRect.x - 2;
-	  int y1 = (vertical_resolution - destinationRect.y - destinationRect.height) - 2;
-	  int x2 = (destinationRect.x + destinationRect.width) + 2;
-	  int y2 = (vertical_resolution - destinationRect.y) + 2;
-	  //0 70 5602 85 5636 0
-	  boxFileOut << charcode << " " << x1 << " " << y1 << " ";
-	  boxFileOut << x2 << " " << y2 ;
-	  boxFileOut << " 0" << endl;
-
-	  //rectangle(characterImg, tallestRect, Scalar(0, 255, 0));
-	  //imshow("characterImg", cropped);
-
-	  waitKey(2);
-
-
-	}
+        waitKey(2);
 
       }
 
+    }
 
-      imwrite("combined.tif", bigTif);
-      ofstream boxFile("combined.box", std::ios::out);
-      boxFile << boxFileOut.str();
+    imwrite("combined.tif", bigTif);
+    ofstream boxFile("combined.box", std::ios::out);
+    boxFile << boxFileOut.str();
 
   }
 

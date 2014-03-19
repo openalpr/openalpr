@@ -20,9 +20,6 @@
 #include "alpr.h"
 #include "alpr_impl.h"
 
-
-
-
 // ALPR code
 
 Alpr::Alpr(const std::string country, const std::string runtimeDir)
@@ -40,21 +37,18 @@ std::vector<AlprResult> Alpr::recognize(std::string filepath)
 
 }
 
-
 std::vector<AlprResult> Alpr::recognize(std::vector<unsigned char> imageBuffer)
 {
-    // Not sure if this actually works
+  // Not sure if this actually works
   cv::Mat img = cv::imdecode(Mat(imageBuffer), 1);
 
   return impl->recognize(img);
 }
 
-
 string Alpr::toJson(const vector< AlprResult > results)
 {
   return impl->toJson(results);
 }
-
 
 void Alpr::setDetectRegion(bool detectRegion)
 {
@@ -74,10 +68,7 @@ bool Alpr::isLoaded()
   return true;
 }
 
-
-
 // Results code
-
 
 AlprResult::AlprResult()
 {

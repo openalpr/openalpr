@@ -19,13 +19,12 @@
 
 #include "licenseplatecandidate.h"
 
-
 LicensePlateCandidate::LicensePlateCandidate(Mat frame, Rect regionOfInterest, Config* config)
 {
-    this->config = config;
+  this->config = config;
 
-    this->frame = frame;
-    this->plateRegion = regionOfInterest;
+  this->frame = frame;
+  this->plateRegion = regionOfInterest;
 }
 
 LicensePlateCandidate::~LicensePlateCandidate()
@@ -38,7 +37,6 @@ void LicensePlateCandidate::recognize()
 {
   charSegmenter = NULL;
 
-
   this->confidence = 0;
 
   int expandX = round(this->plateRegion.width * 0.15);
@@ -46,18 +44,13 @@ void LicensePlateCandidate::recognize()
   // expand box by 15% in all directions
   Rect expandedRegion = expandRect( this->plateRegion, expandX, expandY, frame.cols, frame.rows) ;
 
-
-
-
   Mat plate_bgr = Mat(frame, expandedRegion);
   resize(plate_bgr, plate_bgr, Size(config->templateWidthPx, config->templateHeightPx));
 
   Mat plate_bgr_cleaned = Mat(plate_bgr.size(), plate_bgr.type());
   this->cleanupColors(plate_bgr, plate_bgr_cleaned);
 
-
   CharacterRegion charRegion(plate_bgr, config);
-
 
   if (charRegion.confidence > 10)
   {
@@ -75,15 +68,12 @@ void LicensePlateCandidate::recognize()
     {
       this->plateCorners = transformPointsToOriginalImage(frame, plate_bgr, expandedRegion, smallPlateCorners);
 
-
       this->deskewed = deSkewPlate(frame, this->plateCorners);
-
 
       charSegmenter = new CharacterSegmenter(deskewed, charRegion.thresholdsInverted(), config);
 
-
       //this->recognizedText = ocr->recognizedText;
-    //strcpy(this->recognizedText, ocr.recognizedText);
+      //strcpy(this->recognizedText, ocr.recognizedText);
 
       this->confidence = 100;
 
@@ -91,12 +81,7 @@ void LicensePlateCandidate::recognize()
     charRegion.confidence = 0;
   }
 
-
 }
-
-
-
-
 
 // Re-maps the coordinates from the smallImage to the coordinate space of the bigImage.
 vector<Point2f> LicensePlateCandidate::transformPointsToOriginalImage(Mat bigImage, Mat smallImage, Rect region, vector<Point> corners)
@@ -116,7 +101,6 @@ vector<Point2f> LicensePlateCandidate::transformPointsToOriginalImage(Mat bigIma
   return cornerPoints;
 }
 
-
 Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, vector<Point2f> corners)
 {
 
@@ -134,8 +118,8 @@ Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, vector<Point2f> corners)
   int height = round(((float) width) / aspect);
   if (height > config->ocrImageHeightPx)
   {
-      height = config->ocrImageHeightPx;
-      width = round(((float) height) * aspect);
+    height = config->ocrImageHeightPx;
+    width = round(((float) height) * aspect);
   }
 
   Mat deskewed(height, width, frame.type());
@@ -159,7 +143,6 @@ Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, vector<Point2f> corners)
   return deskewed;
 }
 
-
 void LicensePlateCandidate::cleanupColors(Mat inputImage, Mat outputImage)
 {
   if (this->config->debugGeneral)
@@ -174,25 +157,23 @@ void LicensePlateCandidate::cleanupColors(Mat inputImage, Mat outputImage)
   // Equalize intensity:
   if(intermediate.channels() >= 3)
   {
-      Mat ycrcb;
+    Mat ycrcb;
 
-      cvtColor(intermediate,ycrcb,CV_BGR2YCrCb);
+    cvtColor(intermediate,ycrcb,CV_BGR2YCrCb);
 
-      vector<Mat> channels;
-      split(ycrcb,channels);
+    vector<Mat> channels;
+    split(ycrcb,channels);
 
-      equalizeHist(channels[0], channels[0]);
+    equalizeHist(channels[0], channels[0]);
 
-      merge(channels,ycrcb);
+    merge(channels,ycrcb);
 
-      cvtColor(ycrcb,intermediate,CV_YCrCb2BGR);
+    cvtColor(ycrcb,intermediate,CV_YCrCb2BGR);
 
-      //ycrcb.release();
+    //ycrcb.release();
   }
 
-
   bilateralFilter(intermediate, outputImage, 3, 25, 35);
-
 
   if (this->config->debugGeneral)
   {

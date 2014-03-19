@@ -17,30 +17,26 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
-
 #include "ocr.h"
 
 OCR::OCR(Config* config)
 {
   this->config = config;
 
-   this->postProcessor = new PostProcess(config);
+  this->postProcessor = new PostProcess(config);
 
-   tesseract=new TessBaseAPI();
+  tesseract=new TessBaseAPI();
 
-   // Tesseract requires the prefix directory to be set as an env variable
-   vector<char> tessdataPrefix(config->getTessdataPrefix().size() + 1);
+  // Tesseract requires the prefix directory to be set as an env variable
+  vector<char> tessdataPrefix(config->getTessdataPrefix().size() + 1);
 
-   strcpy(tessdataPrefix.data(), config->getTessdataPrefix().c_str());
-   putenv(tessdataPrefix.data());
+  strcpy(tessdataPrefix.data(), config->getTessdataPrefix().c_str());
+  putenv(tessdataPrefix.data());
 
-
-   tesseract->Init("", config->ocrLanguage.c_str() 	);
-   tesseract->SetVariable("save_blob_choices", "T");
-   //tesseract->SetVariable("tessedit_char_whitelist", "ABCDEFGHIJKLMNPQRSTUVWXYZ1234567890");
-   tesseract->SetPageSegMode(PSM_SINGLE_CHAR);
+  tesseract->Init("", config->ocrLanguage.c_str() 	);
+  tesseract->SetVariable("save_blob_choices", "T");
+  //tesseract->SetVariable("tessedit_char_whitelist", "ABCDEFGHIJKLMNPQRSTUVWXYZ1234567890");
+  tesseract->SetPageSegMode(PSM_SINGLE_CHAR);
 }
 
 OCR::~OCR()
@@ -50,17 +46,13 @@ OCR::~OCR()
   delete tesseract;
 }
 
-
 void OCR::performOCR(vector<Mat> thresholds, vector<Rect> charRegions)
 {
-
 
   timespec startTime;
   getTime(&startTime);
 
-
   postProcessor->clear();
-
 
   for (int i = 0; i < thresholds.size(); i++)
   {
@@ -68,7 +60,6 @@ void OCR::performOCR(vector<Mat> thresholds, vector<Rect> charRegions)
     // Make it black text on white background
     bitwise_not(thresholds[i], thresholds[i]);
     tesseract->SetImage((uchar*) thresholds[i].data, thresholds[i].size().width, thresholds[i].size().height, thresholds[i].channels(), thresholds[i].step1());
-
 
     for (int j = 0; j < charRegions.size(); j++)
     {
@@ -79,51 +70,53 @@ void OCR::performOCR(vector<Mat> thresholds, vector<Rect> charRegions)
 
       tesseract::ResultIterator* ri = tesseract->GetIterator();
       tesseract::PageIteratorLevel level = tesseract::RIL_SYMBOL;
-      do {
-          const char* symbol = ri->GetUTF8Text(level);
-          float conf = ri->Confidence(level);
+      do
+      {
+        const char* symbol = ri->GetUTF8Text(level);
+        float conf = ri->Confidence(level);
 
-	  bool dontcare;
-	  int fontindex = 0;
-	  int pointsize = 0;
-	  const char* fontName = ri->WordFontAttributes(&dontcare, &dontcare, &dontcare, &dontcare, &dontcare, &dontcare, &pointsize, &fontindex);
+        bool dontcare;
+        int fontindex = 0;
+        int pointsize = 0;
+        const char* fontName = ri->WordFontAttributes(&dontcare, &dontcare, &dontcare, &dontcare, &dontcare, &dontcare, &pointsize, &fontindex);
 
-          if(symbol != 0  && pointsize >= config->ocrMinFontSize) {
-	    postProcessor->addLetter(*symbol, j, conf);
-
-
-	      if (this->config->debugOcr)
-		printf("charpos%d: threshold %d:  symbol %s, conf: %f font: %s (index %d) size %dpx", j, i, symbol, conf, fontName, fontindex, pointsize);
-
-              bool indent = false;
-              tesseract::ChoiceIterator ci(*ri);
-              do {
-                  const char* choice = ci.GetUTF8Text();
-
-		  postProcessor->addLetter(*choice, j, ci.Confidence());
-
-
-		  //letterScores.addScore(*choice, j, ci.Confidence() - MIN_CONFIDENCE);
-		  if (this->config->debugOcr)
-		  {
-		    if (indent) printf("\t\t ");
-		    printf("\t- ");
-		    printf("%s conf: %f\n", choice, ci.Confidence());
-		  }
-
-                  indent = true;
-              } while(ci.Next());
-          }
+        if(symbol != 0  && pointsize >= config->ocrMinFontSize)
+        {
+          postProcessor->addLetter(*symbol, j, conf);
 
           if (this->config->debugOcr)
-	    printf("---------------------------------------------\n");
+            printf("charpos%d: threshold %d:  symbol %s, conf: %f font: %s (index %d) size %dpx", j, i, symbol, conf, fontName, fontindex, pointsize);
 
-          delete[] symbol;
-      } while((ri->Next(level)));
+          bool indent = false;
+          tesseract::ChoiceIterator ci(*ri);
+          do
+          {
+            const char* choice = ci.GetUTF8Text();
+
+            postProcessor->addLetter(*choice, j, ci.Confidence());
+
+            //letterScores.addScore(*choice, j, ci.Confidence() - MIN_CONFIDENCE);
+            if (this->config->debugOcr)
+            {
+              if (indent) printf("\t\t ");
+              printf("\t- ");
+              printf("%s conf: %f\n", choice, ci.Confidence());
+            }
+
+            indent = true;
+          }
+          while(ci.Next());
+        }
+
+        if (this->config->debugOcr)
+          printf("---------------------------------------------\n");
+
+        delete[] symbol;
+      }
+      while((ri->Next(level)));
 
       delete ri;
     }
-
 
   }
 
@@ -133,8 +126,5 @@ void OCR::performOCR(vector<Mat> thresholds, vector<Rect> charRegions)
     getTime(&endTime);
     cout << "OCR Time: " << diffclock(startTime, endTime) << "ms." << endl;
   }
-
-
-
 
 }

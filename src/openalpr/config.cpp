@@ -19,7 +19,6 @@
 
 #include "config.h"
 
-
 Config::Config(const std::string country, const std::string runtimeBaseDir)
 {
   this->runtimeBaseDir = runtimeBaseDir;
@@ -30,7 +29,7 @@ Config::Config(const std::string country, const std::string runtimeBaseDir)
   envRuntimeDir = getenv (ENV_VARIABLE_RUNTIME_DIR);
   if (runtimeBaseDir.compare("") != 0)
   {
-      // User has supplied a runtime directory.  Use that.
+    // User has supplied a runtime directory.  Use that.
 
   }
   else if (envRuntimeDir!=NULL)
@@ -93,11 +92,9 @@ void Config::loadValues(string country)
   ocrImageWidthPx = round(((float) templateWidthPx) * ocrImagePercent);
   ocrImageHeightPx = round(((float)templateHeightPx) * ocrImagePercent);
 
-
   float stateIdImagePercent = getFloat("common", "state_id_img_size_percent", 100);
   stateIdImageWidthPx = round(((float)templateWidthPx) * ocrImagePercent);
   stateIdimageHeightPx = round(((float)templateHeightPx) * ocrImagePercent);
-
 
   charAnalysisMinPercent = getFloat(country, "char_analysis_min_pct", 0);
   charAnalysisHeightRange = getFloat(country, "char_analysis_height_range", 0);
@@ -150,7 +147,6 @@ void Config::debugOff()
   debugPostProcess = 	false;
 }
 
-
 string Config::getCascadeRuntimeDir()
 {
   return this->runtimeBaseDir + CASCADE_DIR;
@@ -167,9 +163,6 @@ string Config::getTessdataPrefix()
 {
   return "TESSDATA_PREFIX=" + this->runtimeBaseDir + "/ocr/";
 }
-
-
-
 
 float Config::getFloat(string section, string key, float defaultValue)
 {

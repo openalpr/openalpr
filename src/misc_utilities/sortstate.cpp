@@ -17,11 +17,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
- #include "opencv2/highgui/highgui.hpp"
- #include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 
- #include <iostream>
- #include <stdio.h>
+#include <iostream>
+#include <stdio.h>
 #include <sys/stat.h>
 
 #include "regiondetector.h"
@@ -30,34 +30,34 @@
 #include "utility.h"
 #include "support/filesystem.h"
 
- using namespace std;
- using namespace cv;
+using namespace std;
+using namespace cv;
 
 // Given a directory full of pre-cropped images, identify the state that each image belongs to.
 // This is used to sort our own positive image database as a first step before grabbing characters to use to train the OCR.
 
- bool detectPlate( StateIdentifier* identifier, Mat frame);
+bool detectPlate( StateIdentifier* identifier, Mat frame);
 
 int main( int argc, const char** argv )
 {
 
-   string inDir;
-   string outDir;
-   Mat frame;
-
+  string inDir;
+  string outDir;
+  Mat frame;
 
   //Check if user specify image to process
   if(argc == 3 )
   {
-        inDir = argv[1];
-        outDir =  argv[2];
-	outDir = outDir + "/";
+    inDir = argv[1];
+    outDir =  argv[2];
+    outDir = outDir + "/";
 
-
-  }else{
-      printf("Use:\n\t%s directory \n",argv[0]);
-      printf("Ex: \n\t%s ./pics/   \n",argv[0]);
-      return 0;
+  }
+  else
+  {
+    printf("Use:\n\t%s directory \n",argv[0]);
+    printf("Ex: \n\t%s ./pics/   \n",argv[0]);
+    return 0;
   }
 
   Config config("us");
@@ -65,53 +65,52 @@ int main( int argc, const char** argv )
 
   if (DirectoryExists(outDir.c_str()) == false)
   {
-      printf("Output dir does not exist\n");
-      return 0;
+    printf("Output dir does not exist\n");
+    return 0;
   }
 
   if (DirectoryExists(inDir.c_str()))
   {
-      vector<string> files = getFilesInDir(inDir.c_str());
+    vector<string> files = getFilesInDir(inDir.c_str());
 
-      for (int i = 0; i< files.size(); i++)
+    for (int i = 0; i< files.size(); i++)
+    {
+      if (hasEnding(files[i], ".png"))
       {
-	if (hasEnding(files[i], ".png"))
-	{
-	  string fullpath = inDir + "/" + files[i];
-	  cout << fullpath << endl;
-	  frame = imread( fullpath.c_str() );
+        string fullpath = inDir + "/" + files[i];
+        cout << fullpath << endl;
+        frame = imread( fullpath.c_str() );
 
-	  char code[4];
-	  int confidence = identifier.recognize(frame, code);
+        char code[4];
+        int confidence = identifier.recognize(frame, code);
 
-	  if (confidence <= 20)
-	  {
-	    code[0] = 'z';
-	    code[1] = 'z';
-	    confidence = 100;
-	  }
+        if (confidence <= 20)
+        {
+          code[0] = 'z';
+          code[1] = 'z';
+          confidence = 100;
+        }
 
-	  //imshow("Plate", frame);
-	  if (confidence > 20)
-	  {
-	    cout << confidence << " : " << code;
+        //imshow("Plate", frame);
+        if (confidence > 20)
+        {
+          cout << confidence << " : " << code;
 
-	    ostringstream convert;   // stream used for the conversion
-	    convert << i;      // insert the textual representation of 'Number' in the characters in the stream
+          ostringstream convert;   // stream used for the conversion
+          convert << i;      // insert the textual representation of 'Number' in the characters in the stream
 
-
-	    string copyCommand = "cp \"" + fullpath + "\" " + outDir + code + convert.str() + ".png";
-	    system( copyCommand.c_str() );
-	    waitKey(50);
-	    //while ((char) waitKey(50) != 'c') { }
-	  }
-	  else
-	    waitKey(50);
-	}
-
+          string copyCommand = "cp \"" + fullpath + "\" " + outDir + code + convert.str() + ".png";
+          system( copyCommand.c_str() );
+          waitKey(50);
+          //while ((char) waitKey(50) != 'c') { }
+        }
+        else
+          waitKey(50);
       }
+
+    }
   }
 
 }
 
- bool detectPlate( StateIdentifier* identifier, Mat frame);
+bool detectPlate( StateIdentifier* identifier, Mat frame);

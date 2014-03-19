@@ -17,10 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include "colorfilter.h"
-
-
 
 ColorFilter::ColorFilter(Mat image, Mat characterMask, Config* config)
 {
@@ -31,7 +28,6 @@ ColorFilter::ColorFilter(Mat image, Mat characterMask, Config* config)
   this->config = config;
 
   this->debug = config->debugColorFiler;
-
 
   this->grayscale = imageIsGrayscale(image);
 
@@ -47,7 +43,6 @@ ColorFilter::ColorFilter(Mat image, Mat characterMask, Config* config)
   this->colorMask = Mat(image.size(), CV_8U);
 
   findCharColors();
-
 
   if (config->debugTiming)
   {
@@ -75,12 +70,12 @@ bool ColorFilter::imageIsGrayscale(Mat image)
 
       if (r == g == b)
       {
-	// So far so good
+        // So far so good
       }
       else
       {
-	// Image is color.
-	return false;
+        // Image is color.
+        return false;
       }
     }
   }
@@ -112,15 +107,13 @@ void ColorFilter::findCharColors()
 
   Mat erodedCharMask(charMask.size(), CV_8U);
   Mat element = getStructuringElement( 1,
-				  Size( 2 + 1, 2+1 ),
-				  Point( 1, 1 ) );
+                                       Size( 2 + 1, 2+1 ),
+                                       Point( 1, 1 ) );
   erode(charMask, erodedCharMask, element);
 
   vector<vector<Point> > contours;
   vector<Vec4i> hierarchy;
   findContours(erodedCharMask, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
-
-
 
   vector<float> hMeans, sMeans, vMeans;
   vector<float> hStdDevs, sStdDevs, vStdDevs;
@@ -130,50 +123,46 @@ void ColorFilter::findCharColors()
     if (hierarchy[i][3] != -1)
       continue;
 
-      Mat singleCharMask = Mat::zeros(hsv.size(), CV_8U);
+    Mat singleCharMask = Mat::zeros(hsv.size(), CV_8U);
 
-      drawContours(singleCharMask, contours,
-	  i, // draw this contour
-	  cv::Scalar(255,255,255), // in
-	  CV_FILLED,
-	  8,
-	  hierarchy
-      );
+    drawContours(singleCharMask, contours,
+                 i, // draw this contour
+                 cv::Scalar(255,255,255), // in
+                 CV_FILLED,
+                 8,
+                 hierarchy
+                );
 
-      // get rid of the outline by drawing a 1 pixel width black line
-      drawContours(singleCharMask, contours,
-	  i, // draw this contour
-	  cv::Scalar(0,0,0), // in
-	  1,
-	  8,
-	  hierarchy
-      );
+    // get rid of the outline by drawing a 1 pixel width black line
+    drawContours(singleCharMask, contours,
+                 i, // draw this contour
+                 cv::Scalar(0,0,0), // in
+                 1,
+                 8,
+                 hierarchy
+                );
 
+    //drawAndWait(&singleCharMask);
 
+    Scalar mean;
+    Scalar stddev;
+    meanStdDev(hsv, mean, stddev, singleCharMask);
 
+    if (this->debug)
+    {
+      cout << "ColorFilter " << setw(3) << i << ". Mean:  h: " << setw(7) << mean[0] << " s: " << setw(7) <<mean[1] << " v: " << setw(7) << mean[2]
+           << " | Std: h: " << setw(7) <<stddev[0] << " s: " << setw(7) <<stddev[1] << " v: " << stddev[2] << endl;
+    }
 
-      //drawAndWait(&singleCharMask);
+    if (mean[0] == 0 && mean[1] == 0 && mean[2] == 0)
+      continue;
 
-      Scalar mean;
-      Scalar stddev;
-      meanStdDev(hsv, mean, stddev, singleCharMask);
-
-      if (this->debug)
-      {
-	cout << "ColorFilter " << setw(3) << i << ". Mean:  h: " << setw(7) << mean[0] << " s: " << setw(7) <<mean[1] << " v: " << setw(7) << mean[2]
-			      << " | Std: h: " << setw(7) <<stddev[0] << " s: " << setw(7) <<stddev[1] << " v: " << stddev[2] << endl;
-      }
-
-      if (mean[0] == 0 && mean[1] == 0 && mean[2] == 0)
-	continue;
-
-      hMeans.push_back(mean[0]);
-      sMeans.push_back(mean[1]);
-      vMeans.push_back(mean[2]);
-      hStdDevs.push_back(stddev[0]);
-      sStdDevs.push_back(stddev[1]);
-      vStdDevs.push_back(stddev[2]);
-
+    hMeans.push_back(mean[0]);
+    sMeans.push_back(mean[1]);
+    vMeans.push_back(mean[2]);
+    hStdDevs.push_back(stddev[0]);
+    sStdDevs.push_back(stddev[1]);
+    vStdDevs.push_back(stddev[2]);
 
   }
 
@@ -184,10 +173,8 @@ void ColorFilter::findCharColors()
   int bestSatIndex = this->getMajorityOpinion(sMeans, .65, 35);
   int bestValIndex = this->getMajorityOpinion(vMeans, .65, 30);
 
-
   if (sMeans[bestSatIndex] < MINIMUM_SATURATION)
     return;
-
 
   bool doHueFilter = false, doSatFilter = false, doValFilter = false;
   float hueMin, hueMax;
@@ -259,8 +246,6 @@ void ColorFilter::findCharColors()
       cout << "ColorFilter Val: " << bestValIndex << " : " << setw(7) << vMeans[bestValIndex] << " -- " << valMin << "-" << valMax  << endl;
   }
 
-
-
   Mat imgDebugHueOnly = Mat::zeros(hsv.size(), hsv.type());
   Mat imgDebug = Mat::zeros(hsv.size(), hsv.type());
   Mat imgDistanceFromCenter = Mat::zeros(hsv.size(), CV_8U);
@@ -291,19 +276,19 @@ void ColorFilter::findCharColors()
 
       if (doHueFilter && (h < hueMin || h > hueMax))
       {
-	hPasses = false;
-	imgDebug.at<Vec3b>(row, col)[0] = 0;
-	debugMask.at<uchar>(row, col) = 0;
+        hPasses = false;
+        imgDebug.at<Vec3b>(row, col)[0] = 0;
+        debugMask.at<uchar>(row, col) = 0;
       }
       if (doSatFilter && (s < satMin || s > satMax))
       {
-	sPasses = false;
-	imgDebug.at<Vec3b>(row, col)[1] = 0;
+        sPasses = false;
+        imgDebug.at<Vec3b>(row, col)[1] = 0;
       }
       if (doValFilter && (v < valMin || v > valMax))
       {
-	vPasses = false;
-	imgDebug.at<Vec3b>(row, col)[2] = 0;
+        vPasses = false;
+        imgDebug.at<Vec3b>(row, col)[2] = 0;
       }
 
       //if (pixelPasses)
@@ -314,26 +299,23 @@ void ColorFilter::findCharColors()
       //imgDebug.at<Vec3b>(row, col)[2] = vPasses & 255;
 
       if ((hPasses) ||  (hPasses && sPasses))//(hPasses && vPasses) || (sPasses && vPasses) ||
-	this->colorMask.at<uchar>(row, col) = 255;
+        this->colorMask.at<uchar>(row, col) = 255;
       else
-	this->colorMask.at<uchar>(row, col) = 0;
-
+        this->colorMask.at<uchar>(row, col) = 0;
 
       if ((hPasses && sPasses) || (hPasses && vPasses) || (sPasses && vPasses))
       {
-	vDistance = pow(vDistance, 0.9);
+        vDistance = pow(vDistance, 0.9);
       }
       else
       {
-	vDistance = pow(vDistance, 1.1);
+        vDistance = pow(vDistance, 1.1);
       }
       if (vDistance > 255)
-	vDistance = 255;
+        vDistance = 255;
       imgDistanceFromCenter.at<uchar>(row, col) = vDistance;
     }
   }
-
-
 
   vector<Mat> debugImagesSet;
 
@@ -346,14 +328,13 @@ void ColorFilter::findCharColors()
     debugImagesSet.push_back(addLabel(maskCopy, "color Mask Before"));
   }
 
-
   Mat bigElement = getStructuringElement( 1,
-				  Size( 3 + 1, 3+1 ),
-				  Point( 1, 1 ) );
+                                          Size( 3 + 1, 3+1 ),
+                                          Point( 1, 1 ) );
 
   Mat smallElement = getStructuringElement( 1,
-				Size( 1 + 1, 1+1 ),
-				Point( 1, 1 ) );
+                     Size( 1 + 1, 1+1 ),
+                     Point( 1, 1 ) );
 
   morphologyEx(this->colorMask, this->colorMask, MORPH_CLOSE, bigElement);
   //dilate(this->colorMask, this->colorMask, bigElement);
@@ -378,14 +359,11 @@ void ColorFilter::findCharColors()
 
     debugImagesSet.push_back(addLabel(debugMask, "COLOR Hues off"));
 
-
     Mat dashboard = drawImageDashboard(debugImagesSet, imgDebugHueOnly.type(), 3);
     displayImage(config, "Color Filter Images", dashboard);
   }
 
 }
-
-
 
 // Goes through an array of values, picks the winner based on the highest percentage of other values that are within the maxValDifference
 // Return -1 if it fails.
@@ -403,7 +381,7 @@ int ColorFilter::getMajorityOpinion(vector<float> values, float minPercentAgreem
     {
       float diff = abs(values[i] - values[j]);
       if (diff < maxValDifference)
-	valuesInRange++;
+        valuesInRange++;
 
       overallDiff += diff;
     }

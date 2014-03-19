@@ -17,7 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include "platecorners.h"
 
 PlateCorners::PlateCorners(Mat inputImage, PlateLines* plateLines, CharacterRegion* charRegion, Config* config)
@@ -27,15 +26,12 @@ PlateCorners::PlateCorners(Mat inputImage, PlateLines* plateLines, CharacterRegi
   if (this->config->debugPlateCorners)
     cout << "PlateCorners constructor" << endl;
 
-
-
   this->inputImage = inputImage;
   this->plateLines = plateLines;
   this->charRegion = charRegion;
 
   this->bestHorizontalScore = 9999999999999;
   this->bestVerticalScore = 9999999999999;
-
 
   Point topPoint = charRegion->getTopLine().midpoint();
   Point bottomPoint = charRegion->getBottomLine().closestPointOnSegmentTo(topPoint);
@@ -57,7 +53,7 @@ PlateCorners::~PlateCorners()
 vector<Point> PlateCorners::findPlateCorners()
 {
   if (this->config->debugPlateCorners)
-      cout << "PlateCorners::findPlateCorners" << endl;
+    cout << "PlateCorners::findPlateCorners" << endl;
 
   timespec startTime;
   getTime(&startTime);
@@ -65,15 +61,14 @@ vector<Point> PlateCorners::findPlateCorners()
   int horizontalLines = this->plateLines->horizontalLines.size();
   int verticalLines = this->plateLines->verticalLines.size();
 
-
   // layout horizontal lines
   for (int h1 = NO_LINE; h1 < horizontalLines; h1++)
   {
     for (int h2 = NO_LINE; h2 < horizontalLines; h2++)
     {
-	if (h1 == h2 && h1 != NO_LINE) continue;
+      if (h1 == h2 && h1 != NO_LINE) continue;
 
-	this->scoreHorizontals(h1, h2);
+      this->scoreHorizontals(h1, h2);
 
     }
   }
@@ -81,35 +76,30 @@ vector<Point> PlateCorners::findPlateCorners()
   // layout vertical lines
   for (int v1 = NO_LINE; v1 < verticalLines; v1++)
   {
-      for (int v2 = NO_LINE; v2 < verticalLines; v2++)
-      {
-	if (v1 == v2 && v1 != NO_LINE) continue;
+    for (int v2 = NO_LINE; v2 < verticalLines; v2++)
+    {
+      if (v1 == v2 && v1 != NO_LINE) continue;
 
-	this->scoreVerticals(v1, v2);
-      }
+      this->scoreVerticals(v1, v2);
+    }
   }
-
 
   if (this->config->debugPlateCorners)
   {
 
-      cout << "Drawing debug stuff..." << endl;
+    cout << "Drawing debug stuff..." << endl;
 
-      Mat imgCorners = Mat(inputImage.size(), inputImage.type());
-      inputImage.copyTo(imgCorners);
-      for (int i = 0; i < 4; i++)
-	circle(imgCorners, charRegion->getCharArea()[i], 2, Scalar(0, 0, 0));
+    Mat imgCorners = Mat(inputImage.size(), inputImage.type());
+    inputImage.copyTo(imgCorners);
+    for (int i = 0; i < 4; i++)
+      circle(imgCorners, charRegion->getCharArea()[i], 2, Scalar(0, 0, 0));
 
+    line(imgCorners, this->bestTop.p1, this->bestTop.p2, Scalar(255, 0, 0), 1, CV_AA);
+    line(imgCorners, this->bestRight.p1, this->bestRight.p2, Scalar(0, 0, 255), 1, CV_AA);
+    line(imgCorners, this->bestBottom.p1, this->bestBottom.p2, Scalar(0, 0, 255), 1, CV_AA);
+    line(imgCorners, this->bestLeft.p1, this->bestLeft.p2, Scalar(255, 0, 0), 1, CV_AA);
 
-      line(imgCorners, this->bestTop.p1, this->bestTop.p2, Scalar(255, 0, 0), 1, CV_AA);
-      line(imgCorners, this->bestRight.p1, this->bestRight.p2, Scalar(0, 0, 255), 1, CV_AA);
-      line(imgCorners, this->bestBottom.p1, this->bestBottom.p2, Scalar(0, 0, 255), 1, CV_AA);
-      line(imgCorners, this->bestLeft.p1, this->bestLeft.p2, Scalar(255, 0, 0), 1, CV_AA);
-
-
-
-
-      displayImage(config, "Winning top/bottom Boundaries", imgCorners);
+    displayImage(config, "Winning top/bottom Boundaries", imgCorners);
 
   }
 
@@ -127,8 +117,6 @@ vector<Point> PlateCorners::findPlateCorners()
   corners.push_back(bestBottom.intersection(bestRight));
   corners.push_back(bestBottom.intersection(bestLeft));
 
-
-
   if (config->debugTiming)
   {
     timespec endTime;
@@ -139,7 +127,6 @@ vector<Point> PlateCorners::findPlateCorners()
   return corners;
 }
 
-
 void PlateCorners::scoreVerticals(int v1, int v2)
 {
 
@@ -147,8 +134,6 @@ void PlateCorners::scoreVerticals(int v1, int v2)
 
   LineSegment left;
   LineSegment right;
-
-
 
   float charHeightToPlateWidthRatio = config->plateWidthMM / config->charHeightMM;
   float idealPixelWidth = this->charHeight *  (charHeightToPlateWidthRatio * 1.05);	// Add 10% so we don't clip any characters
@@ -183,8 +168,6 @@ void PlateCorners::scoreVerticals(int v1, int v2)
     score += SCORING_MISSING_SEGMENT_PENALTY_VERTICAL;
   }
 
-
-
   // Make sure this line is to the left of our license plate letters
   if (left.isPointBelowLine(charRegion->getCharBoxLeft().midpoint()) == false)
     return;
@@ -192,7 +175,6 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   // Make sure this line is to the right of our license plate letters
   if (right.isPointBelowLine(charRegion->getCharBoxRight().midpoint()))
     return;
-
 
   /////////////////////////////////////////////////////////////////////////
   // Score "Distance from the edge...
@@ -204,7 +186,6 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   float distanceFromEdge = leftDistanceFromEdge + rightDistanceFromEdge;
   score += distanceFromEdge * SCORING_VERTICALDISTANCE_FROMEDGE_WEIGHT;
 
-
   /////////////////////////////////////////////////////////////////////////
   // Score "Boxiness" of the 4 lines.  How close is it to a parallelogram?
   /////////////////////////////////////////////////////////////////////////
@@ -213,11 +194,9 @@ void PlateCorners::scoreVerticals(int v1, int v2)
 
   score += (verticalAngleDiff) * SCORING_BOXINESS_WEIGHT;
 
-
   //////////////////////////////////////////////////////////////////////////
   // SCORE the shape wrt character position and height relative to position
   //////////////////////////////////////////////////////////////////////////
-
 
   Point leftMidLinePoint = left.closestPointOnSegmentTo(charRegion->getCharBoxLeft().midpoint());
   Point rightMidLinePoint = right.closestPointOnSegmentTo(charRegion->getCharBoxRight().midpoint());
@@ -229,7 +208,6 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   if (score < this->bestVerticalScore)
   {
     float scorecomponent;
-
 
     if (this->config->debugPlateCorners)
     {
@@ -277,7 +255,6 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
   float charHeightToPlateHeightRatio = config->plateHeightMM / config->charHeightMM;
   float idealPixelHeight = this->charHeight *  charHeightToPlateHeightRatio;
 
-
   if (h1 == NO_LINE && h2 == NO_LINE)
   {
 //    return;
@@ -308,26 +285,15 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
     score += SCORING_MISSING_SEGMENT_PENALTY_HORIZONTAL;
   }
 
-
-
   // Make sure this line is above our license plate letters
   if (top.isPointBelowLine(charRegion->getCharBoxTop().midpoint()) == false)
     return;
-
 
   // Make sure this line is below our license plate letters
   if (bottom.isPointBelowLine(charRegion->getCharBoxBottom().midpoint()))
     return;
 
-
-
-
-
-
   // We now have 4 possible lines.  Let's put them to the test and score them...
-
-
-
 
   /////////////////////////////////////////////////////////////////////////
   // Score "Boxiness" of the 4 lines.  How close is it to a parallelogram?
@@ -335,11 +301,9 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
 
   float horizontalAngleDiff = abs(top.angle - bottom.angle);
 
-
   score += (horizontalAngleDiff) * SCORING_BOXINESS_WEIGHT;
 //  if (this->debug)
 //    cout << "PlateCorners boxiness score: " << (horizontalAngleDiff + verticalAngleDiff) * SCORING_BOXINESS_WEIGHT << endl;
-
 
   //////////////////////////////////////////////////////////////////////////
   // SCORE the shape wrt character position and height relative to position
@@ -350,7 +314,6 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
   float plateHeightPx = distanceBetweenPoints(topPoint, botPoint);
 
   // Get the height difference
-
 
   float heightRatio = charHeight / plateHeightPx;
   float idealHeightRatio = (config->charHeightMM / config->plateHeightMM);
@@ -366,7 +329,6 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
 //  float idealTopDistance = charHeight * (TOP_WHITESPACE_HEIGHT_MM / CHARACTER_HEIGHT_MM);
 //  float idealBottomDistance = charHeight * (BOTTOM_WHITESPACE_HEIGHT_MM / CHARACTER_HEIGHT_MM);
 //  float distScore = abs(topDistance - idealTopDistance) + abs(bottomDistance - idealBottomDistance);
-
 
   score += heightRatioDiff * SCORING_PLATEHEIGHT_WEIGHT;
 
@@ -398,13 +360,10 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
 
   float charanglediff = abs(charAngle - top.angle) + abs(charAngle - bottom.angle);
 
-
   score += charanglediff * SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT;
 
 //  if (this->debug)
 //    cout << "PlateCorners boxiness score: " << charanglediff * SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT << endl;
-
-
 
   if (score < this->bestHorizontalScore)
   {
@@ -441,7 +400,5 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
     bestTop = LineSegment(top.p1.x, top.p1.y, top.p2.x, top.p2.y);
     bestBottom = LineSegment(bottom.p1.x, bottom.p1.y, bottom.p2.x, bottom.p2.y);
   }
-
-
 
 }
