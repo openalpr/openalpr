@@ -110,7 +110,7 @@ class Config
     string getPostProcessRuntimeDir();
     string getTessdataPrefix();
 
-private:
+  private:
     CSimpleIniA* ini;
 
     string runtimeBaseDir;

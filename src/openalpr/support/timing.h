@@ -11,13 +11,13 @@
 
 // Support for Windows
 #ifdef WINDOWS
-	#include <windows.h>
+#include <windows.h>
 
-	#define timespec timeval
+#define timespec timeval
 #endif
 
-  void getTime(timespec* time);
-  double diffclock(timespec time1,timespec time2);
+void getTime(timespec* time);
+double diffclock(timespec time1,timespec time2);
 
 
 #endif

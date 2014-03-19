@@ -32,9 +32,9 @@ using namespace cv;
 
 enum NiblackVersion
 {
-	NIBLACK=0,
-    SAUVOLA,
-    WOLFJOLION,
+  NIBLACK=0,
+  SAUVOLA,
+  WOLFJOLION,
 };
 
 #define BINARIZEWOLF_VERSION	"2.3 (February 26th, 2013)"
@@ -49,7 +49,7 @@ enum NiblackVersion
 
 
 void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
-	int winx, int winy, float k);
+                               int winx, int winy, float k);
 
 
 

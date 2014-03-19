@@ -23,29 +23,30 @@
 #ifndef TCLAP_VISITOR_H
 #define TCLAP_VISITOR_H
 
-namespace TCLAP {
+namespace TCLAP
+{
 
 /**
  * A base class that defines the interface for visitors.
  */
 class Visitor
 {
-	public:
+  public:
 
-		/**
-		 * Constructor. Does nothing.
-		 */
-		Visitor() { }
+    /**
+     * Constructor. Does nothing.
+     */
+    Visitor() { }
 
-		/**
-		 * Destructor. Does nothing.
-		 */
-		virtual ~Visitor() { }
+    /**
+     * Destructor. Does nothing.
+     */
+    virtual ~Visitor() { }
 
-		/**
-		 * Does nothing. Should be overridden by child.
-		 */
-		virtual void visit() { }
+    /**
+     * Does nothing. Should be overridden by child.
+     */
+    virtual void visit() { }
 };
 
 }

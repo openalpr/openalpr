@@ -38,7 +38,8 @@ using namespace std;
 
 
 
-struct RecognitionResult {
+struct RecognitionResult
+{
   bool haswinner;
   string winner;
   int confidence;
@@ -54,7 +55,7 @@ class FeatureMatcher
 
 
     RecognitionResult recognize( const Mat& queryImg, bool drawOnImage, Mat* outputImage,
-				  bool debug_on, vector<int> debug_matches_array );
+                                 bool debug_on, vector<int> debug_matches_array );
 
 
     bool loadRecognitionSet(string country);
@@ -83,7 +84,7 @@ class FeatureMatcher
 
 
     void surfStyleMatching( const Mat& queryDescriptors, vector<KeyPoint> queryKeypoints,
-			vector<DMatch>& matches12 );
+                            vector<DMatch>& matches12 );
 
 };
 

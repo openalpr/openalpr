@@ -39,7 +39,8 @@
 #endif
 #endif
 
-namespace TCLAP {
+namespace TCLAP
+{
 
 // ======================================================================
 // Integer types
@@ -49,32 +50,36 @@ namespace TCLAP {
  * longs have value-like semantics.
  */
 template<>
-struct ArgTraits<long> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<long>
+{
+  typedef ValueLike ValueCategory;
 };
 
 /**
  * ints have value-like semantics.
  */
 template<>
-struct ArgTraits<int> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<int>
+{
+  typedef ValueLike ValueCategory;
 };
 
 /**
  * shorts have value-like semantics.
  */
 template<>
-struct ArgTraits<short> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<short>
+{
+  typedef ValueLike ValueCategory;
 };
 
 /**
  * chars have value-like semantics.
  */
 template<>
-struct ArgTraits<char> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<char>
+{
+  typedef ValueLike ValueCategory;
 };
 
 #ifdef HAVE_LONG_LONG
@@ -82,8 +87,9 @@ struct ArgTraits<char> {
  * long longs have value-like semantics.
  */
 template<>
-struct ArgTraits<long long> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<long long>
+{
+  typedef ValueLike ValueCategory;
 };
 #endif
 
@@ -95,32 +101,36 @@ struct ArgTraits<long long> {
  * unsigned longs have value-like semantics.
  */
 template<>
-struct ArgTraits<unsigned long> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<unsigned long>
+{
+  typedef ValueLike ValueCategory;
 };
 
 /**
  * unsigned ints have value-like semantics.
  */
 template<>
-struct ArgTraits<unsigned int> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<unsigned int>
+{
+  typedef ValueLike ValueCategory;
 };
 
 /**
  * unsigned shorts have value-like semantics.
  */
 template<>
-struct ArgTraits<unsigned short> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<unsigned short>
+{
+  typedef ValueLike ValueCategory;
 };
 
 /**
  * unsigned chars have value-like semantics.
  */
 template<>
-struct ArgTraits<unsigned char> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<unsigned char>
+{
+  typedef ValueLike ValueCategory;
 };
 
 // Microsoft implements size_t awkwardly.
@@ -129,8 +139,9 @@ struct ArgTraits<unsigned char> {
  * size_ts have value-like semantics.
  */
 template<>
-struct ArgTraits<size_t> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<size_t>
+{
+  typedef ValueLike ValueCategory;
 };
 #endif
 
@@ -140,8 +151,9 @@ struct ArgTraits<size_t> {
  * unsigned long longs have value-like semantics.
  */
 template<>
-struct ArgTraits<unsigned long long> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<unsigned long long>
+{
+  typedef ValueLike ValueCategory;
 };
 #endif
 
@@ -153,16 +165,18 @@ struct ArgTraits<unsigned long long> {
  * floats have value-like semantics.
  */
 template<>
-struct ArgTraits<float> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<float>
+{
+  typedef ValueLike ValueCategory;
 };
 
 /**
  * doubles have value-like semantics.
  */
 template<>
-struct ArgTraits<double> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<double>
+{
+  typedef ValueLike ValueCategory;
 };
 
 // ======================================================================
@@ -173,8 +187,9 @@ struct ArgTraits<double> {
  * bools have value-like semantics.
  */
 template<>
-struct ArgTraits<bool> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<bool>
+{
+  typedef ValueLike ValueCategory;
 };
 
 
@@ -183,8 +198,9 @@ struct ArgTraits<bool> {
  */
 #ifndef TCLAP_DONT_DECLARE_WCHAR_T_ARGTRAITS
 template<>
-struct ArgTraits<wchar_t> {
-    typedef ValueLike ValueCategory;
+struct ArgTraits<wchar_t>
+{
+  typedef ValueLike ValueCategory;
 };
 #endif
 
@@ -192,14 +208,15 @@ struct ArgTraits<wchar_t> {
  * Strings have string like argument traits.
  */
 template<>
-struct ArgTraits<std::string> {
-    typedef StringLike ValueCategory;
+struct ArgTraits<std::string>
+{
+  typedef StringLike ValueCategory;
 };
 
 template<typename T>
 void SetString(T &dst, const std::string &src)
 {
-    dst = src;
+  dst = src;
 }
 
 } // namespace

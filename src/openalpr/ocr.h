@@ -23,8 +23,8 @@
 #ifndef OCR_H
 #define OCR_H
 
- #include <iostream>
- #include <stdio.h>
+#include <iostream>
+#include <stdio.h>
 
 #include "utility.h"
 #include "postprocess.h"

@@ -3,5 +3,5 @@
 
 static inline double round(double val)
 {
-    return floor(val + 0.5);
+  return floor(val + 0.5);
 }
