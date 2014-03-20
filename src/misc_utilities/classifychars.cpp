@@ -31,8 +31,8 @@
 #include "support/filesystem.h"
 #include "ocr.h"
 
- using namespace std;
- using namespace cv;
+using namespace std;
+using namespace cv;
 
 // Given a directory full of lp images (named [statecode]#.png) crop out the alphanumeric characters.
 // These will be used to train the OCR
@@ -61,36 +61,34 @@ const int DASHBOARD_COLUMNS = 3;
 
 #endif
 
-
 void showDashboard(vector<Mat> images, vector<bool> selectedImages, int selectedIndex);
 vector<char> showCharSelection(Mat image, vector<Rect> charRegions, string state);
 
 int main( int argc, const char** argv )
 {
 
-   string inDir;
-   string outDir;
-   Mat frame;
-
+  string inDir;
+  string outDir;
+  Mat frame;
 
   //Check if user specify image to process
   if(argc == 3)
   {
-        inDir = argv[1];
-	outDir = argv[2];
+    inDir = argv[1];
+    outDir = argv[2];
 
-
-  }else{
-      printf("Use:\n\t%s indirectory outdirectory\n",argv[0]);
-      printf("Ex: \n\t%s ./pics/  ./out  \n",argv[0]);
-      return 0;
   }
-
+  else
+  {
+    printf("Use:\n\t%s indirectory outdirectory\n",argv[0]);
+    printf("Ex: \n\t%s ./pics/  ./out  \n",argv[0]);
+    return 0;
+  }
 
   if (DirectoryExists(outDir.c_str()) == false)
   {
-      printf("Output dir does not exist\n");
-      return 0;
+    printf("Output dir does not exist\n");
+    return 0;
   }
 
   cout << "Usage: " << endl;
@@ -110,171 +108,165 @@ int main( int argc, const char** argv )
 
   if (DirectoryExists(inDir.c_str()))
   {
-      vector<string> files = getFilesInDir(inDir.c_str());
+    vector<string> files = getFilesInDir(inDir.c_str());
 
-      sort( files.begin(), files.end(), stringCompare );
+    sort( files.begin(), files.end(), stringCompare );
 
-      for (int i = 0; i< files.size(); i++)
+    for (int i = 0; i< files.size(); i++)
+    {
+      if (hasEnding(files[i], ".png") || hasEnding(files[i], ".jpg"))
       {
-	if (hasEnding(files[i], ".png") || hasEnding(files[i], ".jpg"))
-	{
-	  string fullpath = inDir + "/" + files[i];
-	  cout << fullpath << endl;
-	  frame = imread( fullpath.c_str() );
-	  resize(frame, frame, Size(config->ocrImageWidthPx, config->ocrImageHeightPx));
+        string fullpath = inDir + "/" + files[i];
+        cout << fullpath << endl;
+        frame = imread( fullpath.c_str() );
+        resize(frame, frame, Size(config->ocrImageWidthPx, config->ocrImageHeightPx));
 
-	  imshow ("Original", frame);
+        imshow ("Original", frame);
 
+        char statecode[3];
+        statecode[0] = files[i][0];
+        statecode[1] = files[i][1];
+        statecode[2] = '\0';
+        string statecodestr(statecode);
 
-	  char statecode[3];
-	  statecode[0] = files[i][0];
-	  statecode[1] = files[i][1];
-	  statecode[2] = '\0';
-	  string statecodestr(statecode);
+        CharacterRegion regionizer(frame, config);
 
-	  CharacterRegion regionizer(frame, config);
+        if (abs(regionizer.getTopLine().angle) > 4)
+        {
+          // Rotate image:
+          Mat rotated(frame.size(), frame.type());
+          Mat rot_mat( 2, 3, CV_32FC1 );
+          Point center = Point( frame.cols/2, frame.rows/2 );
 
-	  if (abs(regionizer.getTopLine().angle) > 4)
-	  {
-	    // Rotate image:
-	    Mat rotated(frame.size(), frame.type());
-	    Mat rot_mat( 2, 3, CV_32FC1 );
-	    Point center = Point( frame.cols/2, frame.rows/2 );
+          rot_mat = getRotationMatrix2D( center, regionizer.getTopLine().angle, 1.0 );
+          warpAffine( frame, rotated, rot_mat, frame.size() );
 
-	    rot_mat = getRotationMatrix2D( center, regionizer.getTopLine().angle, 1.0 );
-	    warpAffine( frame, rotated, rot_mat, frame.size() );
+          rotated.copyTo(frame);
+        }
 
-	    rotated.copyTo(frame);
-	  }
+        CharacterSegmenter charSegmenter(frame, regionizer.thresholdsInverted(), config);
 
-	  CharacterSegmenter charSegmenter(frame, regionizer.thresholdsInverted(), config);
+        //ocr.cleanCharRegions(charSegmenter.thresholds, charSegmenter.characters);
 
-	  //ocr.cleanCharRegions(charSegmenter.thresholds, charSegmenter.characters);
+        ocr.performOCR(charSegmenter.getThresholds(), charSegmenter.characters);
+        ocr.postProcessor->analyze(statecodestr, 25);
+        cout << "OCR results: " << ocr.postProcessor->bestChars << endl;
 
-	  ocr.performOCR(charSegmenter.getThresholds(), charSegmenter.characters);
-	  ocr.postProcessor->analyze(statecodestr, 25);
-	  cout << "OCR results: " << ocr.postProcessor->bestChars << endl;
+        vector<bool> selectedBoxes(charSegmenter.getThresholds().size());
+        for (int z = 0; z < charSegmenter.getThresholds().size(); z++)
+          selectedBoxes[z] = false;
 
+        int curDashboardSelection = 0;
 
-	  vector<bool> selectedBoxes(charSegmenter.getThresholds().size());
-	  for (int z = 0; z < charSegmenter.getThresholds().size(); z++)
-	    selectedBoxes[z] = false;
+        vector<char> humanInputs(charSegmenter.characters.size());
 
-	  int curDashboardSelection = 0;
+        for (int z = 0; z < charSegmenter.characters.size(); z++)
+          humanInputs[z] = ' ';
 
-	  vector<char> humanInputs(charSegmenter.characters.size());
+        showDashboard(charSegmenter.getThresholds(), selectedBoxes, 0);
 
-	  for (int z = 0; z < charSegmenter.characters.size(); z++)
-	    humanInputs[z] = ' ';
+        char waitkey = (char) waitKey(50);
 
-	  showDashboard(charSegmenter.getThresholds(), selectedBoxes, 0);
+        while (waitkey != 'n' && waitkey != 'p')	 // Next image
+        {
+          if (waitkey == LEFT_ARROW_KEY) // left arrow key
+          {
+            if (curDashboardSelection > 0)
+              curDashboardSelection--;
+            showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
+          }
+          else if (waitkey == RIGHT_ARROW_KEY) // right arrow key
+          {
+            if (curDashboardSelection < charSegmenter.getThresholds().size() - 1)
+              curDashboardSelection++;
+            showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
+          }
+          else if (waitkey == DOWN_ARROW_KEY)
+          {
+            if (curDashboardSelection + DASHBOARD_COLUMNS <= charSegmenter.getThresholds().size() - 1)
+              curDashboardSelection += DASHBOARD_COLUMNS;
+            showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
+          }
+          else if (waitkey == UP_ARROW_KEY)
+          {
+            if (curDashboardSelection - DASHBOARD_COLUMNS >= 0)
+              curDashboardSelection -= DASHBOARD_COLUMNS;
+            showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
+          }
+          else if (waitkey == ENTER_KEY)
+          {
+            vector<char> tempdata = showCharSelection(charSegmenter.getThresholds()[curDashboardSelection], charSegmenter.characters, statecodestr);
+            for (int c = 0; c < charSegmenter.characters.size(); c++)
+              humanInputs[c] = tempdata[c];
+          }
+          else if (waitkey == SPACE_KEY)
+          {
+            selectedBoxes[curDashboardSelection] = !selectedBoxes[curDashboardSelection];
+            showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
+          }
+          else if (waitkey == 's' || waitkey == 'S')
+          {
+            bool somethingSelected = false;
+            bool chardataTagged = false;
+            for (int c = 0; c < charSegmenter.getThresholds().size(); c++)
+            {
+              if (selectedBoxes[c])
+              {
+                somethingSelected = true;
+                break;
+              }
+            }
+            for (int c = 0; c < charSegmenter.characters.size(); c++)
+            {
+              if (humanInputs[c] != ' ')
+              {
+                chardataTagged = true;
+                break;
+              }
+            }
+            // Save
+            if (somethingSelected && chardataTagged)
+            {
 
+              for (int c = 0; c < charSegmenter.characters.size(); c++)
+              {
+                if (humanInputs[c] == ' ')
+                  continue;
 
+                for (int t = 0; t < charSegmenter.getThresholds().size(); t++)
+                {
+                  if (selectedBoxes[t] == false)
+                    continue;
 
-	  char waitkey = (char) waitKey(50);
+                  stringstream filename;
+                  Mat cropped = charSegmenter.getThresholds()[t](charSegmenter.characters[c]);
+                  filename << outDir << "/" << humanInputs[c] << "-" << t << "-" << files[i];
+                  imwrite(filename.str(), cropped);
+                  cout << "Writing char image: " << filename.str() << endl;
+                }
+              }
+            }
+            else if (somethingSelected == false)
+              cout << "Did not select any boxes" << endl;
+            else if (chardataTagged == false)
+              cout << "You have not tagged any characters" << endl;
+          }
 
-	  while (waitkey != 'n' && waitkey != 'p')	 // Next image
-	  {
-	    if (waitkey == LEFT_ARROW_KEY) // left arrow key
-	    {
-	      if (curDashboardSelection > 0)
-		curDashboardSelection--;
-	      showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
-	    }
-	    else if (waitkey == RIGHT_ARROW_KEY) // right arrow key
-	    {
-	      if (curDashboardSelection < charSegmenter.getThresholds().size() - 1)
-		curDashboardSelection++;
-	      showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
-	    }
-	    else if (waitkey == DOWN_ARROW_KEY)
-	    {
-		if (curDashboardSelection + DASHBOARD_COLUMNS <= charSegmenter.getThresholds().size() - 1)
-		  curDashboardSelection += DASHBOARD_COLUMNS;
-	      showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
-	    }
-	    else if (waitkey == UP_ARROW_KEY)
-	    {
-		if (curDashboardSelection - DASHBOARD_COLUMNS >= 0)
-		  curDashboardSelection -= DASHBOARD_COLUMNS;
-	      showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
-	    }
-	    else if (waitkey == ENTER_KEY)
-	    {
-	      vector<char> tempdata = showCharSelection(charSegmenter.getThresholds()[curDashboardSelection], charSegmenter.characters, statecodestr);
-	      for (int c = 0; c < charSegmenter.characters.size(); c++)
-		humanInputs[c] = tempdata[c];
-	    }
-	    else if (waitkey == SPACE_KEY)
-	    {
-	      selectedBoxes[curDashboardSelection] = !selectedBoxes[curDashboardSelection];
-	      showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
-	    }
-	    else if (waitkey == 's' || waitkey == 'S')
-	    {
-	      bool somethingSelected = false;
-	      bool chardataTagged = false;
-	      for (int c = 0; c < charSegmenter.getThresholds().size(); c++)
-	      {
-		if (selectedBoxes[c])
-		{
-		    somethingSelected = true;
-		    break;
-		}
-	      }
-	      for (int c = 0; c < charSegmenter.characters.size(); c++)
-	      {
-		if (humanInputs[c] != ' ')
-		{
-		    chardataTagged = true;
-		    break;
-		}
-	      }
-	      // Save
-	      if (somethingSelected && chardataTagged)
-	      {
+          waitkey = (char) waitKey(50);
 
-		for (int c = 0; c < charSegmenter.characters.size(); c++)
-		{
-		  if (humanInputs[c] == ' ')
-		    continue;
+        }
 
-		  for (int t = 0; t < charSegmenter.getThresholds().size(); t++)
-		  {
-		    if (selectedBoxes[t] == false)
-		      continue;
-
-		    stringstream filename;
-		    Mat cropped = charSegmenter.getThresholds()[t](charSegmenter.characters[c]);
-		    filename << outDir << "/" << humanInputs[c] << "-" << t << "-" << files[i];
-		    imwrite(filename.str(), cropped);
-		    cout << "Writing char image: " << filename.str() << endl;
-		  }
-		}
-	      }
-	      else if (somethingSelected == false)
-		cout << "Did not select any boxes" << endl;
-	      else if (chardataTagged == false)
-		cout << "You have not tagged any characters" << endl;
-	    }
-
-	    waitkey = (char) waitKey(50);
-
-	  }
-
-	  if (waitkey == 'p')
-	    i = i - 2;
-	  if (i < -1)
-	    i = -1;
-
-
-	}
+        if (waitkey == 'p')
+          i = i - 2;
+        if (i < -1)
+          i = -1;
 
       }
+
+    }
   }
 
 }
-
 
 void showDashboard(vector<Mat> images, vector<bool> selectedImages, int selectedIndex)
 {
@@ -309,62 +301,60 @@ void showDashboard(vector<Mat> images, vector<bool> selectedImages, int selected
 
 vector<char> showCharSelection(Mat image, vector<Rect> charRegions, string state)
 {
-    int curCharIdx = 0;
+  int curCharIdx = 0;
 
-    vector<char> humanInputs(charRegions.size());
-    for (int i = 0; i < charRegions.size(); i++)
-      humanInputs[i] = (char) SPACE_KEY;
+  vector<char> humanInputs(charRegions.size());
+  for (int i = 0; i < charRegions.size(); i++)
+    humanInputs[i] = (char) SPACE_KEY;
 
+  char waitkey = (char) waitKey(50);
+  while (waitkey != ENTER_KEY && waitkey != ESCAPE_KEY)
+  {
+    Mat imgCopy(image.size(), image.type());
+    image.copyTo(imgCopy);
+    cvtColor(imgCopy, imgCopy, CV_GRAY2BGR);
 
-    char waitkey = (char) waitKey(50);
-    while (waitkey != ENTER_KEY && waitkey != ESCAPE_KEY)
+    rectangle(imgCopy, charRegions[curCharIdx], Scalar(0, 255, 0), 1);
+
+    imshow("Character selector", imgCopy);
+
+    if (waitkey == LEFT_ARROW_KEY)
+      curCharIdx--;
+    else if (waitkey == RIGHT_ARROW_KEY )
+      curCharIdx++;
+    else if ((waitkey >= '0' && waitkey <= '9') || (waitkey >= 'a' && waitkey <= 'z') || waitkey == SPACE_KEY)
     {
-      Mat imgCopy(image.size(), image.type());
-      image.copyTo(imgCopy);
-      cvtColor(imgCopy, imgCopy, CV_GRAY2BGR);
+      // Save the character to disk
+      humanInputs[curCharIdx] = toupper((char) waitkey);
+      curCharIdx++;
 
-      rectangle(imgCopy, charRegions[curCharIdx], Scalar(0, 255, 0), 1);
-
-      imshow("Character selector", imgCopy);
-
-      if (waitkey == LEFT_ARROW_KEY)
-	curCharIdx--;
-      else if (waitkey == RIGHT_ARROW_KEY )
-	curCharIdx++;
-      else if ((waitkey >= '0' && waitkey <= '9') || (waitkey >= 'a' && waitkey <= 'z') || waitkey == SPACE_KEY)
-      {
-	// Save the character to disk
-	humanInputs[curCharIdx] = toupper((char) waitkey);
-	curCharIdx++;
-
-	if (curCharIdx >= charRegions.size())
-	{
-	  waitkey = (char) ENTER_KEY;
-	  break;
-	}
-      }
-
-      if (curCharIdx < 0)
-	curCharIdx = 0;
       if (curCharIdx >= charRegions.size())
-	curCharIdx = charRegions.size() -1;
-
-      waitkey = (char) waitKey(50);
+      {
+        waitkey = (char) ENTER_KEY;
+        break;
+      }
     }
 
-    if (waitkey == ENTER_KEY)
+    if (curCharIdx < 0)
+      curCharIdx = 0;
+    if (curCharIdx >= charRegions.size())
+      curCharIdx = charRegions.size() -1;
+
+    waitkey = (char) waitKey(50);
+  }
+
+  if (waitkey == ENTER_KEY)
+  {
+    // Save all the inputs
+    for (int i = 0; i < charRegions.size(); i++)
     {
-	// Save all the inputs
-	for (int i = 0; i < charRegions.size(); i++)
-	{
-	  if (humanInputs[i] != (char) SPACE_KEY)
-	    cout << "Tagged " << state << " char code: '" << humanInputs[i] << "' at char position: " << i << endl;
-	}
-
+      if (humanInputs[i] != (char) SPACE_KEY)
+        cout << "Tagged " << state << " char code: '" << humanInputs[i] << "' at char position: " << i << endl;
     }
 
-    destroyWindow("Character selector");
+  }
 
+  destroyWindow("Character selector");
 
-    return humanInputs;
+  return humanInputs;
 }

@@ -51,9 +51,10 @@
 typedef unsigned int TRexBool;
 typedef struct TRex TRex;
 
-typedef struct {
-	const TRexChar *begin;
-	int len;
+typedef struct
+{
+  const TRexChar *begin;
+  int len;
 } TRexMatch;
 
 TREX_API TRex *trex_compile(const TRexChar *pattern,const TRexChar **error);

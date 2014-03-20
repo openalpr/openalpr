@@ -4,12 +4,12 @@
 
 
 #ifdef WINDOWS
-	#include "windows/dirent.h"
-	#include "windows/utils.h"
-	#include "windows/unistd_partial.h"
+#include "windows/dirent.h"
+#include "windows/utils.h"
+#include "windows/unistd_partial.h"
 #else
-	#include <dirent.h>
-	#include <unistd.h>
+#include <dirent.h>
+#include <unistd.h>
 #endif
 
 #include <fstream>
@@ -19,12 +19,12 @@
 #include <vector>
 
 
-  bool hasEnding (std::string const &fullString, std::string const &ending);
-  bool DirectoryExists( const char* pzPath );
-  bool fileExists( const char* pzPath );
-  std::vector<std::string> getFilesInDir(const char* dirPath);
+bool hasEnding (std::string const &fullString, std::string const &ending);
+bool DirectoryExists( const char* pzPath );
+bool fileExists( const char* pzPath );
+std::vector<std::string> getFilesInDir(const char* dirPath);
 
-  bool stringCompare( const std::string &left, const std::string &right );
+bool stringCompare( const std::string &left, const std::string &right );
 
 
 #endif // FILESYSTEM_H

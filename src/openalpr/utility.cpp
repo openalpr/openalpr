@@ -17,11 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
-
 #include "utility.h"
-
 
 Rect expandRect(Rect original, int expandXPixels, int expandYPixels, int maxX, int maxY)
 {
@@ -48,22 +44,22 @@ Rect expandRect(Rect original, int expandXPixels, int expandYPixels, int maxX, i
 
 Mat drawImageDashboard(vector<Mat> images, int imageType, int numColumns)
 {
-    int numRows = ceil((float) images.size() / (float) numColumns);
+  int numRows = ceil((float) images.size() / (float) numColumns);
 
-    Mat dashboard(Size(images[0].cols * numColumns, images[0].rows * numRows), imageType);
+  Mat dashboard(Size(images[0].cols * numColumns, images[0].rows * numRows), imageType);
 
-      for (int i = 0; i < numColumns * numRows; i++)
-      {
-	if (i < images.size())
-	  images[i].copyTo(dashboard(Rect((i%numColumns) * images[i].cols, floor((float) i/numColumns) * images[i].rows, images[i].cols, images[i].rows)));
-	else
-	{
-	  Mat black = Mat::zeros(images[0].size(), imageType);
-	  black.copyTo(dashboard(Rect((i%numColumns) * images[0].cols, floor((float) i/numColumns) * images[0].rows, images[0].cols, images[0].rows)));
-	}
-      }
+  for (int i = 0; i < numColumns * numRows; i++)
+  {
+    if (i < images.size())
+      images[i].copyTo(dashboard(Rect((i%numColumns) * images[i].cols, floor((float) i/numColumns) * images[i].rows, images[i].cols, images[i].rows)));
+    else
+    {
+      Mat black = Mat::zeros(images[0].size(), imageType);
+      black.copyTo(dashboard(Rect((i%numColumns) * images[0].cols, floor((float) i/numColumns) * images[0].rows, images[0].cols, images[0].rows)));
+    }
+  }
 
-      return dashboard;
+  return dashboard;
 }
 
 Mat addLabel(Mat input, string label)
@@ -90,15 +86,13 @@ Mat addLabel(Mat input, string label)
   return newImage;
 }
 
-
-
 void drawAndWait(cv::Mat* frame)
 {
   cv::imshow("Temp Window", *frame);
 
   while (cv::waitKey(50) == -1)
   {
-      // loop
+    // loop
   }
 
   cv::destroyWindow("Temp Window");
@@ -137,7 +131,8 @@ vector<Mat> produceThresholds(const Mat img_gray, Config* config)
   NiblackSauvolaWolfJolion (img_gray, thresholds[i++], WOLFJOLION, win, win, 0.05 + (k * 0.35));
   bitwise_not(thresholds[i-1], thresholds[i-1]);
 
-  k = 1; win = 22;
+  k = 1;
+  win = 22;
   NiblackSauvolaWolfJolion (img_gray, thresholds[i++], WOLFJOLION, win, win, 0.05 + (k * 0.35));
   bitwise_not(thresholds[i-1], thresholds[i-1]);
   //NiblackSauvolaWolfJolion (img_gray, thresholds[i++], WOLFJOLION, win, win, 0.05 + (k * 0.35));
@@ -150,11 +145,6 @@ vector<Mat> produceThresholds(const Mat img_gray, Config* config)
   k=2;
   NiblackSauvolaWolfJolion (img_gray, thresholds[i++], SAUVOLA, 12, 12, 0.18 * k);
   bitwise_not(thresholds[i-1], thresholds[i-1]);
-
-
-
-
-
 
   if (config->debugTiming)
   {
@@ -180,7 +170,6 @@ double median(int array[], int arraySize)
   return arraySize % 2 ? array[arraySize / 2] : (array[arraySize / 2 - 1] + array[arraySize / 2]) / 2;
 }
 
-
 Mat equalizeBrightness(Mat img)
 {
 
@@ -193,7 +182,6 @@ Mat equalizeBrightness(Mat img)
   divide(img, closed, img, 1, CV_32FC1);
   normalize(img, img, 0, 255, NORM_MINMAX);
   img.convertTo(img, CV_8U); // convert back to unsigned int
-
 
   return img;
 }
@@ -218,17 +206,16 @@ void fillMask(Mat img, const Mat mask, Scalar color)
 
       if (m)
       {
-	for (int z = 0; z < 3; z++)
-	{
-	  int prevVal = img.at<Vec3b>(row, col)[z];
-	  img.at<Vec3b>(row, col)[z] = ((int) color[z]) | prevVal;
-	}
+        for (int z = 0; z < 3; z++)
+        {
+          int prevVal = img.at<Vec3b>(row, col)[z];
+          img.at<Vec3b>(row, col)[z] = ((int) color[z]) | prevVal;
+        }
       }
 
     }
   }
 }
-
 
 void drawX(Mat img, Rect rect, Scalar color, int thickness)
 {
@@ -251,27 +238,25 @@ double distanceBetweenPoints(Point p1, Point p2)
 
 float angleBetweenPoints(Point p1, Point p2)
 {
-    int deltaY = p2.y - p1.y;
-    int deltaX = p2.x - p1.x;
+  int deltaY = p2.y - p1.y;
+  int deltaX = p2.x - p1.x;
 
-    return atan2((float) deltaY, (float) deltaX) * (180 / CV_PI);
+  return atan2((float) deltaY, (float) deltaX) * (180 / CV_PI);
 }
-
 
 Size getSizeMaintainingAspect(Mat inputImg, int maxWidth, int maxHeight)
 {
-    float aspect = ((float) inputImg.cols) / ((float) inputImg.rows);
+  float aspect = ((float) inputImg.cols) / ((float) inputImg.rows);
 
-    if (maxWidth / aspect > maxHeight)
-    {
-	return Size(maxHeight * aspect, maxHeight);
-    }
-    else
-    {
-      return Size(maxWidth, maxWidth / aspect);
-    }
+  if (maxWidth / aspect > maxHeight)
+  {
+    return Size(maxHeight * aspect, maxHeight);
+  }
+  else
+  {
+    return Size(maxWidth, maxWidth / aspect);
+  }
 }
-
 
 LineSegment::LineSegment()
 {
@@ -292,18 +277,19 @@ void LineSegment::init(int x1, int y1, int x2, int y2)
   this->p1 = Point(x1, y1);
   this->p2 = Point(x2, y2);
 
-    if (p2.x - p1.x == 0)
-      this->slope = 0.00000000001;
-    else
-      this->slope = (float) (p2.y - p1.y) / (float) (p2.x - p1.x);
+  if (p2.x - p1.x == 0)
+    this->slope = 0.00000000001;
+  else
+    this->slope = (float) (p2.y - p1.y) / (float) (p2.x - p1.x);
 
-    this->length = distanceBetweenPoints(p1, p2);
+  this->length = distanceBetweenPoints(p1, p2);
 
-    this->angle = angleBetweenPoints(p1, p2);
+  this->angle = angleBetweenPoints(p1, p2);
 }
 
-bool LineSegment::isPointBelowLine( Point tp ){
-     return ((p2.x - p1.x)*(tp.y - p1.y) - (p2.y - p1.y)*(tp.x - p1.x)) > 0;
+bool LineSegment::isPointBelowLine( Point tp )
+{
+  return ((p2.x - p1.x)*(tp.y - p1.y) - (p2.y - p1.y)*(tp.x - p1.x)) > 0;
 }
 
 float LineSegment::getPointAt(float x)
@@ -328,40 +314,37 @@ Point LineSegment::closestPointOnSegmentTo(Point p)
 
 Point LineSegment::intersection(LineSegment line)
 {
-    float c1, c2;
-    float intersection_X = -1, intersection_Y= -1;
+  float c1, c2;
+  float intersection_X = -1, intersection_Y= -1;
 
+  c1 = p1.y - slope * p1.x; // which is same as y2 - slope * x2
 
-    c1 = p1.y - slope * p1.x; // which is same as y2 - slope * x2
+  c2 = line.p2.y - line.slope * line.p2.x; // which is same as y2 - slope * x2
 
-    c2 = line.p2.y - line.slope * line.p2.x; // which is same as y2 - slope * x2
+  if( (slope - line.slope) == 0)
+  {
+    //std::cout << "No Intersection between the lines" << endl;
+  }
+  else if (p1.x == p2.x)
+  {
+    // Line1 is vertical
+    return Point(p1.x, line.getPointAt(p1.x));
+  }
+  else if (line.p1.x == line.p2.x)
+  {
+    // Line2 is vertical
+    return Point(line.p1.x, getPointAt(line.p1.x));
+  }
+  else
+  {
+    intersection_X = (c2 - c1) / (slope - line.slope);
+    intersection_Y = slope * intersection_X + c1;
 
-    if( (slope - line.slope) == 0)
-    {
-        //std::cout << "No Intersection between the lines" << endl;
-    }
-    else if (p1.x == p2.x)
-    {
-      // Line1 is vertical
-      return Point(p1.x, line.getPointAt(p1.x));
-    }
-    else if (line.p1.x == line.p2.x)
-    {
-	// Line2 is vertical
-      return Point(line.p1.x, getPointAt(line.p1.x));
-    }
-    else
-    {
-        intersection_X = (c2 - c1) / (slope - line.slope);
-        intersection_Y = slope * intersection_X + c1;
+  }
 
-    }
-
-    return Point(intersection_X, intersection_Y);
+  return Point(intersection_X, intersection_Y);
 
 }
-
-
 
 Point LineSegment::midpoint()
 {
@@ -381,17 +364,17 @@ Point LineSegment::midpoint()
 
 LineSegment LineSegment::getParallelLine(float distance)
 {
-    float diff_x = p2.x - p1.x;
-    float diff_y = p2.y - p1.y;
-    float angle = atan2( diff_x, diff_y);
-    float dist_x = distance * cos(angle);
-    float dist_y = -distance * sin(angle);
+  float diff_x = p2.x - p1.x;
+  float diff_y = p2.y - p1.y;
+  float angle = atan2( diff_x, diff_y);
+  float dist_x = distance * cos(angle);
+  float dist_y = -distance * sin(angle);
 
-    int offsetX = (int)round(dist_x);
-    int offsetY = (int)round(dist_y);
+  int offsetX = (int)round(dist_x);
+  int offsetY = (int)round(dist_y);
 
-    LineSegment result(p1.x + offsetX, p1.y + offsetY,
-		       p2.x + offsetX, p2.y + offsetY);
+  LineSegment result(p1.x + offsetX, p1.y + offsetY,
+                     p2.x + offsetX, p2.y + offsetY);
 
-    return result;
+  return result;
 }

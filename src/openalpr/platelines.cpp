@@ -19,7 +19,6 @@
 
 #include "platelines.h"
 
-
 PlateLines::PlateLines(Config* config)
 {
   this->config = config;
@@ -28,7 +27,6 @@ PlateLines::PlateLines(Config* config)
   if (debug)
     cout << "PlateLines constructor" << endl;
 
-
 }
 
 PlateLines::~PlateLines()
@@ -36,22 +34,18 @@ PlateLines::~PlateLines()
 
 }
 
-
-
 void PlateLines::processImage(Mat inputImage, float sensitivity)
 {
   if (this->debug)
     cout << "PlateLines findLines" << endl;
 
-
   timespec startTime;
   getTime(&startTime);
 
-
   Mat smoothed(inputImage.size(), inputImage.type());
   inputImage.copyTo(smoothed);
-    int morph_elem  = 2;
-    int morph_size = 2;
+  int morph_elem  = 2;
+  int morph_size = 2;
   Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
 
   morphologyEx( smoothed, smoothed, MORPH_CLOSE, element );
@@ -65,11 +59,8 @@ void PlateLines::processImage(Mat inputImage, float sensitivity)
   element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
   morphologyEx( smoothed, smoothed, MORPH_OPEN, element );
 
-
-
   Mat edges(inputImage.size(), inputImage.type());
   Canny(smoothed, edges, 66, 133);
-
 
   vector<LineSegment> hlines = this->getLines(edges, sensitivity, false);
   vector<LineSegment> vlines = this->getLines(edges, sensitivity, true);
@@ -77,9 +68,6 @@ void PlateLines::processImage(Mat inputImage, float sensitivity)
     this->horizontalLines.push_back(hlines[i]);
   for (int i = 0; i < vlines.size(); i++)
     this->verticalLines.push_back(vlines[i]);
-
-
-
 
   // if debug is enabled, draw the image
   if (this->debug)
@@ -109,8 +97,6 @@ void PlateLines::processImage(Mat inputImage, float sensitivity)
     displayImage(config, "Hough Lines", dashboard);
   }
 
-
-
   if (config->debugTiming)
   {
     timespec endTime;
@@ -119,7 +105,6 @@ void PlateLines::processImage(Mat inputImage, float sensitivity)
   }
   //smoothed.release();
 
-
   //////////////// METHOD2!!!!!!!////////////////////
 
   /*
@@ -127,33 +112,28 @@ void PlateLines::processImage(Mat inputImage, float sensitivity)
     Mat imgCanny;
     GaussianBlur(inputImage, imgBlur, Size(9, 9), 1, 1);
 
-
-
     Canny(imgBlur, imgCanny, 10, 30, 3);
-
-
 
     //int morph_elem  = 2;
     //int morph_size = 1;
     //Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
     morphologyEx( imgCanny, imgCanny, MORPH_CLOSE, element );
 
-
     Mat imgShaped;
     imgCanny.copyTo(imgShaped);
     //Find contours of possibles characters
     vector< vector< Point> > biggestShapes;
     findContours(imgShaped,
-	    biggestShapes, // a vector of contours
-	    CV_RETR_EXTERNAL, // retrieve the external contours
-	    CV_CHAIN_APPROX_SIMPLE ); // all pixels of each contours
+      biggestShapes, // a vector of contours
+      CV_RETR_EXTERNAL, // retrieve the external contours
+      CV_CHAIN_APPROX_SIMPLE ); // all pixels of each contours
 
     // Draw blue contours on a white image
     //cvtColor(imgShaped, imgShaped, CV_GRAY2RGB);
     cv::drawContours(imgShaped,biggestShapes,
-	    -1, // draw all contours
-	    cv::Scalar(255,255,255), // in blue
-	    1); // with a thickness of 1
+      -1, // draw all contours
+      cv::Scalar(255,255,255), // in blue
+      1); // with a thickness of 1
 
     displayImage(config, "Blurred", imgCanny);
     displayImage(config, "Blurred Contours", imgShaped);
@@ -186,7 +166,6 @@ vector<LineSegment> PlateLines::getLines(Mat edges, bool vertical)
   vector<LSEG> lsegs;
   vector<double> errors;
   lswms.run(edges, lsegs, errors);
-
 
   for( size_t i = 0; i < lsegs.size(); i++ )
   {
@@ -247,7 +226,6 @@ vector<LineSegment> PlateLines::getLines(Mat edges, bool vertical)
 }
 */
 
-
 vector<LineSegment> PlateLines::getLines(Mat edges, float sensitivityMultiplier, bool vertical)
 {
   if (this->debug)
@@ -267,100 +245,92 @@ vector<LineSegment> PlateLines::getLines(Mat edges, float sensitivityMultiplier,
 
   HoughLines( edges, allLines, 1, CV_PI/180, sensitivity, 0, 0 );
 
-
   for( size_t i = 0; i < allLines.size(); i++ )
   {
-     float rho = allLines[i][0], theta = allLines[i][1];
-     Point pt1, pt2;
-     double a = cos(theta), b = sin(theta);
-     double x0 = a*rho, y0 = b*rho;
+    float rho = allLines[i][0], theta = allLines[i][1];
+    Point pt1, pt2;
+    double a = cos(theta), b = sin(theta);
+    double x0 = a*rho, y0 = b*rho;
 
-     double angle = theta * (180 / CV_PI);
-     pt1.x = cvRound(x0 + 1000*(-b));
-     pt1.y = cvRound(y0 + 1000*(a));
-     pt2.x = cvRound(x0 - 1000*(-b));
-     pt2.y = cvRound(y0 - 1000*(a));
+    double angle = theta * (180 / CV_PI);
+    pt1.x = cvRound(x0 + 1000*(-b));
+    pt1.y = cvRound(y0 + 1000*(a));
+    pt2.x = cvRound(x0 - 1000*(-b));
+    pt2.y = cvRound(y0 - 1000*(a));
 
-     if (vertical)
-     {
-	if (angle < 20 || angle > 340 || (angle > 160 && angle < 210))
-	{
-	  // good vertical
+    if (vertical)
+    {
+      if (angle < 20 || angle > 340 || (angle > 160 && angle < 210))
+      {
+        // good vertical
 
-	  LineSegment line;
-	  if (pt1.y <= pt2.y)
-	    line = LineSegment(pt2.x, pt2.y, pt1.x, pt1.y);
-	  else
-	    line = LineSegment(pt1.x, pt1.y, pt2.x, pt2.y);
+        LineSegment line;
+        if (pt1.y <= pt2.y)
+          line = LineSegment(pt2.x, pt2.y, pt1.x, pt1.y);
+        else
+          line = LineSegment(pt1.x, pt1.y, pt2.x, pt2.y);
 
-	  // Get rid of the -1000, 1000 stuff.  Terminate at the edges of the image
-	  // Helps with debugging/rounding issues later
-	  LineSegment top(0, 0, edges.cols, 0);
-	  LineSegment bottom(0, edges.rows, edges.cols, edges.rows);
-	  Point p1 = line.intersection(bottom);
-	  Point p2 = line.intersection(top);
-	  filteredLines.push_back(LineSegment(p1.x, p1.y, p2.x, p2.y));
-	}
-     }
-     else
-     {
+        // Get rid of the -1000, 1000 stuff.  Terminate at the edges of the image
+        // Helps with debugging/rounding issues later
+        LineSegment top(0, 0, edges.cols, 0);
+        LineSegment bottom(0, edges.rows, edges.cols, edges.rows);
+        Point p1 = line.intersection(bottom);
+        Point p2 = line.intersection(top);
+        filteredLines.push_back(LineSegment(p1.x, p1.y, p2.x, p2.y));
+      }
+    }
+    else
+    {
 
-	if ( (angle > 70 && angle < 110) || (angle > 250 && angle < 290))
-	{
-	  // good horizontal
+      if ( (angle > 70 && angle < 110) || (angle > 250 && angle < 290))
+      {
+        // good horizontal
 
-	  LineSegment line;
-	  if (pt1.x <= pt2.x)
-	    line = LineSegment(pt1.x, pt1.y, pt2.x, pt2.y);
-	  else
-	    line =LineSegment(pt2.x, pt2.y, pt1.x, pt1.y);
+        LineSegment line;
+        if (pt1.x <= pt2.x)
+          line = LineSegment(pt1.x, pt1.y, pt2.x, pt2.y);
+        else
+          line =LineSegment(pt2.x, pt2.y, pt1.x, pt1.y);
 
-	  // Get rid of the -1000, 1000 stuff.  Terminate at the edges of the image
-	  // Helps with debugging/ rounding issues later
-	  int newY1 = line.getPointAt(0);
-	  int newY2 = line.getPointAt(edges.cols);
+        // Get rid of the -1000, 1000 stuff.  Terminate at the edges of the image
+        // Helps with debugging/ rounding issues later
+        int newY1 = line.getPointAt(0);
+        int newY2 = line.getPointAt(edges.cols);
 
-	  filteredLines.push_back(LineSegment(0, newY1, edges.cols, newY2));
-	}
-     }
+        filteredLines.push_back(LineSegment(0, newY1, edges.cols, newY2));
+      }
+    }
   }
-
 
   return filteredLines;
 }
-
-
-
-
 
 Mat PlateLines::customGrayscaleConversion(Mat src)
 {
   Mat img_hsv;
   cvtColor(src,img_hsv,CV_BGR2HSV);
 
+  Mat grayscale = Mat(img_hsv.size(), CV_8U );
+  Mat hue(img_hsv.size(), CV_8U );
 
-    Mat grayscale = Mat(img_hsv.size(), CV_8U );
-    Mat hue(img_hsv.size(), CV_8U );
-
-    for (int row = 0; row < img_hsv.rows; row++)
+  for (int row = 0; row < img_hsv.rows; row++)
+  {
+    for (int col = 0; col < img_hsv.cols; col++)
     {
-      for (int col = 0; col < img_hsv.cols; col++)
-      {
-	int h = (int) img_hsv.at<Vec3b>(row, col)[0];
-	int s = (int) img_hsv.at<Vec3b>(row, col)[1];
-	int v = (int) img_hsv.at<Vec3b>(row, col)[2];
+      int h = (int) img_hsv.at<Vec3b>(row, col)[0];
+      int s = (int) img_hsv.at<Vec3b>(row, col)[1];
+      int v = (int) img_hsv.at<Vec3b>(row, col)[2];
 
-	int pixval = pow(v, 1.05);
+      int pixval = pow(v, 1.05);
 
+      if (pixval > 255)
+        pixval = 255;
+      grayscale.at<uchar>(row, col) = pixval;
 
-	if (pixval > 255)
-	  pixval = 255;
-	grayscale.at<uchar>(row, col) = pixval;
-
-	hue.at<uchar>(row, col) = h * (255.0 / 180.0);
-      }
+      hue.at<uchar>(row, col) = h * (255.0 / 180.0);
     }
+  }
 
-    //displayImage(config, "Hue", hue);
-    return grayscale;
+  //displayImage(config, "Hue", hue);
+  return grayscale;
 }

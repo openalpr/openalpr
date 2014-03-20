@@ -19,20 +19,19 @@
 
 #include "stateidentifier.h"
 
-
 StateIdentifier::StateIdentifier(Config* config)
 {
   this->config = config;
 
-    featureMatcher = new FeatureMatcher(config);
+  featureMatcher = new FeatureMatcher(config);
 
-    if (featureMatcher->isLoaded() == false)
-    {
-        cout << "Can not create detector or descriptor extractor or descriptor matcher of given types" << endl;
-	return;
-    }
+  if (featureMatcher->isLoaded() == false)
+  {
+    cout << "Can not create detector or descriptor extractor or descriptor matcher of given types" << endl;
+    return;
+  }
 
-    featureMatcher->loadRecognitionSet(config->country);
+  featureMatcher->loadRecognitionSet(config->country);
 }
 
 StateIdentifier::~StateIdentifier()
@@ -66,18 +65,15 @@ int StateIdentifier::recognize(Mat img, char* stateCode)
   plateImg.copyTo(debugImg);
   vector<int> matchesArray(featureMatcher->numTrainingElements());
 
-
   RecognitionResult result = featureMatcher->recognize(plateImg, true, &debugImg, true, matchesArray );
 
   if (this->config->debugStateId)
   {
 
-
     displayImage(config, "State Identifier1", plateImg);
     displayImage(config, "State Identifier", debugImg);
     cout << result.haswinner << " : " << result.confidence << " : " << result.winner << endl;
   }
-
 
   if (config->debugTiming)
   {
@@ -86,12 +82,10 @@ int StateIdentifier::recognize(Mat img, char* stateCode)
     cout << "State Identification Time: " << diffclock(startTime, endTime) << "ms." << endl;
   }
 
-
   if (result.haswinner == false)
     return 0;
 
   strcpy(stateCode, result.winner.c_str());
-
 
   return result.confidence;
 }

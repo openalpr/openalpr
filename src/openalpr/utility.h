@@ -32,8 +32,8 @@
 
 #include "constants.h"
 #include "support/timing.h"
- #include "opencv2/highgui/highgui.hpp"
- #include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/core/core.hpp"
 #include "binarize_wolf.h"
 #include <vector>
@@ -41,13 +41,13 @@
 
 
 
- /*
+/*
 struct LineSegment
 {
-    float x1;
-    float y1;
-    float x2;
-    float y2;
+   float x1;
+   float y1;
+   float x2;
+   float y2;
 };
 */
 
@@ -61,7 +61,7 @@ class LineSegment
     float length;
     float angle;
 
-   // LineSegment(Point point1, Point point2);
+    // LineSegment(Point point1, Point point2);
     LineSegment();
     LineSegment(int x1, int y1, int x2, int y2);
     LineSegment(Point p1, Point p2);
@@ -90,30 +90,30 @@ class LineSegment
 
 };
 
-  double median(int array[], int arraySize);
+double median(int array[], int arraySize);
 
-  vector<Mat> produceThresholds(const Mat img_gray, Config* config);
+vector<Mat> produceThresholds(const Mat img_gray, Config* config);
 
-  Mat drawImageDashboard(vector<Mat> images, int imageType, int numColumns);
+Mat drawImageDashboard(vector<Mat> images, int imageType, int numColumns);
 
-  void displayImage(Config* config, string windowName, cv::Mat frame);
-  void drawAndWait(cv::Mat* frame);
+void displayImage(Config* config, string windowName, cv::Mat frame);
+void drawAndWait(cv::Mat* frame);
 
-  double distanceBetweenPoints(Point p1, Point p2);
+double distanceBetweenPoints(Point p1, Point p2);
 
-  void drawRotatedRect(Mat* img, RotatedRect rect, Scalar color, int thickness);
+void drawRotatedRect(Mat* img, RotatedRect rect, Scalar color, int thickness);
 
-  void drawX(Mat img, Rect rect, Scalar color, int thickness);
-  void fillMask(Mat img, const Mat mask, Scalar color);
+void drawX(Mat img, Rect rect, Scalar color, int thickness);
+void fillMask(Mat img, const Mat mask, Scalar color);
 
-  float angleBetweenPoints(Point p1, Point p2);
+float angleBetweenPoints(Point p1, Point p2);
 
-  Size getSizeMaintainingAspect(Mat inputImg, int maxWidth, int maxHeight);
+Size getSizeMaintainingAspect(Mat inputImg, int maxWidth, int maxHeight);
 
-  Mat equalizeBrightness(Mat img);
+Mat equalizeBrightness(Mat img);
 
-  Rect expandRect(Rect original, int expandXPixels, int expandYPixels, int maxX, int maxY);
+Rect expandRect(Rect original, int expandXPixels, int expandYPixels, int maxX, int maxY);
 
-  Mat addLabel(Mat input, string label);
+Mat addLabel(Mat input, string label);
 
 #endif // UTILITY_H

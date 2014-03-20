@@ -29,10 +29,10 @@ using namespace std;
 
 struct Valley
 {
-    int startIndex;
-    int endIndex;
-    int width;
-    int pixelsWithin;
+  int startIndex;
+  int endIndex;
+  int width;
+  int pixelsWithin;
 };
 
 enum HistogramDirection { RISING, FALLING, FLAT };

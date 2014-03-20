@@ -37,8 +37,8 @@ struct AlprPlate
 
 struct AlprCoordinate
 {
-    int x;
-    int y;
+  int x;
+  int y;
 };
 
 class AlprResult

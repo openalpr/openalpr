@@ -26,7 +26,8 @@
 #include "Visitor.h"
 #include "Arg.h"
 
-namespace TCLAP {
+namespace TCLAP
+{
 
 /**
  * A Vistor that tells the CmdLine to begin ignoring arguments after
@@ -34,17 +35,20 @@ namespace TCLAP {
  */
 class IgnoreRestVisitor: public Visitor
 {
-	public:
+  public:
 
-		/**
-		 * Constructor.
-		 */
-		IgnoreRestVisitor() : Visitor() {}
+    /**
+     * Constructor.
+     */
+    IgnoreRestVisitor() : Visitor() {}
 
-		/**
-		 * Sets Arg::_ignoreRest.
-		 */
-		void visit() { Arg::beginIgnoring();  }
+    /**
+     * Sets Arg::_ignoreRest.
+     */
+    void visit()
+    {
+      Arg::beginIgnoring();
+    }
 };
 
 }

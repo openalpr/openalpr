@@ -17,39 +17,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
 #include "regiondetector.h"
-
 
 RegionDetector::RegionDetector(Config* config)
 {
   this->config = config;
   // Don't scale.  Can change this in the future (i.e., maximum resolution preference, or some such).
-    this->scale_factor = 1.0f;
+  this->scale_factor = 1.0f;
 
-    // Load either the regular or OpenCL version of the cascade classifier
-    if (config->opencl_enabled)
-    {
-      this->plate_cascade = new ocl::OclCascadeClassifier();
-    }
-    else
-    {
-      this->plate_cascade = new CascadeClassifier();
-    }
+  // Load either the regular or OpenCL version of the cascade classifier
+  if (config->opencl_enabled)
+  {
+    this->plate_cascade = new ocl::OclCascadeClassifier();
+  }
+  else
+  {
+    this->plate_cascade = new CascadeClassifier();
+  }
 
-
-    if( this->plate_cascade->load( config->getCascadeRuntimeDir() + config->country + ".xml" ) )
-    {
-      this->loaded = true;
-    }
-    else
-    {
-      this->loaded = false;
-      printf("--(!)Error loading classifier\n");
-    }
-
-
+  if( this->plate_cascade->load( config->getCascadeRuntimeDir() + config->country + ".xml" ) )
+  {
+    this->loaded = true;
+  }
+  else
+  {
+    this->loaded = false;
+    printf("--(!)Error loading classifier\n");
+  }
 
 }
 
@@ -58,13 +52,10 @@ RegionDetector::~RegionDetector()
   delete this->plate_cascade;
 }
 
-
-
 bool RegionDetector::isLoaded()
 {
   return this->loaded;
 }
-
 
 vector<Rect> RegionDetector::detect(Mat frame)
 {
@@ -76,7 +67,6 @@ vector<Rect> RegionDetector::detect(Mat frame)
 
   return regionsOfInterest;
 }
-
 
 /** @function detectAndDisplay */
 vector<Rect> RegionDetector::doCascade(Mat frame)
@@ -91,44 +81,41 @@ vector<Rect> RegionDetector::doCascade(Mat frame)
   resize(frame, frame, Size(w * this->scale_factor, h * this->scale_factor));
 
   //-- Detect plates
-    timespec startTime;
-    getTime(&startTime);
+  timespec startTime;
+  getTime(&startTime);
 
-    Size minSize(config->minPlateSizeWidthPx * this->scale_factor, config->minPlateSizeHeightPx * this->scale_factor);
-    Size maxSize(w * config->maxPlateWidthPercent * this->scale_factor, h * config->maxPlateHeightPercent * this->scale_factor);
+  Size minSize(config->minPlateSizeWidthPx * this->scale_factor, config->minPlateSizeHeightPx * this->scale_factor);
+  Size maxSize(w * config->maxPlateWidthPercent * this->scale_factor, h * config->maxPlateHeightPercent * this->scale_factor);
 
-    if (config->opencl_enabled)
-    {
-      ocl::oclMat openclFrame(frame);
-      ((ocl::OclCascadeClassifier*) plate_cascade)->detectMultiScale(openclFrame, plates, 1.1, 3, 0, minSize, maxSize);
-    }
-    else
-    {
+  if (config->opencl_enabled)
+  {
+    ocl::oclMat openclFrame(frame);
+    ((ocl::OclCascadeClassifier*) plate_cascade)->detectMultiScale(openclFrame, plates, 1.1, 3, 0, minSize, maxSize);
+  }
+  else
+  {
 
-      plate_cascade->detectMultiScale( frame, plates, 1.1, 3,
-				      0,
-				    //0|CV_HAAR_SCALE_IMAGE,
-				    minSize, maxSize );
-    }
+    plate_cascade->detectMultiScale( frame, plates, 1.1, 3,
+                                     0,
+                                     //0|CV_HAAR_SCALE_IMAGE,
+                                     minSize, maxSize );
+  }
 
+  if (config->debugTiming)
+  {
+    timespec endTime;
+    getTime(&endTime);
+    cout << "LBP Time: " << diffclock(startTime, endTime) << "ms." << endl;
+  }
 
-    if (config->debugTiming)
-    {
-      timespec endTime;
-      getTime(&endTime);
-      cout << "LBP Time: " << diffclock(startTime, endTime) << "ms." << endl;
-    }
+  for( int i = 0; i < plates.size(); i++ )
+  {
+    plates[i].x = plates[i].x / scale_factor;
+    plates[i].y = plates[i].y / scale_factor;
+    plates[i].width = plates[i].width / scale_factor;
+    plates[i].height = plates[i].height / scale_factor;
+  }
 
-
-
-    for( int i = 0; i < plates.size(); i++ )
-    {
-      plates[i].x = plates[i].x / scale_factor;
-      plates[i].y = plates[i].y / scale_factor;
-      plates[i].width = plates[i].width / scale_factor;
-      plates[i].height = plates[i].height / scale_factor;
-    }
-
-    return plates;
+  return plates;
 
 }

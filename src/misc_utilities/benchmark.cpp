@@ -17,12 +17,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
- #include "opencv2/highgui/highgui.hpp"
- #include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 
- #include <iostream>
- #include <fstream>
- #include <stdio.h>
+#include <iostream>
+#include <fstream>
+#include <stdio.h>
 #include <sys/stat.h>
 #include <numeric>      // std::accumulate
 
@@ -34,8 +34,8 @@
 //#include "utility.h"
 #include "support/filesystem.h"
 
- using namespace std;
- using namespace cv;
+using namespace std;
+using namespace cv;
 
 // Given a directory full of lp images (named [statecode]#.png) crop out the alphanumeric characters.
 // These will be used to train the OCR
@@ -44,46 +44,43 @@ void outputStats(vector<double> datapoints);
 
 int main( int argc, const char** argv )
 {
-   string country;
-   string benchmarkName;
-   string inDir;
-   string outDir;
-   Mat frame;
-
+  string country;
+  string benchmarkName;
+  string inDir;
+  string outDir;
+  Mat frame;
 
   //Check if user specify image to process
   if(argc == 5)
   {
-        country = argv[1];
-	benchmarkName = argv[2];
-        inDir = argv[3];
-        outDir = argv[4];
+    country = argv[1];
+    benchmarkName = argv[2];
+    inDir = argv[3];
+    outDir = argv[4];
 
-
-  }else{
-      printf("Use:\n\t%s [country] [benchmark name] [img input dir] [results output dir]\n",argv[0]);
-      printf("\tex: %s us speed ./speed/usimages ./speed\n",argv[0]);
-      printf("\n");
-      printf("\ttest names are: speed, segocr, detection\n\n" );
-      return 0;
   }
-
+  else
+  {
+    printf("Use:\n\t%s [country] [benchmark name] [img input dir] [results output dir]\n",argv[0]);
+    printf("\tex: %s us speed ./speed/usimages ./speed\n",argv[0]);
+    printf("\n");
+    printf("\ttest names are: speed, segocr, detection\n\n" );
+    return 0;
+  }
 
   if (DirectoryExists(inDir.c_str()) == false)
   {
-      printf("Input dir does not exist\n");
-      return 0;
+    printf("Input dir does not exist\n");
+    return 0;
   }
   if (DirectoryExists(outDir.c_str()) == false)
   {
-      printf("Output dir does not exist\n");
-      return 0;
+    printf("Output dir does not exist\n");
+    return 0;
   }
-
 
   vector<string> files = getFilesInDir(inDir.c_str());
   sort( files.begin(), files.end(), stringCompare );
-
 
   if (benchmarkName.compare("segocr") == 0)
   {
@@ -92,55 +89,50 @@ int main( int argc, const char** argv )
 
     OCR* ocr = new OCR(config);
 
-
     for (int i = 0; i< files.size(); i++)
     {
       if (hasEnding(files[i], ".png"))
       {
-	string fullpath = inDir + "/" + files[i];
+        string fullpath = inDir + "/" + files[i];
 
-	frame = imread( fullpath.c_str() );
-	resize(frame, frame, Size(config->ocrImageWidthPx, config->ocrImageHeightPx));
+        frame = imread( fullpath.c_str() );
+        resize(frame, frame, Size(config->ocrImageWidthPx, config->ocrImageHeightPx));
 
-	Rect plateCoords;
-	plateCoords.x = 0;
-	plateCoords.y = 0;
-	plateCoords.width = frame.cols;
-	plateCoords.height = frame.rows;
+        Rect plateCoords;
+        plateCoords.x = 0;
+        plateCoords.y = 0;
+        plateCoords.width = frame.cols;
+        plateCoords.height = frame.rows;
 
-	char statecode[3];
-	statecode[0] = files[i][0];
-	statecode[1] = files[i][1];
-	statecode[2] = '\0';
-	string statecodestr(statecode);
+        char statecode[3];
+        statecode[0] = files[i][0];
+        statecode[1] = files[i][1];
+        statecode[2] = '\0';
+        string statecodestr(statecode);
 
-	CharacterRegion charRegion(frame, config);
+        CharacterRegion charRegion(frame, config);
 
-	if (abs(charRegion.getTopLine().angle) > 4)
-	{
-	  // Rotate image:
-	  Mat rotated(frame.size(), frame.type());
-	  Mat rot_mat( 2, 3, CV_32FC1 );
-	  Point center = Point( frame.cols/2, frame.rows/2 );
+        if (abs(charRegion.getTopLine().angle) > 4)
+        {
+          // Rotate image:
+          Mat rotated(frame.size(), frame.type());
+          Mat rot_mat( 2, 3, CV_32FC1 );
+          Point center = Point( frame.cols/2, frame.rows/2 );
 
-	  rot_mat = getRotationMatrix2D( center, charRegion.getTopLine().angle, 1.0 );
-	  warpAffine( frame, rotated, rot_mat, frame.size() );
+          rot_mat = getRotationMatrix2D( center, charRegion.getTopLine().angle, 1.0 );
+          warpAffine( frame, rotated, rot_mat, frame.size() );
 
-	  rotated.copyTo(frame);
-	}
+          rotated.copyTo(frame);
+        }
 
+        CharacterSegmenter charSegmenter(frame, charRegion.thresholdsInverted(), config);
+        ocr->performOCR(charSegmenter.getThresholds(), charSegmenter.characters);
+        ocr->postProcessor->analyze(statecode, 25);
 
+        cout << files[i] << "," << statecode << "," << ocr->postProcessor->bestChars << endl;
 
-	CharacterSegmenter charSegmenter(frame, charRegion.thresholdsInverted(), config);
-	ocr->performOCR(charSegmenter.getThresholds(), charSegmenter.characters);
-	ocr->postProcessor->analyze(statecode, 25);
-
-	cout << files[i] << "," << statecode << "," << ocr->postProcessor->bestChars << endl;
-
-
-	imshow("Current LP", frame);
-	waitKey(5);
-
+        imshow("Current LP", frame);
+        waitKey(5);
 
       }
 
@@ -158,14 +150,13 @@ int main( int argc, const char** argv )
     {
       if (hasEnding(files[i], ".png"))
       {
-	string fullpath = inDir + "/" + files[i];
-	frame = imread( fullpath.c_str() );
+        string fullpath = inDir + "/" + files[i];
+        frame = imread( fullpath.c_str() );
 
-	vector<Rect> regions = plateDetector.detect(frame);
+        vector<Rect> regions = plateDetector.detect(frame);
 
-	imshow("Current LP", frame);
-	waitKey(5);
-
+        imshow("Current LP", frame);
+        waitKey(5);
 
       }
 
@@ -173,7 +164,7 @@ int main( int argc, const char** argv )
   }
   else if (benchmarkName.compare("speed") == 0)
   {
-      // Benchmarks speed of region detection, plate analysis, and OCR
+    // Benchmarks speed of region detection, plate analysis, and OCR
 
     timespec startTime;
     timespec endTime;
@@ -197,82 +188,78 @@ int main( int argc, const char** argv )
     vector<double> ocrTimes;
     vector<double> postProcessTimes;
 
-
     for (int i = 0; i< files.size(); i++)
     {
       if (hasEnding(files[i], ".png"))
       {
-	cout << "Image: " << files[i] << endl;
+        cout << "Image: " << files[i] << endl;
 
-	string fullpath = inDir + "/" + files[i];
-	frame = imread( fullpath.c_str() );
+        string fullpath = inDir + "/" + files[i];
+        frame = imread( fullpath.c_str() );
 
+        getTime(&startTime);
+        alpr.recognize(frame);
+        getTime(&endTime);
+        double endToEndTime = diffclock(startTime, endTime);
+        cout << " -- End to End recognition time: " << endToEndTime << "ms." << endl;
+        endToEndTimes.push_back(endToEndTime);
 
-	getTime(&startTime);
-	alpr.recognize(frame);
-	getTime(&endTime);
-	double endToEndTime = diffclock(startTime, endTime);
-	cout << " -- End to End recognition time: " << endToEndTime << "ms." << endl;
-	endToEndTimes.push_back(endToEndTime);
+        getTime(&startTime);
+        vector<Rect> regions = plateDetector.detect(frame);
+        getTime(&endTime);
 
-	getTime(&startTime);
-	vector<Rect> regions = plateDetector.detect(frame);
-	getTime(&endTime);
+        double regionDetectionTime = diffclock(startTime, endTime);
+        cout << " -- Region detection time: " << regionDetectionTime << "ms." << endl;
+        regionDetectionTimes.push_back(regionDetectionTime);
 
-	double regionDetectionTime = diffclock(startTime, endTime);
-	cout << " -- Region detection time: " << regionDetectionTime << "ms." << endl;
-	regionDetectionTimes.push_back(regionDetectionTime);
+        for (int z = 0; z < regions.size(); z++)
+        {
+          getTime(&startTime);
+          char temp[5];
+          stateIdentifier.recognize(frame, regions[z], temp);
+          getTime(&endTime);
+          double stateidTime = diffclock(startTime, endTime);
+          cout << "\tRegion " << z << ": State ID time: " << stateidTime << "ms." << endl;
+          stateIdTimes.push_back(stateidTime);
 
-	for (int z = 0; z < regions.size(); z++)
-	{
-	  getTime(&startTime);
-	  char temp[5];
-	  stateIdentifier.recognize(frame, regions[z], temp);
-	  getTime(&endTime);
-	  double stateidTime = diffclock(startTime, endTime);
-	  cout << "\tRegion " << z << ": State ID time: " << stateidTime << "ms." << endl;
-	  stateIdTimes.push_back(stateidTime);
+          getTime(&startTime);
+          LicensePlateCandidate lp(frame, regions[z], &config);
+          lp.recognize();
+          getTime(&endTime);
+          double analysisTime = diffclock(startTime, endTime);
+          cout << "\tRegion " << z << ": Analysis time: " << analysisTime << "ms." << endl;
 
-	  getTime(&startTime);
-	  LicensePlateCandidate lp(frame, regions[z], &config);
-	  lp.recognize();
-	  getTime(&endTime);
-	  double analysisTime = diffclock(startTime, endTime);
-	  cout << "\tRegion " << z << ": Analysis time: " << analysisTime << "ms." << endl;
+          if (lp.confidence > 10)
+          {
+            lpAnalysisPositiveTimes.push_back(analysisTime);
 
-	  if (lp.confidence > 10)
-	  {
-	    lpAnalysisPositiveTimes.push_back(analysisTime);
+            getTime(&startTime);
+            ocr.performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
+            getTime(&endTime);
+            double ocrTime = diffclock(startTime, endTime);
+            cout << "\tRegion " << z << ": OCR time: " << ocrTime << "ms." << endl;
+            ocrTimes.push_back(ocrTime);
 
+            getTime(&startTime);
+            ocr.postProcessor->analyze("", 25);
+            getTime(&endTime);
+            double postProcessTime = diffclock(startTime, endTime);
+            cout << "\tRegion " << z << ": PostProcess time: " << postProcessTime << "ms." << endl;
+            postProcessTimes.push_back(postProcessTime);
+          }
+          else
+          {
+            lpAnalysisNegativeTimes.push_back(analysisTime);
+          }
+        }
 
-	    getTime(&startTime);
-	    ocr.performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
-	    getTime(&endTime);
-	    double ocrTime = diffclock(startTime, endTime);
-	    cout << "\tRegion " << z << ": OCR time: " << ocrTime << "ms." << endl;
-	    ocrTimes.push_back(ocrTime);
-
-	    getTime(&startTime);
-	    ocr.postProcessor->analyze("", 25);
-	    getTime(&endTime);
-	    double postProcessTime = diffclock(startTime, endTime);
-	    cout << "\tRegion " << z << ": PostProcess time: " << postProcessTime << "ms." << endl;
-	    postProcessTimes.push_back(postProcessTime);
-	  }
-	  else
-	  {
-	    lpAnalysisNegativeTimes.push_back(analysisTime);
-	  }
-	}
-
-	waitKey(5);
+        waitKey(5);
 
       }
 
     }
 
     cout << endl << "---------------------" << endl;
-
 
     cout << "End to End Time Statistics:" << endl;
     outputStats(endToEndTimes);
@@ -315,24 +302,23 @@ int main( int argc, const char** argv )
     {
       if (hasEnding(files[i], ".png"))
       {
-	string fullpath = inDir + "/" + files[i];
-	frame = imread( fullpath.c_str() );
+        string fullpath = inDir + "/" + files[i];
+        frame = imread( fullpath.c_str() );
 
-	vector<uchar> buffer;
-	imencode(".bmp", frame, buffer );
+        vector<uchar> buffer;
+        imencode(".bmp", frame, buffer );
 
-	vector<AlprResult> results = alpr.recognize(buffer);
+        vector<AlprResult> results = alpr.recognize(buffer);
 
-	outputdatafile  << files[i] << ": ";
-	for (int z = 0; z < results.size(); z++)
-	{
-	   outputdatafile  << results[z].bestPlate.characters << ", ";
-	}
-	outputdatafile  << endl;
+        outputdatafile  << files[i] << ": ";
+        for (int z = 0; z < results.size(); z++)
+        {
+          outputdatafile  << results[z].bestPlate.characters << ", ";
+        }
+        outputdatafile  << endl;
 
-	imshow("Current LP", frame);
-	waitKey(5);
-
+        imshow("Current LP", frame);
+        waitKey(5);
 
       }
 
@@ -350,7 +336,7 @@ void outputStats(vector<double> datapoints)
 
   std::vector<double> diff(datapoints.size());
   std::transform(datapoints.begin(), datapoints.end(), diff.begin(),
-		std::bind2nd(std::minus<double>(), mean));
+                 std::bind2nd(std::minus<double>(), mean));
   double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
   double stdev = std::sqrt(sq_sum / datapoints.size());
 

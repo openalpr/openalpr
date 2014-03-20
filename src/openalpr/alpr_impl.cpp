@@ -19,7 +19,6 @@
 
 #include "alpr_impl.h"
 
-
 AlprImpl::AlprImpl(const std::string country, const std::string runtimeDir)
 {
   config = new Config(country, runtimeDir);
@@ -39,7 +38,7 @@ AlprImpl::AlprImpl(const std::string country, const std::string runtimeDir)
 
     for (int i = 0; i < platinfo.size(); i++)
     {
-	std::cout << platinfo[i]->platformName << std::endl;
+      std::cout << platinfo[i]->platformName << std::endl;
     }
 
     cv::ocl::DevicesInfo devices;
@@ -68,7 +67,6 @@ AlprImpl::~AlprImpl()
   delete ocr;
 }
 
-
 std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
 {
   timespec startTime;
@@ -76,99 +74,94 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
 
   vector<AlprResult> response;
 
-
   vector<Rect> plateRegions = plateDetector->detect(img);
-
 
   // Recognize.
 
   for (int i = 0; i < plateRegions.size(); i++)
   {
-      timespec platestarttime;
-      getTime(&platestarttime);
+    timespec platestarttime;
+    getTime(&platestarttime);
 
-      LicensePlateCandidate lp(img, plateRegions[i], config);
+    LicensePlateCandidate lp(img, plateRegions[i], config);
 
-      lp.recognize();
+    lp.recognize();
 
+    if (lp.confidence > 10)
+    {
+      AlprResult plateResult;
+      plateResult.region = defaultRegion;
+      plateResult.regionConfidence = 0;
 
-      if (lp.confidence > 10)
+      for (int pointidx = 0; pointidx < 4; pointidx++)
       {
-	AlprResult plateResult;
-	plateResult.region = defaultRegion;
-	plateResult.regionConfidence = 0;
-
-	for (int pointidx = 0; pointidx < 4; pointidx++)
-	{
-	  plateResult.plate_points[pointidx].x = (int) lp.plateCorners[pointidx].x;
-	  plateResult.plate_points[pointidx].y = (int) lp.plateCorners[pointidx].y;
-	}
-
-	if (detectRegion)
-	{
-	  char statecode[4];
-	  plateResult.regionConfidence = stateIdentifier->recognize(img, plateRegions[i], statecode);
-	  if (plateResult.regionConfidence > 0)
-	  {
-	    plateResult.region = statecode;
-	  }
-	}
-
-
-	ocr->performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
-
-	ocr->postProcessor->analyze(plateResult.region, topN);
-
-	//plateResult.characters = ocr->postProcessor->bestChars;
-	const vector<PPResult> ppResults = ocr->postProcessor->getResults();
-
-	int bestPlateIndex = 0;
-
-	for (int pp = 0; pp < ppResults.size(); pp++)
-	{
-	  if (pp >= topN)
-	    break;
-
-	  // Set our "best plate" match to either the first entry, or the first entry with a postprocessor template match
-	  if (bestPlateIndex == 0 && ppResults[pp].matchesTemplate)
-	    bestPlateIndex = pp;
-
-	  if (ppResults[pp].letters.size() >= config->postProcessMinCharacters &&
-	    ppResults[pp].letters.size() <= config->postProcessMaxCharacters)
-	  {
-	    AlprPlate aplate;
-	    aplate.characters = ppResults[pp].letters;
-	    aplate.overall_confidence = ppResults[pp].totalscore;
-	    aplate.matches_template = ppResults[pp].matchesTemplate;
-	    plateResult.topNPlates.push_back(aplate);
-	  }
-	}
-	plateResult.result_count = plateResult.topNPlates.size();
-
-	if (plateResult.topNPlates.size() > 0)
-	  plateResult.bestPlate = plateResult.topNPlates[bestPlateIndex];
-
-	timespec plateEndTime;
-	getTime(&plateEndTime);
-	plateResult.processing_time_ms = diffclock(platestarttime, plateEndTime);
-
-	if (plateResult.result_count > 0)
-	  response.push_back(plateResult);
-
-	if (config->debugGeneral)
-	{
-	  rectangle(img, plateRegions[i], Scalar(0, 255, 0), 2);
-	  for (int z = 0; z < 4; z++)
-	    line(img, lp.plateCorners[z], lp.plateCorners[(z + 1) % 4], Scalar(255,0,255), 2);
-	}
-
-
+        plateResult.plate_points[pointidx].x = (int) lp.plateCorners[pointidx].x;
+        plateResult.plate_points[pointidx].y = (int) lp.plateCorners[pointidx].y;
       }
-      else
+
+      if (detectRegion)
       {
-	if (config->debugGeneral)
-	  rectangle(img, plateRegions[i], Scalar(0, 0, 255), 2);
+        char statecode[4];
+        plateResult.regionConfidence = stateIdentifier->recognize(img, plateRegions[i], statecode);
+        if (plateResult.regionConfidence > 0)
+        {
+          plateResult.region = statecode;
+        }
       }
+
+      ocr->performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
+
+      ocr->postProcessor->analyze(plateResult.region, topN);
+
+      //plateResult.characters = ocr->postProcessor->bestChars;
+      const vector<PPResult> ppResults = ocr->postProcessor->getResults();
+
+      int bestPlateIndex = 0;
+
+      for (int pp = 0; pp < ppResults.size(); pp++)
+      {
+        if (pp >= topN)
+          break;
+
+        // Set our "best plate" match to either the first entry, or the first entry with a postprocessor template match
+        if (bestPlateIndex == 0 && ppResults[pp].matchesTemplate)
+          bestPlateIndex = pp;
+
+        if (ppResults[pp].letters.size() >= config->postProcessMinCharacters &&
+            ppResults[pp].letters.size() <= config->postProcessMaxCharacters)
+        {
+          AlprPlate aplate;
+          aplate.characters = ppResults[pp].letters;
+          aplate.overall_confidence = ppResults[pp].totalscore;
+          aplate.matches_template = ppResults[pp].matchesTemplate;
+          plateResult.topNPlates.push_back(aplate);
+        }
+      }
+      plateResult.result_count = plateResult.topNPlates.size();
+
+      if (plateResult.topNPlates.size() > 0)
+        plateResult.bestPlate = plateResult.topNPlates[bestPlateIndex];
+
+      timespec plateEndTime;
+      getTime(&plateEndTime);
+      plateResult.processing_time_ms = diffclock(platestarttime, plateEndTime);
+
+      if (plateResult.result_count > 0)
+        response.push_back(plateResult);
+
+      if (config->debugGeneral)
+      {
+        rectangle(img, plateRegions[i], Scalar(0, 255, 0), 2);
+        for (int z = 0; z < 4; z++)
+          line(img, lp.plateCorners[z], lp.plateCorners[(z + 1) % 4], Scalar(255,0,255), 2);
+      }
+
+    }
+    else
+    {
+      if (config->debugGeneral)
+        rectangle(img, plateRegions[i], Scalar(0, 0, 255), 2);
+    }
 
   }
 
@@ -210,8 +203,6 @@ string AlprImpl::toJson(const vector< AlprResult > results)
   return response;
 }
 
-
-
 cJSON* AlprImpl::createJsonObj(const AlprResult* result)
 {
   cJSON *root, *coords, *candidates;
@@ -228,7 +219,7 @@ cJSON* AlprImpl::createJsonObj(const AlprResult* result)
   cJSON_AddNumberToObject(root,"processing_time_ms",	result->processing_time_ms);
 
   cJSON_AddItemToObject(root, "coordinates", 		coords=cJSON_CreateArray());
-  for (int i=0;i<4;i++)
+  for (int i=0; i<4; i++)
   {
     cJSON *coords_object;
     coords_object = cJSON_CreateObject();
@@ -237,7 +228,6 @@ cJSON* AlprImpl::createJsonObj(const AlprResult* result)
 
     cJSON_AddItemToArray(coords, coords_object);
   }
-
 
   cJSON_AddItemToObject(root, "candidates", 		candidates=cJSON_CreateArray());
   for (int i = 0; i < result->topNPlates.size(); i++)
@@ -253,7 +243,6 @@ cJSON* AlprImpl::createJsonObj(const AlprResult* result)
 
   return root;
 }
-
 
 void AlprImpl::setDetectRegion(bool detectRegion)
 {

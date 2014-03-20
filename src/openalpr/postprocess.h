@@ -21,13 +21,13 @@
 #ifndef POSTPROCESS_H
 #define POSTPROCESS_H
 
- #include "TRexpp.h"
- #include "constants.h"
- #include "utility.h"
- #include <fstream>
- #include <iostream>
- #include <stdio.h>
- #include <vector>
+#include "TRexpp.h"
+#include "constants.h"
+#include "utility.h"
+#include <fstream>
+#include <iostream>
+#include <stdio.h>
+#include <vector>
 #include "config.h"
 
 using namespace std;
@@ -37,17 +37,17 @@ using namespace std;
 
 struct Letter
 {
-    char letter;
-    int charposition;
-    float totalscore;
-    int occurences;
+  char letter;
+  int charposition;
+  float totalscore;
+  int occurences;
 };
 
 struct PPResult
 {
-    string letters;
-    float totalscore;
-    bool matchesTemplate;
+  string letters;
+  float totalscore;
+  bool matchesTemplate;
 };
 
 
