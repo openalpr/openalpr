@@ -17,8 +17,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <cstdio>
+#include <sstream>
 #include <iostream>
-#include <stdio.h>
+#include <iterator>
+#include <algorithm>
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -49,22 +52,22 @@ int main( int argc, const char** argv )
   std::string country;
   int topn;
 
+  TCLAP::CmdLine cmd("OpenAlpr Command Line Utility", ' ', OPENALPR_VERSION);
+
+  TCLAP::UnlabeledValueArg<std::string>  fileArg( "image_file", "Image containing license plates", false, "", "image_file_path"  );
+
+  TCLAP::ValueArg<std::string> countryCodeArg("c","country","Country code to identify (either us for USA or eu for Europe).  Default=us",false, "us" ,"country_code");
+  TCLAP::ValueArg<int> seekToMsArg("","seek","Seek to the specied millisecond in a video file. Default=0",false, 0 ,"integer_ms");
+  TCLAP::ValueArg<std::string> runtimeDirArg("r","runtime_dir","Path to the OpenAlpr runtime data directory",false, "" ,"runtime_dir");
+  TCLAP::ValueArg<std::string> templateRegionArg("t","template_region","Attempt to match the plate number against a region template (e.g., md for Maryland, ca for California)",false, "" ,"region code");
+  TCLAP::ValueArg<int> topNArg("n","topn","Max number of possible plate numbers to return.  Default=10",false, 10 ,"topN");
+
+  TCLAP::SwitchArg jsonSwitch("j","json","Output recognition results in JSON format.  Default=off", cmd, false);
+  TCLAP::SwitchArg detectRegionSwitch("d","detect_region","Attempt to detect the region of the plate image.  Default=off", cmd, false);
+  TCLAP::SwitchArg clockSwitch("","clock","Measure/print the total time to process image and all plates.  Default=off", cmd, false);
+
   try
   {
-    TCLAP::CmdLine cmd("OpenAlpr Command Line Utility", ' ', OPENALPR_VERSION);
-
-    TCLAP::UnlabeledValueArg<std::string>  fileArg( "image_file", "Image containing license plates", true, "", "image_file_path"  );
-
-    TCLAP::ValueArg<std::string> countryCodeArg("c","country","Country code to identify (either us for USA or eu for Europe).  Default=us",false, "us" ,"country_code");
-    TCLAP::ValueArg<int> seekToMsArg("","seek","Seek to the specied millisecond in a video file. Default=0",false, 0 ,"integer_ms");
-    TCLAP::ValueArg<std::string> runtimeDirArg("r","runtime_dir","Path to the OpenAlpr runtime data directory",false, "" ,"runtime_dir");
-    TCLAP::ValueArg<std::string> templateRegionArg("t","template_region","Attempt to match the plate number against a region template (e.g., md for Maryland, ca for California)",false, "" ,"region code");
-    TCLAP::ValueArg<int> topNArg("n","topn","Max number of possible plate numbers to return.  Default=10",false, 10 ,"topN");
-
-    TCLAP::SwitchArg jsonSwitch("j","json","Output recognition results in JSON format.  Default=off", cmd, false);
-    TCLAP::SwitchArg detectRegionSwitch("d","detect_region","Attempt to detect the region of the plate image.  Default=off", cmd, false);
-    TCLAP::SwitchArg clockSwitch("","clock","Measure/print the total time to process image and all plates.  Default=off", cmd, false);
-
     cmd.add( fileArg );
     cmd.add( countryCodeArg );
     cmd.add( seekToMsArg );
@@ -108,7 +111,42 @@ int main( int argc, const char** argv )
     return 1;
   }
 
-  if (filename == "webcam")
+  if (filename.empty())
+  {
+    std::string line;
+    while (std::getline(std::cin, line))
+    {
+      std::istringstream is(line);
+      std::vector<std::string> args;
+      args.push_back("tmp");
+      args.insert(args.end(), std::istream_iterator<std::string>(is), std::istream_iterator<std::string>());
+      try
+      {
+        cmd.reset();
+        cmd.parse(args);
+
+        filename = fileArg.getValue();
+        outputJson = jsonSwitch.getValue();
+        detectRegion = detectRegionSwitch.getValue();
+        templateRegion = templateRegionArg.getValue();
+        topn = topNArg.getValue();
+
+        alpr.setTopN(topn);
+        if (detectRegion)
+          alpr.setDetectRegion(detectRegion);
+        if (templateRegion.empty() == false)
+          alpr.setDefaultRegion(templateRegion);
+
+        frame = cv::imread( filename );
+        detectandshow( &alpr, frame, "", outputJson);
+      }
+      catch (TCLAP::ArgException &e)    // catch any exceptions
+      {
+        std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+      }
+    }
+  }
+  else if (filename == "webcam")
   {
     int framenum = 0;
     cv::VideoCapture cap(0);
