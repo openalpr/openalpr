@@ -363,7 +363,7 @@ RecognitionResult FeatureMatcher::recognize( const Mat& queryImg, bool drawOnIma
       drawKeypoints(  queryImg, queryKeypoints, tmpImg, CV_RGB(185, 0, 0), DrawMatchesFlags::DEFAULT );
       drawKeypoints(  tmpImg, positiveMatches, *outputImage, CV_RGB(0, 255, 0), DrawMatchesFlags::DEFAULT );
 
-      if (result.haswinner == true)
+      if (result.haswinner)
       {
         std::ostringstream out;
         out << result.winner << " (" << result.confidence << "%)";

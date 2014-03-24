@@ -424,8 +424,7 @@ vector<Rect> CharacterSegmenter::get1DHits(Mat img, int yOffset)
       curSegmentLength++;
     }
 
-    if ((isOn == false && onSegment == true) ||
-        (col == img.cols - 1 && onSegment == true))
+    if (onSegment && (isOn == false || (col == img.cols - 1)))
     {
       // A segment just ended or we're at the very end of the row and we're on a segment
       Point topLeft = Point(col - curSegmentLength, top.getPointAt(col - curSegmentLength) - 1);
@@ -1054,8 +1053,7 @@ int CharacterSegmenter::getLongestBlobLengthBetweenLines(Mat img, int col)
       wasbetweenLines = true;
     }
 
-    if ((isOn == false && onSegment == true) ||
-        (row == img.rows - 1 && onSegment == true))
+    if (onSegment && (isOn == false || (row == img.rows - 1)))
     {
       if (wasbetweenLines && curSegmentLength > longestBlobLength)
         longestBlobLength = curSegmentLength;

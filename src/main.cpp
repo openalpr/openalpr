@@ -99,10 +99,8 @@ int main( int argc, const char** argv )
   if (detectRegion)
     alpr.setDetectRegion(detectRegion);
 
-  if (strcmp(templateRegion.c_str(), "") != 0)
-  {
+  if (templateRegion.empty() == false)
     alpr.setDefaultRegion(templateRegion);
-  }
 
   if (alpr.isLoaded() == false)
   {
@@ -110,7 +108,7 @@ int main( int argc, const char** argv )
     return 1;
   }
 
-  if (strcmp(filename.c_str(), "webcam") == 0)
+  if (filename == "webcam")
   {
     int framenum = 0;
     cv::VideoCapture cap(0);
@@ -120,7 +118,7 @@ int main( int argc, const char** argv )
       return 1;
     }
 
-    while (cap.read(frame) == true)
+    while (cap.read(frame))
     {
       detectandshow(&alpr, frame, "", outputJson);
       cv::waitKey(1);
@@ -137,9 +135,9 @@ int main( int argc, const char** argv )
       cap.open(filename);
       cap.set(CV_CAP_PROP_POS_MSEC, seektoms);
 
-      while (cap.read(frame) == true)
+      while (cap.read(frame))
       {
-        if (SAVE_LAST_VIDEO_STILL == true)
+        if (SAVE_LAST_VIDEO_STILL)
         {
           cv::imwrite(LAST_VIDEO_STILL_LOCATION, frame);
         }

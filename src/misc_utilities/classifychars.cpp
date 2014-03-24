@@ -279,7 +279,7 @@ void showDashboard(vector<Mat> images, vector<bool> selectedImages, int selected
     {
       rectangle(imgCopy, Point(1,1), Point(imgCopy.size().width - 1, imgCopy.size().height -1), Scalar(0, 255, 0), 1);
     }
-    if (selectedImages[i] == true)
+    if (selectedImages[i])
     {
       rectangle(imgCopy, Point(2,2), Point(imgCopy.size().width - 2, imgCopy.size().height -2), Scalar(255, 0, 0), 1);
     }

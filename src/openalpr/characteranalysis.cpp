@@ -651,7 +651,7 @@ vector< bool > CharacterAnalysis::filterContourHoles(vector< vector< Point > > c
 
     int parentIndex = hierarchy[i][3];
 
-    if (parentIndex >= 0 && goodIndices[parentIndex] == true)
+    if (parentIndex >= 0 && goodIndices[parentIndex])
     {
       // this contour is a child of an already identified contour.  REMOVE it
       if (this->config->debugCharAnalysis)
