@@ -45,7 +45,6 @@ FeatureMatcher::~FeatureMatcher()
   descriptorMatcher.release();
   detector.release();
   extractor.release();
-
 }
 
 bool FeatureMatcher::isLoaded()
@@ -78,7 +77,6 @@ void FeatureMatcher::surfStyleMatching( const Mat& queryDescriptors, vector<KeyP
 
 void FeatureMatcher::_surfStyleMatching(const Mat& queryDescriptors, vector<vector<DMatch> > matchesKnn, vector<DMatch>& matches12)
 {
-
   //objectMatches.clear();
   //objectMatches.resize(objectIds.size());
   //cout << "starting matcher" << matchesKnn.size() << endl;
@@ -90,7 +88,6 @@ void FeatureMatcher::_surfStyleMatching(const Mat& queryDescriptors, vector<vect
     // Check to make sure we have 2 matches.  I think this is always the case, but it doesn't hurt to be sure
     if (matchesKnn[descInd].size() > 1)
     {
-
       // Next throw out matches with a crappy score
       // Ignore... already handled by the radiusMatch
       //if (matchesKnn[descInd][0].distance < MAX_DISTANCE_TO_MATCH)
@@ -140,19 +137,15 @@ void FeatureMatcher::_surfStyleMatching(const Mat& queryDescriptors, vector<vect
 
     //for (unsigned int first_index = 0; first_index < matches.size(); ++first_index)
     //{
-
     //matches12.push_back(match);
     //}
-
   }
-
 }
 
 // Compares the matches keypoints for parallel lines.  Removes matches that are criss-crossing too much
 // We assume that license plates won't be upside-down or backwards.  So expect lines to be closely parallel
 void FeatureMatcher::crisscrossFiltering(const vector<KeyPoint> queryKeypoints, const vector<DMatch> inputMatches, vector<DMatch> &outputMatches)
 {
-
   Rect crissCrossAreaVertical(0, 0, config->stateIdImageWidthPx, config->stateIdimageHeightPx * 2);
   Rect crissCrossAreaHorizontal(0, 0, config->stateIdImageWidthPx * 2, config->stateIdimageHeightPx);
 
@@ -222,7 +215,6 @@ void FeatureMatcher::crisscrossFiltering(const vector<KeyPoint> queryKeypoints, 
         hlines.erase(hlines.begin() + mostIntersectionsIndex);
         matchIdx.erase(matchIdx.begin() + mostIntersectionsIndex);
       }
-
     }
 
     // Push the non-crisscrosses back on the list
@@ -231,7 +223,6 @@ void FeatureMatcher::crisscrossFiltering(const vector<KeyPoint> queryKeypoints, 
       outputMatches.push_back(matchesForOnePlate[matchIdx[j]]);
     }
   }
-
 }
 
 // Returns true if successful, false otherwise
@@ -276,7 +267,6 @@ bool FeatureMatcher::loadRecognitionSet(string country)
         trainImages.push_back(descriptors);
         trainingImgKeypoints.push_back(keypoints);
       }
-
     }
 
     this->descriptorMatcher->add(trainImages);
@@ -286,7 +276,6 @@ bool FeatureMatcher::loadRecognitionSet(string country)
   }
 
   return false;
-
 }
 
 RecognitionResult FeatureMatcher::recognize( const Mat& queryImg, bool drawOnImage, Mat* outputImage,
@@ -376,7 +365,6 @@ RecognitionResult FeatureMatcher::recognize( const Mat& queryImg, bool drawOnIma
 
       if (result.haswinner == true)
       {
-
         std::ostringstream out;
         out << result.winner << " (" << result.confidence << "%)";
 
@@ -384,19 +372,15 @@ RecognitionResult FeatureMatcher::recognize( const Mat& queryImg, bool drawOnIma
         //putText(*outputImage, out.str(), Point(15, 27), FONT_HERSHEY_DUPLEX, 1.1, CV_RGB(0, 0, 0), 2);
       }
     }
-
   }
 
   if (this->config->debugStateId)
   {
-
     for (int i = 0; i < billMapping.size(); i++)
     {
       cout << billMapping[i] << " : " << bill_match_counts[i] << endl;
     }
-
   }
 
   return result;
-
 }

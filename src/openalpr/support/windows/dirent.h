@@ -212,11 +212,9 @@
 /* Return number of bytes needed to store d_namlen */
 #define _D_ALLOC_NAMLEN(p) (PATH_MAX + 1)
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 /* Wide-character version */
 struct _wdirent
@@ -244,7 +242,6 @@ static struct _wdirent *_wreaddir (_WDIR *dirp);
 static int _wclosedir (_WDIR *dirp);
 static void _wrewinddir (_WDIR* dirp);
 
-
 /* For compatibility with Symbian */
 #define wdirent _wdirent
 #define WDIR _WDIR
@@ -252,7 +249,6 @@ static void _wrewinddir (_WDIR* dirp);
 #define wreaddir _wreaddir
 #define wclosedir _wclosedir
 #define wrewinddir _wrewinddir
-
 
 /* Multi-byte character versions */
 struct dirent
@@ -276,7 +272,6 @@ static DIR *opendir (const char *dirname);
 static struct dirent *readdir (DIR *dirp);
 static int closedir (DIR *dirp);
 static void rewinddir (DIR* dirp);
-
 
 /* Internal utility functions */
 static WIN32_FIND_DATAW *dirent_first (_WDIR *dirp);
@@ -872,7 +867,6 @@ dirent_set_errno(
   errno = error;
 #endif
 }
-
 
 #ifdef __cplusplus
 }

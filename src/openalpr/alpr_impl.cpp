@@ -32,7 +32,6 @@ AlprImpl::AlprImpl(const std::string country, const std::string runtimeDir)
 
   if (config->opencl_enabled)
   {
-
     cv::ocl::PlatformsInfo platinfo;
     cv::ocl::getOpenCLPlatforms(platinfo);
 
@@ -155,14 +154,12 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
         for (int z = 0; z < 4; z++)
           line(img, lp.plateCorners[z], lp.plateCorners[(z + 1) % 4], Scalar(255,0,255), 2);
       }
-
     }
     else
     {
       if (config->debugGeneral)
         rectangle(img, plateRegions[i], Scalar(0, 0, 255), 2);
     }
-
   }
 
   if (config->debugTiming)

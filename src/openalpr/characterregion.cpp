@@ -96,7 +96,6 @@ CharacterRegion::CharacterRegion(Mat img, Config* config)
 
   if (charAnalysis->linePolygon.size() > 0)
   {
-
     int confidenceDrainers = 0;
     int charSegmentCount = charAnalysis->bestCharSegmentsCount;
     if (charSegmentCount == 1)
@@ -114,7 +113,6 @@ CharacterRegion::CharacterRegion(Mat img, Config* config)
       this->confidence=1;
     else
       this->confidence = 100 - confidenceDrainers;
-
   }
 
   if (config->debugTiming)
@@ -123,7 +121,6 @@ CharacterRegion::CharacterRegion(Mat img, Config* config)
     getTime(&endTime);
     cout << "Character Region Time: " << diffclock(startTime, endTime) << "ms." << endl;
   }
-
 }
 
 CharacterRegion::~CharacterRegion()

@@ -21,7 +21,6 @@
 
 CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* config)
 {
-
   this->config = config;
 
   this->confidence = 0;
@@ -52,7 +51,6 @@ CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* con
 
   if (this->config->debugCharSegmenter)
   {
-
     Mat img_contours(charAnalysis->bestThreshold.size(), CV_8U);
     charAnalysis->bestThreshold.copyTo(img_contours);
     cvtColor(img_contours, img_contours, CV_GRAY2RGB);
@@ -118,7 +116,6 @@ CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* con
     vector<Rect> allBoxes;
     for (int i = 0; i < charAnalysis->allContours.size(); i++)
     {
-
       Mat histogramMask = Mat::zeros(charAnalysis->thresholds[i].size(), CV_8U);
 
       fillConvexPoly(histogramMask, charAnalysis->linePolygon.data(), charAnalysis->linePolygon.size(), Scalar(255,255,255));
@@ -215,7 +212,6 @@ CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* con
 
     if (this->config->debugCharSegmenter)
     {
-
       Mat imgDash = drawImageDashboard(charAnalysis->thresholds, CV_8U, 3);
       displayImage(config, "Segmentation after cleaning", imgDash);
 
@@ -257,7 +253,6 @@ vector<Rect> CharacterSegmenter::getHistogramBoxes(VerticalHistogram histogram, 
 
   for (int i = 0; i < allBoxes.size(); i++)
   {
-
     if (allBoxes[i].width >= config->segmentationMinBoxWidthPx && allBoxes[i].width <= MAX_SEGMENT_WIDTH &&
         allBoxes[i].height > MIN_HISTOGRAM_HEIGHT )
     {
@@ -292,7 +287,6 @@ vector<Rect> CharacterSegmenter::getHistogramBoxes(VerticalHistogram histogram, 
         charBoxes.push_back(Rect(topLeft, allBoxes[i].br()) );
       }
     }
-
   }
 
   return charBoxes;
@@ -300,7 +294,6 @@ vector<Rect> CharacterSegmenter::getHistogramBoxes(VerticalHistogram histogram, 
 
 vector<Rect> CharacterSegmenter::getBestCharBoxes(Mat img, vector<Rect> charBoxes, float avgCharWidth)
 {
-
   float MAX_SEGMENT_WIDTH = avgCharWidth * 1.55;
 
   // This histogram is based on how many char boxes (from ALL of the many thresholded images) are covering each column
@@ -410,7 +403,6 @@ vector<Rect> CharacterSegmenter::getBestCharBoxes(Mat img, vector<Rect> charBoxe
 
     this->imgDbgGeneral.push_back(addLabel(histoImg, "All Histograms"));
     this->imgDbgGeneral.push_back(addLabel(imgBestBoxes, "Best Boxes"));
-
   }
 
   return bestBoxes;
@@ -443,7 +435,6 @@ vector<Rect> CharacterSegmenter::get1DHits(Mat img, int yOffset)
       onSegment = false;
       curSegmentLength = 0;
     }
-
   }
 
   return hits;
@@ -456,7 +447,6 @@ void CharacterSegmenter::removeSmallContours(vector<Mat> thresholds, vector<vect
 
   for (int i = 0; i < thresholds.size(); i++)
   {
-
     for (int c = 0; c < allContours[i].size(); c++)
     {
       if (allContours[i][c].size() == 0)
@@ -469,7 +459,6 @@ void CharacterSegmenter::removeSmallContours(vector<Mat> thresholds, vector<vect
         drawContours(thresholds[i], allContours[i], c, Scalar(0, 0, 0), -1);
         continue;
       }
-
     }
   }
 }
@@ -513,7 +502,6 @@ vector<Rect> CharacterSegmenter::combineCloseBoxes( vector<Rect> charBoxes, floa
     {
       newCharBoxes.push_back(charBoxes[i]);
     }
-
   }
 
   return newCharBoxes;
@@ -577,14 +565,12 @@ void CharacterSegmenter::cleanCharRegions(vector<Mat> thresholds, vector<Rect> c
             tallestContourHeight = r.height;
 
           totalArea += contourArea(contours[c]);
-
         }
         //else if (r.height > tallestContourHeight)
         //{
         //  tallestContourIndex = c;
         //  tallestContourHeight = h;
         //}
-
       }
 
       if (totalArea < MIN_CONTOUR_AREA)
@@ -612,7 +598,6 @@ void CharacterSegmenter::cleanCharRegions(vector<Mat> thresholds, vector<Rect> c
         }
         rectangle(thresholds[i], charRegions[j], Scalar(0, 0, 0), -1);
       }
-
     }
 
     Mat closureElement = getStructuringElement( 1,
@@ -633,7 +618,6 @@ void CharacterSegmenter::cleanCharRegions(vector<Mat> thresholds, vector<Rect> c
       line(thresholds[i], Point(charRegions[j].x + charRegions[j].width + 1, charRegions[j].y), Point(charRegions[j].x + charRegions[j].width + 1, charRegions[j].y + charRegions[j].height), Scalar(0, 0, 0));
     }
   }
-
 }
 
 void CharacterSegmenter::cleanBasedOnColor(vector<Mat> thresholds, Mat colorMask, vector<Rect> charRegions)
@@ -644,10 +628,8 @@ void CharacterSegmenter::cleanBasedOnColor(vector<Mat> thresholds, Mat colorMask
 
   for (int i = 0; i < thresholds.size(); i++)
   {
-
     for (int j = 0; j < charRegions.size(); j++)
     {
-
       Mat boxChar = Mat::zeros(thresholds[i].size(), CV_8U);
       rectangle(boxChar, charRegions[j], Scalar(255,255,255), CV_FILLED);
 
@@ -687,7 +669,6 @@ void CharacterSegmenter::cleanBasedOnColor(vector<Mat> thresholds, Mat colorMask
         }
       }
     }
-
   }
 }
 
@@ -733,7 +714,6 @@ vector<Rect> CharacterSegmenter::filterMostlyEmptyBoxes(vector<Mat> thresholds, 
 
   for (int i = 0; i < thresholds.size(); i++)
   {
-
     for (int j = 0; j < charRegions.size(); j++)
     {
       //float minArea = charRegions[j].area() * MIN_AREA_PERCENT;
@@ -755,7 +735,6 @@ vector<Rect> CharacterSegmenter::filterMostlyEmptyBoxes(vector<Mat> thresholds, 
 
         for (int z = 0; z < contours[c].size(); z++)
           allPointsInBox.push_back(contours[c][z]);
-
       }
 
       float height = 0;
@@ -772,9 +751,7 @@ vector<Rect> CharacterSegmenter::filterMostlyEmptyBoxes(vector<Mat> thresholds, 
       {
         drawX(imgDbgCleanStages[i], charRegions[j], COLOR_DEBUG_EMPTYFILTER, 3);
       }
-
     }
-
   }
 
   vector<Rect> newCharRegions;
@@ -809,7 +786,6 @@ vector<Rect> CharacterSegmenter::filterMostlyEmptyBoxes(vector<Mat> thresholds, 
 
           drawX(imgDbgCleanStages[z], charRegions[i], COLOR_DEBUG_EMPTYFILTER, 1);
         }
-
       }
     }
 
@@ -879,7 +855,6 @@ void CharacterSegmenter::filterEdgeBoxes(vector<Mat> thresholds, const vector<Re
     int col = charRegions[0].x + charRegions[0].width;
     while (col >= 0)
     {
-
       int rowLength = getLongestBlobLengthBetweenLines(rotated, col);
 
       if (rowLength > MIN_CONNECTED_EDGE_PIXELS)
@@ -894,7 +869,6 @@ void CharacterSegmenter::filterEdgeBoxes(vector<Mat> thresholds, const vector<Re
     col = charRegions[charRegions.size() - 1].x;
     while (col < rotated.cols)
     {
-
       int rowLength = getLongestBlobLengthBetweenLines(rotated, col);
 
       if (rowLength > MIN_CONNECTED_EDGE_PIXELS)
@@ -909,7 +883,6 @@ void CharacterSegmenter::filterEdgeBoxes(vector<Mat> thresholds, const vector<Re
       leftEdges.push_back(leftEdgeX);
     if (rightEdgeX != thresholds[i].cols)
       rightEdges.push_back(rightEdgeX);
-
   }
 
   int leftEdge = 0;
@@ -1032,7 +1005,6 @@ void CharacterSegmenter::filterEdgeBoxes(vector<Mat> thresholds, const vector<Re
     // for now, just mask the whole thing
     if (this->debug)
     {
-
       rectangle(imgDbgCleanStages[i], charRegions[boxidx], COLOR_DEBUG_EDGE, 2);
       cout << "Edge Filter: threshold " << i << " box " << boxidx << endl;
     }
@@ -1045,12 +1017,10 @@ void CharacterSegmenter::filterEdgeBoxes(vector<Mat> thresholds, const vector<Re
       }
   }
   */
-
 }
 
 int CharacterSegmenter::getLongestBlobLengthBetweenLines(Mat img, int col)
 {
-
   int longestBlobLength = 0;
 
   bool onSegment = false;
@@ -1093,7 +1063,6 @@ int CharacterSegmenter::getLongestBlobLengthBetweenLines(Mat img, int col)
       isbetweenLines = false;
       curSegmentLength = 0;
     }
-
   }
 
   return longestBlobLength;
@@ -1145,7 +1114,6 @@ int CharacterSegmenter::isSkinnyLineInsideBox(Mat threshold, Rect box, vector<ve
 
     if (tallestContourIdx != -1)
     {
-
       //cout << "Edge Filter: " << tallestContourHeight << " -- " << avgCharHeight << endl;
       if (tallestContourHeight >= avgCharHeight * 0.9 &&
           ((tallestContourWidth < config->segmentationMinBoxWidthPx) || (tallestContourArea < avgCharWidth * avgCharHeight * 0.1)))
@@ -1162,7 +1130,6 @@ int CharacterSegmenter::isSkinnyLineInsideBox(Mat threshold, Rect box, vector<ve
 
 Mat CharacterSegmenter::getCharBoxMask(Mat img_threshold, vector<Rect> charBoxes)
 {
-
   Mat mask = Mat::zeros(img_threshold.size(), CV_8U);
   for (int i = 0; i < charBoxes.size(); i++)
     rectangle(mask, charBoxes[i], Scalar(255, 255, 255), -1);

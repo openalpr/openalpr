@@ -21,7 +21,6 @@
 
 ColorFilter::ColorFilter(Mat image, Mat characterMask, Config* config)
 {
-
   timespec startTime;
   getTime(&startTime);
 
@@ -54,7 +53,6 @@ ColorFilter::ColorFilter(Mat image, Mat characterMask, Config* config)
 
 ColorFilter::~ColorFilter()
 {
-
 }
 
 bool ColorFilter::imageIsGrayscale(Mat image)
@@ -163,7 +161,6 @@ void ColorFilter::findCharColors()
     hStdDevs.push_back(stddev[0]);
     sStdDevs.push_back(stddev[1]);
     vStdDevs.push_back(stddev[2]);
-
   }
 
   if (hMeans.size() == 0)
@@ -362,7 +359,6 @@ void ColorFilter::findCharColors()
     Mat dashboard = drawImageDashboard(debugImagesSet, imgDebugHueOnly.type(), 3);
     displayImage(config, "Color Filter Images", dashboard);
   }
-
 }
 
 // Goes through an array of values, picks the winner based on the highest percentage of other values that are within the maxValDifference

@@ -71,7 +71,6 @@ int clock_gettime(int X, timespec *tv)
 void getTime(timespec* time)
 {
   clock_gettime(0, time);
-
 }
 double diffclock(timespec time1,timespec time2)
 {
@@ -101,7 +100,6 @@ timespec diff(timespec start, timespec end)
 
 void getTime(timespec* time)
 {
-
 #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
   clock_serv_t cclock;
   mach_timespec_t mts;
@@ -113,16 +111,13 @@ void getTime(timespec* time)
 #else
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, time);
 #endif
-
 }
 double diffclock(timespec time1,timespec time2)
 {
-
   timespec delta = diff(time1,time2);
   double milliseconds = (delta.tv_sec * 1000) +  (((double) delta.tv_nsec) / 1000000.0);
 
   return milliseconds;
-
 }
 
 timespec diff(timespec start, timespec end)

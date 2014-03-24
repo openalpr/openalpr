@@ -22,7 +22,6 @@
 VerticalHistogram::VerticalHistogram(Mat inputImage, Mat mask)
 {
   analyzeImage(inputImage, mask);
-
 }
 
 VerticalHistogram::~VerticalHistogram()
@@ -46,7 +45,6 @@ void VerticalHistogram::analyzeImage(Mat inputImage, Mat mask)
 
     for (int row = 0; row < inputImage.rows; row++)
     {
-
       if (inputImage.at<uchar>(row, col) > 0 && mask.at<uchar>(row, col) > 0)
         columnCount++;
     }
@@ -60,9 +58,7 @@ void VerticalHistogram::analyzeImage(Mat inputImage, Mat mask)
 
     for (; columnCount > 0; columnCount--)
       histoImg.at<uchar>(inputImage.rows - columnCount, col) = 255;
-
   }
-
 }
 
 int VerticalHistogram::getLocalMinimum(int leftX, int rightX)
@@ -127,7 +123,6 @@ void VerticalHistogram::findValleys()
         relativePeakHeight = colHeights[i];
 
       prevDirection = FLAT;
-
     }
     else
     {
@@ -137,14 +132,11 @@ void VerticalHistogram::findValleys()
 
       if ((prevDirection == FALLING || prevDirection == FLAT) && direction == RISING)
       {
-
       }
       else if ((prevDirection == FALLING || prevDirection == FLAT) && direction == RISING)
       {
-
       }
     }
-
   }
 }
 

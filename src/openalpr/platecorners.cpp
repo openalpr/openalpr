@@ -47,7 +47,6 @@ PlateCorners::PlateCorners(Mat inputImage, PlateLines* plateLines, CharacterRegi
 
 PlateCorners::~PlateCorners()
 {
-
 }
 
 vector<Point> PlateCorners::findPlateCorners()
@@ -69,7 +68,6 @@ vector<Point> PlateCorners::findPlateCorners()
       if (h1 == h2 && h1 != NO_LINE) continue;
 
       this->scoreHorizontals(h1, h2);
-
     }
   }
 
@@ -86,7 +84,6 @@ vector<Point> PlateCorners::findPlateCorners()
 
   if (this->config->debugPlateCorners)
   {
-
     cout << "Drawing debug stuff..." << endl;
 
     Mat imgCorners = Mat(inputImage.size(), inputImage.type());
@@ -100,7 +97,6 @@ vector<Point> PlateCorners::findPlateCorners()
     line(imgCorners, this->bestLeft.p1, this->bestLeft.p2, Scalar(255, 0, 0), 1, CV_AA);
 
     displayImage(config, "Winning top/bottom Boundaries", imgCorners);
-
   }
 
   // Check if a left/right edge has been established.
@@ -129,7 +125,6 @@ vector<Point> PlateCorners::findPlateCorners()
 
 void PlateCorners::scoreVerticals(int v1, int v2)
 {
-
   float score = 0;	// Lower is better
 
   LineSegment left;
@@ -237,13 +232,11 @@ void PlateCorners::scoreVerticals(int v1, int v2)
     bestLeft = LineSegment(left.p1.x, left.p1.y, left.p2.x, left.p2.y);
     bestRight = LineSegment(right.p1.x, right.p1.y, right.p2.x, right.p2.y);
   }
-
 }
 // Score a collection of lines as a possible license plate region.
 // If any segments are missing, extrapolate the missing pieces
 void PlateCorners::scoreHorizontals(int h1, int h2)
 {
-
   //if (this->debug)
   //    cout << "PlateCorners::scorePlate" << endl;
 
@@ -400,5 +393,4 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
     bestTop = LineSegment(top.p1.x, top.p1.y, top.p2.x, top.p2.y);
     bestBottom = LineSegment(bottom.p1.x, bottom.p1.y, bottom.p2.x, bottom.p2.y);
   }
-
 }

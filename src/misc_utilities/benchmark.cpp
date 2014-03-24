@@ -57,7 +57,6 @@ int main( int argc, const char** argv )
     benchmarkName = argv[2];
     inDir = argv[3];
     outDir = argv[4];
-
   }
   else
   {
@@ -133,9 +132,7 @@ int main( int argc, const char** argv )
 
         imshow("Current LP", frame);
         waitKey(5);
-
       }
-
     }
 
     delete config;
@@ -157,9 +154,7 @@ int main( int argc, const char** argv )
 
         imshow("Current LP", frame);
         waitKey(5);
-
       }
-
     }
   }
   else if (benchmarkName.compare("speed") == 0)
@@ -254,9 +249,7 @@ int main( int argc, const char** argv )
         }
 
         waitKey(5);
-
       }
-
     }
 
     cout << endl << "---------------------" << endl;
@@ -319,14 +312,11 @@ int main( int argc, const char** argv )
 
         imshow("Current LP", frame);
         waitKey(5);
-
       }
-
     }
 
     outputdatafile.close();
   }
-
 }
 
 void outputStats(vector<double> datapoints)
@@ -341,5 +331,4 @@ void outputStats(vector<double> datapoints)
   double stdev = std::sqrt(sq_sum / datapoints.size());
 
   cout << "\t" << datapoints.size() << " samples, avg: " << mean << "ms,  stdev: " << stdev << endl;
-
 }

@@ -17,8 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
 #ifndef CHARACTERANALYSIS_H
 #define CHARACTERANALYSIS_H
 
@@ -29,7 +27,6 @@
 
 using namespace cv;
 using namespace std;
-
 
 class CharacterAnalysis
 {
@@ -68,15 +65,12 @@ class CharacterAnalysis
 
     Mat getCharacterMask();
 
-
-
   private:
     Config* config;
 
     Mat img_gray;
 
     Mat findOuterBoxMask( );
-
 
     bool isPlateInverted();
     vector<bool> filter(Mat img, vector<vector<Point> > contours, vector<Vec4i> hierarchy);
@@ -94,7 +88,6 @@ class CharacterAnalysis
     bool verifySize(Mat r, float minHeightPx, float maxHeightPx);
 
     int getGoodIndicesCount(vector<bool> goodIndices);
-
 
 };
 

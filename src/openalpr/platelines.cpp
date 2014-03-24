@@ -26,12 +26,10 @@ PlateLines::PlateLines(Config* config)
 
   if (debug)
     cout << "PlateLines constructor" << endl;
-
 }
 
 PlateLines::~PlateLines()
 {
-
 }
 
 void PlateLines::processImage(Mat inputImage, float sensitivity)
@@ -150,13 +148,11 @@ void PlateLines::processImage(Mat inputImage, float sensitivity)
        //minEnclosingCircle( (Mat)contours_poly[i], center[i], radius[i] );
      }
   */
-
 }
 
 /*
 vector<LineSegment> PlateLines::getLines(Mat edges, bool vertical)
 {
-
   vector<LineSegment> filteredLines;
 
   int sensitivity;
@@ -169,7 +165,6 @@ vector<LineSegment> PlateLines::getLines(Mat edges, bool vertical)
 
   for( size_t i = 0; i < lsegs.size(); i++ )
   {
-
      if (vertical)
      {
 	LineSegment candidate;
@@ -213,7 +208,6 @@ vector<LineSegment> PlateLines::getLines(Mat edges, bool vertical)
 
     for( size_t i = 0; i < filteredLines.size(); i++ )
     {
-
       line( debugImg, filteredLines[i].p1, filteredLines[i].p2, Scalar(0,0,255), 1, CV_AA);
     }
     if (vertical)
@@ -281,7 +275,6 @@ vector<LineSegment> PlateLines::getLines(Mat edges, float sensitivityMultiplier,
     }
     else
     {
-
       if ( (angle > 70 && angle < 110) || (angle > 250 && angle < 290))
       {
         // good horizontal

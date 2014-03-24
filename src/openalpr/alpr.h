@@ -17,7 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef ALPR_H
 #define ALPR_H
 
@@ -59,8 +58,6 @@ class AlprResult
     int regionConfidence;
     std::string region;
 };
-
-
 
 class AlprImpl;
 class Alpr

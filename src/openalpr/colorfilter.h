@@ -17,7 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef COLORFILTER_H
 #define COLORFILTER_H
 
@@ -31,8 +30,6 @@
 using namespace cv;
 using namespace std;
 
-
-
 class ColorFilter
 {
 
@@ -42,8 +39,6 @@ class ColorFilter
 
     Mat colorMask;
 
-
-
   private:
 
     Config* config;
@@ -51,7 +46,6 @@ class ColorFilter
 
     Mat hsv;
     Mat charMask;
-
 
     bool grayscale;
 

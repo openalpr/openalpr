@@ -17,7 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef PLATECORNERS_H
 #define PLATECORNERS_H
 
@@ -31,7 +30,6 @@ using namespace cv;
 using namespace std;
 
 #define NO_LINE -1
-
 
 #define SCORING_MISSING_SEGMENT_PENALTY_VERTICAL	10
 #define SCORING_MISSING_SEGMENT_PENALTY_HORIZONTAL	15

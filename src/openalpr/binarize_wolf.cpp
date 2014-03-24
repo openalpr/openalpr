@@ -40,7 +40,6 @@
 
 float calcLocalStats (Mat &im, Mat &map_m, Mat &map_s, int winx, int winy)
 {
-
   float m,s,max_s;
   long sum, sum_sq;
   uchar foo;
@@ -73,7 +72,6 @@ float calcLocalStats (Mat &im, Mat &map_m, Mat &map_s, int winx, int winy)
     // Shift the window, add and remove	new/old values to the histogram
     for	(int i=1 ; i <= im.cols-winx; i++)
     {
-
       // Remove the left old column and add the right new column
       for (int wy=0; wy<winy; ++wy)
       {
@@ -103,7 +101,6 @@ float calcLocalStats (Mat &im, Mat &map_m, Mat &map_s, int winx, int winy)
 void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
                                int winx, int winy, float k)
 {
-
   float dR = BINARIZEWOLF_DEFAULTDR;
 
   float m, s, max_s;
@@ -131,18 +128,15 @@ void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
 
   for	(int j = y_firstth ; j<=y_lastth; j++)
   {
-
     // NORMAL, NON-BORDER AREA IN THE MIDDLE OF THE WINDOW:
     for	(int i=0 ; i <= im.cols-winx; i++)
     {
-
       m  = map_m.fget(i+wxh, j);
       s  = map_s.fget(i+wxh, j);
 
       // Calculate the threshold
       switch (version)
       {
-
       case NIBLACK:
         th = m + k*s;
         break;

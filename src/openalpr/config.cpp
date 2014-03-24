@@ -30,7 +30,6 @@ Config::Config(const std::string country, const std::string runtimeBaseDir)
   if (runtimeBaseDir.compare("") != 0)
   {
     // User has supplied a runtime directory.  Use that.
-
   }
   else if (envRuntimeDir!=NULL)
   {
@@ -69,7 +68,6 @@ Config::~Config()
 
 void Config::loadValues(string country)
 {
-
   opencl_enabled = getBoolean("common", "opencl_enabled", false);
   maxPlateWidthPercent = getFloat("common", "max_plate_width_percent", 100);
   maxPlateHeightPercent = getFloat("common", "max_plate_height_percent", 100);
@@ -129,7 +127,6 @@ void Config::loadValues(string country)
   debugOcr = 		getBoolean("debug", "ocr", 		false);
   debugPostProcess = 	getBoolean("debug", "postprocess", 	false);
   debugShowImages = 	getBoolean("debug", "show_images",	false);
-
 }
 
 void Config::debugOff()
