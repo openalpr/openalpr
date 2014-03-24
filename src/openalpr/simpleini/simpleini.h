@@ -16,7 +16,6 @@
     Windows and Linux/Unix. It is fast, simple and source code using this
     component will compile unchanged on either OS.
 
-
     @section features FEATURES
 
     - MIT Licence allows free use in all software (including GPL and commercial)
@@ -43,7 +42,6 @@
         - Windows/VC.NET 2003 (warning level 4)
         - Windows/VC 2005 (warning level 4)
         - Linux/gcc (-Wall)
-
 
     @section usage USAGE SUMMARY
 
@@ -266,7 +264,6 @@ enum SI_Error
 # define SI_HAS_WIDE_FILE
 # define SI_WCHAR_T     UChar
 #endif
-
 
 // ---------------------------------------------------------------------------
 //                              MAIN TEMPLATE CLASS
@@ -1225,7 +1222,6 @@ class CSimpleIniTempl
     {
       return (ch == ';' || ch == '#');
     }
-
 
     /** Skip over a newline character (or characters) for either DOS or UNIX */
     inline void SkipNewLine(SI_CHAR *& a_pData) const
@@ -2881,7 +2877,6 @@ class SI_ConvertA
     }
 };
 
-
 // ---------------------------------------------------------------------------
 //                              SI_CONVERT_GENERIC
 // ---------------------------------------------------------------------------
@@ -3103,7 +3098,6 @@ class SI_ConvertW
 
 #endif // SI_CONVERT_GENERIC
 
-
 // ---------------------------------------------------------------------------
 //                              SI_CONVERT_ICU
 // ---------------------------------------------------------------------------
@@ -3299,7 +3293,6 @@ class SI_ConvertW
 
 #endif // SI_CONVERT_ICU
 
-
 // ---------------------------------------------------------------------------
 //                              SI_CONVERT_WIN32
 // ---------------------------------------------------------------------------
@@ -3474,7 +3467,6 @@ class SI_ConvertW
 };
 
 #endif // SI_CONVERT_WIN32
-
 
 // ---------------------------------------------------------------------------
 //                                  TYPE DEFINITIONS

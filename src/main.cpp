@@ -51,7 +51,6 @@ int main( int argc, const char** argv )
 
   try
   {
-
     TCLAP::CmdLine cmd("OpenAlpr Command Line Utility", ' ', OPENALPR_VERSION);
 
     TCLAP::UnlabeledValueArg<std::string>  fileArg( "image_file", "Image containing license plates", true, "", "image_file_path"  );
@@ -85,7 +84,6 @@ int main( int argc, const char** argv )
     templateRegion = templateRegionArg.getValue();
     topn = topNArg.getValue();
     measureProcessingTime = clockSwitch.getValue();
-
   }
   catch (TCLAP::ArgException &e)    // catch any exceptions
   {
@@ -101,10 +99,8 @@ int main( int argc, const char** argv )
   if (detectRegion)
     alpr.setDetectRegion(detectRegion);
 
-  if (strcmp(templateRegion.c_str(), "") != 0)
-  {
+  if (templateRegion.empty() == false)
     alpr.setDefaultRegion(templateRegion);
-  }
 
   if (alpr.isLoaded() == false)
   {
@@ -112,7 +108,7 @@ int main( int argc, const char** argv )
     return 1;
   }
 
-  if (strcmp(filename.c_str(), "webcam") == 0)
+  if (filename == "webcam")
   {
     int framenum = 0;
     cv::VideoCapture cap(0);
@@ -122,7 +118,7 @@ int main( int argc, const char** argv )
       return 1;
     }
 
-    while (cap.read(frame) == true)
+    while (cap.read(frame))
     {
       detectandshow(&alpr, frame, "", outputJson);
       cv::waitKey(1);
@@ -139,9 +135,9 @@ int main( int argc, const char** argv )
       cap.open(filename);
       cap.set(CV_CAP_PROP_POS_MSEC, seektoms);
 
-      while (cap.read(frame) == true)
+      while (cap.read(frame))
       {
-        if (SAVE_LAST_VIDEO_STILL == true)
+        if (SAVE_LAST_VIDEO_STILL)
         {
           cv::imwrite(LAST_VIDEO_STILL_LOCATION, frame);
         }
@@ -157,7 +153,6 @@ int main( int argc, const char** argv )
     {
       std::cerr << "Video file not found: " << filename << std::endl;
     }
-
   }
   else if (hasEnding(filename, ".png") || hasEnding(filename, ".jpg") || hasEnding(filename, ".gif"))
   {
@@ -171,7 +166,6 @@ int main( int argc, const char** argv )
     {
       std::cerr << "Image file not found: " << filename << std::endl;
     }
-
   }
   else if (DirectoryExists(filename.c_str()))
   {
@@ -195,7 +189,6 @@ int main( int argc, const char** argv )
           //cv::waitKey(50);
         }
       }
-
     }
   }
   else
@@ -209,7 +202,6 @@ int main( int argc, const char** argv )
 
 bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJson)
 {
-
   std::vector<uchar> buffer;
   cv::imencode(".bmp", frame, buffer );
 
@@ -232,7 +224,6 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
       {
         std::cout << "    - " << results[i].topNPlates[k].characters << "\t confidence: " << results[i].topNPlates[k].overall_confidence << "\t template_match: " << results[i].topNPlates[k].matches_template << std::endl;
       }
-
     }
   }
 
@@ -241,8 +232,5 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
   if (measureProcessingTime)
     std::cout << "Total Time to process image: " << diffclock(startTime, endTime) << "ms." << std::endl;
 
-  if (results.size() > 0)
-    return true;
-  return false;
-
+  return results.size() > 0;
 }

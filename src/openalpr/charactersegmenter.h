@@ -17,8 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
 #ifndef CHARACTERSEGMENTER_H
 #define CHARACTERSEGMENTER_H
 

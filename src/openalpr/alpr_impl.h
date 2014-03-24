@@ -17,7 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef ALPRIMPL_H
 #define ALPRIMPL_H
 
@@ -34,8 +33,6 @@
 
 #include <opencv2/core/core.hpp>
 #include "opencv2/ocl/ocl.hpp"
-
-
 
 #define DEFAULT_TOPN 25
 #define DEFAULT_DETECT_REGION false

@@ -40,7 +40,6 @@ bool detectPlate( StateIdentifier* identifier, Mat frame);
 
 int main( int argc, const char** argv )
 {
-
   string inDir;
   string outDir;
   Mat frame;
@@ -51,7 +50,6 @@ int main( int argc, const char** argv )
     inDir = argv[1];
     outDir =  argv[2];
     outDir = outDir + "/";
-
   }
   else
   {
@@ -107,10 +105,8 @@ int main( int argc, const char** argv )
         else
           waitKey(50);
       }
-
     }
   }
-
 }
 
 bool detectPlate( StateIdentifier* identifier, Mat frame);

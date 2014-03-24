@@ -17,9 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
-
 #ifndef OCR_H
 #define OCR_H
 
@@ -38,7 +35,6 @@ using namespace  tesseract;
 using namespace std;
 using namespace cv;
 
-
 class OCR
 {
 
@@ -53,16 +49,11 @@ class OCR
     //float confidence;
     //float overallConfidence;
 
-
   private:
     Config* config;
 
     TessBaseAPI *tesseract;
 
-
-
 };
-
-
 
 #endif // OCR_H

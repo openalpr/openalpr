@@ -17,10 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef CONFIG_H
 #define CONFIG_H
-
 
 #include "simpleini/simpleini.h"
 #include "support/filesystem.h"
@@ -89,7 +87,6 @@ class Config
     int postProcessMinCharacters;
     int postProcessMaxCharacters;
 
-
     bool debugGeneral;
     bool debugTiming;
     bool debugStateId;
@@ -122,6 +119,5 @@ class Config
     string getString(string section, string key, string defaultValue);
     bool getBoolean(string section, string key, bool defaultValue);
 };
-
 
 #endif // CONFIG_H

@@ -48,7 +48,6 @@ OCR::~OCR()
 
 void OCR::performOCR(vector<Mat> thresholds, vector<Rect> charRegions)
 {
-
   timespec startTime;
   getTime(&startTime);
 
@@ -56,7 +55,6 @@ void OCR::performOCR(vector<Mat> thresholds, vector<Rect> charRegions)
 
   for (int i = 0; i < thresholds.size(); i++)
   {
-
     // Make it black text on white background
     bitwise_not(thresholds[i], thresholds[i]);
     tesseract->SetImage((uchar*) thresholds[i].data, thresholds[i].size().width, thresholds[i].size().height, thresholds[i].channels(), thresholds[i].step1());
@@ -117,7 +115,6 @@ void OCR::performOCR(vector<Mat> thresholds, vector<Rect> charRegions)
 
       delete ri;
     }
-
   }
 
   if (config->debugTiming)
@@ -126,5 +123,4 @@ void OCR::performOCR(vector<Mat> thresholds, vector<Rect> charRegions)
     getTime(&endTime);
     cout << "OCR Time: " << diffclock(startTime, endTime) << "ms." << endl;
   }
-
 }

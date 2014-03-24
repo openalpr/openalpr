@@ -21,7 +21,6 @@
 
 CharacterAnalysis::CharacterAnalysis(Mat img, Config* config)
 {
-
   this->config = config;
 
   this->hasPlateMask = false;
@@ -36,7 +35,6 @@ CharacterAnalysis::CharacterAnalysis(Mat img, Config* config)
     img_gray = Mat(img.size(), img.type());
     img.copyTo(img_gray);
   }
-
 }
 
 CharacterAnalysis::~CharacterAnalysis()
@@ -50,7 +48,6 @@ CharacterAnalysis::~CharacterAnalysis()
 
 void CharacterAnalysis::analyze()
 {
-
   thresholds = produceThresholds(img_gray, config);
 
   /*
@@ -64,7 +61,6 @@ void CharacterAnalysis::analyze()
       //morphologyEx( mask, mask, MORPH_CLOSE, element );
       morphologyEx( thresholds[i], thresholds[i], MORPH_OPEN, element );
       //dilate( thresholds[i], thresholds[i],  element );
-
     }
   */
 
@@ -129,7 +125,6 @@ void CharacterAnalysis::analyze()
   int bestFitIndex = -1;
   for (int i = 0; i < thresholds.size(); i++)
   {
-
     //vector<bool> goodIndices = this->filter(thresholds[i], allContours[i], allHierarchy[i]);
     //charSegments.push_back(goodIndices);
 
@@ -157,7 +152,6 @@ void CharacterAnalysis::analyze()
 
   if (this->config->debugCharAnalysis)
   {
-
     Mat img_contours(bestThreshold.size(), CV_8U);
     bestThreshold.copyTo(img_contours);
     cvtColor(img_contours, img_contours, CV_GRAY2RGB);
@@ -201,12 +195,10 @@ void CharacterAnalysis::analyze()
       this->charBoxBottom = LineSegment(this->charArea[3].x, this->charArea[3].y, this->charArea[2].x, this->charArea[2].y);
       this->charBoxLeft = LineSegment(this->charArea[3].x, this->charArea[3].y, this->charArea[0].x, this->charArea[0].y);
       this->charBoxRight = LineSegment(this->charArea[2].x, this->charArea[2].y, this->charArea[1].x, this->charArea[1].y);
-
     }
   }
 
   this->thresholdsInverted = isPlateInverted();
-
 }
 
 int CharacterAnalysis::getGoodIndicesCount(vector<bool> goodIndices)
@@ -269,7 +261,6 @@ Mat CharacterAnalysis::findOuterBoxMask()
         lowestArea = boxArea;
       }
     }
-
   }
 
   if (this->config->debugCharAnalysis)
@@ -356,7 +347,6 @@ Mat CharacterAnalysis::findOuterBoxMask()
                    allHierarchy[winningIndex],
                    0
                   );
-
     }
 
     if (this->config->debugCharAnalysis)
@@ -382,12 +372,10 @@ Mat CharacterAnalysis::findOuterBoxMask()
   Mat fullMask = Mat::zeros(thresholds[0].size(), CV_8U);
   bitwise_not(fullMask, fullMask);
   return fullMask;
-
 }
 
 Mat CharacterAnalysis::getCharacterMask()
 {
-
   Mat charMask = Mat::zeros(bestThreshold.size(), CV_8U);
 
   for (int i = 0; i < bestContours.size(); i++)
@@ -421,7 +409,6 @@ Mat CharacterAnalysis::getCharacterMask()
 // Returns a polygon "stripe" across the width of the character region.  The lines are voted and the polygon starts at 0 and extends to image width
 vector<Point> CharacterAnalysis::getBestVotedLines(Mat img, vector<vector<Point> > contours, vector<bool> goodIndices)
 {
-
   //if (this->debug)
   //  cout << "CharacterAnalysis::getBestVotedLines" << endl;
 
@@ -519,7 +506,6 @@ vector<Point> CharacterAnalysis::getBestVotedLines(Mat img, vector<vector<Point>
       int curScore = 0;
       for (int charidx = 0; charidx < charRegions.size(); charidx++)
       {
-
         float topYPos = topLines[i].getPointAt(charRegions[charidx].x);
         float botYPos = bottomLines[i].getPointAt(charRegions[charidx].x);
 
@@ -535,7 +521,6 @@ vector<Point> CharacterAnalysis::getBestVotedLines(Mat img, vector<vector<Point>
 
         //cout << "Slope: " << topslope << " yPos: " << topYPos << endl;
         //drawAndWait(&tempImg);
-
       }
 
       // Tie goes to the one with longer line segments
@@ -573,7 +558,6 @@ vector<Point> CharacterAnalysis::getBestVotedLines(Mat img, vector<vector<Point>
     bestStripe.push_back(topRight);
     bestStripe.push_back(bottomRight);
     bestStripe.push_back(bottomLeft);
-
   }
 
   return bestStripe;
@@ -624,7 +608,6 @@ vector<bool> CharacterAnalysis::filter(Mat img, vector<vector<Point> > contours,
 // Goes through the contours for the plate and picks out possible char segments based on min/max height
 vector<bool> CharacterAnalysis::filterByBoxSize(vector< vector< Point> > contours, vector<bool> goodIndices, int minHeightPx, int maxHeightPx)
 {
-
   float idealAspect=config->charWidthMM / config->charHeightMM;
   float aspecttolerance=0.25;
 
@@ -645,7 +628,6 @@ vector<bool> CharacterAnalysis::filterByBoxSize(vector< vector< Point> > contour
     //Mat auxRoi(img, mr);
     if(mr.height >= minHeightPx && mr.height <= maxHeightPx && mr.width > minWidth)
     {
-
       float charAspect= (float)mr.width/(float)mr.height;
 
       if (abs(charAspect - idealAspect) < aspecttolerance)
@@ -654,12 +636,10 @@ vector<bool> CharacterAnalysis::filterByBoxSize(vector< vector< Point> > contour
   }
 
   return includedIndices;
-
 }
 
 vector< bool > CharacterAnalysis::filterContourHoles(vector< vector< Point > > contours, vector< Vec4i > hierarchy, vector< bool > goodIndices)
 {
-
   vector<bool> includedIndices(contours.size());
   for (int j = 0; j < contours.size(); j++)
     includedIndices.push_back(false);
@@ -671,7 +651,7 @@ vector< bool > CharacterAnalysis::filterContourHoles(vector< vector< Point > > c
 
     int parentIndex = hierarchy[i][3];
 
-    if (parentIndex >= 0 && goodIndices[parentIndex] == true)
+    if (parentIndex >= 0 && goodIndices[parentIndex])
     {
       // this contour is a child of an already identified contour.  REMOVE it
       if (this->config->debugCharAnalysis)
@@ -692,7 +672,6 @@ vector< bool > CharacterAnalysis::filterContourHoles(vector< vector< Point > > c
 // returns a vector of indices corresponding to valid contours
 vector<bool> CharacterAnalysis::filterByParentContour( vector< vector< Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices)
 {
-
   vector<bool> includedIndices(contours.size());
   for (int j = 0; j < contours.size(); j++)
     includedIndices[j] = false;
@@ -725,7 +704,6 @@ vector<bool> CharacterAnalysis::filterByParentContour( vector< vector< Point> > 
     {
       votes[voteIndex] = votes[voteIndex] + 1;
     }
-
   }
 
   // Tally up the votes, pick the winner
@@ -816,7 +794,6 @@ vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<Point>
     for (int tempContourIdx = 0; tempContourIdx < tempContours.size(); tempContourIdx++)
     {
       areaBetweenLines += contourArea(tempContours[tempContourIdx]);
-
     }
 
     if (areaBetweenLines / totalArea >= MIN_AREA_PERCENT_WITHIN_LINES)
@@ -882,7 +859,6 @@ std::vector< bool > CharacterAnalysis::filterByOuterMask(vector< vector< Point >
 
 bool CharacterAnalysis::isPlateInverted()
 {
-
   Mat charMask = getCharacterMask();
 
   Scalar meanVal = mean(bestThreshold, charMask)[0];
@@ -920,7 +896,6 @@ bool CharacterAnalysis::verifySize(Mat r, float minHeightPx, float maxHeightPx)
     return true;
   else
     return false;
-
 }
 
 vector<Point> CharacterAnalysis::getCharArea()

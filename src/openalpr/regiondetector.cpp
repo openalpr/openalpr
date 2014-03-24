@@ -44,7 +44,6 @@ RegionDetector::RegionDetector(Config* config)
     this->loaded = false;
     printf("--(!)Error loading classifier\n");
   }
-
 }
 
 RegionDetector::~RegionDetector()
@@ -59,7 +58,6 @@ bool RegionDetector::isLoaded()
 
 vector<Rect> RegionDetector::detect(Mat frame)
 {
-
   Mat frame_gray;
   cvtColor( frame, frame_gray, CV_BGR2GRAY );
 
@@ -94,7 +92,6 @@ vector<Rect> RegionDetector::doCascade(Mat frame)
   }
   else
   {
-
     plate_cascade->detectMultiScale( frame, plates, 1.1, 3,
                                      0,
                                      //0|CV_HAAR_SCALE_IMAGE,
@@ -117,5 +114,4 @@ vector<Rect> RegionDetector::doCascade(Mat frame)
   }
 
   return plates;
-
 }

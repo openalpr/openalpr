@@ -17,7 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef BINARIZEWOLF_H
 #define BINARIZEWOLF_H
 
@@ -40,17 +39,12 @@ enum NiblackVersion
 #define BINARIZEWOLF_VERSION	"2.3 (February 26th, 2013)"
 #define BINARIZEWOLF_DEFAULTDR 128
 
-
 #define uget(x,y)    at<unsigned char>(y,x)
 #define uset(x,y,v)  at<unsigned char>(y,x)=v;
 #define fget(x,y)    at<float>(y,x)
 #define fset(x,y,v)  at<float>(y,x)=v;
 
-
-
 void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
                                int winx, int winy, float k);
-
-
 
 #endif // BINARIZEWOLF_H

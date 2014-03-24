@@ -17,7 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef VERTICALHISTOGRAM_H
 #define VERTICALHISTOGRAM_H
 
@@ -25,7 +24,6 @@
 
 using namespace cv;
 using namespace std;
-
 
 struct Valley
 {

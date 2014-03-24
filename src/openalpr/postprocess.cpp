@@ -51,7 +51,6 @@ PostProcess::PostProcess(Config* config)
   //vector<RegexRule> test = rules["base"];
   //for (int i = 0; i < test.size(); i++)
   //  cout << "Rule: " << test[i].regex << endl;
-
 }
 
 PostProcess::~PostProcess()
@@ -65,7 +64,6 @@ PostProcess::~PostProcess()
     {
       delete iter->second[i];
     }
-
   }
 }
 
@@ -86,12 +84,10 @@ void PostProcess::addLetter(char letter, int charposition, float score)
   //{
   //  insertLetter('O', charposition, score - 0.5);
   //}
-
 }
 
 void PostProcess::insertLetter(char letter, int charposition, float score)
 {
-
   score = score - config->postProcessMinConfidence;
 
   int existingIndex = -1;
@@ -128,7 +124,6 @@ void PostProcess::insertLetter(char letter, int charposition, float score)
     letters[charposition][existingIndex].occurences = letters[charposition][existingIndex].occurences + 1;
     letters[charposition][existingIndex].totalscore = letters[charposition][existingIndex].totalscore + score;
   }
-
 }
 
 void PostProcess::clear()
@@ -147,9 +142,9 @@ void PostProcess::clear()
   bestChars = "";
   matchesTemplate = false;
 }
+
 void PostProcess::analyze(string templateregion, int topn)
 {
-
   timespec startTime;
   getTime(&startTime);
 
@@ -174,14 +169,12 @@ void PostProcess::analyze(string templateregion, int topn)
 
   if (this->config->debugPostProcess)
   {
-
     // Print all letters
     for (int i = 0; i < letters.size(); i++)
     {
       for (int j = 0; j < letters[i].size(); j++)
         cout << "PostProcess Letter: " << letters[i][j].charposition << " " << letters[i][j].letter << " -- score: " << letters[i][j].totalscore << " -- occurences: " << letters[i][j].occurences << endl;
     }
-
   }
 
   // Prune the letters based on the topN value.
@@ -270,12 +263,10 @@ void PostProcess::analyze(string templateregion, int topn)
     {
       allPossibilities[i].totalscore = maxPercentScore * (allPossibilities[i].totalscore / highestRelativeScore);
     }
-
   }
 
   if (this->config->debugPostProcess)
   {
-
     // Print top words
     for (int i = 0; i < allPossibilities.size(); i++)
     {
@@ -335,7 +326,6 @@ float PostProcess::calculateMaxConfidenceScore()
 //	      Y-95  Z-90
 vector<int> PostProcess::getMaxDepth(int topn)
 {
-
   vector<int> depth;
   for (int i = 0; i < letters.size(); i++)
     depth.push_back(0);
@@ -394,14 +384,12 @@ const vector<PPResult> PostProcess::getResults()
 
 void PostProcess::findAllPermutations(vector<Letter> prevletters, int charPos, int substitutionsLeft)
 {
-
   if (substitutionsLeft < 0)
     return;
 
   // Add my letter to the chain and recurse
   for (int i = 0; i < letters[charPos].size(); i++)
   {
-
     if (charPos == letters.size() - 1)
     {
       // Last letter, add the word
@@ -442,7 +430,6 @@ void PostProcess::findAllPermutations(vector<Letter> prevletters, int charPos, i
     // Just pass it along
     findAllPermutations(prevletters, charPos + 1, substitutionsLeft);
   }
-
 }
 
 bool wordCompare( const PPResult &left, const PPResult &right )
@@ -450,7 +437,6 @@ bool wordCompare( const PPResult &left, const PPResult &right )
   if (left.totalscore < right.totalscore)
     return false;
   return true;
-
 }
 
 bool letterCompare( const Letter &left, const Letter &right )
@@ -476,7 +462,6 @@ RegexRule::RegexRule(string region, string pattern)
         i++;
       }
       this->regex = this->regex + ']';
-
     }
     else if (pattern.at(i) == '?')
     {

@@ -26,15 +26,16 @@ Alpr::Alpr(const std::string country, const std::string runtimeDir)
 {
   impl = new AlprImpl(country, runtimeDir);
 }
+
 Alpr::~Alpr()
 {
   delete impl;
 }
+
 std::vector<AlprResult> Alpr::recognize(std::string filepath)
 {
   cv::Mat img = cv::imread(filepath, CV_LOAD_IMAGE_COLOR);
   return impl->recognize(img);
-
 }
 
 std::vector<AlprResult> Alpr::recognize(std::vector<unsigned char> imageBuffer)
@@ -54,10 +55,12 @@ void Alpr::setDetectRegion(bool detectRegion)
 {
   impl->setDetectRegion(detectRegion);
 }
+
 void Alpr::setTopN(int topN)
 {
   impl->setTopN(topN);
 }
+
 void Alpr::setDefaultRegion(std::string region)
 {
   impl->setDefaultRegion(region);
@@ -72,9 +75,8 @@ bool Alpr::isLoaded()
 
 AlprResult::AlprResult()
 {
-
 }
+
 AlprResult::~AlprResult()
 {
-
 }

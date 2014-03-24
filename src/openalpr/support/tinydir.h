@@ -37,7 +37,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sys/stat.h>
 #endif
 
-
 /* types */
 
 #define _TINYDIR_PATH_MAX 4096
@@ -88,7 +87,6 @@ typedef struct
 #endif
 } tinydir_dir;
 
-
 /* declarations */
 
 _TINYDIR_FUNC
@@ -109,7 +107,6 @@ int tinydir_open_subdir_n(tinydir_dir *dir, int i);
 
 _TINYDIR_FUNC
 int _tinydir_file_cmp(const void *a, const void *b);
-
 
 /* definitions*/
 

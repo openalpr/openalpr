@@ -17,8 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
 #ifndef PLATELINES_H
 #define PLATELINES_H
 
@@ -30,7 +28,6 @@
 
 using namespace cv;
 using namespace std;
-
 
 class PlateLines
 {
@@ -49,7 +46,6 @@ class PlateLines
   private:
     Config* config;
     bool debug;
-
 
     Mat customGrayscaleConversion(Mat src);
     void findLines(Mat inputImage);
