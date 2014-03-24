@@ -234,7 +234,5 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
   if (measureProcessingTime)
     std::cout << "Total Time to process image: " << diffclock(startTime, endTime) << "ms." << std::endl;
 
-  if (results.size() > 0)
-    return true;
-  return false;
+  return results.size() > 0;
 }
