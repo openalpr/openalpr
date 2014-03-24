@@ -71,6 +71,9 @@ void Config::loadValues(string country)
 {
 
   opencl_enabled = getBoolean("common", "opencl_enabled", false);
+  
+  detection_iteration_increase = getFloat("common", "detection_iteration_increase", 1.1);
+  
   maxPlateWidthPercent = getFloat("common", "max_plate_width_percent", 100);
   maxPlateHeightPercent = getFloat("common", "max_plate_height_percent", 100);
 

@@ -45,6 +45,8 @@ class Config
 
     bool opencl_enabled;
 
+    float detection_iteration_increase;
+    
     float maxPlateWidthPercent;
     float maxPlateHeightPercent;
 

@@ -90,12 +90,12 @@ vector<Rect> RegionDetector::doCascade(Mat frame)
   if (config->opencl_enabled)
   {
     ocl::oclMat openclFrame(frame);
-    ((ocl::OclCascadeClassifier*) plate_cascade)->detectMultiScale(openclFrame, plates, 1.1, 3, 0, minSize, maxSize);
+    ((ocl::OclCascadeClassifier*) plate_cascade)->detectMultiScale(openclFrame, plates, config->detection_iteration_increase, 3, 0, minSize, maxSize);
   }
   else
   {
 
-    plate_cascade->detectMultiScale( frame, plates, 1.1, 3,
+    plate_cascade->detectMultiScale( frame, plates, config->detection_iteration_increase, 3,
                                      0,
                                      //0|CV_HAAR_SCALE_IMAGE,
                                      minSize, maxSize );
