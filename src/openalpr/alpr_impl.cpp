@@ -58,6 +58,7 @@ AlprImpl::AlprImpl(const std::string country, const std::string runtimeDir)
     }
   }
 }
+
 AlprImpl::~AlprImpl()
 {
   delete config;
@@ -245,10 +246,12 @@ void AlprImpl::setDetectRegion(bool detectRegion)
 {
   this->detectRegion = detectRegion;
 }
+
 void AlprImpl::setTopN(int topn)
 {
   this->topN = topn;
 }
+
 void AlprImpl::setDefaultRegion(string region)
 {
   this->defaultRegion = region;

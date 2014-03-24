@@ -142,6 +142,7 @@ void PostProcess::clear()
   bestChars = "";
   matchesTemplate = false;
 }
+
 void PostProcess::analyze(string templateregion, int topn)
 {
   timespec startTime;

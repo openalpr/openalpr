@@ -72,6 +72,7 @@ void getTime(timespec* time)
 {
   clock_gettime(0, time);
 }
+
 double diffclock(timespec time1,timespec time2)
 {
   timespec delta = diff(time1,time2);
@@ -112,6 +113,7 @@ void getTime(timespec* time)
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, time);
 #endif
 }
+
 double diffclock(timespec time1,timespec time2)
 {
   timespec delta = diff(time1,time2);

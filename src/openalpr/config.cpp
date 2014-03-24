@@ -61,6 +61,7 @@ Config::Config(const std::string country, const std::string runtimeBaseDir)
 
   loadValues(country);
 }
+
 Config::~Config()
 {
   delete ini;
@@ -148,14 +149,17 @@ string Config::getCascadeRuntimeDir()
 {
   return this->runtimeBaseDir + CASCADE_DIR;
 }
+
 string Config::getKeypointsRuntimeDir()
 {
   return this->runtimeBaseDir + KEYPOINTS_DIR;
 }
+
 string Config::getPostProcessRuntimeDir()
 {
   return this->runtimeBaseDir + POSTPROCESS_DIR;
 }
+
 string Config::getTessdataPrefix()
 {
   return "TESSDATA_PREFIX=" + this->runtimeBaseDir + "/ocr/";
@@ -173,6 +177,7 @@ float Config::getFloat(string section, string key, float defaultValue)
   float val = atof(pszValue);
   return val;
 }
+
 int Config::getInt(string section, string key, int defaultValue)
 {
   const char * pszValue = ini->GetValue(section.c_str(), key.c_str(), NULL /*default*/);
@@ -185,6 +190,7 @@ int Config::getInt(string section, string key, int defaultValue)
   int val = atoi(pszValue);
   return val;
 }
+
 bool Config::getBoolean(string section, string key, bool defaultValue)
 {
   const char * pszValue = ini->GetValue(section.c_str(), key.c_str(), NULL /*default*/);
@@ -197,6 +203,7 @@ bool Config::getBoolean(string section, string key, bool defaultValue)
   int val = atoi(pszValue);
   return val != 0;
 }
+
 string Config::getString(string section, string key, string defaultValue)
 {
   const char * pszValue = ini->GetValue(section.c_str(), key.c_str(), NULL /*default*/);

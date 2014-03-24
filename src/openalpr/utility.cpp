@@ -262,6 +262,7 @@ LineSegment::LineSegment(Point p1, Point p2)
 {
   init(p1.x, p1.y, p2.x, p2.y);
 }
+
 LineSegment::LineSegment(int x1, int y1, int x2, int y2)
 {
   init(x1, y1, x2, y2);

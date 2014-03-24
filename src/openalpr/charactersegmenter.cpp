@@ -697,6 +697,7 @@ void CharacterSegmenter::cleanMostlyFullBoxes(vector<Mat> thresholds, const vect
     }
   }
 }
+
 vector<Rect> CharacterSegmenter::filterMostlyEmptyBoxes(vector<Mat> thresholds, const vector<Rect> charRegions)
 {
   // Of the n thresholded images, if box 3 (for example) is empty in half (for example) of the thresholded images,
