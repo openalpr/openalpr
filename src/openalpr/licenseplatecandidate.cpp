@@ -54,7 +54,6 @@ void LicensePlateCandidate::recognize()
 
   if (charRegion.confidence > 10)
   {
-
     PlateLines plateLines(config);
     //Mat boogedy = charRegion.getPlateMask();
 
@@ -76,11 +75,9 @@ void LicensePlateCandidate::recognize()
       //strcpy(this->recognizedText, ocr.recognizedText);
 
       this->confidence = 100;
-
     }
     charRegion.confidence = 0;
   }
-
 }
 
 // Re-maps the coordinates from the smallImage to the coordinate space of the bigImage.
@@ -103,7 +100,6 @@ vector<Point2f> LicensePlateCandidate::transformPointsToOriginalImage(Mat bigIma
 
 Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, vector<Point2f> corners)
 {
-
   // Figure out the appoximate width/height of the license plate region, so we can maintain the aspect ratio.
   LineSegment leftEdge(round(corners[3].x), round(corners[3].y), round(corners[0].x), round(corners[0].y));
   LineSegment rightEdge(round(corners[2].x), round(corners[2].y), round(corners[1].x), round(corners[1].y));
@@ -179,5 +175,4 @@ void LicensePlateCandidate::cleanupColors(Mat inputImage, Mat outputImage)
   {
     displayImage(config, "After cleanup", outputImage);
   }
-
 }

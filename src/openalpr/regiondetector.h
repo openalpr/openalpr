@@ -17,9 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
-
 #ifndef REGIONDETECTOR_H
 #define REGIONDETECTOR_H
 
@@ -35,10 +32,6 @@
 #include "utility.h"
 #include "support/timing.h"
 #include "constants.h"
-
-
-
-
 
 class RegionDetector
 {
@@ -61,8 +54,5 @@ class RegionDetector
     vector<Rect> doCascade(Mat frame);
 
 };
-
-
-
 
 #endif // REGIONDETECTOR_H

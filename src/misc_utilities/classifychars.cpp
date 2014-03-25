@@ -66,7 +66,6 @@ vector<char> showCharSelection(Mat image, vector<Rect> charRegions, string state
 
 int main( int argc, const char** argv )
 {
-
   string inDir;
   string outDir;
   Mat frame;
@@ -76,7 +75,6 @@ int main( int argc, const char** argv )
   {
     inDir = argv[1];
     outDir = argv[2];
-
   }
   else
   {
@@ -227,7 +225,6 @@ int main( int argc, const char** argv )
             // Save
             if (somethingSelected && chardataTagged)
             {
-
               for (int c = 0; c < charSegmenter.characters.size(); c++)
               {
                 if (humanInputs[c] == ' ')
@@ -253,19 +250,15 @@ int main( int argc, const char** argv )
           }
 
           waitkey = (char) waitKey(50);
-
         }
 
         if (waitkey == 'p')
           i = i - 2;
         if (i < -1)
           i = -1;
-
       }
-
     }
   }
-
 }
 
 void showDashboard(vector<Mat> images, vector<bool> selectedImages, int selectedIndex)
@@ -286,7 +279,7 @@ void showDashboard(vector<Mat> images, vector<bool> selectedImages, int selected
     {
       rectangle(imgCopy, Point(1,1), Point(imgCopy.size().width - 1, imgCopy.size().height -1), Scalar(0, 255, 0), 1);
     }
-    if (selectedImages[i] == true)
+    if (selectedImages[i])
     {
       rectangle(imgCopy, Point(2,2), Point(imgCopy.size().width - 2, imgCopy.size().height -2), Scalar(255, 0, 0), 1);
     }
@@ -351,7 +344,6 @@ vector<char> showCharSelection(Mat image, vector<Rect> charRegions, string state
       if (humanInputs[i] != (char) SPACE_KEY)
         cout << "Tagged " << state << " char code: '" << humanInputs[i] << "' at char position: " << i << endl;
     }
-
   }
 
   destroyWindow("Character selector");

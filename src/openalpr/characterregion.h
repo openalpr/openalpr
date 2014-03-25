@@ -17,8 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
 #ifndef CHARACTERREGION_H
 #define CHARACTERREGION_H
 
@@ -30,7 +28,6 @@
 
 using namespace cv;
 using namespace std;
-
 
 class CharacterRegion
 {

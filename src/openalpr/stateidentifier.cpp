@@ -49,7 +49,6 @@ int StateIdentifier::recognize(Mat img, Rect frame, char* stateCode)
 // with the value of the country/state
 int StateIdentifier::recognize(Mat img, char* stateCode)
 {
-
   timespec startTime;
   getTime(&startTime);
 
@@ -69,7 +68,6 @@ int StateIdentifier::recognize(Mat img, char* stateCode)
 
   if (this->config->debugStateId)
   {
-
     displayImage(config, "State Identifier1", plateImg);
     displayImage(config, "State Identifier", debugImg);
     cout << result.haswinner << " : " << result.confidence << " : " << result.winner << endl;

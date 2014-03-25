@@ -17,7 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef POSTPROCESS_H
 #define POSTPROCESS_H
 
@@ -31,7 +30,6 @@
 #include "config.h"
 
 using namespace std;
-
 
 #define SKIP_CHAR '~'
 
@@ -50,16 +48,13 @@ struct PPResult
   bool matchesTemplate;
 };
 
-
 bool wordCompare( const PPResult &left, const PPResult &right );
 bool letterCompare( const Letter &left, const Letter &right );
-
 
 class RegexRule
 {
   public:
     RegexRule(string region, string pattern);
-
 
     bool match(string text);
     string filterSkips(string text);
@@ -72,7 +67,6 @@ class RegexRule
     string region;
     vector<int> skipPositions;
 };
-
 
 class PostProcess
 {
@@ -103,7 +97,6 @@ class PostProcess
 
     vector<vector<Letter> > letters;
     vector<int> unknownCharPositions;
-
 
     vector<PPResult> allPossibilities;
 

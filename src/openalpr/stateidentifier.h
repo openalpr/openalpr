@@ -17,8 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
 #ifndef STATEIDENTIFIER_H
 #define STATEIDENTIFIER_H
 
@@ -27,8 +25,6 @@
 #include "featurematcher.h"
 #include "utility.h"
 #include "config.h"
-
-
 
 class StateIdentifier
 {
@@ -45,9 +41,7 @@ class StateIdentifier
   protected:
     Config* config;
 
-
   private:
-
 
     FeatureMatcher* featureMatcher;
 

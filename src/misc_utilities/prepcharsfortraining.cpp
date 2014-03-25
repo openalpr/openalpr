@@ -33,14 +33,12 @@ using namespace cv;
 // Also creates a box file so Tesseract can recognize it
 int main( int argc, const char** argv )
 {
-
   string inDir;
 
   //Check if user specify image to process
   if(argc == 2)
   {
     inDir = argv[1];
-
   }
   else
   {
@@ -149,15 +147,11 @@ int main( int argc, const char** argv )
         //imshow("characterImg", cropped);
 
         waitKey(2);
-
       }
-
     }
 
     imwrite("combined.tif", bigTif);
     ofstream boxFile("combined.box", std::ios::out);
     boxFile << boxFileOut.str();
-
   }
-
 }

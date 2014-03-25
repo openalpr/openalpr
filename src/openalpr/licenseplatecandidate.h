@@ -17,7 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef STAGE2_H
 #define STAGE2_H
 
@@ -38,8 +37,6 @@
 
 using namespace std;
 using namespace cv;
-
-
 
 //vector<Rect> getCharacterRegions(Mat frame, vector<Rect> regionsOfInterest);
 //vector<RotatedRect> getCharSegmentsBetweenLines(Mat img, vector<vector<Point> > contours, LineSegment top, LineSegment bottom);
@@ -64,7 +61,6 @@ class LicensePlateCandidate
 
     Config* config;
 
-
     Mat frame;
     Rect plateRegion;
 
@@ -76,6 +72,5 @@ class LicensePlateCandidate
     Mat deSkewPlate(Mat inputImage, vector<Point2f> corners);
 
 };
-
 
 #endif // STAGE2_H

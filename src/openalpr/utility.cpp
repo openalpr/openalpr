@@ -155,7 +155,6 @@ vector<Mat> produceThresholds(const Mat img_gray, Config* config)
 
   return thresholds;
   //threshold(img_equalized, img_threshold, 100, 255, THRESH_BINARY);
-
 }
 
 double median(int array[], int arraySize)
@@ -172,7 +171,6 @@ double median(int array[], int arraySize)
 
 Mat equalizeBrightness(Mat img)
 {
-
   // Divide the image by its morphologically closed counterpart
   Mat kernel = getStructuringElement(MORPH_ELLIPSE, Size(19,19));
   Mat closed;
@@ -188,12 +186,10 @@ Mat equalizeBrightness(Mat img)
 
 void drawRotatedRect(Mat* img, RotatedRect rect, Scalar color, int thickness)
 {
-
   Point2f rect_points[4];
   rect.points( rect_points );
   for( int j = 0; j < 4; j++ )
     line( *img, rect_points[j], rect_points[(j+1)%4], color, thickness, 8 );
-
 }
 
 void fillMask(Mat img, const Mat mask, Scalar color)
@@ -212,7 +208,6 @@ void fillMask(Mat img, const Mat mask, Scalar color)
           img.at<Vec3b>(row, col)[z] = ((int) color[z]) | prevVal;
         }
       }
-
     }
   }
 }
@@ -267,6 +262,7 @@ LineSegment::LineSegment(Point p1, Point p2)
 {
   init(p1.x, p1.y, p2.x, p2.y);
 }
+
 LineSegment::LineSegment(int x1, int y1, int x2, int y2)
 {
   init(x1, y1, x2, y2);
@@ -339,11 +335,9 @@ Point LineSegment::intersection(LineSegment line)
   {
     intersection_X = (c2 - c1) / (slope - line.slope);
     intersection_Y = slope * intersection_X + c1;
-
   }
 
   return Point(intersection_X, intersection_Y);
-
 }
 
 Point LineSegment::midpoint()

@@ -17,14 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-
-
 #ifndef UTILITY_H
 #define UTILITY_H
-
-
-
 
 #include <iostream>
 #include <stdio.h>
@@ -39,8 +33,6 @@
 #include <vector>
 #include "config.h"
 
-
-
 /*
 struct LineSegment
 {
@@ -50,7 +42,6 @@ struct LineSegment
    float y2;
 };
 */
-
 
 class LineSegment
 {
@@ -86,7 +77,6 @@ class LineSegment
       ss << "(" << p1.x << ", " << p1.y << ") : (" << p2.x << ", " << p2.y << ")";
       return ss.str() ;
     }
-
 
 };
 
