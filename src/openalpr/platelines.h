@@ -25,6 +25,7 @@
 #include "utility.h"
 #include "binarize_wolf.h"
 #include "config.h"
+#include "characterregion.h"
 
 using namespace cv;
 using namespace std;
@@ -36,7 +37,7 @@ class PlateLines
     PlateLines(Config* config);
     virtual ~PlateLines();
 
-    void processImage(Mat img, float sensitivity=1.0);
+    void processImage(Mat img, CharacterRegion* charRegion, float sensitivity=1.0);
 
     vector<LineSegment> horizontalLines;
     vector<LineSegment> verticalLines;

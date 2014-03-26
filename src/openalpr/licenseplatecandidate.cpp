@@ -57,8 +57,8 @@ void LicensePlateCandidate::recognize()
     PlateLines plateLines(config);
     //Mat boogedy = charRegion.getPlateMask();
 
-    plateLines.processImage(charRegion.getPlateMask(), 1.15);
-    plateLines.processImage(plate_bgr_cleaned, 0.9);
+    plateLines.processImage(charRegion.getPlateMask(), &charRegion, 1.10);
+    plateLines.processImage(plate_bgr_cleaned, &charRegion, 0.9);
 
     PlateCorners cornerFinder(plate_bgr, &plateLines, &charRegion, config);
     vector<Point> smallPlateCorners = cornerFinder.findPlateCorners();

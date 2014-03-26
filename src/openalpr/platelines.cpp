@@ -32,7 +32,7 @@ PlateLines::~PlateLines()
 {
 }
 
-void PlateLines::processImage(Mat inputImage, float sensitivity)
+void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float sensitivity)
 {
   if (this->debug)
     cout << "PlateLines findLines" << endl;
@@ -40,6 +40,7 @@ void PlateLines::processImage(Mat inputImage, float sensitivity)
   timespec startTime;
   getTime(&startTime);
 
+  
   Mat smoothed(inputImage.size(), inputImage.type());
   inputImage.copyTo(smoothed);
   int morph_elem  = 2;
@@ -50,16 +51,20 @@ void PlateLines::processImage(Mat inputImage, float sensitivity)
 
   morph_size = 1;
   element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
-
-  //morphologyEx( thresholded, thresholded, MORPH_GRADIENT, element );
-
-  morph_size = 1;
-  element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
   morphologyEx( smoothed, smoothed, MORPH_OPEN, element );
 
   Mat edges(inputImage.size(), inputImage.type());
   Canny(smoothed, edges, 66, 133);
 
+  // Create a mask that is dilated based on the detected characters
+  Mat mask = charRegion->charAnalysis->getCharacterMask();
+  dilate(mask, mask, element);
+  bitwise_not(mask, mask);
+  
+  // AND canny edges with the character mask
+  bitwise_and(edges, mask, edges);
+  
+  
   vector<LineSegment> hlines = this->getLines(edges, sensitivity, false);
   vector<LineSegment> vlines = this->getLines(edges, sensitivity, true);
   for (int i = 0; i < hlines.size(); i++)
