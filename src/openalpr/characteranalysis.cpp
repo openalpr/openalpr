@@ -392,15 +392,6 @@ Mat CharacterAnalysis::getCharacterMask()
                  1
                 );
 
-    // get rid of the outline by drawing a 1 pixel width black line
-    drawContours(charMask, bestContours,
-                 i, // draw this contour
-                 cv::Scalar(0,0,0), // in
-                 1,
-                 8,
-                 bestHierarchy,
-                 1
-                );
   }
 
   return charMask;
