@@ -113,37 +113,11 @@ int main( int argc, const char** argv )
 
   if (filename.empty())
   {
-    std::string line;
-    while (std::getline(std::cin, line))
+    std::string filename;
+    while (std::getline(std::cin, filename))
     {
-      std::istringstream is(line);
-      std::vector<std::string> args;
-      args.push_back("tmp");
-      args.insert(args.end(), std::istream_iterator<std::string>(is), std::istream_iterator<std::string>());
-      try
-      {
-        cmd.reset();
-        cmd.parse(args);
-
-        filename = fileArg.getValue();
-        outputJson = jsonSwitch.getValue();
-        detectRegion = detectRegionSwitch.getValue();
-        templateRegion = templateRegionArg.getValue();
-        topn = topNArg.getValue();
-
-        alpr.setTopN(topn);
-        if (detectRegion)
-          alpr.setDetectRegion(detectRegion);
-        if (templateRegion.empty() == false)
-          alpr.setDefaultRegion(templateRegion);
-
-        frame = cv::imread( filename );
-        detectandshow( &alpr, frame, "", outputJson);
-      }
-      catch (TCLAP::ArgException &e)    // catch any exceptions
-      {
-        std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
-      }
+      frame = cv::imread( filename );
+      detectandshow( &alpr, frame, "", outputJson);
     }
   }
   else if (filename == "webcam")
