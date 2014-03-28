@@ -116,8 +116,16 @@ int main( int argc, const char** argv )
     std::string filename;
     while (std::getline(std::cin, filename))
     {
-      frame = cv::imread( filename );
-      detectandshow( &alpr, frame, "", outputJson);
+      if (fileExists(filename.c_str()))
+      {
+	frame = cv::imread( filename );
+	detectandshow( &alpr, frame, "", outputJson);
+      }
+      else
+      {
+	std::cerr << "Image file not found: " << filename << std::endl;
+      }
+
     }
   }
   else if (filename == "webcam")
