@@ -92,6 +92,7 @@ int main( int argc, const char** argv )
   cout << "Usage: " << endl;
   cout << "\tn		-- Next plate" << endl;
   cout << "\tp		-- Previous plate" << endl;
+  cout << "\tW		-- Select image and save characters according to OCR results, then go to next image" << endl;
   cout << "\ts		-- Save characters" << endl;
   cout << "\t<- and ->	-- Cycle between images" << endl;
   cout << "\tEnt/space	-- Select plate" << endl;
@@ -202,8 +203,16 @@ int main( int argc, const char** argv )
             selectedBoxes[curDashboardSelection] = !selectedBoxes[curDashboardSelection];
             showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
           }
-          else if (waitkey == 's' || waitkey == 'S')
+          else if (waitkey == 's' || waitkey == 'S' || waitkey == 'W')
           {
+            if (waitkey == 'W')
+            {
+              selectedBoxes[curDashboardSelection] = true;
+              showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
+              const std::string& ocr_str = ocr.postProcessor->bestChars;
+              humanInputs.assign(ocr_str.begin(), ocr_str.end());
+            }
+
             bool somethingSelected = false;
             bool chardataTagged = false;
             for (int c = 0; c < charSegmenter.getThresholds().size(); c++)
@@ -247,6 +256,12 @@ int main( int argc, const char** argv )
               cout << "Did not select any boxes" << endl;
             else if (chardataTagged == false)
               cout << "You have not tagged any characters" << endl;
+
+            if (waitkey == 'W')
+            {
+              waitkey = 'n';
+              continue;
+            }
           }
 
           waitkey = (char) waitKey(50);
