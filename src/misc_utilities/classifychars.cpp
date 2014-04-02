@@ -66,20 +66,22 @@ vector<char> showCharSelection(Mat image, vector<Rect> charRegions, string state
 
 int main( int argc, const char** argv )
 {
+  string country;
   string inDir;
   string outDir;
   Mat frame;
 
   //Check if user specify image to process
-  if(argc == 3)
+  if(argc == 4)
   {
-    inDir = argv[1];
-    outDir = argv[2];
+    country = argv[1];
+    inDir = argv[2];
+    outDir = argv[3];
   }
   else
   {
-    printf("Use:\n\t%s indirectory outdirectory\n",argv[0]);
-    printf("Ex: \n\t%s ./pics/  ./out  \n",argv[0]);
+    printf("Use:\n\t%s country indirectory outdirectory\n",argv[0]);
+    printf("Ex: \n\t%s eu ./pics/ ./out\n",argv[0]);
     return 0;
   }
 
@@ -92,6 +94,7 @@ int main( int argc, const char** argv )
   cout << "Usage: " << endl;
   cout << "\tn		-- Next plate" << endl;
   cout << "\tp		-- Previous plate" << endl;
+  cout << "\tW		-- Select image and save characters according to OCR results, then go to next image" << endl;
   cout << "\ts		-- Save characters" << endl;
   cout << "\t<- and ->	-- Cycle between images" << endl;
   cout << "\tEnt/space	-- Select plate" << endl;
@@ -101,8 +104,8 @@ int main( int argc, const char** argv )
   cout << "\t[0-9A-Z]		-- Identify a character (saves the image)" << endl;
   cout << "\tESC/Ent/Space	-- Back to plate selection" << endl;
 
-  Config* config = new Config("eu");
-  OCR ocr(config);
+  Config config(country);
+  OCR ocr(&config);
 
   if (DirectoryExists(inDir.c_str()))
   {
@@ -117,7 +120,7 @@ int main( int argc, const char** argv )
         string fullpath = inDir + "/" + files[i];
         cout << fullpath << endl;
         frame = imread( fullpath.c_str() );
-        resize(frame, frame, Size(config->ocrImageWidthPx, config->ocrImageHeightPx));
+        resize(frame, frame, Size(config.ocrImageWidthPx, config.ocrImageHeightPx));
 
         imshow ("Original", frame);
 
@@ -127,7 +130,7 @@ int main( int argc, const char** argv )
         statecode[2] = '\0';
         string statecodestr(statecode);
 
-        CharacterRegion regionizer(frame, config);
+        CharacterRegion regionizer(frame, &config);
 
         if (abs(regionizer.getTopLine().angle) > 4)
         {
@@ -142,7 +145,7 @@ int main( int argc, const char** argv )
           rotated.copyTo(frame);
         }
 
-        CharacterSegmenter charSegmenter(frame, regionizer.thresholdsInverted(), config);
+        CharacterSegmenter charSegmenter(frame, regionizer.thresholdsInverted(), &config);
 
         //ocr.cleanCharRegions(charSegmenter.thresholds, charSegmenter.characters);
 
@@ -202,8 +205,16 @@ int main( int argc, const char** argv )
             selectedBoxes[curDashboardSelection] = !selectedBoxes[curDashboardSelection];
             showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
           }
-          else if (waitkey == 's' || waitkey == 'S')
+          else if (waitkey == 's' || waitkey == 'S' || waitkey == 'W')
           {
+            if (waitkey == 'W')
+            {
+              selectedBoxes[curDashboardSelection] = true;
+              showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
+              const std::string& ocr_str = ocr.postProcessor->bestChars;
+              humanInputs.assign(ocr_str.begin(), ocr_str.end());
+            }
+
             bool somethingSelected = false;
             bool chardataTagged = false;
             for (int c = 0; c < charSegmenter.getThresholds().size(); c++)
@@ -247,6 +258,12 @@ int main( int argc, const char** argv )
               cout << "Did not select any boxes" << endl;
             else if (chardataTagged == false)
               cout << "You have not tagged any characters" << endl;
+
+            if (waitkey == 'W')
+            {
+              waitkey = 'n';
+              continue;
+            }
           }
 
           waitkey = (char) waitKey(50);
