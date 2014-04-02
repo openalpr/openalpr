@@ -104,8 +104,8 @@ int main( int argc, const char** argv )
   cout << "\t[0-9A-Z]		-- Identify a character (saves the image)" << endl;
   cout << "\tESC/Ent/Space	-- Back to plate selection" << endl;
 
-  Config* config = new Config(country);
-  OCR ocr(config);
+  Config config(country);
+  OCR ocr(&config);
 
   if (DirectoryExists(inDir.c_str()))
   {
@@ -120,7 +120,7 @@ int main( int argc, const char** argv )
         string fullpath = inDir + "/" + files[i];
         cout << fullpath << endl;
         frame = imread( fullpath.c_str() );
-        resize(frame, frame, Size(config->ocrImageWidthPx, config->ocrImageHeightPx));
+        resize(frame, frame, Size(config.ocrImageWidthPx, config.ocrImageHeightPx));
 
         imshow ("Original", frame);
 
@@ -130,7 +130,7 @@ int main( int argc, const char** argv )
         statecode[2] = '\0';
         string statecodestr(statecode);
 
-        CharacterRegion regionizer(frame, config);
+        CharacterRegion regionizer(frame, &config);
 
         if (abs(regionizer.getTopLine().angle) > 4)
         {
@@ -145,7 +145,7 @@ int main( int argc, const char** argv )
           rotated.copyTo(frame);
         }
 
-        CharacterSegmenter charSegmenter(frame, regionizer.thresholdsInverted(), config);
+        CharacterSegmenter charSegmenter(frame, regionizer.thresholdsInverted(), &config);
 
         //ocr.cleanCharRegions(charSegmenter.thresholds, charSegmenter.characters);
 
