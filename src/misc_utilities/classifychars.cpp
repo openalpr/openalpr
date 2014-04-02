@@ -66,20 +66,22 @@ vector<char> showCharSelection(Mat image, vector<Rect> charRegions, string state
 
 int main( int argc, const char** argv )
 {
+  string country;
   string inDir;
   string outDir;
   Mat frame;
 
   //Check if user specify image to process
-  if(argc == 3)
+  if(argc == 4)
   {
-    inDir = argv[1];
-    outDir = argv[2];
+    country = argv[1];
+    inDir = argv[2];
+    outDir = argv[3];
   }
   else
   {
-    printf("Use:\n\t%s indirectory outdirectory\n",argv[0]);
-    printf("Ex: \n\t%s ./pics/  ./out  \n",argv[0]);
+    printf("Use:\n\t%s country indirectory outdirectory\n",argv[0]);
+    printf("Ex: \n\t%s eu ./pics/ ./out\n",argv[0]);
     return 0;
   }
 
@@ -102,7 +104,7 @@ int main( int argc, const char** argv )
   cout << "\t[0-9A-Z]		-- Identify a character (saves the image)" << endl;
   cout << "\tESC/Ent/Space	-- Back to plate selection" << endl;
 
-  Config* config = new Config("eu");
+  Config* config = new Config(country);
   OCR ocr(config);
 
   if (DirectoryExists(inDir.c_str()))
