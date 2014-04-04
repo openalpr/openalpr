@@ -120,8 +120,8 @@ void Config::loadValues(string country)
   postProcessMinConfidence = getFloat("common", "postprocess_min_confidence", 100);
   postProcessConfidenceSkipLevel = getFloat("common", "postprocess_confidence_skip_level", 100);
   postProcessMaxSubstitutions = getInt("common", "postprocess_max_substitutions", 100);
-  postProcessMinCharacters = getInt("common", "postprocess_min_characers", 100);
-  postProcessMaxCharacters = getInt("common", "postprocess_max_characers", 100);
+  postProcessMinCharacters = getInt("common", "postprocess_min_characters", 100);
+  postProcessMaxCharacters = getInt("common", "postprocess_max_characters", 100);
   
   debugGeneral = 	getBoolean("debug", "general",		false);
   debugTiming = 	getBoolean("debug", "timing",		false);
