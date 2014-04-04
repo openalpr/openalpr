@@ -122,6 +122,8 @@ vector<PlateRegion> RegionDetector::doCascade(Mat frame)
 
 }
 
+bool rectHasLargerArea(cv::Rect a, cv::Rect b) { return a.area() < b.area(); };
+
 vector<PlateRegion> RegionDetector::aggregateRegions(vector<Rect> regions)
 {
   // Combines overlapping regions into a parent->child order.
@@ -130,8 +132,12 @@ vector<PlateRegion> RegionDetector::aggregateRegions(vector<Rect> regions)
   // If there was no plate match.  Otherwise, we would process everything and that would be wasteful.
   
   vector<PlateRegion> orderedRegions;
+  vector<PlateRegion> topLevelRegions;
   
-  // For now, just return a full list with no children, so I can get the plumbing sorted.
+  // Sort the list of rect regions smallest to largest
+  std::sort(regions.begin(), regions.end(), rectHasLargerArea);
+  
+  // Create new PlateRegions and attach the rectangles to each
   for (int i = 0; i < regions.size(); i++)
   {
     PlateRegion newRegion;
@@ -139,5 +145,51 @@ vector<PlateRegion> RegionDetector::aggregateRegions(vector<Rect> regions)
     orderedRegions.push_back(newRegion);
   }
   
-  return orderedRegions;
+  for (int i = 0; i < orderedRegions.size(); i++)
+  {
+    bool foundParent = false;
+    for (int k = i + 1; k < orderedRegions.size(); k++)
+    {
+      Point center( orderedRegions[i].rect.x + (orderedRegions[i].rect.width / 2),
+		    orderedRegions[i].rect.y + (orderedRegions[i].rect.height / 2));
+      
+      // Check if the center of the smaller rectangle is inside the bigger rectangle.
+      // If so, add it to the children and continue on.
+      if (orderedRegions[k].rect.contains(center))
+      {
+	orderedRegions[k].children.push_back(orderedRegions[i]);
+	foundParent = true;
+	break;
+      }
+      
+    }
+
+    if (foundParent == false)
+    {
+      // We didn't find any parents for this rectangle.  Add it to the top level regions
+      topLevelRegions.push_back(orderedRegions[i]);
+    }
+    
+  }
+  
+  /*
+  cv::Mat debugFrame = Mat::zeros( 700, 1300, CV_8UC3);
+  
+  for (int i = 0; i < regions.size(); i++)
+  {
+    // Draw all level
+    cv::rectangle(debugFrame, regions[i], Scalar(0, 0, 255), 2);
+  }
+  
+  for (int i = 0; i < topLevelRegions.size(); i++)
+  {
+    // Draw top level
+    cv::rectangle(debugFrame, topLevelRegions[i].rect, Scalar(255, 0, 0), 2);
+  }
+  
+  drawAndWait(&debugFrame);
+  */
+  
+  
+  return topLevelRegions;
 }
