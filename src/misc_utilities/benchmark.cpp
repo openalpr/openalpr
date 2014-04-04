@@ -150,7 +150,7 @@ int main( int argc, const char** argv )
         string fullpath = inDir + "/" + files[i];
         frame = imread( fullpath.c_str() );
 
-        vector<Rect> regions = plateDetector.detect(frame);
+        vector<PlateRegion> regions = plateDetector.detect(frame);
 
         imshow("Current LP", frame);
         waitKey(5);
@@ -200,7 +200,7 @@ int main( int argc, const char** argv )
         endToEndTimes.push_back(endToEndTime);
 
         getTime(&startTime);
-        vector<Rect> regions = plateDetector.detect(frame);
+        vector<PlateRegion> regions = plateDetector.detect(frame);
         getTime(&endTime);
 
         double regionDetectionTime = diffclock(startTime, endTime);
@@ -211,14 +211,14 @@ int main( int argc, const char** argv )
         {
           getTime(&startTime);
           char temp[5];
-          stateIdentifier.recognize(frame, regions[z], temp);
+          stateIdentifier.recognize(frame, regions[z].rect, temp);
           getTime(&endTime);
           double stateidTime = diffclock(startTime, endTime);
           cout << "\tRegion " << z << ": State ID time: " << stateidTime << "ms." << endl;
           stateIdTimes.push_back(stateidTime);
 
           getTime(&startTime);
-          LicensePlateCandidate lp(frame, regions[z], &config);
+          LicensePlateCandidate lp(frame, regions[z].rect, &config);
           lp.recognize();
           getTime(&endTime);
           double analysisTime = diffclock(startTime, endTime);

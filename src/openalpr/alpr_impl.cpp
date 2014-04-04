@@ -79,7 +79,7 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
 
 
   // Find all the candidate regions
-  vector<Rect> plateRegions = plateDetector->detect(img);
+  vector<PlateRegion> plateRegions = plateDetector->detect(img);
 
   // Get the number of threads specified and make sure the value is sane (cannot be greater than CPU cores or less than 1)
   int numThreads = config->multithreading_cores;
@@ -120,7 +120,7 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
   {
     for (int i = 0; i < plateRegions.size(); i++)
     {
-      rectangle(img, plateRegions[i], Scalar(0, 0, 255), 2);
+      rectangle(img, plateRegions[i].rect, Scalar(0, 0, 255), 2);
     }
     
     for (int i = 0; i < dispatcher.getRecognitionResults().size(); i++)
@@ -137,8 +137,9 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
     
     displayImage(config, "Main Image", img);
     // Pause indefinitely until they press a key
-    while ((char) cv::waitKey(50) == -1)
-      {}
+    cv::waitKey(1);
+    //while ((char) cv::waitKey(50) == -1)
+    //  {}
   }
 
   
@@ -163,7 +164,7 @@ void plateAnalysisThread(void* arg)
       cout << "Thread: " << tthread::this_thread::get_id() << " loop " << ++loop_count << endl;
     
     // Get a single plate region from the queue
-    Rect plateRegion = dispatcher->nextPlate();
+    PlateRegion plateRegion = dispatcher->nextPlate();
     
     Mat img = dispatcher->getImageCopy();
 
@@ -172,7 +173,7 @@ void plateAnalysisThread(void* arg)
       timespec platestarttime;
       getTime(&platestarttime);
       
-      LicensePlateCandidate lp(img, plateRegion, dispatcher->config);
+      LicensePlateCandidate lp(img, plateRegion.rect, dispatcher->config);
       
       lp.recognize();
 
@@ -192,7 +193,7 @@ void plateAnalysisThread(void* arg)
 	if (dispatcher->detectRegion)
 	{
 	  char statecode[4];
-	  plateResult.regionConfidence = dispatcher->stateIdentifier->recognize(img, plateRegion, statecode);
+	  plateResult.regionConfidence = dispatcher->stateIdentifier->recognize(img, plateRegion.rect, statecode);
 	  if (plateResult.regionConfidence > 0)
 	  {
 	    plateResult.region = statecode;

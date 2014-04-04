@@ -33,6 +33,12 @@
 #include "support/timing.h"
 #include "constants.h"
 
+struct PlateRegion
+{
+  Rect rect;
+  vector<PlateRegion> children;
+};
+
 class RegionDetector
 {
 
@@ -41,7 +47,7 @@ class RegionDetector
     virtual ~RegionDetector();
 
     bool isLoaded();
-    vector<Rect> detect(Mat frame);
+    vector<PlateRegion> detect(Mat frame);
 
   private:
     Config* config;
@@ -51,8 +57,9 @@ class RegionDetector
 
     bool loaded;
 
-    vector<Rect> doCascade(Mat frame);
+    vector<PlateRegion> doCascade(Mat frame);
 
+    vector<PlateRegion> aggregateRegions(vector<Rect> regions);
 };
 
 #endif // REGIONDETECTOR_H

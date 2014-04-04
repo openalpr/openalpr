@@ -57,19 +57,19 @@ bool RegionDetector::isLoaded()
   return this->loaded;
 }
 
-vector<Rect> RegionDetector::detect(Mat frame)
+vector<PlateRegion> RegionDetector::detect(Mat frame)
 {
 
   Mat frame_gray;
   cvtColor( frame, frame_gray, CV_BGR2GRAY );
 
-  vector<Rect> regionsOfInterest = doCascade(frame_gray);
+  vector<PlateRegion> regionsOfInterest = doCascade(frame_gray);
 
   return regionsOfInterest;
 }
 
 /** @function detectAndDisplay */
-vector<Rect> RegionDetector::doCascade(Mat frame)
+vector<PlateRegion> RegionDetector::doCascade(Mat frame)
 {
   //float scale_factor = 1;
   int w = frame.size().width;
@@ -116,6 +116,28 @@ vector<Rect> RegionDetector::doCascade(Mat frame)
     plates[i].height = plates[i].height / scale_factor;
   }
 
-  return plates;
+  vector<PlateRegion> orderedRegions = aggregateRegions(plates);
+  
+  return orderedRegions;
 
+}
+
+vector<PlateRegion> RegionDetector::aggregateRegions(vector<Rect> regions)
+{
+  // Combines overlapping regions into a parent->child order.
+  // The largest regions will be parents, and they will have children if they are within them.
+  // This way, when processing regions later, we can process the parents first, and only delve into the children
+  // If there was no plate match.  Otherwise, we would process everything and that would be wasteful.
+  
+  vector<PlateRegion> orderedRegions;
+  
+  // For now, just return a full list with no children, so I can get the plumbing sorted.
+  for (int i = 0; i < regions.size(); i++)
+  {
+    PlateRegion newRegion;
+    newRegion.rect = regions[i];
+    orderedRegions.push_back(newRegion);
+  }
+  
+  return orderedRegions;
 }

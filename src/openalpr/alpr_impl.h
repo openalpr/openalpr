@@ -78,7 +78,7 @@ class AlprImpl
 class PlateDispatcher
 {
   public:
-    PlateDispatcher(vector<Rect> plateRegions, cv::Mat* image, 
+    PlateDispatcher(vector<PlateRegion> plateRegions, cv::Mat* image, 
 		    Config* config,
 		    StateIdentifier* stateIdentifier,
 		    OCR* ocr,
@@ -113,11 +113,11 @@ class PlateDispatcher
       mMutex.unlock();
       return plateAvailable;
     }
-    Rect nextPlate()
+    PlateRegion nextPlate()
     {
       tthread::lock_guard<tthread::mutex> guard(mMutex);
       
-      Rect plateRegion = plateRegions[plateRegions.size() - 1];
+      PlateRegion plateRegion = plateRegions[plateRegions.size() - 1];
       plateRegions.pop_back();
       
       return plateRegion;
@@ -147,7 +147,7 @@ class PlateDispatcher
     
     tthread::mutex mMutex;
     cv::Mat* frame;
-    vector<Rect> plateRegions;
+    vector<PlateRegion> plateRegions;
     vector<AlprResult> recognitionResults;
 
 };
