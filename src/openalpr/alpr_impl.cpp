@@ -118,21 +118,29 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
   
   if (config->debugGeneral && config->debugShowImages)
   {
+    for (int i = 0; i < plateRegions.size(); i++)
+    {
+      rectangle(img, plateRegions[i], Scalar(0, 0, 255), 2);
+    }
+    
+    for (int i = 0; i < dispatcher.getRecognitionResults().size(); i++)
+    {
+      for (int z = 0; z < 4; z++)
+      {
+	AlprCoordinate* coords = dispatcher.getRecognitionResults()[i].plate_points;
+	Point p1(coords[z].x, coords[z].y);
+	Point p2(coords[(z + 1) % 4].x, coords[(z + 1) % 4].y);
+	line(img, p1, p2, Scalar(255,0,255), 2);
+      }
+    }
+
+    
     displayImage(config, "Main Image", img);
     // Pause indefinitely until they press a key
     while ((char) cv::waitKey(50) == -1)
       {}
   }
-  
-  //	if (config->debugGeneral)
-//	{
-//	  rectangle(img, plateRegion, Scalar(0, 255, 0), 2);
-//	  for (int z = 0; z < 4; z++)
-//	    line(img, lp.plateCorners[z], lp.plateCorners[(z + 1) % 4], Scalar(255,0,255), 2);
-//	}
 
-//	if (config->debugGeneral)
-//	  rectangle(img, plateRegion, Scalar(0, 0, 255), 2);
   
   return dispatcher.getRecognitionResults();
 }
