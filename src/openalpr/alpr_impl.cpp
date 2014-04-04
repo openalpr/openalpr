@@ -26,17 +26,8 @@ AlprImpl::AlprImpl(const std::string country, const std::string runtimeDir)
 {
   config = new Config(country, runtimeDir);
   plateDetector = new RegionDetector(config);
-  
-  int numThreads = getNumThreads();
-  
-  for (int i = 0; i < numThreads; i++)
-  {
-    StateIdentifier* stateIdentifier = new StateIdentifier(config);
-    OCR* ocr = new OCR(config);
-    
-    stateIdentifiers.push_back(stateIdentifier);
-    ocrs.push_back(ocr);
-  }
+  stateIdentifier = new StateIdentifier(config);
+  ocr = new OCR(config);
   
   setNumThreads(0);
   
@@ -77,28 +68,10 @@ AlprImpl::~AlprImpl()
 {
   delete config;
   delete plateDetector;
-  
-  for (int i = 0; i < stateIdentifiers.size(); i++)
-  {
-    delete stateIdentifiers[i];	
-    delete ocrs[i];
-  }
-  
-  stateIdentifiers.clear();
-  ocrs.clear();
+  delete stateIdentifier;
+  delete ocr;
 }
 
-int AlprImpl::getNumThreads()
-{
-  // Get the number of threads specified and make sure the value is sane (cannot be greater than CPU cores or less than 1)
-  int numThreads = config->multithreading_cores;
-  if (numThreads > tthread::thread::hardware_concurrency())
-    numThreads = tthread::thread::hardware_concurrency();
-  if (numThreads <= 0)
-    numThreads = 1;
-  
-  return numThreads;
-}
 
 std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
 {
@@ -110,11 +83,15 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
   vector<Rect> plateRegions = plateDetector->detect(img);
 
   // Get the number of threads specified and make sure the value is sane (cannot be greater than CPU cores or less than 1)
-  int numThreads = getNumThreads();
+  int numThreads = config->multithreading_cores;
+  if (numThreads > tthread::thread::hardware_concurrency())
+    numThreads = tthread::thread::hardware_concurrency();
+  if (numThreads <= 0)
+    numThreads = 1;
 
   
   PlateDispatcher dispatcher(plateRegions, &img, 
-			     config, stateIdentifiers, ocrs, 
+			     config, stateIdentifier, ocr, 
 			     topN, detectRegion, defaultRegion);
     
   // Spawn n threads to process all of the candidate regions and recognize
@@ -164,27 +141,12 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
 void plateAnalysisThread(void* arg)
 {
   PlateDispatcher* dispatcher = (PlateDispatcher*) arg;
-  
-  timespec syncstarttime;
-  getTime(&syncstarttime);
-  
-  int threadID = dispatcher->getUniqueThreadId();
-  Mat img = dispatcher->getImageCopy();
-      
   if (dispatcher->config->debugGeneral)
     cout << "Thread: " << tthread::this_thread::get_id() << " Initialized" << endl;
-
-  if (dispatcher->config->debugTiming)
-  {
-    timespec syncendtime;
-    getTime(&syncendtime);
-    cout << "Thread: " << tthread::this_thread::get_id() << " Synchronized initialization time in " << diffclock(syncstarttime, syncendtime) << "ms." << endl;
-  }
   
   int loop_count = 0;
   while (true)
   {
-    
     
     if (dispatcher->hasPlate() == false)
       break;
@@ -196,16 +158,13 @@ void plateAnalysisThread(void* arg)
     // Get a single plate region from the queue
     Rect plateRegion = dispatcher->nextPlate();
     
-    
+    Mat img = dispatcher->getImageCopy();
 
   
     // Parallel section
   
       timespec platestarttime;
       getTime(&platestarttime);
-      
-      StateIdentifier* stateIdentifier = dispatcher->stateIdentifiers[threadID];
-      OCR* ocr = dispatcher->ocrs[threadID];
       
       LicensePlateCandidate lp(img, plateRegion, dispatcher->config);
       
@@ -227,7 +186,7 @@ void plateAnalysisThread(void* arg)
 	if (dispatcher->detectRegion)
 	{
 	  char statecode[4];
-	  plateResult.regionConfidence = stateIdentifier->recognize(img, plateRegion, statecode);
+	  plateResult.regionConfidence = dispatcher->stateIdentifier->recognize(img, plateRegion, statecode);
 	  if (plateResult.regionConfidence > 0)
 	  {
 	    plateResult.region = statecode;
@@ -235,12 +194,12 @@ void plateAnalysisThread(void* arg)
 	} 
     
     
-	ocr->performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
+	dispatcher->ocr->performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
 	
-	ocr->postProcessor->analyze(plateResult.region, dispatcher->topN);
+	dispatcher->ocr->postProcessor->analyze(plateResult.region, dispatcher->topN);
 
 	//plateResult.characters = ocr->postProcessor->bestChars;
-	const vector<PPResult> ppResults = ocr->postProcessor->getResults();
+	const vector<PPResult> ppResults = dispatcher->ocr->postProcessor->getResults();
 	
 	int bestPlateIndex = 0;
 	

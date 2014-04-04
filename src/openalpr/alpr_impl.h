@@ -63,17 +63,15 @@ class AlprImpl
     
   private:
     
-    int getNumThreads();
-    cJSON* createJsonObj(const AlprResult* result);
-    
     RegionDetector* plateDetector;
-    vector<StateIdentifier*> stateIdentifiers;
-    vector<OCR*> ocrs;
+    StateIdentifier* stateIdentifier;
+    OCR* ocr;
   
     int topN;
     bool detectRegion;
     std::string defaultRegion;
     
+    cJSON* createJsonObj(const AlprResult* result);
     
     
 };
@@ -83,21 +81,19 @@ class PlateDispatcher
   public:
     PlateDispatcher(vector<Rect> plateRegions, cv::Mat* image, 
 		    Config* config,
-		    vector<StateIdentifier*> stateIdentifiers,
-		    vector<OCR*> ocrs,
+		    StateIdentifier* stateIdentifier,
+		    OCR* ocr,
 		    int topN, bool detectRegion, std::string defaultRegion) 
     {
       this->plateRegions = plateRegions;
       this->frame = image;
       
       this->config = config;
-      this->stateIdentifiers = stateIdentifiers;
-      this->ocrs = ocrs;
+      this->stateIdentifier = stateIdentifier;
+      this->ocr = ocr;
       this->topN = topN;
       this->detectRegion = detectRegion;
       this->defaultRegion = defaultRegion;
-      
-      this->threadCounter = 0;
     }
 
     cv::Mat getImageCopy()
@@ -108,13 +104,6 @@ class PlateDispatcher
       this->frame->copyTo(img);
       
       return img;
-    }
-    
-    int getUniqueThreadId()
-    {
-      tthread::lock_guard<tthread::mutex> guard(mMutex);
-      
-      return threadCounter++;
     }
 
     bool hasPlate()
@@ -147,8 +136,8 @@ class PlateDispatcher
     }
     
 
-    vector<StateIdentifier*> stateIdentifiers;
-    vector<OCR*> ocrs;
+    StateIdentifier* stateIdentifier;
+    OCR* ocr;
     Config* config;
   
     int topN;
@@ -157,7 +146,6 @@ class PlateDispatcher
     
   private:
     
-    int threadCounter;
     tthread::mutex mMutex;
     cv::Mat* frame;
     vector<Rect> plateRegions;
