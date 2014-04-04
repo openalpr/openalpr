@@ -123,6 +123,13 @@ class PlateDispatcher
       return plateRegion;
     }
     
+    void appendPlate(PlateRegion plate)
+    {
+      tthread::lock_guard<tthread::mutex> guard(mMutex);
+      
+      plateRegions.push_back(plate);
+    }
+    
     void addResult(AlprResult recognitionResult)
     {
       tthread::lock_guard<tthread::mutex> guard(mMutex);

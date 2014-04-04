@@ -159,7 +159,6 @@ void plateAnalysisThread(void* arg)
     if (dispatcher->hasPlate() == false)
       break;
     
-    // Synchronized section
     if (dispatcher->config->debugGeneral)
       cout << "Thread: " << tthread::this_thread::get_id() << " loop " << ++loop_count << endl;
     
@@ -168,92 +167,101 @@ void plateAnalysisThread(void* arg)
     
     Mat img = dispatcher->getImageCopy();
 
+    timespec platestarttime;
+    getTime(&platestarttime);
+    
+    LicensePlateCandidate lp(img, plateRegion.rect, dispatcher->config);
+    
+    lp.recognize();
+
+    
+    if (lp.confidence <= 10)
+    {
+      // Not a valid plate
+      // Check if this plate has any children, if so, send them back up to the dispatcher for processing
+      for (int childidx = 0; childidx < plateRegion.children.size(); childidx++)
+      {
+	dispatcher->appendPlate(plateRegion.children[childidx]);
+      }
+    }
+    else
+    {
+      AlprResult plateResult;
+      plateResult.region = dispatcher->defaultRegion;
+      plateResult.regionConfidence = 0;
+      
+      for (int pointidx = 0; pointidx < 4; pointidx++)
+      {
+	plateResult.plate_points[pointidx].x = (int) lp.plateCorners[pointidx].x;
+	plateResult.plate_points[pointidx].y = (int) lp.plateCorners[pointidx].y;
+      }
+      
+      if (dispatcher->detectRegion)
+      {
+	char statecode[4];
+	plateResult.regionConfidence = dispatcher->stateIdentifier->recognize(img, plateRegion.rect, statecode);
+	if (plateResult.regionConfidence > 0)
+	{
+	  plateResult.region = statecode;
+	}
+      }
   
-    // Parallel section
-      timespec platestarttime;
-      getTime(&platestarttime);
+  
+      dispatcher->ocr->performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
       
-      LicensePlateCandidate lp(img, plateRegion.rect, dispatcher->config);
-      
-      lp.recognize();
+      dispatcher->ocr->postProcessor->analyze(plateResult.region, dispatcher->topN);
 
+      //plateResult.characters = ocr->postProcessor->bestChars;
+      const vector<PPResult> ppResults = dispatcher->ocr->postProcessor->getResults();
       
-      if (lp.confidence > 10)
+      int bestPlateIndex = 0;
+      
+      for (int pp = 0; pp < ppResults.size(); pp++)
       {
-	AlprResult plateResult;
-	plateResult.region = dispatcher->defaultRegion;
-	plateResult.regionConfidence = 0;
+	if (pp >= dispatcher->topN)
+	  break;
 	
-	for (int pointidx = 0; pointidx < 4; pointidx++)
+	// Set our "best plate" match to either the first entry, or the first entry with a postprocessor template match
+	if (bestPlateIndex == 0 && ppResults[pp].matchesTemplate)
+	  bestPlateIndex = pp;
+	
+	if (ppResults[pp].letters.size() >= dispatcher->config->postProcessMinCharacters &&
+	  ppResults[pp].letters.size() <= dispatcher->config->postProcessMaxCharacters)
 	{
-	  plateResult.plate_points[pointidx].x = (int) lp.plateCorners[pointidx].x;
-	  plateResult.plate_points[pointidx].y = (int) lp.plateCorners[pointidx].y;
+	  AlprPlate aplate;
+	  aplate.characters = ppResults[pp].letters;
+	  aplate.overall_confidence = ppResults[pp].totalscore;
+	  aplate.matches_template = ppResults[pp].matchesTemplate;
+	  plateResult.topNPlates.push_back(aplate);
 	}
-	
-	if (dispatcher->detectRegion)
-	{
-	  char statecode[4];
-	  plateResult.regionConfidence = dispatcher->stateIdentifier->recognize(img, plateRegion.rect, statecode);
-	  if (plateResult.regionConfidence > 0)
-	  {
-	    plateResult.region = statecode;
-	  }
-	}
-    
-    
-	dispatcher->ocr->performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
-	
-	dispatcher->ocr->postProcessor->analyze(plateResult.region, dispatcher->topN);
-
-	//plateResult.characters = ocr->postProcessor->bestChars;
-	const vector<PPResult> ppResults = dispatcher->ocr->postProcessor->getResults();
-	
-	int bestPlateIndex = 0;
-	
-	for (int pp = 0; pp < ppResults.size(); pp++)
-	{
-	  if (pp >= dispatcher->topN)
-	    break;
-	  
-	  // Set our "best plate" match to either the first entry, or the first entry with a postprocessor template match
-	  if (bestPlateIndex == 0 && ppResults[pp].matchesTemplate)
-	    bestPlateIndex = pp;
-	  
-	  if (ppResults[pp].letters.size() >= dispatcher->config->postProcessMinCharacters &&
-	    ppResults[pp].letters.size() <= dispatcher->config->postProcessMaxCharacters)
-	  {
-	    AlprPlate aplate;
-	    aplate.characters = ppResults[pp].letters;
-	    aplate.overall_confidence = ppResults[pp].totalscore;
-	    aplate.matches_template = ppResults[pp].matchesTemplate;
-	    plateResult.topNPlates.push_back(aplate);
-	  }
-	}
-	plateResult.result_count = plateResult.topNPlates.size();
-	
-	if (plateResult.topNPlates.size() > 0)
-	  plateResult.bestPlate = plateResult.topNPlates[bestPlateIndex];
-	
-	timespec plateEndTime;
-	getTime(&plateEndTime);
-	plateResult.processing_time_ms = diffclock(platestarttime, plateEndTime);
-	
-	if (plateResult.result_count > 0)
-	{
-	  // Synchronized section
-	  dispatcher->addResult(plateResult);
-	  
-	}
-	
+      }
+      plateResult.result_count = plateResult.topNPlates.size();
+      
+      if (plateResult.topNPlates.size() > 0)
+	plateResult.bestPlate = plateResult.topNPlates[bestPlateIndex];
+      
+      timespec plateEndTime;
+      getTime(&plateEndTime);
+      plateResult.processing_time_ms = diffclock(platestarttime, plateEndTime);
+      
+      if (plateResult.result_count > 0)
+      {
+	// Synchronized section
+	dispatcher->addResult(plateResult);
 	
       }
       
-      if (dispatcher->config->debugTiming)
-      {
-	timespec plateEndTime;
-	getTime(&plateEndTime);
-	cout << "Thread: " << tthread::this_thread::get_id() << " Finished loop " << loop_count << " in " << diffclock(platestarttime, plateEndTime) << "ms." << endl;
-      }
+    }
+      
+    
+      
+    if (dispatcher->config->debugTiming)
+    {
+      timespec plateEndTime;
+      getTime(&plateEndTime);
+      cout << "Thread: " << tthread::this_thread::get_id() << " Finished loop " << loop_count << " in " << diffclock(platestarttime, plateEndTime) << "ms." << endl;
+    }
+      
       
   }
 
