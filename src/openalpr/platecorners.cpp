@@ -131,7 +131,7 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   LineSegment right;
 
   float charHeightToPlateWidthRatio = config->plateWidthMM / config->charHeightMM;
-  float idealPixelWidth = this->charHeight *  (charHeightToPlateWidthRatio * 1.05);	// Add 10% so we don't clip any characters
+  float idealPixelWidth = this->charHeight *  (charHeightToPlateWidthRatio * 1.03);	// Add 3% so we don't clip any characters
 
   if (v1 == NO_LINE && v2 == NO_LINE)
   {
