@@ -39,8 +39,8 @@ void LicensePlateCandidate::recognize()
 
   this->confidence = 0;
 
-  int expandX = round(this->plateRegion.width * 0.15);
-  int expandY = round(this->plateRegion.height * 0.10);
+  int expandX = round(this->plateRegion.width * 0.20);
+  int expandY = round(this->plateRegion.height * 0.15);
   // expand box by 15% in all directions
   Rect expandedRegion = expandRect( this->plateRegion, expandX, expandY, frame.cols, frame.rows) ;
 
