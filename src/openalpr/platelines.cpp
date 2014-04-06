@@ -41,10 +41,9 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
   getTime(&startTime);
 
   // Copy the input image over to the "smoothed" image as grayscale
-  Mat smoothed;
-  cvtColor(inputImage, smoothed, CV_BGR2GRAY);
+  Mat smoothed(inputImage.size(), inputImage.type());
+  inputImage.copyTo(smoothed);
   
-  drawAndWait(&inputImage);
   // Ignore input images that are pure white or pure black
   Scalar avgPixelIntensity = mean(smoothed);
   if (avgPixelIntensity[0] == 255)
