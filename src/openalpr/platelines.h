@@ -48,6 +48,7 @@ class PlateLines
     Config* config;
     bool debug;
 
+    void cleanupColors(Mat inputImage, Mat outputImage);
     Mat customGrayscaleConversion(Mat src);
     void findLines(Mat inputImage);
     vector<LineSegment> getLines(Mat edges, float sensitivityMultiplier, bool vertical);

@@ -64,7 +64,6 @@ class LicensePlateCandidate
     Mat frame;
     Rect plateRegion;
 
-    void cleanupColors(Mat inputImage, Mat outputImage);
     Mat filterByCharacterHue(vector<vector<Point> > charRegionContours);
     vector<Point> findPlateCorners(Mat inputImage, PlateLines plateLines, CharacterRegion charRegion);	// top-left, top-right, bottom-right, bottom-left
 

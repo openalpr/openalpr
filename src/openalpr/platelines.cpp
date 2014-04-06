@@ -40,9 +40,20 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
   timespec startTime;
   getTime(&startTime);
 
+  // Copy the input image over to the "smoothed" image as grayscale
+  Mat smoothed;
+  cvtColor(inputImage, smoothed, CV_BGR2GRAY);
   
-  Mat smoothed(inputImage.size(), inputImage.type());
-  inputImage.copyTo(smoothed);
+  drawAndWait(&inputImage);
+  // Ignore input images that are pure white or pure black
+  Scalar avgPixelIntensity = mean(smoothed);
+  if (avgPixelIntensity[0] == 255)
+    return;
+  else if (avgPixelIntensity[0] == 0)
+    return;
+  
+  drawAndWait(&smoothed);
+  
   int morph_elem  = 2;
   int morph_size = 2;
   Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
@@ -224,6 +235,44 @@ vector<LineSegment> PlateLines::getLines(Mat edges, bool vertical)
   return filteredLines;
 }
 */
+
+void PlateLines::cleanupColors(Mat inputImage, Mat outputImage)
+{
+  if (this->config->debugGeneral)
+    cout << "LicensePlate::cleanupColors" << endl;
+
+  //Mat normalized(inputImage.size(), inputImage.type());
+
+  Mat intermediate(inputImage.size(), inputImage.type());
+
+  normalize(inputImage, intermediate, 0, 255, CV_MINMAX );
+
+  // Equalize intensity:
+  if(intermediate.channels() >= 3)
+  {
+    Mat ycrcb;
+
+    cvtColor(intermediate,ycrcb,CV_BGR2YCrCb);
+
+    vector<Mat> channels;
+    split(ycrcb,channels);
+
+    equalizeHist(channels[0], channels[0]);
+
+    merge(channels,ycrcb);
+
+    cvtColor(ycrcb,intermediate,CV_YCrCb2BGR);
+
+    //ycrcb.release();
+  }
+
+  bilateralFilter(intermediate, outputImage, 3, 25, 35);
+
+  if (this->config->debugGeneral)
+  {
+    displayImage(config, "After cleanup", outputImage);
+  }
+}
 
 vector<LineSegment> PlateLines::getLines(Mat edges, float sensitivityMultiplier, bool vertical)
 {

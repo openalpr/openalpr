@@ -47,9 +47,6 @@ void LicensePlateCandidate::recognize()
   Mat plate_bgr = Mat(frame, expandedRegion);
   resize(plate_bgr, plate_bgr, Size(config->templateWidthPx, config->templateHeightPx));
 
-  Mat plate_bgr_cleaned = Mat(plate_bgr.size(), plate_bgr.type());
-  this->cleanupColors(plate_bgr, plate_bgr_cleaned);
-
   CharacterRegion charRegion(plate_bgr, config);
 
   if (charRegion.confidence > 10)
@@ -58,7 +55,7 @@ void LicensePlateCandidate::recognize()
     //Mat boogedy = charRegion.getPlateMask();
 
     plateLines.processImage(charRegion.getPlateMask(), &charRegion, 1.10);
-    plateLines.processImage(plate_bgr_cleaned, &charRegion, 0.9);
+    plateLines.processImage(plate_bgr, &charRegion, 0.9);
 
     PlateCorners cornerFinder(plate_bgr, &plateLines, &charRegion, config);
     vector<Point> smallPlateCorners = cornerFinder.findPlateCorners();
@@ -139,40 +136,3 @@ Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, vector<Point2f> corners)
   return deskewed;
 }
 
-void LicensePlateCandidate::cleanupColors(Mat inputImage, Mat outputImage)
-{
-  if (this->config->debugGeneral)
-    cout << "LicensePlate::cleanupColors" << endl;
-
-  //Mat normalized(inputImage.size(), inputImage.type());
-
-  Mat intermediate(inputImage.size(), inputImage.type());
-
-  normalize(inputImage, intermediate, 0, 255, CV_MINMAX );
-
-  // Equalize intensity:
-  if(intermediate.channels() >= 3)
-  {
-    Mat ycrcb;
-
-    cvtColor(intermediate,ycrcb,CV_BGR2YCrCb);
-
-    vector<Mat> channels;
-    split(ycrcb,channels);
-
-    equalizeHist(channels[0], channels[0]);
-
-    merge(channels,ycrcb);
-
-    cvtColor(ycrcb,intermediate,CV_YCrCb2BGR);
-
-    //ycrcb.release();
-  }
-
-  bilateralFilter(intermediate, outputImage, 3, 25, 35);
-
-  if (this->config->debugGeneral)
-  {
-    displayImage(config, "After cleanup", outputImage);
-  }
-}
