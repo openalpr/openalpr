@@ -40,34 +40,42 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
   timespec startTime;
   getTime(&startTime);
 
-  // Copy the input image over to the "smoothed" image as grayscale
-  Mat smoothed(inputImage.size(), inputImage.type());
-  inputImage.copyTo(smoothed);
-  
+
   // Ignore input images that are pure white or pure black
-  Scalar avgPixelIntensity = mean(smoothed);
+  Scalar avgPixelIntensity = mean(inputImage);
   if (avgPixelIntensity[0] == 255)
     return;
   else if (avgPixelIntensity[0] == 0)
     return;
   
-  drawAndWait(&smoothed);
+  // Do a bilateral filter to clean the noise but keep edges sharp
+  Mat smoothed(inputImage.size(), inputImage.type());
+  adaptiveBilateralFilter(inputImage, smoothed, Size(3,3), 45, 45);
   
-  int morph_elem  = 2;
-  int morph_size = 2;
+  
+  
+  int morph_elem  = 1;
+  int morph_size = 1;
   Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
 
+  /*
   morphologyEx( smoothed, smoothed, MORPH_CLOSE, element );
 
   morph_size = 1;
   element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
   morphologyEx( smoothed, smoothed, MORPH_OPEN, element );
-
+*/
+  
   Mat edges(inputImage.size(), inputImage.type());
   Canny(smoothed, edges, 66, 133);
 
   // Create a mask that is dilated based on the detected characters
-  Mat mask = charRegion->charAnalysis->getCharacterMask();
+  vector<vector<Point> > polygons;
+  polygons.push_back(charRegion->charAnalysis->charArea);
+  
+  Mat mask = Mat::zeros(inputImage.size(), CV_8U);
+  fillPoly(mask, polygons, Scalar(255,255,255));
+
   dilate(mask, mask, element);
   bitwise_not(mask, mask);
   
