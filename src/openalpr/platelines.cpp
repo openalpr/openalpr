@@ -58,13 +58,6 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
   int morph_size = 1;
   Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
 
-  /*
-  morphologyEx( smoothed, smoothed, MORPH_CLOSE, element );
-
-  morph_size = 1;
-  element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
-  morphologyEx( smoothed, smoothed, MORPH_OPEN, element );
-*/
   
   Mat edges(inputImage.size(), inputImage.type());
   Canny(smoothed, edges, 66, 133);
