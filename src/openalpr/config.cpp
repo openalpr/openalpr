@@ -135,6 +135,7 @@ void Config::loadValues(string country)
   debugOcr = 		getBoolean("debug", "ocr", 		false);
   debugPostProcess = 	getBoolean("debug", "postprocess", 	false);
   debugShowImages = 	getBoolean("debug", "show_images",	false);
+  debugPauseOnFrame = 	getBoolean("debug", "pause_on_frame",	false);
   
 }
 

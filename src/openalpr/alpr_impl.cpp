@@ -136,10 +136,14 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
 
     
     displayImage(config, "Main Image", img);
-    // Pause indefinitely until they press a key
     cv::waitKey(1);
-    //while ((char) cv::waitKey(50) == -1)
-    //  {}
+    
+    if (config->debugPauseOnFrame)
+    {
+      // Pause indefinitely until they press a key
+      while ((char) cv::waitKey(50) == -1)
+      {}
+    }
   }
 
   

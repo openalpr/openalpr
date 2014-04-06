@@ -104,6 +104,7 @@ class Config
     bool debugOcr;
     bool debugPostProcess;
     bool debugShowImages;
+    bool debugPauseOnFrame;
     
     void debugOff();
    
