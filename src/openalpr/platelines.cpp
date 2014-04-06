@@ -54,8 +54,8 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
   
   
   
-  int morph_elem  = 1;
-  int morph_size = 1;
+  int morph_elem  = 2;
+  int morph_size = 2;
   Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
 
   
