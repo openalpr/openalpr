@@ -47,6 +47,10 @@ void LicensePlateCandidate::recognize()
   Mat plate_bgr = Mat(frame, expandedRegion);
   resize(plate_bgr, plate_bgr, Size(config->templateWidthPx, config->templateHeightPx));
 
+  Mat plate_gray;
+  cvtColor(plate_bgr, plate_gray, CV_BGR2GRAY);
+  
+  
   CharacterRegion charRegion(plate_bgr, config);
 
   if (charRegion.confidence > 10)
@@ -55,7 +59,7 @@ void LicensePlateCandidate::recognize()
     //Mat boogedy = charRegion.getPlateMask();
 
     plateLines.processImage(charRegion.getPlateMask(), &charRegion, 1.10);
-    plateLines.processImage(plate_bgr, &charRegion, 0.9);
+    plateLines.processImage(plate_gray, &charRegion, 0.9);
 
     PlateCorners cornerFinder(plate_bgr, &plateLines, &charRegion, config);
     vector<Point> smallPlateCorners = cornerFinder.findPlateCorners();
