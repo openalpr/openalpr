@@ -49,7 +49,7 @@ CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* con
     displayImage(config, "CharacterSegmenter  Thresholds", drawImageDashboard(charAnalysis->thresholds, CV_8U, 3));
   }
 
-  if (this->config->debugCharSegmenter)
+  if (this->config->debugCharSegmenter && charAnalysis->linePolygon.size() > 0)
   {
     Mat img_contours(charAnalysis->bestThreshold.size(), CV_8U);
     charAnalysis->bestThreshold.copyTo(img_contours);
