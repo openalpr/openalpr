@@ -53,21 +53,28 @@ float calcLocalStats (Mat &im, Mat &map_m, Mat &map_s, int winx, int winy)
   max_s = 0;
   for	(int j = y_firstth ; j<=y_lastth; j++)
   {
+    float* mapm_rowdata = map_m.ptr<float>(j);
+    float* maps_rowdata = map_s.ptr<float>(j);
+    
     // Calculate the initial window at the beginning of the line
     sum = sum_sq = 0;
     for	(int wy=0 ; wy<winy; wy++)
+    {
+      uchar* imdatarow = im.ptr<uchar>(j-wyh+wy);
       for	(int wx=0 ; wx<winx; wx++)
       {
-        foo = im.uget(wx,j-wyh+wy);
+        foo = imdatarow[wx];
         sum    += foo;
         sum_sq += foo*foo;
       }
+    }
+    
     m  = ((float)sum) / winarea;
     s  = sqrt ((((float)sum_sq) - ((float)(sum*sum))/winarea)/winarea);
     if (s > max_s)
       max_s = s;
-    map_m.fset(x_firstth, j, m);
-    map_s.fset(x_firstth, j, s);
+    mapm_rowdata[x_firstth] = m;
+    maps_rowdata[x_firstth] = s;
 
     // Shift the window, add and remove	new/old values to the histogram
     for	(int i=1 ; i <= im.cols-winx; i++)
@@ -86,8 +93,8 @@ float calcLocalStats (Mat &im, Mat &map_m, Mat &map_s, int winx, int winy)
       s  = sqrt ((((float)sum_sq) - ((float) (sum*sum))/winarea)/winarea);
       if (s > max_s)
         max_s = s;
-      map_m.fset(i+wxh, j, m);
-      map_s.fset(i+wxh, j, s);
+      mapm_rowdata[i+wxh] = m;
+      maps_rowdata[i+wxh] = s;
     }
   }
 
@@ -128,11 +135,15 @@ void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
 
   for	(int j = y_firstth ; j<=y_lastth; j++)
   {
+    float* mapm_rowdata = map_m.ptr<float>(j);
+    float* maps_rowdata = map_s.ptr<float>(j);
+    float* thsurf_rowdata = thsurf.ptr<float>(j);
+    
     // NORMAL, NON-BORDER AREA IN THE MIDDLE OF THE WINDOW:
     for	(int i=0 ; i <= im.cols-winx; i++)
     {
-      m  = map_m.fget(i+wxh, j);
-      s  = map_s.fget(i+wxh, j);
+      m  = mapm_rowdata[i+wxh];
+      s  = maps_rowdata[i+wxh];
 
       // Calculate the threshold
       switch (version)
@@ -154,25 +165,31 @@ void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
         exit (1);
       }
 
-      thsurf.fset(i+wxh,j,th);
+      thsurf_rowdata[i+wxh] = th;
 
       if (i==0)
       {
         // LEFT BORDER
         for (int i=0; i<=x_firstth; ++i)
-          thsurf.fset(i,j,th);
+          thsurf_rowdata[i] = th;
 
         // LEFT-UPPER CORNER
         if (j==y_firstth)
           for (int u=0; u<y_firstth; ++u)
+	  {
+	    float* thsurf_subrowdata = thsurf.ptr<float>(u);
             for (int i=0; i<=x_firstth; ++i)
-              thsurf.fset(i,u,th);
+              thsurf_subrowdata[i] = th;
+	  }
 
         // LEFT-LOWER CORNER
         if (j==y_lastth)
           for (int u=y_lastth+1; u<im.rows; ++u)
+	  {
+	    float* thsurf_subrowdata = thsurf.ptr<float>(u);
             for (int i=0; i<=x_firstth; ++i)
-              thsurf.fset(i,u,th);
+              thsurf_subrowdata[i] = th;
+	  }
       }
 
       // UPPER BORDER
@@ -188,31 +205,39 @@ void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
 
     // RIGHT BORDER
     for (int i=x_lastth; i<im.cols; ++i)
-      thsurf.fset(i,j,th);
+      thsurf_rowdata[i] = th;
 
     // RIGHT-UPPER CORNER
     if (j==y_firstth)
       for (int u=0; u<y_firstth; ++u)
+      {
+	float* thsurf_subrowdata = thsurf.ptr<float>(u);
         for (int i=x_lastth; i<im.cols; ++i)
-          thsurf.fset(i,u,th);
+          thsurf_subrowdata[i] = th;
+      }
 
     // RIGHT-LOWER CORNER
     if (j==y_lastth)
       for (int u=y_lastth+1; u<im.rows; ++u)
+      {
+	float* thsurf_subrowdata = thsurf.ptr<float>(u);
         for (int i=x_lastth; i<im.cols; ++i)
-          thsurf.fset(i,u,th);
+          thsurf_subrowdata[i] = th;
+      }
   }
 
   for	(int y=0; y<im.rows; ++y)
+  {
+    uchar* outputdatarow = output.ptr<uchar>(y);
+    uchar* imdatarow = im.ptr<uchar>(y);
+    float* thsurfdatarow = thsurf.ptr<float>(y);
+  
     for	(int x=0; x<im.cols; ++x)
     {
-      if (im.uget(x,y) >= thsurf.fget(x,y))
-      {
-        output.uset(x,y,255);
-      }
+      if (imdatarow[x] >= thsurfdatarow[x])
+	outputdatarow[x]=255;
       else
-      {
-        output.uset(x,y,0);
-      }
+	outputdatarow[x]=0;
     }
+  }
 }
