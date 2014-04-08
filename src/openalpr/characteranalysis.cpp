@@ -264,7 +264,7 @@ Mat CharacterAnalysis::findOuterBoxMask()
   }
 
   if (this->config->debugCharAnalysis)
-    cout << "Winning image index is: " << winningIndex << endl;
+    cout << "Winning image index (findOuterBoxMask) is: " << winningIndex << endl;
 
   if (winningIndex != -1 && bestCharCount >= 3)
   {
