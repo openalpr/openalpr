@@ -733,6 +733,7 @@ vector<bool> CharacterAnalysis::filterByParentContour( vector< vector< Point> > 
 vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<Point> > contours, vector<Vec4i> hierarchy, vector<Point> outerPolygon, vector<bool> goodIndices)
 {
   static float MIN_AREA_PERCENT_WITHIN_LINES = 0.88;
+  static float MAX_DISTANCE_PERCENT_FROM_LINES = 0.15;
 
   vector<bool> includedIndices(contours.size());
   for (int j = 0; j < contours.size(); j++)
@@ -754,15 +755,17 @@ vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<Point>
 
   // Create a white mask for the area inside the polygon
   Mat outerMask = Mat::zeros(img.size(), CV_8U);
-  Mat innerArea = Mat::zeros(img.size(), CV_8U);
+  Mat innerArea(img.size(), CV_8U);
   fillConvexPoly(outerMask, outerPolygon.data(), outerPolygon.size(), Scalar(255,255,255));
 
+  // For each contour, determine if enough of it is between the lines to qualify
   for (int i = 0; i < contours.size(); i++)
   {
     if (goodIndices[i] == false)
       continue;
 
-    // get rid of the outline by drawing a 1 pixel width black line
+    innerArea.setTo(Scalar(0,0,0));
+    
     drawContours(innerArea, contours,
                  i, // draw this contour
                  cv::Scalar(255,255,255), // in
@@ -777,7 +780,7 @@ vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<Point>
     vector<vector<Point> > tempContours;
     findContours(innerArea, tempContours,
                  CV_RETR_EXTERNAL, // retrieve the external contours
-                 CV_CHAIN_APPROX_SIMPLE ); // all pixels of each contours );
+                 CV_CHAIN_APPROX_SIMPLE  ); // all pixels of each contours );
 
     double totalArea = contourArea(contours[i]);
     double areaBetweenLines = 0;
@@ -787,12 +790,51 @@ vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<Point>
       areaBetweenLines += contourArea(tempContours[tempContourIdx]);
     }
 
-    if (areaBetweenLines / totalArea >= MIN_AREA_PERCENT_WITHIN_LINES)
+
+    
+    if (areaBetweenLines / totalArea < MIN_AREA_PERCENT_WITHIN_LINES)
+    {
+      // Not enough area is inside the lines.
+      continue;
+    }
+    
+    
+    // now check to make sure that the top and bottom of the contour are near enough to the lines
+    
+    // First get the high and low point for the contour
+    // Remember that origin is top-left, so the top Y values are actually closer to 0.
+    int highPointIndex = 0;
+    int highPointValue = 999999999;
+    int lowPointIndex = 0;
+    int lowPointValue = 0;
+    for (int cidx = 0; cidx < contours[i].size(); cidx++)
+    {
+      if (contours[i][cidx].y < highPointValue)
+      {
+	highPointIndex = cidx;
+	highPointValue = contours[i][cidx].y;
+      }
+      if (contours[i][cidx].y > lowPointValue)
+      {
+	lowPointIndex = cidx;
+	lowPointValue = contours[i][cidx].y;
+      }
+    }
+    
+    // Get the absolute distance from the top and bottom lines
+    Point closestTopPoint = topLine.closestPointOnSegmentTo(contours[i][highPointIndex]);
+    Point closestBottomPoint = bottomLine.closestPointOnSegmentTo(contours[i][lowPointIndex]);
+    
+    float absTopDistance = distanceBetweenPoints(closestTopPoint, contours[i][highPointIndex]);
+    float absBottomDistance = distanceBetweenPoints(closestBottomPoint, contours[i][lowPointIndex]);
+    
+    float maxDistance = lineHeight * MAX_DISTANCE_PERCENT_FROM_LINES;
+     
+    if (absTopDistance < maxDistance && absBottomDistance < maxDistance)
     {
       includedIndices[i] = true;
     }
 
-    innerArea.setTo(Scalar(0,0,0));
   }
 
   return includedIndices;
