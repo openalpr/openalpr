@@ -37,7 +37,7 @@ CharacterRegion::CharacterRegion(Mat img, Config* config)
   charAnalysis = new CharacterAnalysis(img, config);
   charAnalysis->analyze();
 
-  if (this->debug)
+  if (this->debug && charAnalysis->linePolygon.size() > 0)
   {
     vector<Mat> tempDash;
     for (int z = 0; z < charAnalysis->thresholds.size(); z++)

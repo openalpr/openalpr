@@ -573,12 +573,12 @@ vector<bool> CharacterAnalysis::filter(Mat img, vector<vector<Point> > contours,
     goodIndices = this->filterByBoxSize(contours, goodIndices, STARTING_MIN_HEIGHT + (i * HEIGHT_STEP), STARTING_MAX_HEIGHT + (i * HEIGHT_STEP));
 
     goodIndicesCount = getGoodIndicesCount(goodIndices);
-    if ( goodIndicesCount > 0 && goodIndicesCount <= bestFitScore)	// Don't bother doing more filtering if we already lost...
+    if ( goodIndicesCount == 0 || goodIndicesCount <= bestFitScore)	// Don't bother doing more filtering if we already lost...
       continue;
     goodIndices = this->filterContourHoles(contours, hierarchy, goodIndices);
 
     goodIndicesCount = getGoodIndicesCount(goodIndices);
-    if ( goodIndicesCount > 0 && goodIndicesCount <= bestFitScore)	// Don't bother doing more filtering if we already lost...
+    if ( goodIndicesCount == 0 || goodIndicesCount <= bestFitScore)	// Don't bother doing more filtering if we already lost...
       continue;
     //goodIndices = this->filterByParentContour( contours, hierarchy, goodIndices);
     vector<Point> lines = getBestVotedLines(img, contours, goodIndices);
