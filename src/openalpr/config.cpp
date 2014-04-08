@@ -78,6 +78,8 @@ void Config::loadValues(string country)
   maxPlateWidthPercent = getFloat("common", "max_plate_width_percent", 100);
   maxPlateHeightPercent = getFloat("common", "max_plate_height_percent", 100);
 
+  maxPlateAngleDegrees = getInt("common", "max_plate_angle_degrees", 15);
+  
   minPlateSizeWidthPx = getInt(country, "min_plate_size_width_px", 100);
   minPlateSizeHeightPx = getInt(country, "min_plate_size_height_px", 100);
     

@@ -50,6 +50,8 @@ class Config
     float maxPlateWidthPercent;
     float maxPlateHeightPercent;
     
+    int maxPlateAngleDegrees;
+    
     float minPlateSizeWidthPx;
     float minPlateSizeHeightPx;
     

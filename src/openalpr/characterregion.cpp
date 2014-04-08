@@ -75,10 +75,10 @@ CharacterRegion::CharacterRegion(Mat img, Config* config)
       confidenceDrainers += (5 - charSegmentCount) * 10;
 
     int absangle = abs(charAnalysis->topLine.angle);
-    if (absangle > 10)
+    if (absangle > config->maxPlateAngleDegrees)
       confidenceDrainers += 91;
     else if (absangle > 1)
-      confidenceDrainers += (10 - absangle) * 5;
+      confidenceDrainers += (config->maxPlateAngleDegrees - absangle) ;
 
     if (confidenceDrainers >= 100)
       this->confidence=1;
