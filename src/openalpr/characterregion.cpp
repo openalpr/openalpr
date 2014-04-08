@@ -64,35 +64,6 @@ CharacterRegion::CharacterRegion(Mat img, Config* config)
     displayImage(config, "Character Region Step 1 Thresholds", drawImageDashboard(tempDash, bestVal.type(), 3));
   }
 
-  if (this->debug)
-  {
-    /*
-    Mat img_contours(img_threshold.size(), CV_8U);
-    img_threshold.copyTo(img_contours);
-    cvtColor(img_contours, img_contours, CV_GRAY2RGB);
-
-    vector<vector<Point> > allowedContours;
-    for (int i = 0; i < contours.size(); i++)
-    {
-    if (charSegments[i])
-    allowedContours.push_back(contours[i]);
-    }
-
-    drawContours(img_contours, contours,
-    -1, // draw all contours
-    cv::Scalar(255,0,0), // in blue
-    1); // with a thickness of 1
-
-    drawContours(img_contours, allowedContours,
-    -1, // draw all contours
-    cv::Scalar(0,255,0), // in green
-    1); // with a thickness of 1
-
-    displayImage(config, "Matching Contours", img_contours);
-    */
-  }
-
-  //charsegments = this->getPossibleCharRegions(img_threshold, allContours, allHierarchy, STARTING_MIN_HEIGHT + (bestFitIndex * HEIGHT_STEP), STARTING_MAX_HEIGHT + (bestFitIndex * HEIGHT_STEP));
 
   if (charAnalysis->linePolygon.size() > 0)
   {
