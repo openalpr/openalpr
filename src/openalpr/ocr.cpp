@@ -52,6 +52,10 @@ void OCR::performOCR(vector<Mat> thresholds, vector<Rect> charRegions)
   getTime(&startTime);
 
   postProcessor->clear();
+  
+  // Don't waste time on OCR processing if it is impossible to get sufficient characters
+  if (charRegions.size() < config->postProcessMinCharacters)
+    return;
 
   for (int i = 0; i < thresholds.size(); i++)
   {
