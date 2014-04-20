@@ -67,3 +67,7 @@ ENDIF()
 
 add_subdirectory(openalpr)
 add_subdirectory(misc_utilities)
+
+install (TARGETS alpr DESTINATION bin)
+install (FILES openalpr/alpr.h DESTINATION include)
+install (FILES ${CMAKE_BINARY_DIR}/openalpr/libopenalpr.so DESTINATION lib)
