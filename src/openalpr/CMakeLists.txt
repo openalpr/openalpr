@@ -32,7 +32,8 @@ add_subdirectory(simpleini)
 add_subdirectory(support)
 
 
-add_library(openalpr ${lpr_source_files})
+add_library(openalpr-static 	STATIC ${lpr_source_files} )
+add_library(openalpr 		SHARED ${lpr_source_files} )
 
 
 # Add definition for default runtime dir
