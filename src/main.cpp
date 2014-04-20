@@ -52,10 +52,11 @@ int main( int argc, const char** argv )
   std::string country;
   int topn;
 
-  TCLAP::CmdLine cmd("OpenAlpr Command Line Utility", ' ', OPENALPR_VERSION);
+  TCLAP::CmdLine cmd("OpenAlpr Command Line Utility", ' ', Alpr::getVersion());
 
   TCLAP::UnlabeledValueArg<std::string>  fileArg( "image_file", "Image containing license plates", false, "", "image_file_path"  );
 
+  
   TCLAP::ValueArg<std::string> countryCodeArg("c","country","Country code to identify (either us for USA or eu for Europe).  Default=us",false, "us" ,"country_code");
   TCLAP::ValueArg<int> seekToMsArg("","seek","Seek to the specied millisecond in a video file. Default=0",false, 0 ,"integer_ms");
   TCLAP::ValueArg<std::string> runtimeDirArg("r","runtime_dir","Path to the OpenAlpr runtime data directory",false, "" ,"runtime_dir");
@@ -94,6 +95,7 @@ int main( int argc, const char** argv )
     return 1;
   }
 
+  
   cv::Mat frame;
 
   Alpr alpr(country, runtimePath);

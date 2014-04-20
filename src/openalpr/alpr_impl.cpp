@@ -352,3 +352,11 @@ void AlprImpl::setDefaultRegion(string region)
   this->defaultRegion = region;
 }
 
+std::string AlprImpl::getVersion()
+{
+  std::stringstream ss;
+  
+  ss << OPENALPR_MAJOR_VERSION << "." << OPENALPR_MINOR_VERSION << "." << OPENALPR_PATCH_VERSION;
+  return ss.str();
+}
+

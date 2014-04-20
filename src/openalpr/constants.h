@@ -16,6 +16,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
+#define OPENALPR_MAJOR_VERSION 1
+#define OPENALPR_MINOR_VERSION 1
+#define OPENALPR_PATCH_VERSION 0
 
 #define CONFIG_FILE 		"/openalpr.conf"
 #define KEYPOINTS_DIR		"/keypoints"

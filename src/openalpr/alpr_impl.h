@@ -22,6 +22,7 @@
 #define ALPRIMPL_H
 
 #include <list>
+#include <sstream>
 
 #include "alpr.h"
 #include "config.h"
@@ -31,6 +32,8 @@
 #include "stateidentifier.h"
 #include "charactersegmenter.h"
 #include "ocr.h"
+
+#include "constants.h"
 
 #include "cjson.h"
 
@@ -59,6 +62,7 @@ class AlprImpl
     void setDefaultRegion(string region);
     
     std::string toJson(const vector<AlprResult> results);
+    static std::string getVersion();
     
     Config* config;
     

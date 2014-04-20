@@ -71,6 +71,11 @@ bool Alpr::isLoaded()
   return true;
 }
 
+std::string Alpr::getVersion()
+{
+  return AlprImpl::getVersion();
+}
+
 // Results code
 
 AlprResult::AlprResult()

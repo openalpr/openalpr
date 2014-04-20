@@ -23,7 +23,6 @@
 #include <iostream>
 #include <vector>
 
-#define OPENALPR_VERSION "1.0"
 
 struct AlprPlate
 {
@@ -77,6 +76,8 @@ class Alpr
     std::string toJson(const std::vector<AlprResult> results);
 
     bool isLoaded();
+    
+    static std::string getVersion();
 
   private:
     AlprImpl* impl;
