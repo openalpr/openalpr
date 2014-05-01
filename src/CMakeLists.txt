@@ -18,9 +18,23 @@ IF (WIN32)
 	add_definitions( -DNOMINMAX)
 
 	link_directories( ${Tesseract_DIR}/vs2008/LIB_Release/ )
+	
+	# Extra linker dependencies for Windows
+	SET(Tesseract_LIBS 		
+		libtesseract302-static
+		liblept168
+		liblept168-static-mtdll
+		libpng143-static-mtdll
+		libjpeg8c-static-mtdll
+		giflib416-static-mtdll
+		libtiff394-static-mtdll
+		zlib125-static-mtdll
+		ws2_32.lib)
 ELSE()
 
 	link_directories( ${Tesseract_DIR}/api/.libs/ )
+	
+	SET(Tesseract_LIBS tesseract)
 ENDIF()
 
 
@@ -38,32 +52,13 @@ set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall ")
 ADD_EXECUTABLE( alpr  main.cpp  )
 
 
-IF (WIN32)
-	# Extra linker dependencies for Windows
-	TARGET_LINK_LIBRARIES(alpr
-		openalpr
-		support
-		${OpenCV_LIBS}
-		libtesseract302-static
-		liblept168
-		liblept168-static-mtdll
-		libpng143-static-mtdll
-		libjpeg8c-static-mtdll
-		giflib416-static-mtdll
-		libtiff394-static-mtdll
-		zlib125-static-mtdll
-		ws2_32.lib
-	  )
 
-ELSE()
-
-	TARGET_LINK_LIBRARIES(alpr
-		openalpr
-		support
-		${OpenCV_LIBS}
-		tesseract
-	  )
-ENDIF()
+TARGET_LINK_LIBRARIES(alpr
+	openalpr-static
+	support
+	${OpenCV_LIBS}
+	${Tesseract_LIBS}
+  )
 
 add_subdirectory(openalpr)
 add_subdirectory(misc_utilities)

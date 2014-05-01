@@ -35,6 +35,11 @@ add_subdirectory(support)
 add_library(openalpr-static 	STATIC ${lpr_source_files} )
 add_library(openalpr 		SHARED ${lpr_source_files} )
 
+TARGET_LINK_LIBRARIES(openalpr
+	support
+	${OpenCV_LIBS}
+	${Tesseract_LIBS}
+  )
 
 # Add definition for default runtime dir
 add_definitions(-DDEFAULT_RUNTIME_DIR="${CMAKE_SOURCE_DIR}/../runtime_data/")

@@ -5,27 +5,27 @@ target_link_libraries(openalpr)
 
 ADD_EXECUTABLE( sortstate  sortstate.cpp  )
 TARGET_LINK_LIBRARIES(sortstate 
-    openalpr
+    openalpr-static
     support
     ${OpenCV_LIBS} 
-    tesseract
+	${Tesseract_LIBS}
   )
   
 ADD_EXECUTABLE( classifychars  classifychars.cpp )
 TARGET_LINK_LIBRARIES(classifychars 
-    openalpr
+    openalpr-static
     support
     ${OpenCV_LIBS} 
-    tesseract
+	${Tesseract_LIBS}
   )
   
   
 ADD_EXECUTABLE( benchmark  benchmark.cpp )
 TARGET_LINK_LIBRARIES(benchmark 
-    openalpr
+    openalpr-static
     support
     ${OpenCV_LIBS} 
-    tesseract
+	${Tesseract_LIBS}
   )
   
   
