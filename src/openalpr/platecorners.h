@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PLATECORNERS_H
-#define PLATECORNERS_H
+#ifndef OPENALPR_PLATECORNERS_H
+#define OPENALPR_PLATECORNERS_H
 
 #include "opencv2/imgproc/imgproc.hpp"
 #include "characterregion.h"
@@ -75,4 +75,4 @@ class PlateCorners
 
 };
 
-#endif // PLATELINES_H
+#endif // OPENALPR_PLATELINES_H

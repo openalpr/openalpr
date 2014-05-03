@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BINARIZEWOLF_H
-#define BINARIZEWOLF_H
+#ifndef OPENALPR_BINARIZEWOLF_H
+#define OPENALPR_BINARIZEWOLF_H
 
 #include "support/filesystem.h"
 
@@ -47,4 +47,4 @@ enum NiblackVersion
 void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
                                int winx, int winy, float k);
 
-#endif // BINARIZEWOLF_H
+#endif // OPENALPR_BINARIZEWOLF_H

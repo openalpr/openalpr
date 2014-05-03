@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STAGE2_H
-#define STAGE2_H
+#ifndef OPENALPR_LICENSEPLATECANDIDATE_H
+#define OPENALPR_LICENSEPLATECANDIDATE_H
 
 #include <iostream>
 #include <stdio.h>
@@ -72,4 +72,4 @@ class LicensePlateCandidate
 
 };
 
-#endif // STAGE2_H
+#endif // OPENALPR_LICENSEPLATECANDIDATE_H

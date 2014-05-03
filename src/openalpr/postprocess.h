@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef POSTPROCESS_H
-#define POSTPROCESS_H
+#ifndef OPENALPR_POSTPROCESS_H
+#define OPENALPR_POSTPROCESS_H
 
 #include "TRexpp.h"
 #include "constants.h"
@@ -125,4 +125,4 @@ class LetterScores
     vector<float> scores;
 };
 */
-#endif // POSTPROCESS_H
+#endif // OPENALPR_POSTPROCESS_H

@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STATEIDENTIFIER_H
-#define STATEIDENTIFIER_H
+#ifndef OPENALPR_STATEIDENTIFIER_H
+#define OPENALPR_STATEIDENTIFIER_H
 
 #include "opencv2/imgproc/imgproc.hpp"
 #include "constants.h"
@@ -47,4 +47,4 @@ class StateIdentifier
 
 };
 
-#endif // STATEIDENTIFIER_H
+#endif // OPENALPR_STATEIDENTIFIER_H

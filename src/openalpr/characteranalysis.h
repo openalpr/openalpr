@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CHARACTERANALYSIS_H
-#define CHARACTERANALYSIS_H
+#ifndef OPENALPR_CHARACTERANALYSIS_H
+#define OPENALPR_CHARACTERANALYSIS_H
 
 #include "opencv2/imgproc/imgproc.hpp"
 #include "constants.h"
@@ -91,4 +91,4 @@ class CharacterAnalysis
 
 };
 
-#endif // CHARACTERANALYSIS_H
+#endif // OPENALPR_CHARACTERANALYSIS_H

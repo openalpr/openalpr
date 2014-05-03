@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CHARACTERSEGMENTER_H
-#define CHARACTERSEGMENTER_H
+#ifndef OPENALPR_CHARACTERSEGMENTER_H
+#define OPENALPR_CHARACTERSEGMENTER_H
 
 #include "opencv2/imgproc/imgproc.hpp"
 #include "constants.h"
@@ -98,4 +98,4 @@ class CharacterSegmenter
     vector<Point> getEncapsulatingLines(Mat img, vector<vector<Point> > contours, vector<bool> goodIndices);
 };
 
-#endif // CHARACTERSEGMENTER_H
+#endif // OPENALPR_CHARACTERSEGMENTER_H

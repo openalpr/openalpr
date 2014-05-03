@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef UTILITY_H
-#define UTILITY_H
+#ifndef OPENALPR_UTILITY_H
+#define OPENALPR_UTILITY_H
 
 #include <iostream>
 #include <stdio.h>
@@ -106,4 +106,4 @@ Rect expandRect(Rect original, int expandXPixels, int expandYPixels, int maxX, i
 
 Mat addLabel(Mat input, string label);
 
-#endif // UTILITY_H
+#endif // OPENALPR_UTILITY_H

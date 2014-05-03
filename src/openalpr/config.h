@@ -18,8 +18,8 @@
 */
 
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef OPENALPR_CONFIG_H
+#define OPENALPR_CONFIG_H
 
 
 #include "simpleini/simpleini.h"
@@ -129,4 +129,4 @@ private:
 };
 
 
-#endif // CONFIG_H
+#endif // OPENALPR_CONFIG_H

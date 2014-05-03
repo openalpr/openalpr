@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CHARACTERREGION_H
-#define CHARACTERREGION_H
+#ifndef OPENALPR_CHARACTERREGION_H
+#define OPENALPR_CHARACTERREGION_H
 
 #include "opencv2/imgproc/imgproc.hpp"
 #include "constants.h"
@@ -78,4 +78,4 @@ class CharacterRegion
 
 };
 
-#endif // CHARACTERREGION_H
+#endif // OPENALPR_CHARACTERREGION_H

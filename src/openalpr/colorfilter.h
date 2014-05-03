@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef COLORFILTER_H
-#define COLORFILTER_H
+#ifndef OPENALPR_COLORFILTER_H
+#define OPENALPR_COLORFILTER_H
 
 #include <iomanip>
 #include "opencv2/imgproc/imgproc.hpp"
@@ -56,4 +56,4 @@ class ColorFilter
     int getMajorityOpinion(vector<float> values, float minPercentAgreement, float maxValDifference);
 };
 
-#endif // COLORFILTER_H
+#endif // OPENALPR_COLORFILTER_H

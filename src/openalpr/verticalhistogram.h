@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef VERTICALHISTOGRAM_H
-#define VERTICALHISTOGRAM_H
+#ifndef OPENALPR_VERTICALHISTOGRAM_H
+#define OPENALPR_VERTICALHISTOGRAM_H
 
 #include "opencv2/imgproc/imgproc.hpp"
 
@@ -63,4 +63,4 @@ class VerticalHistogram
     HistogramDirection getHistogramDirection(int index);
 };
 
-#endif // VERTICALHISTOGRAM_H
+#endif // OPENALPR_VERTICALHISTOGRAM_H

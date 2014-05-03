@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef REGIONDETECTOR_H
-#define REGIONDETECTOR_H
+#ifndef OPENALPR_REGIONDETECTOR_H
+#define OPENALPR_REGIONDETECTOR_H
 
 #include <iostream>
 #include <stdio.h>
@@ -62,4 +62,4 @@ class RegionDetector
     vector<PlateRegion> aggregateRegions(vector<Rect> regions);
 };
 
-#endif // REGIONDETECTOR_H
+#endif // OPENALPR_REGIONDETECTOR_H

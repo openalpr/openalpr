@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OCR_H
-#define OCR_H
+#ifndef OPENALPR_OCR_H
+#define OPENALPR_OCR_H
 
 #include <iostream>
 #include <stdio.h>
@@ -56,4 +56,4 @@ class OCR
 
 };
 
-#endif // OCR_H
+#endif // OPENALPR_OCR_H

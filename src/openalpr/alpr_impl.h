@@ -18,8 +18,8 @@
 */
 
 
-#ifndef ALPRIMPL_H
-#define ALPRIMPL_H
+#ifndef OPENALPR_ALPRIMPL_H
+#define OPENALPR_ALPRIMPL_H
 
 #include <list>
 #include <sstream>
@@ -163,4 +163,4 @@ class PlateDispatcher
 
 };
 
-#endif // ALPRIMPL_H
+#endif // OPENALPR_ALPRIMPL_H

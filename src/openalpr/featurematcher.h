@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef FEATUREMATCHER_H
-#define FEATUREMATCHER_H
+#ifndef OPENALPR_FEATUREMATCHER_H
+#define OPENALPR_FEATUREMATCHER_H
 
 #include "opencv2/calib3d/calib3d.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -76,4 +76,4 @@ class FeatureMatcher
 
 };
 
-#endif // FEATUREMATCHER_H
+#endif // OPENALPR_FEATUREMATCHER_H

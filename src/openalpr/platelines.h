@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PLATELINES_H
-#define PLATELINES_H
+#ifndef OPENALPR_PLATELINES_H
+#define OPENALPR_PLATELINES_H
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -53,4 +53,4 @@ class PlateLines
     vector<LineSegment> getLines(Mat edges, float sensitivityMultiplier, bool vertical);
 };
 
-#endif // PLATELINES_H
+#endif // OPENALPR_PLATELINES_H
