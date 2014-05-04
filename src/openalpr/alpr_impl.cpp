@@ -159,18 +159,15 @@ void plateAnalysisThread(void* arg)
   int loop_count = 0;
   while (true)
   {
-    
-    if (dispatcher->hasPlate() == false)
+    PlateRegion plateRegion;
+    if (dispatcher->nextPlate(&plateRegion) == false)
       break;
     
     if (dispatcher->config->debugGeneral)
       cout << "Thread: " << tthread::this_thread::get_id() << " loop " << ++loop_count << endl;
-    
-    // Get a single plate region from the queue
-    PlateRegion plateRegion = dispatcher->nextPlate();
-    
+      
     Mat img = dispatcher->getImageCopy();
-
+    
     timespec platestarttime;
     getTime(&platestarttime);
     
