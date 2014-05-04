@@ -141,7 +141,6 @@ class PlateDispatcher
       return recognitionResults;
     }
     
-
     StateIdentifier* stateIdentifier;
     OCR* ocr;
     Config* config;
@@ -150,9 +149,12 @@ class PlateDispatcher
     bool detectRegion;
     std::string defaultRegion;
     
+    tthread::mutex ocrMutex;
+    
   private:
     
     tthread::mutex mMutex;
+    
     cv::Mat* frame;
     vector<PlateRegion> plateRegions;
     vector<AlprResult> recognitionResults;

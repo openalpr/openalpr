@@ -153,6 +153,7 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
 void plateAnalysisThread(void* arg)
 {
   PlateDispatcher* dispatcher = (PlateDispatcher*) arg;
+  
   if (dispatcher->config->debugGeneral)
     cout << "Thread: " << tthread::this_thread::get_id() << " Initialized" << endl;
   
@@ -207,13 +208,13 @@ void plateAnalysisThread(void* arg)
 	}
       }
   
-  
-      dispatcher->ocr->performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
       
+      // Tesseract OCR does not appear to be threadsafe
+      dispatcher->ocrMutex.lock();
+      dispatcher->ocr->performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
       dispatcher->ocr->postProcessor->analyze(plateResult.region, dispatcher->topN);
-
-      //plateResult.characters = ocr->postProcessor->bestChars;
       const vector<PPResult> ppResults = dispatcher->ocr->postProcessor->getResults();
+      dispatcher->ocrMutex.unlock();
       
       int bestPlateIndex = 0;
       
