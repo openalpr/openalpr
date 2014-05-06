@@ -105,17 +105,12 @@ OpenALPR requires the following additional libraries:
 
 After cloning this GitHub repository, you should download and extract Tesseract and OpenCV source code into their own directories.  Compile both libraries.
 
-Update the src/CMakeLists.txt file in the OpenALPR project.  Update the following lines to match the directories of your libraries on your system:
+Please follow these detailed compilation guides for your respective operating system:
 
-    - SET(OpenCV_DIR "../libraries/opencv/")
-    - SET(Tesseract_DIR "/home/mhill/projects/alpr/libraries/tesseract-ocr")
+* [Windows] (https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(Windows))
+* [Ubuntu Linux] (https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(Ubuntu-Linux))
 
-Finally, in the src directory, execute the following commands:
-
-    - cmake ./
-    - make
-
-If all went well, there should be an executable named *alpr* along with *libopenalpr.a* that can be linked into your project.
+If all went well, there should be an executable named *alpr* along with *libopenalpr-static.a* and *libopenalpr.so* that can be linked into your project.
 
 
 Questions
