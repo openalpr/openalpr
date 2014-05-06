@@ -38,7 +38,6 @@
 #include "cjson.h"
 
 #include <opencv2/core/core.hpp>
-#include "opencv2/ocl/ocl.hpp"
    
 
 #include "tinythread/tinythread.h"

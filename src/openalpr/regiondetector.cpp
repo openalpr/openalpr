@@ -26,14 +26,8 @@ RegionDetector::RegionDetector(Config* config)
   this->scale_factor = 1.0f;
 
   // Load either the regular or OpenCL version of the cascade classifier
-  if (config->opencl_enabled)
-  {
-    this->plate_cascade = new ocl::OclCascadeClassifier();
-  }
-  else
-  {
-    this->plate_cascade = new CascadeClassifier();
-  }
+  this->plate_cascade = new CascadeClassifier();
+  
 
   if( this->plate_cascade->load( config->getCascadeRuntimeDir() + config->country + ".xml" ) )
   {
@@ -87,19 +81,12 @@ vector<PlateRegion> RegionDetector::doCascade(Mat frame)
   Size minSize(config->minPlateSizeWidthPx * this->scale_factor, config->minPlateSizeHeightPx * this->scale_factor);
   Size maxSize(w * config->maxPlateWidthPercent * this->scale_factor, h * config->maxPlateHeightPercent * this->scale_factor);
 
-  if (config->opencl_enabled)
-  {
-    ocl::oclMat openclFrame(frame);
-    ((ocl::OclCascadeClassifier*) plate_cascade)->detectMultiScale(openclFrame, plates, config->detection_iteration_increase, 3, 0, minSize, maxSize);
-  }
-  else
-  {
 
-    plate_cascade->detectMultiScale( frame, plates, config->detection_iteration_increase, 3,
-                                     0,
-                                     //0|CV_HAAR_SCALE_IMAGE,
-                                     minSize, maxSize );
-  }
+  plate_cascade->detectMultiScale( frame, plates, config->detection_iteration_increase, 3,
+				    0,
+				    //0|CV_HAAR_SCALE_IMAGE,
+				    minSize, maxSize );
+  
 
   if (config->debugTiming)
   {

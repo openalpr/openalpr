@@ -33,34 +33,6 @@ AlprImpl::AlprImpl(const std::string country, const std::string runtimeDir)
   this->topN = DEFAULT_TOPN;
   this->defaultRegion = "";
   
-  if (config->opencl_enabled)
-  {
-    
-    cv::ocl::PlatformsInfo platinfo;
-    cv::ocl::getOpenCLPlatforms(platinfo);
-    
-    for (int i = 0; i < platinfo.size(); i++)
-    {
-	std::cout << platinfo[i]->platformName << std::endl;
-    }
-    
-    cv::ocl::DevicesInfo devices;
-    cv::ocl::getOpenCLDevices(devices, cv::ocl::CVCL_DEVICE_TYPE_CPU);
-    
-    for (int i = 0; i < devices.size(); i++)
-      std:: cout << devices[i]->deviceName << std::endl;
-    
-    if (devices.size() > 0)
-    {
-      cv::ocl::setDevice(devices[0]);
-    
-      cout << "Using OpenCL Device: " << devices[0]->deviceName << endl;
-    }
-    else
-    {
-      cout << "OpenCL initialization failed.  Runtime drivers may not be installed." << endl;
-    }
-  }
 }
 AlprImpl::~AlprImpl()
 {
