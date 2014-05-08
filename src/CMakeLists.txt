@@ -54,7 +54,7 @@ ADD_EXECUTABLE( alpr  main.cpp  )
 
 
 TARGET_LINK_LIBRARIES(alpr
-	openalpr-static
+	openalpr
 	support
 	${OpenCV_LIBS}
 	${Tesseract_LIBS}
