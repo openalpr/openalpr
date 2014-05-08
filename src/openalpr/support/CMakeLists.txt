@@ -5,5 +5,6 @@ set(support_source_files
  timing.cpp
 )
 
+add_library(support STATIC ${support_source_files})
 
-add_library(support ${support_source_files})
+SET_TARGET_PROPERTIES( support PROPERTIES COMPILE_FLAGS -fPIC)
