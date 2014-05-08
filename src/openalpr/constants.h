@@ -20,9 +20,6 @@
 #define OPENALPR_CONSTANTS_H
 
 
-#define OPENALPR_MAJOR_VERSION 1
-#define OPENALPR_MINOR_VERSION 1
-#define OPENALPR_PATCH_VERSION 0
 
 #define CONFIG_FILE 		"/openalpr.conf"
 #define KEYPOINTS_DIR		"/keypoints"
