@@ -3,6 +3,17 @@ project(src)
 
 cmake_minimum_required (VERSION 2.6)
 
+# Set the OpenALPR version in cmake, and also add it as a DEFINE for the code to access
+SET(OPENALPR_MAJOR_VERSION "1")
+SET(OPENALPR_MINOR_VERSION "1")
+SET(OPENALPR_PATCH_VERSION "0")
+SET(OPENALPR_VERSION ${OPENALPR_MAJOR_VERSION}.${OPENALPR_MINOR_VERSION}.${OPENALPR_PATCH_VERSION})
+
+add_definitions( -DOPENALPR_MAJOR_VERSION=${OPENALPR_MAJOR_VERSION})
+add_definitions( -DOPENALPR_MINOR_VERSION=${OPENALPR_MINOR_VERSION})
+add_definitions( -DOPENALPR_PATCH_VERSION=${OPENALPR_PATCH_VERSION})
+
+
 SET(OpenCV_DIR "${CMAKE_SOURCE_DIR}/../libraries/opencv/")
 SET(Tesseract_DIR "${CMAKE_SOURCE_DIR}/../libraries/tesseract-ocr")
 
