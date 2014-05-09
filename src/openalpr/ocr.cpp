@@ -28,14 +28,8 @@ OCR::OCR(Config* config)
   tesseract=new TessBaseAPI();
 
   // Tesseract requires the prefix directory to be set as an env variable
-  vector<char> tessdataPrefix(config->getTessdataPrefix().size() + 1);
-
-  strcpy(tessdataPrefix.data(), config->getTessdataPrefix().c_str());
-  putenv(tessdataPrefix.data());
-
-  tesseract->Init("", config->ocrLanguage.c_str() 	);
+  tesseract->Init(config->getTessdataPrefix().c_str(), config->ocrLanguage.c_str() 	);
   tesseract->SetVariable("save_blob_choices", "T");
-  //tesseract->SetVariable("tessedit_char_whitelist", "ABCDEFGHIJKLMNPQRSTUVWXYZ1234567890");
   tesseract->SetPageSegMode(PSM_SINGLE_CHAR);
 }
 

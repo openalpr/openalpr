@@ -171,7 +171,7 @@ string Config::getPostProcessRuntimeDir()
 }
 string Config::getTessdataPrefix()
 {
-  return "TESSDATA_PREFIX=" + this->runtimeBaseDir + "/ocr/";
+  return this->runtimeBaseDir + "/ocr/";
 }
 
 
