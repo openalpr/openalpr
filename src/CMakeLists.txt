@@ -56,7 +56,7 @@ IF (${OpenCV_VERSION} VERSION_LESS 2.4.8)
 ENDIF()
 
 
-include_directories(./openalpr )
+include_directories(./openalpr ) 
 
 
 set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall ")
@@ -75,5 +75,8 @@ add_subdirectory(openalpr)
 add_subdirectory(misc_utilities)
 
 install (TARGETS alpr DESTINATION bin)
-install (FILES openalpr/alpr.h DESTINATION include)
-install (FILES ${CMAKE_BINARY_DIR}/openalpr/libopenalpr.so DESTINATION lib)
+install (DIRECTORY ${CMAKE_SOURCE_DIR}/../runtime_data DESTINATION share/openalpr/)
+
+
+
+INCLUDE(CPack)
