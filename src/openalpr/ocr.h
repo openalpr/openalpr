@@ -30,7 +30,7 @@
 #include "constants.h"
 #include "opencv2/imgproc/imgproc.hpp"
 
-#include "baseapi.h"
+#include "tesseract/baseapi.h"
 using namespace  tesseract;
 using namespace std;
 using namespace cv;
