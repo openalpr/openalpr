@@ -26,10 +26,10 @@
 #define CASCADE_DIR		"/region/"
 #define POSTPROCESS_DIR		"/postprocess"
 
-#ifndef DEFAULT_RUNTIME_DIR
-#define DEFAULT_RUNTIME_DIR 	"/default_runtime_data_dir/"
+#ifndef DEFAULT_CONFIG_FILE
+  #define DEFAULT_CONFIG_FILE 	"/etc/openalpr/openalpr.conf"
 #endif
 
-#define ENV_VARIABLE_RUNTIME_DIR "OPENALPR_RUNTIME_DIR"
+#define ENV_VARIABLE_CONFIG_FILE "OPENALPR_CONFIG_FILE"
 
 #endif // OPENALPR_CONSTANTS_H

@@ -63,7 +63,7 @@ class Alpr
 {
 
   public:
-    Alpr(const std::string country, const std::string runtimeDir = "");
+    Alpr(const std::string country, const std::string configFile = "");
     virtual ~Alpr();
 
     void setDetectRegion(bool detectRegion);

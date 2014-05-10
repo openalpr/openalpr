@@ -45,11 +45,13 @@
 #define DEFAULT_TOPN 25
 #define DEFAULT_DETECT_REGION false
 
+#define ALPR_NULL_PTR 0
+
 class AlprImpl
 {
 
   public:
-    AlprImpl(const std::string country, const std::string runtimeDir = "");
+    AlprImpl(const std::string country, const std::string configFile = "");
     virtual ~AlprImpl();
 
     std::vector<AlprResult> recognize(cv::Mat img);
@@ -64,6 +66,8 @@ class AlprImpl
     static std::string getVersion();
     
     Config* config;
+    
+    bool isLoaded();
     
   private:
     

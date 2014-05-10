@@ -48,4 +48,5 @@ install (FILES alpr.h DESTINATION include)
 install (TARGETS openalpr DESTINATION lib)
 
 # Add definition for default runtime dir
-add_definitions(-DDEFAULT_RUNTIME_DIR="/usr/share/openalpr/runtime_data")
+#add_definitions(-DDEFAULT_RUNTIME_DIR="/usr/share/openalpr/runtime_data")
+add_definitions(-DDEFAULT_CONFIG_FILE="/etc/openalpr/openalpr.conf")

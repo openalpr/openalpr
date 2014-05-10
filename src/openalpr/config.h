@@ -38,9 +38,11 @@ class Config
 {
 
   public:
-    Config(const std::string country, const std::string runtimeDir = "");
+    Config(const std::string country, const std::string config_file = "");
     virtual ~Config();
 
+    bool loaded;
+    
     string country;
     
     bool opencl_enabled;
