@@ -1,7 +1,7 @@
 openalpr
 ========
 
-OpenALPR is an open source *Automated License Plate Recognition* library written in C++.  The library analyzes images and identifies license plates.  The output is the text representation of any license plate characters found in the image.
+OpenALPR is an open source *Automatic License Plate Recognition* library written in C++.  The library analyzes images and identifies license plates.  The output is the text representation of any license plate characters found in the image.
 
 Check out a live online demo here: http://www.openalpr.com/demo.html
 
