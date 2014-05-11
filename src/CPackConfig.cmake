@@ -56,7 +56,7 @@ SET (CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.1.3), libgcc1 (>= 4.1.1), libtess
 SET (CPACK_RESOURCE_FILE_LICENSE "${CUR_SOURCE_DIR}/../LICENSE")
 SET (CPACK_PACKAGE_DESCRIPTION "OpenALPR - Open Source Automatic License Plate Recognition")
 SET (CPACK_PACKAGE_DESCRIPTION_SUMMARY "OpenALPR is an open source Automated License Plate Recognition library written in C++.  The library analyzes images and identifies license plates. The output is the text representation of any license plate characters found in the image.  Check out a live online demo here: http://www.openalpr.com/demo.html" )
-SET (CPACK_PACKAGE_CONTACT "matt@ndu.com")
+SET (CPACK_PACKAGE_CONTACT "Matt Hill <matt@ndu.com>")
 SET (CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_ARCHITECTURE}")
 
 SET (CPACK_COMPONENTS_ALL Libraries ApplicationData)
