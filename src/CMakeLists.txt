@@ -76,9 +76,8 @@ add_subdirectory(misc_utilities)
 
 
 
-
 install (TARGETS alpr DESTINATION bin)
-install (FILES ${CMAKE_SOURCE_DIR}/../doc/man/openalpr.1 DESTINATION share/man/man1 COMPONENT doc)
+install (FILES ${CMAKE_SOURCE_DIR}/../doc/man/alpr.1 DESTINATION share/man/man1 COMPONENT doc)
 install (DIRECTORY ${CMAKE_SOURCE_DIR}/../runtime_data DESTINATION share/openalpr/)
 install (FILES ${CMAKE_SOURCE_DIR}/../config/openalpr.conf DESTINATION /etc/openalpr/ COMPONENT config)
 
