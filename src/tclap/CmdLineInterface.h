@@ -83,14 +83,14 @@ class CmdLineInterface
      * \param argc - Number of arguments.
      * \param argv - Array of arguments.
      */
-    virtual void parse(int argc, const char * const * argv)=0;
+    virtual bool parse(int argc, const char * const * argv)=0;
 
     /**
      * Parses the command line.
      * \param args - A vector of strings representing the args.
      * args[0] is still the program name.
      */
-    void parse(std::vector<std::string>& args);
+    bool parse(std::vector<std::string>& args);
 
     /**
      * Returns the CmdLineOutput object.

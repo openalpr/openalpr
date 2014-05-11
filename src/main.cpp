@@ -76,7 +76,12 @@ int main( int argc, const char** argv )
     cmd.add( fileArg );
     cmd.add( countryCodeArg );
 
-    cmd.parse( argc, argv );
+    
+    if (cmd.parse( argc, argv ) == false)
+    {
+      // Error occured while parsing.  Exit now.
+      return 1;
+    }
 
     filename = fileArg.getValue();
 
