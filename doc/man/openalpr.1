@@ -26,47 +26,47 @@ the library, the accuracy for these other countries can be increased.
 .SH "USAGE"
 .PP 
 
-alpr    [-c <country_code>] [--config <config_file>] [-n <topN>] [--seek
-        <integer_ms>] [-t <region code>] [--clock] [-d] [-j] [--]
-        [--version] [-h] <image_file_path>
+alpr    [\-c <country_code>] [\-\-config <config_file>] [\-n <topN>] [\-\-seek
+        <integer_ms>] [\-t <region code>] [\-\-clock] [\-d] [\-j] [\-\-]
+        [\-\-version] [\-h] <image_file_path>
 
 
 Where: 
 
-   -c <country_code>,  --country <country_code>
+   \-c <country_code>,  \-\-country <country_code>
      Country code to identify (either us for USA or eu for Europe). 
      Default=us
 
-   --config <config_file>
+   \-\-config <config_file>
      Path to the openalpr.conf file
 
-   -n <topN>,  --topn <topN>
+   \-n <topN>,  \-\-topn <topN>
      Max number of possible plate numbers to return.  Default=10
 
-   --seek <integer_ms>
+   \-\-seek <integer_ms>
      Seek to the specied millisecond in a video file. Default=0
 
-   -t <region code>,  --template_region <region code>
+   \-t <region code>,  \-\-template_region <region code>
      Attempt to match the plate number against a region template (e.g., md
      for Maryland, ca for California)
 
-   --clock
+   \-\-clock
      Measure/print the total time to process image and all plates. 
      Default=off
 
-   -d,  --detect_region
+   \-d,  \-\-detect_region
      Attempt to detect the region of the plate image.  Default=off
 
-   -j,  --json
+   \-j,  \-\-json
      Output recognition results in JSON format.  Default=off
 
-   --,  --ignore_rest
+   \-\-,  \-\-ignore_rest
      Ignores the rest of the labeled arguments following this flag.
 
-   --version
+   \-\-version
      Displays version information and exits.
 
-   -h,  --help
+   \-h,  \-\-help
      Displays usage information and exits.
 
    <image_file_path>
@@ -82,7 +82,7 @@ Where:
 .RE
 .PP
 This command will attempt to recognize number plates in the /source/image.jpg
-image using the European-style recognition data.
+image using the European\-style recognition data.
 The config file is not provided on the CLI, so it will use the value in 
 the environment variable 'OPENALPR_CONFIG_FILE' if provided, or the default location.
 .PP
@@ -91,7 +91,7 @@ the environment variable 'OPENALPR_CONFIG_FILE' if provided, or the default loca
 .RE
 .PP
 This command will attempt to recognize number plates in the /source/image.png
-image using the default USA-style recognition data.
+image using the default USA\-style recognition data.
 The config file is not provided on the CLI, so it will read the configuration data
 from /tmp/openalpr.conf
 .PP
@@ -141,18 +141,18 @@ Please contact the mailing\-list at openalpr@googlegroups.com.
 .PP 
 This program uses the following libraries:
 
-.IP - 
-OpenCV - Computer vision (http://www.opencv.org)
-.IP - 
-Tesseract - Optical Character Recognition (https://code.google.com/p/tesseract-ocr)
-.IP - 
-T-Rex - Regular Expression processing (http://tiny-rex.sourceforge.net)
-.IP - 
-TinyThread++ - Multi-threaded analysis (http://tinythreadpp.bitsnbites.eu)
-.IP - 
-TClap - CLI Argument parsing (http://tclap.sourceforge.net)
-.IP - 
-SimpleINI - INI file configuration (https://github.com/brofield/simpleini)
+.IP * 
+OpenCV \- Computer vision (http://www.opencv.org)
+.IP * 
+Tesseract \- Optical Character Recognition (https://code.google.com/p/tesseract\-ocr)
+.IP * 
+T\-Rex \- Regular Expression processing (http://tiny\-rex.sourceforge.net)
+.IP * 
+TinyThread++ \- Multi\-threaded analysis (http://tinythreadpp.bitsnbites.eu)
+.IP * 
+TClap \- CLI Argument parsing (http://tclap.sourceforge.net)
+.IP * 
+SimpleINI \- INI file configuration (https://github.com/brofield/simpleini)
 
 .PP 
 .SH "THANKS"
