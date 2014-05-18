@@ -22,6 +22,7 @@
 #include <iostream>
 #include <iterator>
 #include <algorithm>
+#include <signal.h>
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -29,6 +30,7 @@
 #include "tclap/CmdLine.h"
 #include "support/filesystem.h"
 #include "support/timing.h"
+#include "videobuffer.h"
 #include "alpr.h"
 
 const std::string MAIN_WINDOW_NAME = "ALPR main window";
@@ -38,13 +40,18 @@ const std::string LAST_VIDEO_STILL_LOCATION = "/tmp/laststill.jpg";
 
 /** Function Headers */
 bool detectandshow(Alpr* alpr, cv::Mat frame, std::string region, bool writeJson);
+void sighandler(int sig);
 
 bool measureProcessingTime = false;
+
+// This boolean is set to false when the user hits terminates (e.g., CTRL+C )
+// so we can end infinite loops for things like video processing.
+bool program_active = true;
 
 int main( int argc, const char** argv )
 {
   std::string filename;
-  std::string runtimePath = "";
+  std::string configFile = "";
   bool outputJson = false;
   int seektoms = 0;
   bool detectRegion = false;
@@ -59,7 +66,7 @@ int main( int argc, const char** argv )
   
   TCLAP::ValueArg<std::string> countryCodeArg("c","country","Country code to identify (either us for USA or eu for Europe).  Default=us",false, "us" ,"country_code");
   TCLAP::ValueArg<int> seekToMsArg("","seek","Seek to the specied millisecond in a video file. Default=0",false, 0 ,"integer_ms");
-  TCLAP::ValueArg<std::string> runtimeDirArg("r","runtime_dir","Path to the OpenAlpr runtime data directory",false, "" ,"runtime_dir");
+  TCLAP::ValueArg<std::string> configFileArg("","config","Path to the openalpr.conf file",false, "" ,"config_file");
   TCLAP::ValueArg<std::string> templateRegionArg("t","template_region","Attempt to match the plate number against a region template (e.g., md for Maryland, ca for California)",false, "" ,"region code");
   TCLAP::ValueArg<int> topNArg("n","topn","Max number of possible plate numbers to return.  Default=10",false, 10 ,"topN");
 
@@ -69,21 +76,26 @@ int main( int argc, const char** argv )
 
   try
   {
-    cmd.add( fileArg );
-    cmd.add( countryCodeArg );
+    cmd.add( templateRegionArg );
     cmd.add( seekToMsArg );
     cmd.add( topNArg );
-    cmd.add( runtimeDirArg );
-    cmd.add( templateRegionArg );
+    cmd.add( configFileArg );
+    cmd.add( fileArg );
+    cmd.add( countryCodeArg );
 
-    cmd.parse( argc, argv );
+    
+    if (cmd.parse( argc, argv ) == false)
+    {
+      // Error occured while parsing.  Exit now.
+      return 1;
+    }
 
     filename = fileArg.getValue();
 
     country = countryCodeArg.getValue();
     seektoms = seekToMsArg.getValue();
     outputJson = jsonSwitch.getValue();
-    runtimePath = runtimeDirArg.getValue();
+    configFile = configFileArg.getValue();
     detectRegion = detectRegionSwitch.getValue();
     templateRegion = templateRegionArg.getValue();
     topn = topNArg.getValue();
@@ -95,10 +107,22 @@ int main( int argc, const char** argv )
     return 1;
   }
 
+  struct sigaction sigIntHandler;
+  
+  sigIntHandler.sa_handler = sighandler;
+  sigemptyset(&sigIntHandler.sa_mask);
+  sigIntHandler.sa_flags = 0;
+  
+  sigaction(SIGHUP, &sigIntHandler, NULL);
+  sigaction(SIGINT, &sigIntHandler, NULL);
+  sigaction(SIGQUIT, &sigIntHandler, NULL);
+  sigaction(SIGKILL, &sigIntHandler, NULL);
+  sigaction(SIGTERM, &sigIntHandler, NULL);
+  //sigaction(SIGABRT, &sigIntHandler, NULL);
   
   cv::Mat frame;
 
-  Alpr alpr(country, runtimePath);
+  Alpr alpr(country, configFile);
   alpr.setTopN(topn);
 
   if (detectRegion)
@@ -109,7 +133,7 @@ int main( int argc, const char** argv )
 
   if (alpr.isLoaded() == false)
   {
-    std::cerr << "Error loading OpenAlpr" << std::endl;
+    std::cerr << "Error loading OpenALPR" << std::endl;
     return 1;
   }
 
@@ -146,6 +170,32 @@ int main( int argc, const char** argv )
       cv::waitKey(1);
       framenum++;
     }
+  }
+  else if (startsWith(filename, "http://") || startsWith(filename, "https://"))
+  {
+    int framenum = 0;
+    
+    VideoBuffer videoBuffer;
+    
+    videoBuffer.connect(filename, 5);
+    
+    cv::Mat latestFrame;
+    
+    while (program_active)
+    {
+      int response = videoBuffer.getLatestFrame(&latestFrame);
+      
+      if (response != -1)
+      {
+        detectandshow( &alpr, latestFrame, "", outputJson);
+      }
+      
+      cv::waitKey(10);
+    }
+    
+    videoBuffer.disconnect();
+    
+    std::cout << "Video processing ended" << std::endl;
   }
   else if (hasEnding(filename, ".avi") || hasEnding(filename, ".mp4") || hasEnding(filename, ".webm") || hasEnding(filename, ".flv"))
   {
@@ -221,6 +271,14 @@ int main( int argc, const char** argv )
 
   return 0;
 }
+
+
+void sighandler(int sig)
+{
+  program_active = false;
+  //std::cout << "Sig handler caught " << sig << std::endl;
+}
+
 
 bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJson)
 {

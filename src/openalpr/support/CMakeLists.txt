@@ -3,6 +3,7 @@
 set(support_source_files
  filesystem.cpp
  timing.cpp
+ tinythread.cpp
 )
 
 add_library(support STATIC ${support_source_files})

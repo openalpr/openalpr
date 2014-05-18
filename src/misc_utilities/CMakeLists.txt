@@ -24,6 +24,7 @@ ADD_EXECUTABLE( benchmark  benchmark.cpp )
 TARGET_LINK_LIBRARIES(benchmark 
     openalpr-static
     support
+    pthread
     ${OpenCV_LIBS} 
 	${Tesseract_LIBS}
   )

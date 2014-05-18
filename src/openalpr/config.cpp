@@ -20,48 +20,83 @@
 #include "config.h"
 
 
-Config::Config(const std::string country, const std::string runtimeBaseDir)
+Config::Config(const std::string country, const std::string config_file)
 {
-  this->runtimeBaseDir = runtimeBaseDir;
+  
+  string debug_message = "";
+  
+  this->loaded = false;
   
   ini = new CSimpleIniA();
   
-  char* envRuntimeDir;
-  envRuntimeDir = getenv (ENV_VARIABLE_RUNTIME_DIR);
-  if (runtimeBaseDir.compare("") != 0)
+  string configFile;
+  
+  char* envConfigFile;
+  envConfigFile = getenv (ENV_VARIABLE_CONFIG_FILE);
+  if (config_file.compare("") != 0)
   {
-      // User has supplied a runtime directory.  Use that.
-    
+      // User has supplied a config file.  Use that.
+    configFile = config_file;
+    debug_message = "Config file location provided via API";
   }
-  else if (envRuntimeDir!=NULL)
+  else if (envConfigFile != NULL)
   {
     // Environment variable is non-empty.  Use that.
-    this->runtimeBaseDir = envRuntimeDir;
+    configFile = envConfigFile;
+    debug_message = "Config file location provided via environment variable: " + string(ENV_VARIABLE_CONFIG_FILE);
   }
   else
   {
     // Use the default
-    this->runtimeBaseDir = DEFAULT_RUNTIME_DIR;
+    configFile = DEFAULT_CONFIG_FILE;
+    debug_message = "Config file location provided via default location";
   }
   
-  string configFile = (this->runtimeBaseDir + CONFIG_FILE);
+  //string configFile = (this->runtimeBaseDir + CONFIG_FILE);
+  
+  if (fileExists(configFile.c_str()) == false)
+  {
+    std::cerr << "--(!) Config file '" << configFile << "' does not exist!" << endl;
+    std::cerr << "--(!)             You can specify the configuration file location via the command line " << endl;
+    std::cerr << "--(!)             or by setting the environment variable '" << ENV_VARIABLE_CONFIG_FILE << "'" << endl;
+    return;
+  }
+  else if (DirectoryExists(configFile.c_str()))
+  {
+    std::cerr << "--(!) Config file '" << configFile << "' was specified as a directory, rather than a file!" << endl;
+    std::cerr << "--(!)             Please specify the full path to the 'openalpr.conf file'" << endl;
+    std::cerr << "--(!)             e.g., /etc/openalpr/openalpr.conf" << endl;
+    return;
+  }
+ 
+  ini->LoadFile(configFile.c_str());
+   
+  this->country = country;
+  
+  
+  loadValues(country);
+  
   
   if (DirectoryExists(this->runtimeBaseDir.c_str()) == false)
   {
-    std::cerr << "--(!)Runtime directory '" << this->runtimeBaseDir << "' does not exist!" << endl;
+    std::cerr << "--(!) Runtime directory '" << this->runtimeBaseDir << "' does not exist!" << endl;
+    std::cerr << "--(!)                   Please update the OpenALPR config file: '" << configFile << "'" << endl;
+    std::cerr << "--(!)                   to point to the correct location of your runtime_dir" << endl;
     return;
   }
-  else if (fileExists(configFile.c_str()) == false)
+  else if (fileExists((this->runtimeBaseDir + "/ocr/tessdata/l" + country + ".traineddata").c_str()) == false)
   {
-    std::cerr << "--(!)Runtime directory '" << this->runtimeBaseDir << "' does not contain a config file '" << CONFIG_FILE << "'!" << endl;
+    std::cerr << "--(!) Runtime directory '" << this->runtimeBaseDir << "' is invalid.  Missing OCR data for the country: '" << country<< "'!" << endl;
     return;
   }
   
-  ini->LoadFile(configFile.c_str());
   
-  this->country = country;
+  if (this->debugGeneral)
+  {
+    std::cout << debug_message << endl;
+  }
   
-  loadValues(country);
+  this->loaded = true;
 }
 Config::~Config()
 {
@@ -70,6 +105,8 @@ Config::~Config()
 
 void Config::loadValues(string country)
 {
+  
+  runtimeBaseDir = getString("common", "runtime_dir", "/usr/share/openalpr/runtime_data");
   
   opencl_enabled = getBoolean("common", "opencl_enabled", false);
   multithreading_cores = getInt("common", "multithreading_cores", 1);
@@ -171,7 +208,7 @@ string Config::getPostProcessRuntimeDir()
 }
 string Config::getTessdataPrefix()
 {
-  return "TESSDATA_PREFIX=" + this->runtimeBaseDir + "/ocr/";
+  return this->runtimeBaseDir + "/ocr/";
 }
 
 

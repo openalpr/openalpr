@@ -60,7 +60,7 @@ include_directories(./openalpr )
 
 
 set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall ")
-ADD_EXECUTABLE( alpr  main.cpp  )
+ADD_EXECUTABLE( alpr  main.cpp videobuffer.cpp )
 
 
 
@@ -74,8 +74,12 @@ TARGET_LINK_LIBRARIES(alpr
 add_subdirectory(openalpr)
 add_subdirectory(misc_utilities)
 
+
+
 install (TARGETS alpr DESTINATION bin)
+install (FILES ${CMAKE_SOURCE_DIR}/../doc/man/alpr.1 DESTINATION share/man/man1 COMPONENT doc)
 install (DIRECTORY ${CMAKE_SOURCE_DIR}/../runtime_data DESTINATION share/openalpr/)
+install (FILES ${CMAKE_SOURCE_DIR}/../config/openalpr.conf DESTINATION /etc/openalpr/ COMPONENT config)
 
 
 

@@ -17,6 +17,7 @@
 #include <string.h>
 #include <vector>
 
+bool startsWith(std::string const &fullString, std::string const &prefix);
 bool hasEnding (std::string const &fullString, std::string const &ending);
 bool DirectoryExists( const char* pzPath );
 bool fileExists( const char* pzPath );

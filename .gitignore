@@ -1,6 +1,7 @@
 *~
 build/
 scratch/
+_CPack_Packages/
 /libraries/
 CMakeFiles/
 CMakeCache.txt

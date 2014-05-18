@@ -1,0 +1,171 @@
+.TH "openalpr" "1" "10 May 2014" "" ""
+.SH "NAME"
+OpenALPR \- Automatic License Plate Recognition Library
+.SH "SYNOPSIS"
+
+.PP 
+.nf 
+Plate detection:  alpr [OPTION...] [IMAGE_PATH]
+
+.fi 
+
+.SH "DESCRIPTION"
+
+.PP 
+OpenALPR is an open source Automatic License Plate Recognition library written 
+in C++. The library analyzes images and identifies license plates. The output 
+is the text representation of any license plate characters found in the image.
+.PP
+Check out a live online demo here: http://www.openalpr.com/demo.html
+.PP 
+OpenALPR supports license plates from the USA as well as number plates from Europe.
+The library can also be used to identify plates from other countries.  By training 
+the library, the accuracy for these other countries can be increased.
+
+
+.SH "USAGE"
+.PP 
+
+alpr    [\-c <country_code>] [\-\-config <config_file>] [\-n <topN>] [\-\-seek
+        <integer_ms>] [\-t <region code>] [\-\-clock] [\-d] [\-j] [\-\-]
+        [\-\-version] [\-h] <image_file_path>
+
+
+Where: 
+
+   \-c <country_code>,  \-\-country <country_code>
+     Country code to identify (either us for USA or eu for Europe). 
+     Default=us
+
+   \-\-config <config_file>
+     Path to the openalpr.conf file
+
+   \-n <topN>,  \-\-topn <topN>
+     Max number of possible plate numbers to return.  Default=10
+
+   \-\-seek <integer_ms>
+     Seek to the specied millisecond in a video file. Default=0
+
+   \-t <region code>,  \-\-template_region <region code>
+     Attempt to match the plate number against a region template (e.g., md
+     for Maryland, ca for California)
+
+   \-\-clock
+     Measure/print the total time to process image and all plates. 
+     Default=off
+
+   \-d,  \-\-detect_region
+     Attempt to detect the region of the plate image.  Default=off
+
+   \-j,  \-\-json
+     Output recognition results in JSON format.  Default=off
+
+   \-\-,  \-\-ignore_rest
+     Ignores the rest of the labeled arguments following this flag.
+
+   \-\-version
+     Displays version information and exits.
+
+   \-h,  \-\-help
+     Displays usage information and exits.
+
+   <image_file_path>
+     Image containing license plates
+
+
+
+.SH "EXAMPLES"
+.PP 
+.RS
+.PP
+\f(CW$ alpr \-c eu /source/image.jpg
+.RE
+.PP
+This command will attempt to recognize number plates in the /source/image.jpg
+image using the European\-style recognition data.
+The config file is not provided on the CLI, so it will use the value in 
+the environment variable 'OPENALPR_CONFIG_FILE' if provided, or the default location.
+.PP
+.RS
+\f(CW$ alpr \-\-config /tmp/openalpr.conf /source/image.png
+.RE
+.PP
+This command will attempt to recognize number plates in the /source/image.png
+image using the default USA\-style recognition data.
+The config file is not provided on the CLI, so it will read the configuration data
+from /tmp/openalpr.conf
+.PP
+.RS
+\f(CW$ alpr \-j /source/video.mp4
+.RE
+.PP
+This command reads data from an input video (/source/video.mp4) and outputs
+recognition data as JSON.
+.PP
+.RS
+\f(CW$ alpr \-j < /source/imagefilelist.txt > /out/recognitionresults.txt
+.RE
+.PP
+This command processes a list of image files provided in /source/imagefilelist.txt
+and writes JSON results to /out/recognitionresults.txt.
+.PP
+.RE
+
+.SH "DIAGNOSTICS"
+
+.PP 
+License plate recognition software can never achieve 100% accuracy.  In cases where the 
+plate is not recognized correctly, there is diagnostic information available.  You 
+can modify the openalpr.conf file to turn "debug" information on.
+.PP
+In the [debug] section toggle the various debug options to enabled by changing the '0' 
+value to a '1'.  Some of these options will output text to the CLI and others may output 
+images to the GUI.
+
+.SH "BUGS"
+.PP 
+Please report bugs! See the web site at
+https://github.com/openalpr/openalpr/issues
+.PP 
+
+.SH "CREDITS"
+
+.PP 
+OpenALPR is distributed under the GNU Affero General Public License version 3.
+See the file LICENSE for details.
+.PP 
+The OpenALPR site is available at: http://www.openalpr.com/.
+.PP 
+We would be delighted to hear about the creative ways that you are using this program.
+Please contact the mailing\-list at openalpr@googlegroups.com.
+.PP 
+This program uses the following libraries:
+
+.IP * 
+OpenCV \- Computer vision (http://www.opencv.org)
+.IP * 
+Tesseract \- Optical Character Recognition (https://code.google.com/p/tesseract\-ocr)
+.IP * 
+T\-Rex \- Regular Expression processing (http://tiny\-rex.sourceforge.net)
+.IP * 
+TinyThread++ \- Multi\-threaded analysis (http://tinythreadpp.bitsnbites.eu)
+.IP * 
+TClap \- CLI Argument parsing (http://tclap.sourceforge.net)
+.IP * 
+SimpleINI \- INI file configuration (https://github.com/brofield/simpleini)
+
+.PP 
+.SH "THANKS"
+
+.PP 
+Special thanks go out to: Stefan Bauer, Philippe Vaucher, Kristians Vebers, and 
+all contributors to the project.
+
+.SH "AUTHOR"
+
+.PP 
+OpenALPR is written and maintained by Matthew Hill (matt@ndu.com)
+and contributors from the open source community.
+.PP 
+Mailing lists for support and development are available at
+https://groups.google.com/forum/#!forum/openalpr

@@ -22,9 +22,9 @@
 
 // ALPR code
 
-Alpr::Alpr(const std::string country, const std::string runtimeDir)
+Alpr::Alpr(const std::string country, const std::string configFile)
 {
-  impl = new AlprImpl(country, runtimeDir);
+  impl = new AlprImpl(country, configFile);
 }
 
 Alpr::~Alpr()
@@ -68,7 +68,7 @@ void Alpr::setDefaultRegion(std::string region)
 
 bool Alpr::isLoaded()
 {
-  return true;
+  return impl->isLoaded();
 }
 
 std::string Alpr::getVersion()

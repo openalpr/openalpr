@@ -240,14 +240,14 @@ class CmdLine : public CmdLineInterface
      * \param argc - Number of arguments.
      * \param argv - Array of arguments.
      */
-    void parse(int argc, const char * const * argv);
+    bool parse(int argc, const char * const * argv);
 
     /**
      * Parses the command line.
      * \param args - A vector of strings representing the args.
      * args[0] is still the program name.
      */
-    void parse(std::vector<std::string>& args);
+    bool parse(std::vector<std::string>& args);
 
     /**
      *
@@ -423,17 +423,17 @@ inline void CmdLine::add( Arg* a )
 }
 
 
-inline void CmdLine::parse(int argc, const char * const * argv)
+inline bool CmdLine::parse(int argc, const char * const * argv)
 {
   // this step is necessary so that we have easy access to
   // mutable strings.
   std::vector<std::string> args;
   for (int i = 0; i < argc; i++)
     args.push_back(argv[i]);
-  parse(args);
+  return parse(args);
 }
 
-inline void CmdLine::parse(std::vector<std::string>& args)
+inline bool CmdLine::parse(std::vector<std::string>& args)
 {
   bool shouldExit = false;
   int estat = 0;
@@ -497,7 +497,12 @@ inline void CmdLine::parse(std::vector<std::string>& args)
     shouldExit = true;
   }
   if (shouldExit)
-    exit(estat);
+  {
+    //exit(estat);
+    return false;
+  }
+
+  return true;
 }
 
 inline bool CmdLine::_emptyCombined(const std::string& s)
