@@ -22,6 +22,7 @@
 #include <iostream>
 #include <iterator>
 #include <algorithm>
+#include <signal.h>
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -29,6 +30,7 @@
 #include "tclap/CmdLine.h"
 #include "support/filesystem.h"
 #include "support/timing.h"
+#include "videobuffer.h"
 #include "alpr.h"
 
 const std::string MAIN_WINDOW_NAME = "ALPR main window";
@@ -38,8 +40,13 @@ const std::string LAST_VIDEO_STILL_LOCATION = "/tmp/laststill.jpg";
 
 /** Function Headers */
 bool detectandshow(Alpr* alpr, cv::Mat frame, std::string region, bool writeJson);
+void sighandler(int sig);
 
 bool measureProcessingTime = false;
+
+// This boolean is set to false when the user hits terminates (e.g., CTRL+C )
+// so we can end infinite loops for things like video processing.
+bool program_active = true;
 
 int main( int argc, const char** argv )
 {
@@ -100,6 +107,18 @@ int main( int argc, const char** argv )
     return 1;
   }
 
+  struct sigaction sigIntHandler;
+  
+  sigIntHandler.sa_handler = sighandler;
+  sigemptyset(&sigIntHandler.sa_mask);
+  sigIntHandler.sa_flags = 0;
+  
+  sigaction(SIGHUP, &sigIntHandler, NULL);
+  sigaction(SIGINT, &sigIntHandler, NULL);
+  sigaction(SIGQUIT, &sigIntHandler, NULL);
+  sigaction(SIGKILL, &sigIntHandler, NULL);
+  sigaction(SIGTERM, &sigIntHandler, NULL);
+  //sigaction(SIGABRT, &sigIntHandler, NULL);
   
   cv::Mat frame;
 
@@ -151,6 +170,32 @@ int main( int argc, const char** argv )
       cv::waitKey(1);
       framenum++;
     }
+  }
+  else if (startsWith(filename, "http://") || startsWith(filename, "https://"))
+  {
+    int framenum = 0;
+    
+    VideoBuffer videoBuffer;
+    
+    videoBuffer.connect(filename, 5);
+    
+    cv::Mat latestFrame;
+    
+    while (program_active)
+    {
+      int response = videoBuffer.getLatestFrame(&latestFrame);
+      
+      if (response != -1)
+      {
+        detectandshow( &alpr, latestFrame, "", outputJson);
+      }
+      
+      cv::waitKey(10);
+    }
+    
+    videoBuffer.disconnect();
+    
+    std::cout << "Video processing ended" << std::endl;
   }
   else if (hasEnding(filename, ".avi") || hasEnding(filename, ".mp4") || hasEnding(filename, ".webm") || hasEnding(filename, ".flv"))
   {
@@ -226,6 +271,14 @@ int main( int argc, const char** argv )
 
   return 0;
 }
+
+
+void sighandler(int sig)
+{
+  program_active = false;
+  //std::cout << "Sig handler caught " << sig << std::endl;
+}
+
 
 bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJson)
 {

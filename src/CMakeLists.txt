@@ -60,7 +60,7 @@ include_directories(./openalpr )
 
 
 set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall ")
-ADD_EXECUTABLE( alpr  main.cpp  )
+ADD_EXECUTABLE( alpr  main.cpp videobuffer.cpp )
 
 
 
