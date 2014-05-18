@@ -1,5 +1,14 @@
 #include "filesystem.h"
 
+bool startsWith(std::string const &fullString, std::string const &prefix)
+{
+  if(fullString.substr(0, prefix.size()) == prefix) {
+      return true;
+  }  
+  
+  return false;
+}
+
 bool hasEnding (std::string const &fullString, std::string const &ending)
 {
   if (fullString.length() >= ending.length())
