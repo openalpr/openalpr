@@ -21,12 +21,20 @@
 
 OCR::OCR(Config* config)
 {
+  const string EXPECTED_TESSERACT_VERSION = "3.03";
+  
   this->config = config;
 
   this->postProcessor = new PostProcess(config);
 
   tesseract=new TessBaseAPI();
 
+  if (tesseract->Version() != EXPECTED_TESSERACT_VERSION)
+  {
+    std::cerr << "Warning: You are running an unsupported version of Tesseract." << endl;
+    std::cerr << "Expecting version " << EXPECTED_TESSERACT_VERSION << ", your version is: " << tesseract->Version() << endl;
+  }
+  
   // Tesseract requires the prefix directory to be set as an env variable
   tesseract->Init(config->getTessdataPrefix().c_str(), config->ocrLanguage.c_str() 	);
   tesseract->SetVariable("save_blob_choices", "T");
