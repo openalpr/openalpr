@@ -40,7 +40,7 @@
 #include <opencv2/core/core.hpp>
    
 
-#include "tinythread/tinythread.h"
+#include "support/tinythread.h"
 
 #define DEFAULT_TOPN 25
 #define DEFAULT_DETECT_REGION false
