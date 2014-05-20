@@ -197,8 +197,8 @@ int main( int argc, const char** argv )
     
     std::cout << "Video processing ended" << std::endl;
   }
-  else if (hasEnding(filename, ".avi") || hasEnding(filename, ".mp4") || hasEnding(filename, ".webm") || 
-	   hasEnding(filename, ".flv") || hasEnding(filename, ".mjpg") || hasEnding(filename, ".mjpeg"))
+  else if (hasEndingInsensitive(filename, ".avi") || hasEndingInsensitive(filename, ".mp4") || hasEndingInsensitive(filename, ".webm") || 
+	   hasEndingInsensitive(filename, ".flv") || hasEndingInsensitive(filename, ".mjpg") || hasEndingInsensitive(filename, ".mjpeg"))
   {
     if (fileExists(filename.c_str()))
     {
@@ -227,7 +227,8 @@ int main( int argc, const char** argv )
       std::cerr << "Video file not found: " << filename << std::endl;
     }
   }
-  else if (hasEnding(filename, ".png") || hasEnding(filename, ".jpg") || hasEnding(filename, ".gif"))
+  else if (hasEndingInsensitive(filename, ".png") || hasEndingInsensitive(filename, ".jpg") || 
+	   hasEndingInsensitive(filename, ".jpeg") || hasEndingInsensitive(filename, ".gif"))
   {
     if (fileExists(filename.c_str()))
     {
@@ -248,7 +249,7 @@ int main( int argc, const char** argv )
 
     for (int i = 0; i< files.size(); i++)
     {
-      if (hasEnding(files[i], ".jpg") || hasEnding(files[i], ".png"))
+      if (hasEndingInsensitive(files[i], ".jpg") || hasEndingInsensitive(files[i], ".png"))
       {
         std::string fullpath = filename + "/" + files[i];
         std::cout << fullpath << std::endl;
