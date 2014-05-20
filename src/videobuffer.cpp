@@ -106,8 +106,21 @@ void imageCollectionThread(void* arg)
     {
       
       dispatcher->mMutex.lock();
-      bool hasImage = cap.read(frame);
-      dispatcher->setLatestFrame(&frame);
+      bool hasImage = false;
+      try
+      {
+	hasImage = cap.read(frame);
+	dispatcher->setLatestFrame(&frame);
+      }
+      catch (int e)
+      {
+	// Error occured while trying to gather image.  Retry, don't exit.
+	std::cerr << "Exception happened " << e << std::endl;
+      }
+      // Double check the image to make sure it's valid.
+      if (frame.cols == 0 || frame.rows == 0)
+	hasImage = false;
+      
       dispatcher->mMutex.unlock();
       
       if (hasImage == false)
