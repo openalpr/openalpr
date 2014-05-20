@@ -115,10 +115,6 @@ int main( int argc, const char** argv )
   
   sigaction(SIGHUP, &sigIntHandler, NULL);
   sigaction(SIGINT, &sigIntHandler, NULL);
-  sigaction(SIGQUIT, &sigIntHandler, NULL);
-  sigaction(SIGKILL, &sigIntHandler, NULL);
-  sigaction(SIGTERM, &sigIntHandler, NULL);
-  //sigaction(SIGABRT, &sigIntHandler, NULL);
   
   cv::Mat frame;
 
