@@ -197,7 +197,8 @@ int main( int argc, const char** argv )
     
     std::cout << "Video processing ended" << std::endl;
   }
-  else if (hasEnding(filename, ".avi") || hasEnding(filename, ".mp4") || hasEnding(filename, ".webm") || hasEnding(filename, ".flv"))
+  else if (hasEnding(filename, ".avi") || hasEnding(filename, ".mp4") || hasEnding(filename, ".webm") || 
+	   hasEnding(filename, ".flv") || hasEnding(filename, ".mjpg") || hasEnding(filename, ".mjpeg"))
   {
     if (fileExists(filename.c_str()))
     {
