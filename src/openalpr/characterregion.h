@@ -26,25 +26,23 @@
 #include "characteranalysis.h"
 #include "config.h"
 
-using namespace cv;
-using namespace std;
 
 class CharacterRegion
 {
 
   public:
-    CharacterRegion(Mat img, Config* config);
+    CharacterRegion(cv::Mat img, Config* config);
     virtual ~CharacterRegion();
 
     CharacterAnalysis *charAnalysis;
 
     int confidence;
-    Mat getPlateMask();
+    cv::Mat getPlateMask();
 
     LineSegment getTopLine();
     LineSegment getBottomLine();
     //vector<Point> getLinePolygon();
-    vector<Point> getCharArea();
+    std::vector<cv::Point> getCharArea();
 
     LineSegment getCharBoxTop();
     LineSegment getCharBoxBottom();
@@ -57,24 +55,24 @@ class CharacterRegion
     Config* config;
     bool debug;
 
-    Mat findOuterBoxMask(vector<Mat> thresholds, vector<vector<vector<Point> > > allContours, vector<vector<Vec4i> > allHierarchy);
+    cv::Mat findOuterBoxMask(std::vector<cv::Mat> thresholds, std::vector<std::vector<std::vector<cv::Point> > > allContours, std::vector<std::vector<cv::Vec4i> > allHierarchy);
 
-    vector<bool> filter(Mat img, vector<vector<Point> > contours, vector<Vec4i> hierarchy);
-    vector<bool> filterByBoxSize(Mat img, vector<vector<Point> > contours, vector<bool> goodIndices, float minHeightPx, float maxHeightPx);
-    vector<bool> filterByParentContour( vector< vector< Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices);
-    vector<bool> filterContourHoles(vector<vector<Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices);
+    std::vector<bool> filter(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy);
+    std::vector<bool> filterByBoxSize(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<bool> goodIndices, float minHeightPx, float maxHeightPx);
+    std::vector<bool> filterByParentContour( std::vector< std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
+    std::vector<bool> filterContourHoles(std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
 
-    vector<Point> getBestVotedLines(Mat img, vector<vector<Point> > contours, vector<bool> goodIndices);
+    std::vector<cv::Point> getBestVotedLines(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<bool> goodIndices);
     //vector<Point> getCharSegmentsBetweenLines(Mat img, vector<vector<Point> > contours, vector<Point> outerPolygon);
-    vector<bool> filterBetweenLines(Mat img, vector<vector<Point> > contours, vector<Vec4i> hierarchy, vector<Point> outerPolygon, vector<bool> goodIndices);
-    Mat getCharacterMask(Mat img, vector<vector<Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices);
+    std::vector<bool> filterBetweenLines(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<cv::Point> outerPolygon, std::vector<bool> goodIndices);
+    cv::Mat getCharacterMask(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
 
-    vector<Rect> wrapContours(vector<vector<Point> > contours);
-    bool verifySize(Mat r, float minHeightPx, float maxHeightPx);
+    std::vector<cv::Rect> wrapContours(std::vector<std::vector<cv::Point> > contours);
+    bool verifySize(cv::Mat r, float minHeightPx, float maxHeightPx);
 
-    int getGoodIndicesCount(vector<bool> goodIndices);
+    int getGoodIndicesCount(std::vector<bool> goodIndices);
 
-    bool isPlateInverted(Mat threshold, vector<vector<Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices);
+    bool isPlateInverted(cv::Mat threshold, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
 
 };
 

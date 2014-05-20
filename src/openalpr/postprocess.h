@@ -29,7 +29,6 @@
 #include <vector>
 #include "config.h"
 
-using namespace std;
 
 #define SKIP_CHAR '~'
 
@@ -43,7 +42,7 @@ struct Letter
 
 struct PPResult
 {
-  string letters;
+  std::string letters;
   float totalscore;
   bool matchesTemplate;
 };
@@ -54,18 +53,18 @@ bool letterCompare( const Letter &left, const Letter &right );
 class RegexRule
 {
   public:
-    RegexRule(string region, string pattern);
+    RegexRule(std::string region, std::string pattern);
 
-    bool match(string text);
-    string filterSkips(string text);
+    bool match(std::string text);
+    std::string filterSkips(std::string text);
 
   private:
     int numchars;
     TRexpp trexp;
-    string original;
-    string regex;
-    string region;
-    vector<int> skipPositions;
+    std::string original;
+    std::string regex;
+    std::string region;
+    std::vector<int> skipPositions;
 };
 
 class PostProcess
@@ -77,33 +76,33 @@ class PostProcess
     void addLetter(char letter, int charposition, float score);
 
     void clear();
-    void analyze(string templateregion, int topn);
+    void analyze(std::string templateregion, int topn);
 
-    string bestChars;
+    std::string bestChars;
     bool matchesTemplate;
 
-    const vector<PPResult> getResults();
+    const std::vector<PPResult> getResults();
 
   private:
     Config* config;
     //void getTopN();
-    void findAllPermutations(vector<Letter> prevletters, int charPos, int substitutionsLeft);
+    void findAllPermutations(std::vector<Letter> prevletters, int charPos, int substitutionsLeft);
 
     void insertLetter(char letter, int charPosition, float score);
 
-    map<string, vector<RegexRule*> > rules;
+    std::map<std::string, std::vector<RegexRule*> > rules;
 
     float calculateMaxConfidenceScore();
 
-    vector<vector<Letter> > letters;
-    vector<int> unknownCharPositions;
+    std::vector<std::vector<Letter> > letters;
+    std::vector<int> unknownCharPositions;
 
-    vector<PPResult> allPossibilities;
+    std::vector<PPResult> allPossibilities;
 
     // Functions used to prune the list of letters (based on topn) to improve performance
-    vector<int> getMaxDepth(int topn);
-    int getPermutationCount(vector<int> depth);
-    int getNextLeastDrop(vector<int> depth);
+    std::vector<int> getMaxDepth(int topn);
+    int getPermutationCount(std::vector<int> depth);
+    int getNextLeastDrop(std::vector<int> depth);
 };
 
 /*

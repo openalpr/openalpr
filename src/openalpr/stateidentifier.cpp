@@ -19,6 +19,10 @@
 
 #include "stateidentifier.h"
 
+
+using namespace cv;
+using namespace std;
+
 StateIdentifier::StateIdentifier(Config* config)
 {
   this->config = config;

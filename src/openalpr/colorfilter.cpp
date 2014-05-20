@@ -19,6 +19,9 @@
 
 #include "colorfilter.h"
 
+using namespace cv;
+using namespace std;
+
 ColorFilter::ColorFilter(Mat image, Mat characterMask, Config* config)
 {
   timespec startTime;

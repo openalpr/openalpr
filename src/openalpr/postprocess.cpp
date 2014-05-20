@@ -19,6 +19,8 @@
 
 #include "postprocess.h"
 
+using namespace std;
+
 PostProcess::PostProcess(Config* config)
 {
   this->config = config;

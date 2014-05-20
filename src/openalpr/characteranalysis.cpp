@@ -19,6 +19,9 @@
 
 #include "characteranalysis.h"
 
+using namespace cv;
+using namespace std;
+
 CharacterAnalysis::CharacterAnalysis(Mat img, Config* config)
 {
   this->config = config;

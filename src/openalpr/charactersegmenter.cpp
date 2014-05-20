@@ -19,6 +19,9 @@
 
 #include "charactersegmenter.h"
 
+using namespace cv;
+using namespace std;
+
 CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* config)
 {
   this->config = config;

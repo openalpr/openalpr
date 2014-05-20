@@ -19,6 +19,9 @@
 
 #include "platecorners.h"
 
+using namespace cv;
+using namespace std;
+
 PlateCorners::PlateCorners(Mat inputImage, PlateLines* plateLines, CharacterRegion* charRegion, Config* config)
 {
   this->config = config;

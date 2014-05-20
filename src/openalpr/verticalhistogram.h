@@ -22,8 +22,6 @@
 
 #include "opencv2/imgproc/imgproc.hpp"
 
-using namespace cv;
-using namespace std;
 
 struct Valley
 {
@@ -39,10 +37,10 @@ class VerticalHistogram
 {
 
   public:
-    VerticalHistogram(Mat inputImage, Mat mask);
+    VerticalHistogram(cv::Mat inputImage, cv::Mat mask);
     virtual ~VerticalHistogram();
 
-    Mat histoImg;
+    cv::Mat histoImg;
 
     // Returns the lowest X position between two points.
     int getLocalMinimum(int leftX, int rightX);
@@ -52,12 +50,12 @@ class VerticalHistogram
     int getHeightAt(int x);
 
   private:
-    vector<int> colHeights;
+    std::vector<int> colHeights;
     int highestPeak;
     int lowestValley;
-    vector<Valley> valleys;
+    std::vector<Valley> valleys;
 
-    void analyzeImage(Mat inputImage, Mat mask);
+    void analyzeImage(cv::Mat inputImage, cv::Mat mask);
     void findValleys();
 
     HistogramDirection getHistogramDirection(int index);

@@ -27,8 +27,6 @@
 #include "config.h"
 #include "characterregion.h"
 
-using namespace cv;
-using namespace std;
 
 class PlateLines
 {
@@ -37,20 +35,20 @@ class PlateLines
     PlateLines(Config* config);
     virtual ~PlateLines();
 
-    void processImage(Mat img, CharacterRegion* charRegion, float sensitivity=1.0);
+    void processImage(cv::Mat img, CharacterRegion* charRegion, float sensitivity=1.0);
 
-    vector<LineSegment> horizontalLines;
-    vector<LineSegment> verticalLines;
+    std::vector<LineSegment> horizontalLines;
+    std::vector<LineSegment> verticalLines;
 
-    vector<Point> winningCorners;
+    std::vector<cv::Point> winningCorners;
 
   private:
     Config* config;
     bool debug;
 
-    Mat customGrayscaleConversion(Mat src);
-    void findLines(Mat inputImage);
-    vector<LineSegment> getLines(Mat edges, float sensitivityMultiplier, bool vertical);
+    cv::Mat customGrayscaleConversion(cv::Mat src);
+    void findLines(cv::Mat inputImage);
+    std::vector<LineSegment> getLines(cv::Mat edges, float sensitivityMultiplier, bool vertical);
 };
 
 #endif // OPENALPR_PLATELINES_H

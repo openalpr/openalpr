@@ -27,33 +27,31 @@
 #include "utility.h"
 #include "config.h"
 
-using namespace cv;
-using namespace std;
 
 class ColorFilter
 {
 
   public:
-    ColorFilter(Mat image, Mat characterMask, Config* config);
+    ColorFilter(cv::Mat image, cv::Mat characterMask, Config* config);
     virtual ~ColorFilter();
 
-    Mat colorMask;
+    cv::Mat colorMask;
 
   private:
 
     Config* config;
     bool debug;
 
-    Mat hsv;
-    Mat charMask;
+    cv::Mat hsv;
+    cv::Mat charMask;
 
     bool grayscale;
 
     void preprocessImage();
     void findCharColors();
 
-    bool imageIsGrayscale(Mat image);
-    int getMajorityOpinion(vector<float> values, float minPercentAgreement, float maxValDifference);
+    bool imageIsGrayscale(cv::Mat image);
+    int getMajorityOpinion(std::vector<float> values, float minPercentAgreement, float maxValDifference);
 };
 
 #endif // OPENALPR_COLORFILTER_H

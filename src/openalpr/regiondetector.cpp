@@ -19,6 +19,9 @@
 
 #include "regiondetector.h"
 
+using namespace cv;
+using namespace std;
+
 RegionDetector::RegionDetector(Config* config)
 {
   this->config = config;

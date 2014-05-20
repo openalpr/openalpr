@@ -32,7 +32,6 @@
 #include <stdlib.h>     /* getenv */
 #include <math.h>
 
-using namespace std;
 
 class Config
 {
@@ -43,7 +42,7 @@ class Config
 
     bool loaded;
     
-    string country;
+    std::string country;
     
     bool opencl_enabled;
     int multithreading_cores;
@@ -86,7 +85,7 @@ class Config
     float segmentationMinCharHeightPercent;
     float segmentationMaxCharWidthvsAverage;
     
-    string ocrLanguage;
+    std::string ocrLanguage;
     int ocrMinFontSize;
     
     float postProcessMinConfidence;
@@ -112,22 +111,22 @@ class Config
     
     void debugOff();
    
-    string getKeypointsRuntimeDir();
-    string getCascadeRuntimeDir();
-    string getPostProcessRuntimeDir();
-    string getTessdataPrefix();
+    std::string getKeypointsRuntimeDir();
+    std::string getCascadeRuntimeDir();
+    std::string getPostProcessRuntimeDir();
+    std::string getTessdataPrefix();
 
 private:
     CSimpleIniA* ini;
 
-    string runtimeBaseDir;
+    std::string runtimeBaseDir;
     
-    void loadValues(string country);
+    void loadValues(std::string country);
     
-    int getInt(string section, string key, int defaultValue);
-    float getFloat(string section, string key, float defaultValue);
-    string getString(string section, string key, string defaultValue);
-    bool getBoolean(string section, string key, bool defaultValue);
+    int getInt(std::string section, std::string key, int defaultValue);
+    float getFloat(std::string section, std::string key, float defaultValue);
+    std::string getString(std::string section, std::string key, std::string defaultValue);
+    bool getBoolean(std::string section, std::string key, bool defaultValue);
 };
 
 

@@ -33,6 +33,9 @@
 
 #include "binarize_wolf.h"
 
+using namespace std;
+using namespace cv;
+
 // *************************************************************
 // glide a window across the image and
 // create two maps: mean and standard deviation.

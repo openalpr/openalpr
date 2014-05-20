@@ -30,13 +30,11 @@
 #include "utility.h"
 #include "config.h"
 
-using namespace cv;
-using namespace std;
 
 struct RecognitionResult
 {
   bool haswinner;
-  string winner;
+  std::string winner;
   int confidence;
 } ;
 
@@ -47,10 +45,10 @@ class FeatureMatcher
     FeatureMatcher(Config* config);
     virtual ~FeatureMatcher();
 
-    RecognitionResult recognize( const Mat& queryImg, bool drawOnImage, Mat* outputImage,
-                                 bool debug_on, vector<int> debug_matches_array );
+    RecognitionResult recognize( const cv::Mat& queryImg, bool drawOnImage, cv::Mat* outputImage,
+                                 bool debug_on, std::vector<int> debug_matches_array );
 
-    bool loadRecognitionSet(string country);
+    bool loadRecognitionSet(std::string country);
 
     bool isLoaded();
 
@@ -59,20 +57,20 @@ class FeatureMatcher
   private:
     Config* config;
 
-    Ptr<DescriptorMatcher> descriptorMatcher;
-    Ptr<FastFeatureDetector> detector;
-    Ptr<BRISK> extractor;
+    cv::Ptr<cv::DescriptorMatcher> descriptorMatcher;
+    cv::Ptr<cv::FastFeatureDetector> detector;
+    cv::Ptr<cv::BRISK> extractor;
 
-    vector<vector<KeyPoint> > trainingImgKeypoints;
+    std::vector<std::vector<cv::KeyPoint> > trainingImgKeypoints;
 
-    void _surfStyleMatching(const Mat& queryDescriptors, vector<vector<DMatch> > matchesKnn, vector<DMatch>& matches12);
+    void _surfStyleMatching(const cv::Mat& queryDescriptors, std::vector<std::vector<cv::DMatch> > matchesKnn, std::vector<cv::DMatch>& matches12);
 
-    void crisscrossFiltering(const vector<KeyPoint> queryKeypoints, const vector<DMatch> inputMatches, vector<DMatch> &outputMatches);
+    void crisscrossFiltering(const std::vector<cv::KeyPoint> queryKeypoints, const std::vector<cv::DMatch> inputMatches, std::vector<cv::DMatch> &outputMatches);
 
-    vector<string> billMapping;
+    std::vector<std::string> billMapping;
 
-    void surfStyleMatching( const Mat& queryDescriptors, vector<KeyPoint> queryKeypoints,
-                            vector<DMatch>& matches12 );
+    void surfStyleMatching( const cv::Mat& queryDescriptors, std::vector<cv::KeyPoint> queryKeypoints,
+                            std::vector<cv::DMatch>& matches12 );
 
 };
 

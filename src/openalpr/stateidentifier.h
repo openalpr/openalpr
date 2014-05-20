@@ -33,8 +33,8 @@ class StateIdentifier
     StateIdentifier(Config* config);
     virtual ~StateIdentifier();
 
-    int recognize(Mat img, Rect frame, char* stateCode);
-    int recognize(Mat img, char* stateCode);
+    int recognize(cv::Mat img, cv::Rect frame, char* stateCode);
+    int recognize(cv::Mat img, char* stateCode);
 
     //int confidence;
 

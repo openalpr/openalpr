@@ -35,8 +35,6 @@
 #include "platecorners.h"
 #include "config.h"
 
-using namespace std;
-using namespace cv;
 
 //vector<Rect> getCharacterRegions(Mat frame, vector<Rect> regionsOfInterest);
 //vector<RotatedRect> getCharSegmentsBetweenLines(Mat img, vector<vector<Point> > contours, LineSegment top, LineSegment bottom);
@@ -45,30 +43,30 @@ class LicensePlateCandidate
 {
 
   public:
-    LicensePlateCandidate(Mat frame, Rect regionOfInterest, Config* config);
+    LicensePlateCandidate(cv::Mat frame, cv::Rect regionOfInterest, Config* config);
     virtual ~LicensePlateCandidate();
 
     float confidence;		// 0-100
     //vector<Point> points;	// top-left, top-right, bottom-right, bottom-left
-    vector<Point2f> plateCorners;
+    std::vector<cv::Point2f> plateCorners;
 
     void recognize();
 
-    Mat deskewed;
+    cv::Mat deskewed;
     CharacterSegmenter* charSegmenter;
 
   private:
 
     Config* config;
 
-    Mat frame;
-    Rect plateRegion;
+    cv::Mat frame;
+    cv::Rect plateRegion;
 
-    Mat filterByCharacterHue(vector<vector<Point> > charRegionContours);
-    vector<Point> findPlateCorners(Mat inputImage, PlateLines plateLines, CharacterRegion charRegion);	// top-left, top-right, bottom-right, bottom-left
+    cv::Mat filterByCharacterHue(std::vector<std::vector<cv::Point> > charRegionContours);
+    std::vector<cv::Point> findPlateCorners(cv::Mat inputImage, PlateLines plateLines, CharacterRegion charRegion);	// top-left, top-right, bottom-right, bottom-left
 
-    vector<Point2f> transformPointsToOriginalImage(Mat bigImage, Mat smallImage, Rect region, vector<Point> corners);
-    Mat deSkewPlate(Mat inputImage, vector<Point2f> corners);
+    std::vector<cv::Point2f> transformPointsToOriginalImage(cv::Mat bigImage, cv::Mat smallImage, cv::Rect region, std::vector<cv::Point> corners);
+    cv::Mat deSkewPlate(cv::Mat inputImage, std::vector<cv::Point2f> corners);
 
 };
 

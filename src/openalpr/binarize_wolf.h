@@ -26,8 +26,6 @@
 #include <iostream>
 #include "opencv2/opencv.hpp"
 
-using namespace std;
-using namespace cv;
 
 enum NiblackVersion
 {
@@ -44,7 +42,7 @@ enum NiblackVersion
 #define fget(x,y)    at<float>(y,x)
 #define fset(x,y,v)  at<float>(y,x)=v;
 
-void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
+void NiblackSauvolaWolfJolion (cv::Mat im, cv::Mat output, NiblackVersion version,
                                int winx, int winy, float k);
 
 #endif // OPENALPR_BINARIZEWOLF_H

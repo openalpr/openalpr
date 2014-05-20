@@ -18,8 +18,9 @@
 */
 
 #include "characterregion.h"
-//#include <apr-1.0/apr_poll.h>
-#include <math.h>
+
+using namespace cv;
+using namespace std;
 
 CharacterRegion::CharacterRegion(Mat img, Config* config)
 {

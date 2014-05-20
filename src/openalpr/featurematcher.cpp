@@ -19,6 +19,9 @@
 
 #include "featurematcher.h"
 
+using namespace cv;
+using namespace std;
+
 //const int DEFAULT_QUERY_FEATURES = 305;
 //const int DEFAULT_TRAINING_FEATURES = 305;
 const float MAX_DISTANCE_TO_MATCH = 100.0f;

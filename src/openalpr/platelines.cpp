@@ -19,6 +19,9 @@
 
 #include "platelines.h"
 
+using namespace cv;
+using namespace std;
+
 PlateLines::PlateLines(Config* config)
 {
   this->config = config;

@@ -19,6 +19,7 @@
 
 #include "config.h"
 
+using namespace std;
 
 Config::Config(const std::string country, const std::string config_file, const std::string runtime_dir)
 {

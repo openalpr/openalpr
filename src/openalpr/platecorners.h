@@ -26,8 +26,6 @@
 #include "utility.h"
 #include "config.h"
 
-using namespace cv;
-using namespace std;
 
 #define NO_LINE -1
 
@@ -46,17 +44,17 @@ class PlateCorners
 {
 
   public:
-    PlateCorners(Mat inputImage, PlateLines* plateLines, CharacterRegion* charRegion, Config* config);
+    PlateCorners(cv::Mat inputImage, PlateLines* plateLines, CharacterRegion* charRegion, Config* config);
     virtual ~PlateCorners();
 
-    vector<Point> findPlateCorners();
+    std::vector<cv::Point> findPlateCorners();
 
     float confidence;
 
   private:
 
     Config* config;
-    Mat inputImage;
+    cv::Mat inputImage;
     float charHeight;
     float charAngle;
 

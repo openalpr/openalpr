@@ -19,6 +19,9 @@
 
 #include "verticalhistogram.h"
 
+using namespace cv;
+using namespace std;
+
 VerticalHistogram::VerticalHistogram(Mat inputImage, Mat mask)
 {
   analyzeImage(inputImage, mask);

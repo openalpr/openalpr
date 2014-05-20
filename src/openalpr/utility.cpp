@@ -19,6 +19,9 @@
 
 #include "utility.h"
 
+using namespace cv;
+using namespace std;
+
 Rect expandRect(Rect original, int expandXPixels, int expandYPixels, int maxX, int maxY)
 {
   Rect expandedRegion = Rect(original);

@@ -19,6 +19,9 @@
 
 #include "licenseplatecandidate.h"
 
+using namespace std;
+using namespace cv;
+
 LicensePlateCandidate::LicensePlateCandidate(Mat frame, Rect regionOfInterest, Config* config)
 {
   this->config = config;
