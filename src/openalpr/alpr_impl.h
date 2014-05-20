@@ -51,7 +51,7 @@ class AlprImpl
 {
 
   public:
-    AlprImpl(const std::string country, const std::string configFile = "");
+    AlprImpl(const std::string country, const std::string configFile = "", const std::string runtimeDir = "");
     virtual ~AlprImpl();
 
     std::vector<AlprResult> recognize(cv::Mat img);

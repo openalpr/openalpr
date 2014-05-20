@@ -20,7 +20,7 @@
 #include "config.h"
 
 
-Config::Config(const std::string country, const std::string config_file)
+Config::Config(const std::string country, const std::string config_file, const std::string runtime_dir)
 {
   
   string debug_message = "";
@@ -76,6 +76,11 @@ Config::Config(const std::string country, const std::string config_file)
   
   loadValues(country);
   
+  if (runtime_dir.compare("") != 0)
+  {
+    // User provided a runtime directory directly into the library.  Use this.
+    this->runtimeBaseDir = runtime_dir;
+  }
   
   if (DirectoryExists(this->runtimeBaseDir.c_str()) == false)
   {

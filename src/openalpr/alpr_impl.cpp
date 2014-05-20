@@ -21,9 +21,9 @@
 
 void plateAnalysisThread(void* arg);
 
-AlprImpl::AlprImpl(const std::string country, const std::string configFile)
+AlprImpl::AlprImpl(const std::string country, const std::string configFile, const std::string runtimeDir)
 {
-  config = new Config(country, configFile);
+  config = new Config(country, configFile, runtimeDir);
   
   // Config file or runtime dir not found.  Don't process any further.
   if (config->loaded == false)

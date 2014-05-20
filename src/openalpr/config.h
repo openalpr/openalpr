@@ -38,7 +38,7 @@ class Config
 {
 
   public:
-    Config(const std::string country, const std::string config_file = "");
+    Config(const std::string country, const std::string config_file = "", const std::string runtime_dir = "");
     virtual ~Config();
 
     bool loaded;
