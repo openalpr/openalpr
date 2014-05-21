@@ -22,7 +22,6 @@
 #include <iostream>
 #include <iterator>
 #include <algorithm>
-#include <signal.h>
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -40,7 +39,6 @@ const std::string LAST_VIDEO_STILL_LOCATION = "/tmp/laststill.jpg";
 
 /** Function Headers */
 bool detectandshow(Alpr* alpr, cv::Mat frame, std::string region, bool writeJson);
-void sighandler(int sig);
 
 bool measureProcessingTime = false;
 
@@ -107,14 +105,6 @@ int main( int argc, const char** argv )
     return 1;
   }
 
-  struct sigaction sigIntHandler;
-  
-  sigIntHandler.sa_handler = sighandler;
-  sigemptyset(&sigIntHandler.sa_mask);
-  sigIntHandler.sa_flags = 0;
-  
-  sigaction(SIGHUP, &sigIntHandler, NULL);
-  sigaction(SIGINT, &sigIntHandler, NULL);
   
   cv::Mat frame;
 
@@ -271,11 +261,6 @@ int main( int argc, const char** argv )
 }
 
 
-void sighandler(int sig)
-{
-  program_active = false;
-  //std::cout << "Sig handler caught " << sig << std::endl;
-}
 
 
 bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJson)
