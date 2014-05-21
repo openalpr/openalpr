@@ -2,6 +2,7 @@
 #define TIMING_H
 
 #include <iostream>
+#include <ctime>
 
 // Support for OS X
 #ifdef __MACH__
@@ -18,5 +19,7 @@
 
 void getTime(timespec* time);
 double diffclock(timespec time1,timespec time2);
+
+int getEpochTime();
 
 #endif

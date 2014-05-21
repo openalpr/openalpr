@@ -139,3 +139,9 @@ timespec diff(timespec start, timespec end)
 }
 
 #endif
+
+
+int getEpochTime()
+{
+    return std::time(0);
+}

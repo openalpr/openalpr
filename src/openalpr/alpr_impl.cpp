@@ -294,6 +294,7 @@ cJSON* AlprImpl::createJsonObj(const AlprResult* result)
   root=cJSON_CreateObject();	
   
   cJSON_AddStringToObject(root,"plate",		result->bestPlate.characters.c_str());
+  cJSON_AddNumberToObject(root,"epoch_time",		getEpochTime()  );
   cJSON_AddNumberToObject(root,"confidence",		result->bestPlate.overall_confidence);
   cJSON_AddNumberToObject(root,"matches_template",	result->bestPlate.matches_template);
   
