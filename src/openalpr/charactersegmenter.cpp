@@ -514,7 +514,7 @@ void CharacterSegmenter::cleanCharRegions(vector<Mat> thresholds, vector<Rect> c
   const float MIN_SPECKLE_HEIGHT_PERCENT = 0.13;
   const float MIN_SPECKLE_WIDTH_PX = 3;
   const float MIN_CONTOUR_AREA_PERCENT = 0.1;
-  const float MIN_CONTOUR_HEIGHT_PERCENT = 0.60;
+  const float MIN_CONTOUR_HEIGHT_PERCENT = config->segmentationMinCharHeightPercent;
 
   Mat mask = getCharBoxMask(thresholds[0], charRegions);
 
@@ -706,7 +706,7 @@ vector<Rect> CharacterSegmenter::filterMostlyEmptyBoxes(vector<Mat> thresholds, 
   // clear all data for every box #3.
 
   //const float MIN_AREA_PERCENT = 0.1;
-  const float MIN_CONTOUR_HEIGHT_PERCENT = 0.65;
+  const float MIN_CONTOUR_HEIGHT_PERCENT = config->segmentationMinCharHeightPercent;
 
   Mat mask = getCharBoxMask(thresholds[0], charRegions);
 
