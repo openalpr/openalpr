@@ -142,6 +142,9 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
     
   }
   
+  
+  vector<AlprResult> results = dispatcher.getRecognitionResults();
+  
   if (config->debugPauseOnFrame)
   {
     // Pause indefinitely until they press a key
@@ -149,7 +152,7 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
     {}
   }
   
-  return dispatcher.getRecognitionResults();
+  return results;
 }
 
 void plateAnalysisThread(void* arg)
