@@ -70,6 +70,15 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
   getTime(&startTime);
   
 
+  if (!img.data)
+  {
+    // Invalid image
+    if (this->config->debugGeneral)
+      std::cerr << "Invalid image" << std::endl;
+    
+    vector<AlprResult> emptyVector;
+    return emptyVector;
+  }
 
   // Find all the candidate regions
   vector<PlateRegion> plateRegions = plateDetector->detect(img);
