@@ -224,27 +224,15 @@ bool writeToQueue(std::string jsonResult)
 {
   
     Beanstalk::Client client("127.0.0.1", 11300);
-    client.use("test");
-    client.watch("test");
+    client.use("alpr");
+    //client.watch("test");
 
     int id = client.put(jsonResult);
     
     if (id <= 0)
-      return 1;
+      return false;
     
     std::cout << "put job id: " << id << std::endl;
 
-    Beanstalk::Job job;
-    client.reserve(job);
-    
-    if (job.id() != id)
-      return 1;
-
-    std::cout << "reserved job id: "
-         << job.id()
-         << " with body: " << job.body() << ""
-         << std::endl;
-
-    client.del(job.id());
-    std::cout << "deleted job id: " << job.id() << std::endl;
+    return true;
 }
