@@ -62,6 +62,7 @@ include_directories(./openalpr )
 set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall ")
 ADD_EXECUTABLE( alpr  main.cpp videobuffer.cpp )
 
+ADD_EXECUTABLE( alprd  daemon.cpp videobuffer.cpp beanstalk.c beanstalk.cc )
 
 
 TARGET_LINK_LIBRARIES(alpr
@@ -70,6 +71,15 @@ TARGET_LINK_LIBRARIES(alpr
 	${OpenCV_LIBS}
 	${Tesseract_LIBS}
   )
+  
+  
+TARGET_LINK_LIBRARIES(alprd
+	openalpr
+	support
+	${OpenCV_LIBS}
+	${Tesseract_LIBS}
+  )
+  
 
 add_subdirectory(openalpr)
 add_subdirectory(misc_utilities)
