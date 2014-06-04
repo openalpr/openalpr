@@ -29,7 +29,8 @@ const std::string BEANSTALK_TUBE_NAME="alpr";
 
 struct CaptureThreadData
 {
-  std::string stream_url;  
+  std::string stream_url;
+  std::string site_id;
   int camera_id;
   
   std::string config_file;
@@ -37,6 +38,10 @@ struct CaptureThreadData
   std::string output_image_folder;
 };
 
+struct UploadThreadData
+{
+  std::string upload_url;
+};
 
 bool daemon_active;
 
@@ -95,6 +100,7 @@ int main( int argc, const char** argv )
     
     std::ofstream out(logFile.c_str());
     std::cout.rdbuf(out.rdbuf());
+    std::cerr.rdbuf(out.rdbuf());
     
     std::cout << "Running OpenALPR daemon in daemon mode." << std::endl;
   }
@@ -131,6 +137,8 @@ int main( int argc, const char** argv )
   }
   
   std::string imageFolder = ini.GetValue("daemon", "image_folder", "/tmp/");
+  std::string upload_url = ini.GetValue("daemon", "upload_address", "");
+  std::string site_id = ini.GetValue("daemon", "site_id", "");
   
   std::cout << "Using: " << imageFolder << " for storing valid plate images" << std::endl;
   
@@ -142,12 +150,15 @@ int main( int argc, const char** argv )
     tdata->config_file = configFile;
     tdata->output_image_folder = imageFolder;
     tdata->country_code = country;
+    tdata->site_id = site_id;
     
     tthread::thread* t = new tthread::thread(streamRecognitionThread, (void*) tdata);
   }
 
   // Kick off the data upload thread
-  tthread::thread* t = new tthread::thread(dataUploadThread, 0 );
+  UploadThreadData* udata = new UploadThreadData();
+  udata->upload_url = upload_url;
+  tthread::thread* t = new tthread::thread(dataUploadThread, (void*) udata );
 
   while (daemon_active)
   {
@@ -212,6 +223,7 @@ void streamRecognitionThread(void* arg)
 	cJSON *array = cJSON_Parse(json.c_str());
 	cJSON_AddStringToObject(root,	"uuid",		uuid.c_str());
 	cJSON_AddNumberToObject(root,	"camera_id",	tdata->camera_id);
+	cJSON_AddStringToObject(root, "site-id", 	tdata->site_id.c_str());
 	cJSON_AddItemToObject(root, 	"results", 	array);
 
 	char *out;
@@ -260,6 +272,7 @@ bool writeToQueue(std::string jsonResult)
 void dataUploadThread(void* arg)
 {
   
+  UploadThreadData* udata = (UploadThreadData*) arg;
   
   Beanstalk::Client client(BEANSTALK_QUEUE_HOST, BEANSTALK_PORT);
 
@@ -274,7 +287,7 @@ void dataUploadThread(void* arg)
     
     if (job.id() > 0)
     {
-      if (uploadPost("http://localhost/", job.body()))
+      if (uploadPost(udata->upload_url, job.body()))
       {
 	client.del(job.id());
 	std::cout << "Job: " << job.id() << " successfully uploaded" << std::endl;
