@@ -272,6 +272,10 @@ bool writeToQueue(std::string jsonResult)
 void dataUploadThread(void* arg)
 {
   
+  /* In windows, this will init the winsock stuff */ 
+  curl_global_init(CURL_GLOBAL_ALL);
+  
+  
   UploadThreadData* udata = (UploadThreadData*) arg;
   
   Beanstalk::Client client(BEANSTALK_QUEUE_HOST, BEANSTALK_PORT);
@@ -302,6 +306,7 @@ void dataUploadThread(void* arg)
     usleep(10000);
   }
   
+  curl_global_cleanup();
 }
 
 
@@ -311,8 +316,6 @@ bool uploadPost(std::string url, std::string data)
   CURL *curl;
   CURLcode res;
  
-  /* In windows, this will init the winsock stuff */ 
-  curl_global_init(CURL_GLOBAL_ALL);
  
   /* get a curl handle */ 
   curl = curl_easy_init();
@@ -322,7 +325,9 @@ bool uploadPost(std::string url, std::string data)
        data. */ 
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     /* Now specify the POST data */ 
+    //char* escaped_data = curl_easy_escape(curl, data.c_str(), data.length());
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
+    //curl_free(escaped_data);
  
     /* Perform the request, res will get the return code */ 
     res = curl_easy_perform(curl);
@@ -335,7 +340,6 @@ bool uploadPost(std::string url, std::string data)
     /* always cleanup */ 
     curl_easy_cleanup(curl);
   }
-  curl_global_cleanup();
   
   return success;
 
