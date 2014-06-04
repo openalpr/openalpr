@@ -77,6 +77,7 @@ TARGET_LINK_LIBRARIES(alprd
 	openalpr
 	support
 	uuid
+	curl
 	${OpenCV_LIBS}
 	${Tesseract_LIBS}
   )

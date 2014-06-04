@@ -10,14 +10,15 @@
 #include "support/tinythread.h"
 #include "videobuffer.h"
 #include "uuid.h"
-
+#include <curl/curl.h>
 
 
 // prototypes
 void streamRecognitionThread(void* arg);
 bool writeToQueue(std::string jsonResult);
+bool uploadPost(std::string url, std::string data);
 
-struct ThreadData
+struct CaptureThreadData
 {
   std::string stream_url;  
   int camera_id;
@@ -25,6 +26,11 @@ struct ThreadData
   std::string config_file;
   std::string country_code;
   std::string output_image_folder;
+};
+
+struct UploadThreadData
+{
+  std::string upload_data;
 };
 
 bool daemon_active;
@@ -119,7 +125,7 @@ int main( int argc, const char** argv )
   
   for (int i = 0; i < stream_urls.size(); i++)
   {
-    ThreadData* tdata = new ThreadData();
+    CaptureThreadData* tdata = new CaptureThreadData();
     tdata->stream_url = stream_urls[i];
     tdata->camera_id = i + 1;
     tdata->config_file = configFile;
@@ -140,7 +146,7 @@ int main( int argc, const char** argv )
 
 void streamRecognitionThread(void* arg)
 {
-  ThreadData* tdata = (ThreadData*) arg;
+  CaptureThreadData* tdata = (CaptureThreadData*) arg;
   
   std::cout << "country: " << tdata->country_code << " -- config file: " << tdata->config_file << std::endl;
   std::cout << "Stream " << tdata->camera_id << ": " << tdata->stream_url << std::endl;
@@ -225,7 +231,6 @@ bool writeToQueue(std::string jsonResult)
   
     Beanstalk::Client client("127.0.0.1", 11300);
     client.use("alpr");
-    //client.watch("test");
 
     int id = client.put(jsonResult);
     
@@ -235,4 +240,77 @@ bool writeToQueue(std::string jsonResult)
     std::cout << "put job id: " << id << std::endl;
 
     return true;
+}
+
+
+
+void dataUploadThread(void* arg)
+{
+  
+  UploadThreadData* tdata = (UploadThreadData*) arg;
+  
+  Beanstalk::Client client("127.0.0.1", 11300);
+  client.use("alpr");
+  
+  client.watch("alpr");
+  
+  while(daemon_active)
+  {
+    Beanstalk::Job job;
+    
+    client.reserve(job);
+    
+    if (job.id() > 0)
+    {
+      if (uploadPost("http://localhost/", tdata->upload_data))
+      {
+	client.del(job.id());
+      }
+      else
+      {
+	client.release(job);
+      }
+    }
+    
+    usleep(10000);
+  }
+  
+}
+
+
+bool uploadPost(std::string url, std::string data)
+{
+  bool success = true;
+  CURL *curl;
+  CURLcode res;
+ 
+  /* In windows, this will init the winsock stuff */ 
+  curl_global_init(CURL_GLOBAL_ALL);
+ 
+  /* get a curl handle */ 
+  curl = curl_easy_init();
+  if(curl) {
+    /* First set the URL that is about to receive our POST. This URL can
+       just as well be a https:// URL if that is what should receive the
+       data. */ 
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    /* Now specify the POST data */ 
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
+ 
+    /* Perform the request, res will get the return code */ 
+    res = curl_easy_perform(curl);
+    /* Check for errors */ 
+    if(res != CURLE_OK)
+    {
+      success = false;
+    }
+ 
+    /* always cleanup */ 
+    curl_easy_cleanup(curl);
+  }
+  curl_global_cleanup();
+  
+  return success;
+
+  
 }
