@@ -17,6 +17,15 @@
 void streamRecognitionThread(void* arg);
 bool writeToQueue(std::string jsonResult);
 bool uploadPost(std::string url, std::string data);
+void dataUploadThread(void* arg);
+
+// Constants
+const std::string DEFAULT_LOG_FILE_PATH="/var/log/openalpr.log";
+const std::string WTS_CONFIG_FILE_PATH="/etc/openalpr/wts.conf";
+
+const std::string BEANSTALK_QUEUE_HOST="127.0.0.1";
+const int BEANSTALK_PORT=11300;
+const std::string BEANSTALK_TUBE_NAME="alpr";
 
 struct CaptureThreadData
 {
@@ -28,10 +37,6 @@ struct CaptureThreadData
   std::string output_image_folder;
 };
 
-struct UploadThreadData
-{
-  std::string upload_data;
-};
 
 bool daemon_active;
 
@@ -51,7 +56,7 @@ int main( int argc, const char** argv )
   TCLAP::ValueArg<std::string> countryCodeArg("c","country","Country code to identify (either us for USA or eu for Europe).  Default=us",false, "us" ,"country_code");
   TCLAP::ValueArg<std::string> configFileArg("","config","Path to the openalpr.conf file.",false, "" ,"config_file");
   TCLAP::ValueArg<int> topNArg("n","topn","Max number of possible plate numbers to return.  Default=10",false, 10 ,"topN");
-  TCLAP::ValueArg<std::string> logFileArg("l","log","Log file to write to.  Default=/var/log/openalpr.log",false, "/var/log/openalpr.log" ,"topN");
+  TCLAP::ValueArg<std::string> logFileArg("l","log","Log file to write to.  Default=" + DEFAULT_LOG_FILE_PATH,false, DEFAULT_LOG_FILE_PATH ,"topN");
 
   TCLAP::SwitchArg daemonOffSwitch("f","foreground","Set this flag for debugging.  Disables forking the process as a daemon and runs in the foreground.  Default=off", cmd, false);
 
@@ -85,6 +90,12 @@ int main( int argc, const char** argv )
   {
     // Fork off into a separate daemon
     daemon(0, 0);
+    
+    // Redirect std out to log file
+    
+    std::ofstream out(logFile.c_str());
+    std::cout.rdbuf(out.rdbuf());
+    
     std::cout << "Running OpenALPR daemon in daemon mode." << std::endl;
   }
   else
@@ -95,7 +106,7 @@ int main( int argc, const char** argv )
   CSimpleIniA ini;
   ini.SetMultiKey();
   
-  ini.LoadFile("/etc/openalpr/wts.conf");
+  ini.LoadFile(WTS_CONFIG_FILE_PATH.c_str());
   
   std::vector<std::string> stream_urls;
   
@@ -135,6 +146,8 @@ int main( int argc, const char** argv )
     tthread::thread* t = new tthread::thread(streamRecognitionThread, (void*) tdata);
   }
 
+  // Kick off the data upload thread
+  tthread::thread* t = new tthread::thread(dataUploadThread, 0 );
 
   while (daemon_active)
   {
@@ -229,8 +242,8 @@ void streamRecognitionThread(void* arg)
 bool writeToQueue(std::string jsonResult)
 {
   
-    Beanstalk::Client client("127.0.0.1", 11300);
-    client.use("alpr");
+    Beanstalk::Client client(BEANSTALK_QUEUE_HOST, BEANSTALK_PORT);
+    client.use(BEANSTALK_TUBE_NAME);
 
     int id = client.put(jsonResult);
     
@@ -247,12 +260,11 @@ bool writeToQueue(std::string jsonResult)
 void dataUploadThread(void* arg)
 {
   
-  UploadThreadData* tdata = (UploadThreadData*) arg;
   
-  Beanstalk::Client client("127.0.0.1", 11300);
-  client.use("alpr");
+  Beanstalk::Client client(BEANSTALK_QUEUE_HOST, BEANSTALK_PORT);
+
   
-  client.watch("alpr");
+  client.watch(BEANSTALK_TUBE_NAME);
   
   while(daemon_active)
   {
@@ -262,13 +274,15 @@ void dataUploadThread(void* arg)
     
     if (job.id() > 0)
     {
-      if (uploadPost("http://localhost/", tdata->upload_data))
+      if (uploadPost("http://localhost/", job.body()))
       {
 	client.del(job.id());
+	std::cout << "Job: " << job.id() << " successfully uploaded" << std::endl;
       }
       else
       {
 	client.release(job);
+	std::cout << "Job: " << job.id() << " failed to upload.  Will retry." << std::endl;
       }
     }
     
