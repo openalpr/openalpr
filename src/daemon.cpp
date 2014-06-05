@@ -25,7 +25,7 @@ const std::string WTS_CONFIG_FILE_PATH="/etc/openalpr/wts.conf";
 
 const std::string BEANSTALK_QUEUE_HOST="127.0.0.1";
 const int BEANSTALK_PORT=11300;
-const std::string BEANSTALK_TUBE_NAME="alpr";
+const std::string BEANSTALK_TUBE_NAME="alprd";
 
 struct CaptureThreadData
 {
@@ -223,7 +223,7 @@ void streamRecognitionThread(void* arg)
 	cJSON *array = cJSON_Parse(json.c_str());
 	cJSON_AddStringToObject(root,	"uuid",		uuid.c_str());
 	cJSON_AddNumberToObject(root,	"camera_id",	tdata->camera_id);
-	cJSON_AddStringToObject(root, "site-id", 	tdata->site_id.c_str());
+	cJSON_AddStringToObject(root, "site_id", 	tdata->site_id.c_str());
 	cJSON_AddItemToObject(root, 	"results", 	array);
 
 	char *out;
