@@ -178,9 +178,6 @@ void streamRecognitionThread(void* arg)
   Alpr alpr(tdata->country_code, tdata->config_file);
   
   
-  std::cout << "asdf" << std::endl;
-  
-  
   int framenum = 0;
   
   VideoBuffer videoBuffer;
@@ -224,6 +221,8 @@ void streamRecognitionThread(void* arg)
 	cJSON_AddStringToObject(root,	"uuid",		uuid.c_str());
 	cJSON_AddNumberToObject(root,	"camera_id",	tdata->camera_id);
 	cJSON_AddStringToObject(root, "site_id", 	tdata->site_id.c_str());
+	cJSON_AddNumberToObject(root,	"img_width",	latestFrame.cols);
+	cJSON_AddNumberToObject(root,	"img_height",	latestFrame.rows);
 	cJSON_AddItemToObject(root, 	"results", 	array);
 
 	char *out;
@@ -291,6 +290,7 @@ void dataUploadThread(void* arg)
     
     if (job.id() > 0)
     {
+      //std::cout << job.body() << std::endl;
       if (uploadPost(udata->upload_url, job.body()))
       {
 	client.del(job.id());
