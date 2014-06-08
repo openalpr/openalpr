@@ -277,7 +277,10 @@ bool writeToQueue(std::string jsonResult)
   int id = client.put(jsonResult);
   
   if (id <= 0)
+  {
+    LOG4CPLUS_ERROR(logger, "Failed to write data to queue");
     return false;
+  }
   
   LOG4CPLUS_INFO(logger, "put job id: " << id );
 
