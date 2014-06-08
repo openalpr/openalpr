@@ -107,7 +107,7 @@ int main( int argc, const char** argv )
     daemon(0, 0);
     
     
-    log4cplus::SharedAppenderPtr myAppender(new log4cplus::FileAppender(logFile));
+    log4cplus::SharedAppenderPtr myAppender(new log4cplus::RollingFileAppender(logFile));
     myAppender->setName("alprd_appender");
     // Redirect std out to log file
     logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("alprd"));
