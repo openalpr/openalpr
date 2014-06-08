@@ -12,6 +12,11 @@
 #include "uuid.h"
 #include <curl/curl.h>
 
+#include <log4cplus/logger.h>
+#include <log4cplus/loggingmacros.h>
+#include <log4cplus/configurator.h>
+#include <log4cplus/consoleappender.h>
+#include <log4cplus/fileappender.h>
 
 // prototypes
 void streamRecognitionThread(void* arg);
@@ -44,6 +49,8 @@ struct UploadThreadData
 };
 
 bool daemon_active;
+
+static log4cplus::Logger logger;
 
 int main( int argc, const char** argv )
 {
@@ -91,22 +98,33 @@ int main( int argc, const char** argv )
     return 1;
   }
   
+  log4cplus::BasicConfigurator config;
+  config.configure();
+    
   if (noDaemon == false)
   {
     // Fork off into a separate daemon
     daemon(0, 0);
     
+    
+    log4cplus::SharedAppenderPtr myAppender(new log4cplus::FileAppender(logFile));
+    myAppender->setName("alprd_appender");
     // Redirect std out to log file
+    logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("alprd"));
+    logger.addAppender(myAppender);
     
-    std::ofstream out(logFile.c_str());
-    std::cout.rdbuf(out.rdbuf());
-    std::cerr.rdbuf(out.rdbuf());
     
-    std::cout << "Running OpenALPR daemon in daemon mode." << std::endl;
+    LOG4CPLUS_INFO(logger, "Running OpenALPR daemon in daemon mode.");
   }
   else
   {
-    std::cout << "Running OpenALPR daemon in the foreground" << std::endl;
+    //log4cplus::SharedAppenderPtr myAppender(new log4cplus::ConsoleAppender());
+    //myAppender->setName("alprd_appender");
+    // Redirect std out to log file
+    logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("alprd"));
+    //logger.addAppender(myAppender);
+    
+    LOG4CPLUS_INFO(logger, "Running OpenALPR daemon in the foreground.");
   }
   
   CSimpleIniA ini;
@@ -132,7 +150,7 @@ int main( int argc, const char** argv )
   
   if (stream_urls.size() == 0)
   {
-    std::cout << "No video streams defined in the configuration" << std::endl;
+    LOG4CPLUS_FATAL(logger, "No video streams defined in the configuration.");
     return 1;
   }
   
@@ -140,7 +158,7 @@ int main( int argc, const char** argv )
   std::string upload_url = ini.GetValue("daemon", "upload_address", "");
   std::string site_id = ini.GetValue("daemon", "site_id", "");
   
-  std::cout << "Using: " << imageFolder << " for storing valid plate images" << std::endl;
+  LOG4CPLUS_INFO(logger, "Using: " << imageFolder << " for storing valid plate images");
   
   for (int i = 0; i < stream_urls.size(); i++)
   {
@@ -172,8 +190,8 @@ void streamRecognitionThread(void* arg)
 {
   CaptureThreadData* tdata = (CaptureThreadData*) arg;
   
-  std::cout << "country: " << tdata->country_code << " -- config file: " << tdata->config_file << std::endl;
-  std::cout << "Stream " << tdata->camera_id << ": " << tdata->stream_url << std::endl;
+  LOG4CPLUS_INFO(logger, "country: " << tdata->country_code << " -- config file: " << tdata->config_file );
+  LOG4CPLUS_INFO(logger, "Stream " << tdata->camera_id << ": " << tdata->stream_url);
   
   Alpr alpr(tdata->country_code, tdata->config_file);
   
@@ -188,7 +206,7 @@ void streamRecognitionThread(void* arg)
   
   std::vector<uchar> buffer;
   
-  std::cout << "Daemon active: " << daemon_active << std::endl;
+  LOG4CPLUS_INFO(logger, "Daemon active: " << daemon_active);
   
   while (daemon_active)
   {
@@ -244,7 +262,7 @@ void streamRecognitionThread(void* arg)
   
   videoBuffer.disconnect();
   
-  std::cout << "Video processing ended" << std::endl;
+  LOG4CPLUS_INFO(logger, "Video processing ended");
   
   delete tdata;
 }
@@ -253,17 +271,17 @@ void streamRecognitionThread(void* arg)
 bool writeToQueue(std::string jsonResult)
 {
   
-    Beanstalk::Client client(BEANSTALK_QUEUE_HOST, BEANSTALK_PORT);
-    client.use(BEANSTALK_TUBE_NAME);
+  Beanstalk::Client client(BEANSTALK_QUEUE_HOST, BEANSTALK_PORT);
+  client.use(BEANSTALK_TUBE_NAME);
 
-    int id = client.put(jsonResult);
-    
-    if (id <= 0)
-      return false;
-    
-    std::cout << "put job id: " << id << std::endl;
+  int id = client.put(jsonResult);
+  
+  if (id <= 0)
+    return false;
+  
+  LOG4CPLUS_INFO(logger, "put job id: " << id );
 
-    return true;
+  return true;
 }
 
 
@@ -290,16 +308,16 @@ void dataUploadThread(void* arg)
     
     if (job.id() > 0)
     {
-      //std::cout << job.body() << std::endl;
+      LOG4CPLUS_DEBUG(logger, job.body() );
       if (uploadPost(udata->upload_url, job.body()))
       {
 	client.del(job.id());
-	std::cout << "Job: " << job.id() << " successfully uploaded" << std::endl;
+	LOG4CPLUS_INFO(logger, "Job: " << job.id() << " successfully uploaded" );
       }
       else
       {
 	client.release(job);
-	std::cout << "Job: " << job.id() << " failed to upload.  Will retry." << std::endl;
+	LOG4CPLUS_WARN(logger, "Job: " << job.id() << " failed to upload.  Will retry." );
       }
     }
     

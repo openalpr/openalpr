@@ -78,6 +78,7 @@ TARGET_LINK_LIBRARIES(alprd
 	support
 	uuid
 	curl
+	log4cplus
 	${OpenCV_LIBS}
 	${Tesseract_LIBS}
   )
