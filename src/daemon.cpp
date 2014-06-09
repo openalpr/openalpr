@@ -206,7 +206,7 @@ void streamRecognitionThread(void* arg)
   
   std::vector<uchar> buffer;
   
-  LOG4CPLUS_INFO(logger, "Daemon active: " << daemon_active);
+  LOG4CPLUS_INFO(logger, "Starting camera " << tdata->camera_id);
   
   while (daemon_active)
   {
