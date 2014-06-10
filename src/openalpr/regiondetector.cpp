@@ -25,7 +25,6 @@ using namespace std;
 RegionDetector::RegionDetector(Config* config)
 {
   this->config = config;
-  // Don't scale.  Can change this in the future (i.e., maximum resolution preference, or some such).
   this->scale_factor = 1.0f;
 
   // Load either the regular or OpenCL version of the cascade classifier
@@ -59,7 +58,7 @@ vector<PlateRegion> RegionDetector::detect(Mat frame)
 
   Mat frame_gray;
   cvtColor( frame, frame_gray, CV_BGR2GRAY );
-
+  
   vector<PlateRegion> regionsOfInterest = doCascade(frame_gray);
 
   return regionsOfInterest;
@@ -68,7 +67,25 @@ vector<PlateRegion> RegionDetector::detect(Mat frame)
 /** @function detectAndDisplay */
 vector<PlateRegion> RegionDetector::doCascade(Mat frame)
 {
-  //float scale_factor = 1;
+
+  
+  if (frame.cols > config->maxDetectionInputWidth)
+  {
+    // The frame is too wide
+    this->scale_factor = ((float) config->maxDetectionInputWidth) / ((float) frame.cols);
+    
+    if (config->debugGeneral)
+      std::cout << "Input detection image is too wide.  Resizing with scale: " << this->scale_factor << endl;
+  }
+  else if (frame.rows > config->maxDetectionInputHeight)
+  {
+    // The frame is too tall
+    this->scale_factor = ((float) config->maxDetectionInputHeight) / ((float) frame.rows);
+    
+    if (config->debugGeneral)
+      std::cout << "Input detection image is too tall.  Resizing with scale: " << this->scale_factor << endl;
+  }
+  
   int w = frame.size().width;
   int h = frame.size().height;
 
@@ -84,8 +101,7 @@ vector<PlateRegion> RegionDetector::doCascade(Mat frame)
   Size minSize(config->minPlateSizeWidthPx * this->scale_factor, config->minPlateSizeHeightPx * this->scale_factor);
   Size maxSize(w * config->maxPlateWidthPercent * this->scale_factor, h * config->maxPlateHeightPercent * this->scale_factor);
 
-
-  plate_cascade->detectMultiScale( frame, plates, config->detection_iteration_increase, 3,
+  plate_cascade->detectMultiScale( frame, plates, config->detection_iteration_increase, config->detectionStrictness,
 				    0,
 				    //0|CV_HAAR_SCALE_IMAGE,
 				    minSize, maxSize );

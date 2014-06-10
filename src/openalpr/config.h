@@ -48,8 +48,11 @@ class Config
     int multithreading_cores;
     
     float detection_iteration_increase;
+    int detectionStrictness;
     float maxPlateWidthPercent;
     float maxPlateHeightPercent;
+    int maxDetectionInputWidth;
+    int maxDetectionInputHeight;
     
     int maxPlateAngleDegrees;
     
