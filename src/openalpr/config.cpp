@@ -118,8 +118,11 @@ void Config::loadValues(string country)
   multithreading_cores = getInt("common", "multithreading_cores", 1);
 
   detection_iteration_increase = getFloat("common", "detection_iteration_increase", 1.1);
+  detectionStrictness = getInt("common", "detection_strictness", 3);
   maxPlateWidthPercent = getFloat("common", "max_plate_width_percent", 100);
   maxPlateHeightPercent = getFloat("common", "max_plate_height_percent", 100);
+  maxDetectionInputWidth = getInt("common", "max_detection_input_width", 1280);
+  maxDetectionInputHeight = getInt("common", "max_detection_input_height", 768);
 
   maxPlateAngleDegrees = getInt("common", "max_plate_angle_degrees", 15);
   
