@@ -276,19 +276,28 @@ void plateAnalysisThread(void* arg)
     cout << "Thread: " << tthread::this_thread::get_id() << " Complete" << endl;
 }
 
-string AlprImpl::toJson(const vector< AlprResult > results)
+string AlprImpl::toJson(const vector< AlprResult > results, double processing_time_ms)
 {
-  cJSON *root = cJSON_CreateArray();	
+  cJSON *root, *jsonResults;
+  root = cJSON_CreateObject();
   
+  cJSON_AddNumberToObject(root,"epoch_time",		getEpochTime()  );
+  if (processing_time_ms >= 0)
+  {
+    cJSON_AddNumberToObject(root,"processing_time_ms",		processing_time_ms );
+  }
+  
+  cJSON_AddItemToObject(root, "results", 		jsonResults=cJSON_CreateArray());
   for (int i = 0; i < results.size(); i++)
   {
     cJSON *resultObj = createJsonObj( &results[i] );
-    cJSON_AddItemToArray(root, resultObj);
+    cJSON_AddItemToArray(jsonResults, resultObj);
   }
   
   // Print the JSON object to a string and return
   char *out;
   out=cJSON_PrintUnformatted(root);
+  
   cJSON_Delete(root);
   
   string response(out);
@@ -306,7 +315,6 @@ cJSON* AlprImpl::createJsonObj(const AlprResult* result)
   root=cJSON_CreateObject();	
   
   cJSON_AddStringToObject(root,"plate",		result->bestPlate.characters.c_str());
-  cJSON_AddNumberToObject(root,"epoch_time",		getEpochTime()  );
   cJSON_AddNumberToObject(root,"confidence",		result->bestPlate.overall_confidence);
   cJSON_AddNumberToObject(root,"matches_template",	result->bestPlate.matches_template);
   
