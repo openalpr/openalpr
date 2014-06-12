@@ -46,9 +46,9 @@ std::vector<AlprResult> Alpr::recognize(std::vector<unsigned char> imageBuffer)
   return impl->recognize(img);
 }
 
-string Alpr::toJson(const vector< AlprResult > results)
+string Alpr::toJson(const vector< AlprResult > results, double processing_time_ms)
 {
-  return impl->toJson(results);
+  return impl->toJson(results, processing_time_ms);
 }
 
 void Alpr::setDetectRegion(bool detectRegion)

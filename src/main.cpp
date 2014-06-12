@@ -36,6 +36,7 @@ const std::string MAIN_WINDOW_NAME = "ALPR main window";
 
 const bool SAVE_LAST_VIDEO_STILL = false;
 const std::string LAST_VIDEO_STILL_LOCATION = "/tmp/laststill.jpg";
+std::string getJson(Alpr* alpr, std::vector<AlprResult> results);
 
 /** Function Headers */
 bool detectandshow(Alpr* alpr, cv::Mat frame, std::string region, bool writeJson);
@@ -273,9 +274,16 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
 
   std::vector<AlprResult> results = alpr->recognize(buffer);
 
+  timespec endTime;
+  getTime(&endTime);
+  double totalProcessingTime = diffclock(startTime, endTime);
+  if (measureProcessingTime)
+    std::cout << "Total Time to process image: " << totalProcessingTime << "ms." << std::endl;
+  
+  
   if (writeJson)
   {
-    std::cout << alpr->toJson(results) << std::endl;
+    std::cout << alpr->toJson(results, totalProcessingTime) << std::endl;
   }
   else
   {
@@ -290,10 +298,8 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
     }
   }
 
-  timespec endTime;
-  getTime(&endTime);
-  if (measureProcessingTime)
-    std::cout << "Total Time to process image: " << diffclock(startTime, endTime) << "ms." << std::endl;
+
 
   return results.size() > 0;
 }
+
