@@ -11,6 +11,7 @@
 #include "videobuffer.h"
 #include "uuid.h"
 #include <curl/curl.h>
+#include "support/timing.h"
 
 #include <log4cplus/logger.h>
 #include <log4cplus/loggingmacros.h>
@@ -214,8 +215,15 @@ void streamRecognitionThread(void* arg)
     
     if (response != -1)
     {
+      
+      timespec startTime;
+      getTime(&startTime);
       cv::imencode(".bmp", latestFrame, buffer );
       std::vector<AlprResult> results = alpr.recognize(buffer);
+      
+      timespec endTime;
+      getTime(&endTime);
+      double totalProcessingTime = diffclock(startTime, endTime);
       
       if (results.size() > 0)
       {
@@ -229,19 +237,15 @@ void streamRecognitionThread(void* arg)
 	cv::imwrite(ss.str(), latestFrame);
 	
 	// Update the JSON content to include UUID and camera ID
-	cJSON *root;
   
-	root=cJSON_CreateObject();	
-  
-	std::string json = alpr.toJson(results);
+	std::string json = alpr.toJson(results, totalProcessingTime);
 	
-	cJSON *array = cJSON_Parse(json.c_str());
+	cJSON *root = cJSON_Parse(json.c_str());
 	cJSON_AddStringToObject(root,	"uuid",		uuid.c_str());
 	cJSON_AddNumberToObject(root,	"camera_id",	tdata->camera_id);
-	cJSON_AddStringToObject(root, "site_id", 	tdata->site_id.c_str());
+	cJSON_AddStringToObject(root, 	"site_id", 	tdata->site_id.c_str());
 	cJSON_AddNumberToObject(root,	"img_width",	latestFrame.cols);
 	cJSON_AddNumberToObject(root,	"img_height",	latestFrame.rows);
-	cJSON_AddItemToObject(root, 	"results", 	array);
 
 	char *out;
 	out=cJSON_PrintUnformatted(root);
