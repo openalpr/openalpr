@@ -41,12 +41,12 @@ std::vector<AlprResult> Alpr::recognize(std::string filepath)
 std::vector<AlprResult> Alpr::recognize(std::vector<unsigned char> imageBuffer)
 {
   // Not sure if this actually works
-  cv::Mat img = cv::imdecode(Mat(imageBuffer), 1);
+  cv::Mat img = cv::imdecode(cv::Mat(imageBuffer), 1);
 
   return impl->recognize(img);
 }
 
-string Alpr::toJson(const vector< AlprResult > results, double processing_time_ms)
+std::string Alpr::toJson(const std::vector< AlprResult > results, double processing_time_ms)
 {
   return impl->toJson(results, processing_time_ms);
 }

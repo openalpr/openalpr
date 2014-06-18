@@ -47,6 +47,8 @@
 
 #define ALPR_NULL_PTR 0
 
+
+
 class AlprImpl
 {
 
@@ -60,9 +62,9 @@ class AlprImpl
     
     void setDetectRegion(bool detectRegion);
     void setTopN(int topn);
-    void setDefaultRegion(string region);
+    void setDefaultRegion(std::string region);
     
-    std::string toJson(const vector<AlprResult> results, double processing_time_ms = -1);
+    std::string toJson(const std::vector<AlprResult> results, double processing_time_ms = -1);
     static std::string getVersion();
     
     Config* config;
@@ -85,7 +87,7 @@ class AlprImpl
 class PlateDispatcher
 {
   public:
-    PlateDispatcher(vector<PlateRegion> plateRegions, cv::Mat* image, 
+    PlateDispatcher(std::vector<PlateRegion> plateRegions, cv::Mat* image, 
 		    Config* config,
 		    StateIdentifier* stateIdentifier,
 		    OCR* ocr,
@@ -106,7 +108,7 @@ class PlateDispatcher
     {
       tthread::lock_guard<tthread::mutex> guard(mMutex);
 
-      Mat img(this->frame->size(), this->frame->type());
+      cv::Mat img(this->frame->size(), this->frame->type());
       this->frame->copyTo(img);
       
       return img;
@@ -139,7 +141,7 @@ class PlateDispatcher
       recognitionResults.push_back(recognitionResult);
     }
     
-    vector<AlprResult> getRecognitionResults()
+    std::vector<AlprResult> getRecognitionResults()
     {
       return recognitionResults;
     }
@@ -159,8 +161,8 @@ class PlateDispatcher
     tthread::mutex mMutex;
     
     cv::Mat* frame;
-    vector<PlateRegion> plateRegions;
-    vector<AlprResult> recognitionResults;
+    std::vector<PlateRegion> plateRegions;
+    std::vector<AlprResult> recognitionResults;
 
 };
 

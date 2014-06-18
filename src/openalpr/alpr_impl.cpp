@@ -21,6 +21,9 @@
 
 void plateAnalysisThread(void* arg);
 
+using namespace std;
+using namespace cv;
+
 AlprImpl::AlprImpl(const std::string country, const std::string configFile, const std::string runtimeDir)
 {
   config = new Config(country, configFile, runtimeDir);

@@ -19,6 +19,10 @@
 
 #include "ocr.h"
 
+using namespace std;
+using namespace cv;
+using namespace tesseract;
+
 OCR::OCR(Config* config)
 {
   const string EXPECTED_TESSERACT_VERSION = "3.03";
