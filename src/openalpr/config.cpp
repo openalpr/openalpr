@@ -200,6 +200,7 @@ void Config::debugOff()
   debugColorFiler = 	false;
   debugOcr = 		false;
   debugPostProcess = 	false;
+  debugPauseOnFrame = 	false;
 }
 
 
