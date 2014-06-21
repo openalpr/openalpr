@@ -20,7 +20,11 @@ TARGET_LINK_LIBRARIES(classifychars
   )
   
   
-ADD_EXECUTABLE( benchmark  benchmark.cpp )
+ADD_EXECUTABLE(benchmark  
+		benchmark/benchmark.cpp 
+		benchmark/benchmark_utils.cpp 
+		benchmark/endtoendtest.cpp 
+)
 TARGET_LINK_LIBRARIES(benchmark 
     openalpr-static
     support
@@ -36,4 +40,10 @@ TARGET_LINK_LIBRARIES(prepcharsfortraining
     ${OpenCV_LIBS} 
   )
   
+  
+ADD_EXECUTABLE( tagplates  tagplates.cpp )
+TARGET_LINK_LIBRARIES(tagplates 
+    support
+    ${OpenCV_LIBS} 
+  )
   
