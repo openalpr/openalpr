@@ -106,4 +106,9 @@ cv::Rect expandRect(cv::Rect original, int expandXPixels, int expandYPixels, int
 
 cv::Mat addLabel(cv::Mat input, std::string label);
 
+
+std::string toString(int value);
+std::string toString(float value);
+std::string toString(double value);
+
 #endif // OPENALPR_UTILITY_H
