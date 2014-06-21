@@ -28,10 +28,8 @@
 
 #include "alpr_impl.h"
 
-//#include "stage1.h"
-//#include "stage2.h"
-//#include "stateidentifier.h"
-//#include "utility.h"
+#include "endtoendtest.h"
+
 #include "support/filesystem.h"
 
 using namespace std;
@@ -41,6 +39,10 @@ using namespace cv;
 // These will be used to train the OCR
 
 void outputStats(vector<double> datapoints);
+
+
+
+
 
 int main( int argc, const char** argv )
 {
@@ -284,38 +286,9 @@ int main( int argc, const char** argv )
   }
   else if (benchmarkName.compare("endtoend") == 0)
   {
-    Alpr alpr(country);
-    alpr.setDetectRegion(true);
-
-    ofstream outputdatafile;
-
-    outputdatafile.open("results.txt");
-
-    for (int i = 0; i< files.size(); i++)
-    {
-      if (hasEnding(files[i], ".png"))
-      {
-        string fullpath = inDir + "/" + files[i];
-        frame = imread( fullpath.c_str() );
-
-        vector<uchar> buffer;
-        imencode(".bmp", frame, buffer );
-
-        vector<AlprResult> results = alpr.recognize(buffer);
-
-        outputdatafile  << files[i] << ": ";
-        for (int z = 0; z < results.size(); z++)
-        {
-          outputdatafile  << results[z].bestPlate.characters << ", ";
-        }
-        outputdatafile  << endl;
-
-        imshow("Current LP", frame);
-        waitKey(5);
-      }
-    }
-
-    outputdatafile.close();
+    EndToEndTest e2eTest(inDir, outDir);
+    e2eTest.runTest(country, files);
+    
   }
 }
 
