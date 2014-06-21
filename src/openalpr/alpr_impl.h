@@ -48,6 +48,11 @@
 #define ALPR_NULL_PTR 0
 
 
+struct AlprFullDetails
+{
+  std::vector<PlateRegion> plateRegions;
+  std::vector<AlprResult> results;
+};
 
 class AlprImpl
 {
@@ -56,6 +61,7 @@ class AlprImpl
     AlprImpl(const std::string country, const std::string configFile = "", const std::string runtimeDir = "");
     virtual ~AlprImpl();
 
+    AlprFullDetails recognizeFullDetails(cv::Mat img);
     std::vector<AlprResult> recognize(cv::Mat img);
     
     void applyRegionTemplate(AlprResult* result, std::string region);

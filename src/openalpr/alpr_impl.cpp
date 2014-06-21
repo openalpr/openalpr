@@ -66,12 +66,12 @@ bool AlprImpl::isLoaded()
   return config->loaded;
 }
 
-
-std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
+AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img)
 {
   timespec startTime;
   getTime(&startTime);
   
+  AlprFullDetails response;
 
   if (!img.data)
   {
@@ -80,11 +80,16 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
       std::cerr << "Invalid image" << std::endl;
     
     vector<AlprResult> emptyVector;
-    return emptyVector;
+    response.results = emptyVector;
+    
+    vector<PlateRegion> emptyVector2;
+    response.plateRegions = emptyVector2;
+    
+    return response;
   }
 
   // Find all the candidate regions
-  vector<PlateRegion> plateRegions = plateDetector->detect(img);
+  response.plateRegions = plateDetector->detect(img);
 
   // Get the number of threads specified and make sure the value is sane (cannot be greater than CPU cores or less than 1)
   int numThreads = config->multithreading_cores;
@@ -94,7 +99,7 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
     numThreads = 1;
 
 
-  PlateDispatcher dispatcher(plateRegions, &img, 
+  PlateDispatcher dispatcher(response.plateRegions, &img, 
 			     config, stateIdentifier, ocr, 
 			     topN, detectRegion, defaultRegion);
     
@@ -123,9 +128,9 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
   
   if (config->debugGeneral && config->debugShowImages)
   {
-    for (int i = 0; i < plateRegions.size(); i++)
+    for (int i = 0; i < response.plateRegions.size(); i++)
     {
-      rectangle(img, plateRegions[i].rect, Scalar(0, 0, 255), 2);
+      rectangle(img, response.plateRegions[i].rect, Scalar(0, 0, 255), 2);
     }
     
     for (int i = 0; i < dispatcher.getRecognitionResults().size(); i++)
@@ -146,7 +151,7 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
   }
   
   
-  vector<AlprResult> results = dispatcher.getRecognitionResults();
+  response.results = dispatcher.getRecognitionResults();
   
   if (config->debugPauseOnFrame)
   {
@@ -155,7 +160,13 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
     {}
   }
   
-  return results;
+  return response;
+}
+
+std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
+{
+  AlprFullDetails fullDetails = recognizeFullDetails(img);
+  return fullDetails.results;
 }
 
 void plateAnalysisThread(void* arg)
