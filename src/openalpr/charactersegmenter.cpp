@@ -130,7 +130,9 @@ CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* con
         Mat histoCopy(vertHistogram.histoImg.size(), vertHistogram.histoImg.type());
         //vertHistogram.copyTo(histoCopy);
         cvtColor(vertHistogram.histoImg, histoCopy, CV_GRAY2RGB);
-        allHistograms.push_back(histoCopy);
+
+	string label = "threshold: " + toString(i);
+        allHistograms.push_back(addLabel(histoCopy, label));
       }
 
 //
@@ -144,7 +146,7 @@ CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* con
           rectangle(allHistograms[i], charBoxes[cboxIdx], Scalar(0, 255, 0));
         }
 
-        Mat histDashboard = drawImageDashboard(allHistograms, allHistograms[0].type(), 3);
+        Mat histDashboard = drawImageDashboard(allHistograms, allHistograms[0].type(), 1);
         displayImage(config, "Char seg histograms", histDashboard);
       }
 
