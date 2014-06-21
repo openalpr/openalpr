@@ -101,3 +101,9 @@ bool stringCompare( const std::string &left, const std::string &right )
     return true;
   return false;
 }
+
+std::string filenameWithoutExtension(std::string filename)
+{
+  int lastindex = filename.find_last_of("."); 
+  return filename.substr(0, lastindex); 
+}
