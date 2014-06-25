@@ -375,3 +375,23 @@ LineSegment LineSegment::getParallelLine(float distance)
 
   return result;
 }
+
+
+std::string toString(int value)
+{
+  stringstream ss;
+  ss << value;
+  return ss.str();
+}
+std::string toString(float value)
+{
+  stringstream ss;
+  ss << value;
+  return ss.str();
+}
+std::string toString(double value)
+{
+  stringstream ss;
+  ss << value;
+  return ss.str();
+}
