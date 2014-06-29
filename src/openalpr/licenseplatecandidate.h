@@ -31,7 +31,7 @@
 #include "constants.h"
 #include "platelines.h"
 #include "characterregion.h"
-#include "charactersegmenter.h"
+#include "segmentation/charactersegmenter.h"
 #include "platecorners.h"
 #include "config.h"
 #include "pipeline_data.h"
