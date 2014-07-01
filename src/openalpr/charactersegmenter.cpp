@@ -22,7 +22,7 @@
 using namespace cv;
 using namespace std;
 
-CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* config)
+CharacterSegmenter::CharacterSegmenter(Mat img_gray, bool invertedColors, Config* config)
 {
   this->config = config;
 
@@ -36,8 +36,6 @@ CharacterSegmenter::CharacterSegmenter(Mat img, bool invertedColors, Config* con
   timespec startTime;
   getTime(&startTime);
 
-  Mat img_gray(img.size(), CV_8U);
-  cvtColor( img, img_gray, CV_BGR2GRAY );
 
   medianBlur(img_gray, img_gray, 3);
 

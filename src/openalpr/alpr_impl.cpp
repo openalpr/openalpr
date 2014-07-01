@@ -186,12 +186,12 @@ void plateAnalysisThread(void* arg)
     if (dispatcher->config->debugGeneral)
       cout << "Thread: " << tthread::this_thread::get_id() << " loop " << ++loop_count << endl;
       
-    Mat img = dispatcher->getImageCopy();
+    PipelineData pipeline_data(dispatcher->getImageCopy(), plateRegion.rect, dispatcher->config);
     
     timespec platestarttime;
     getTime(&platestarttime);
     
-    LicensePlateCandidate lp(img, plateRegion.rect, dispatcher->config);
+    LicensePlateCandidate lp(&pipeline_data);
     
     lp.recognize();
 
@@ -220,7 +220,7 @@ void plateAnalysisThread(void* arg)
       if (dispatcher->detectRegion)
       {
 	char statecode[4];
-	plateResult.regionConfidence = dispatcher->stateIdentifier->recognize(img, plateRegion.rect, statecode);
+	plateResult.regionConfidence = dispatcher->stateIdentifier->recognize(&pipeline_data);
 	if (plateResult.regionConfidence > 0)
 	{
 	  plateResult.region = statecode;

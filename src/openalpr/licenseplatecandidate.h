@@ -34,7 +34,7 @@
 #include "charactersegmenter.h"
 #include "platecorners.h"
 #include "config.h"
-
+#include "pipeline_data.h"
 
 //vector<Rect> getCharacterRegions(Mat frame, vector<Rect> regionsOfInterest);
 //vector<RotatedRect> getCharSegmentsBetweenLines(Mat img, vector<vector<Point> > contours, LineSegment top, LineSegment bottom);
@@ -43,7 +43,7 @@ class LicensePlateCandidate
 {
 
   public:
-    LicensePlateCandidate(cv::Mat frame, cv::Rect regionOfInterest, Config* config);
+    LicensePlateCandidate(PipelineData* pipeline_data);
     virtual ~LicensePlateCandidate();
 
     float confidence;		// 0-100
@@ -56,11 +56,9 @@ class LicensePlateCandidate
     CharacterSegmenter* charSegmenter;
 
   private:
-
+    PipelineData* pipeline_data;
     Config* config;
 
-    cv::Mat frame;
-    cv::Rect plateRegion;
 
     cv::Mat filterByCharacterHue(std::vector<std::vector<cv::Point> > charRegionContours);
     std::vector<cv::Point> findPlateCorners(cv::Mat inputImage, PlateLines plateLines, CharacterRegion charRegion);	// top-left, top-right, bottom-right, bottom-left

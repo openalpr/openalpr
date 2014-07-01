@@ -22,12 +22,11 @@
 using namespace std;
 using namespace cv;
 
-LicensePlateCandidate::LicensePlateCandidate(Mat frame, Rect regionOfInterest, Config* config)
+LicensePlateCandidate::LicensePlateCandidate(PipelineData* pipeline_data)
 {
-  this->config = config;
+  this->pipeline_data = pipeline_data;
+  this->config = pipeline_data->config;
 
-  this->frame = frame;
-  this->plateRegion = regionOfInterest;
 }
 
 LicensePlateCandidate::~LicensePlateCandidate()
@@ -42,19 +41,16 @@ void LicensePlateCandidate::recognize()
 
   this->confidence = 0;
 
-  int expandX = round(this->plateRegion.width * 0.20);
-  int expandY = round(this->plateRegion.height * 0.15);
+  int expandX = round(this->pipeline_data->regionOfInterest.width * 0.20);
+  int expandY = round(this->pipeline_data->regionOfInterest.height * 0.15);
   // expand box by 15% in all directions
-  Rect expandedRegion = expandRect( this->plateRegion, expandX, expandY, frame.cols, frame.rows) ;
+  Rect expandedRegion = expandRect( this->pipeline_data->regionOfInterest, expandX, expandY, this->pipeline_data->grayImg.cols, this->pipeline_data->grayImg.rows) ;
 
-  Mat plate_bgr = Mat(frame, expandedRegion);
-  resize(plate_bgr, plate_bgr, Size(config->templateWidthPx, config->templateHeightPx));
-
-  Mat plate_gray;
-  cvtColor(plate_bgr, plate_gray, CV_BGR2GRAY);
+  pipeline_data->crop_gray = Mat(this->pipeline_data->grayImg, expandedRegion);
+  resize(pipeline_data->crop_gray, pipeline_data->crop_gray, Size(config->templateWidthPx, config->templateHeightPx));
   
   
-  CharacterRegion charRegion(plate_bgr, config);
+  CharacterRegion charRegion(pipeline_data->crop_gray, config);
 
   if (charRegion.confidence > 10)
   {
@@ -62,16 +58,16 @@ void LicensePlateCandidate::recognize()
     //Mat boogedy = charRegion.getPlateMask();
 
     plateLines.processImage(charRegion.getPlateMask(), &charRegion, 1.10);
-    plateLines.processImage(plate_gray, &charRegion, 0.9);
+    plateLines.processImage(pipeline_data->crop_gray, &charRegion, 0.9);
 
-    PlateCorners cornerFinder(plate_bgr, &plateLines, &charRegion, config);
+    PlateCorners cornerFinder(pipeline_data->crop_gray, &plateLines, &charRegion, config);
     vector<Point> smallPlateCorners = cornerFinder.findPlateCorners();
 
     if (cornerFinder.confidence > 0)
     {
-      this->plateCorners = transformPointsToOriginalImage(frame, plate_bgr, expandedRegion, smallPlateCorners);
+      this->plateCorners = transformPointsToOriginalImage(this->pipeline_data->grayImg, pipeline_data->crop_gray, expandedRegion, smallPlateCorners);
 
-      this->deskewed = deSkewPlate(frame, this->plateCorners);
+      this->deskewed = deSkewPlate(this->pipeline_data->grayImg, this->plateCorners);
 
       charSegmenter = new CharacterSegmenter(deskewed, charRegion.thresholdsInverted(), config);
 
@@ -122,7 +118,7 @@ Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, vector<Point2f> corners)
     width = round(((float) height) * aspect);
   }
 
-  Mat deskewed(height, width, frame.type());
+  Mat deskewed(height, width, this->pipeline_data->grayImg.type());
 
   // Corners of the destination image
   vector<Point2f> quad_pts;

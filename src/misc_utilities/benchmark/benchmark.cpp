@@ -211,16 +211,19 @@ int main( int argc, const char** argv )
 
         for (int z = 0; z < regions.size(); z++)
         {
+	  
+	  PipelineData pipeline_data(frame, regions[z].rect, &config);
+	  
           getTime(&startTime);
-          char temp[5];
-          stateIdentifier.recognize(frame, regions[z].rect, temp);
+	  
+          stateIdentifier.recognize(&pipeline_data);
           getTime(&endTime);
           double stateidTime = diffclock(startTime, endTime);
           cout << "\tRegion " << z << ": State ID time: " << stateidTime << "ms." << endl;
           stateIdTimes.push_back(stateidTime);
 
           getTime(&startTime);
-          LicensePlateCandidate lp(frame, regions[z].rect, &config);
+          LicensePlateCandidate lp(&pipeline_data);
           lp.recognize();
           getTime(&endTime);
           double analysisTime = diffclock(startTime, endTime);
