@@ -47,7 +47,6 @@ class CharacterSegmenter
     CharacterSegmenter(PipelineData* pipeline_data);
     virtual ~CharacterSegmenter();
 
-    std::vector<cv::Rect> characters;
     int confidence;
 
 

@@ -161,9 +161,9 @@ int main( int argc, const char** argv )
 
         int curDashboardSelection = 0;
 
-        vector<char> humanInputs(charSegmenter.characters.size());
+        vector<char> humanInputs(pipeline_data.charRegions.size());
 
-        for (int z = 0; z < charSegmenter.characters.size(); z++)
+        for (int z = 0; z < pipeline_data.charRegions.size(); z++)
           humanInputs[z] = ' ';
 
         showDashboard(pipeline_data.thresholds, selectedBoxes, 0);
@@ -198,8 +198,8 @@ int main( int argc, const char** argv )
           }
           else if (waitkey == ENTER_KEY)
           {
-            vector<char> tempdata = showCharSelection(pipeline_data.thresholds[curDashboardSelection], charSegmenter.characters, statecodestr);
-            for (int c = 0; c < charSegmenter.characters.size(); c++)
+            vector<char> tempdata = showCharSelection(pipeline_data.thresholds[curDashboardSelection], pipeline_data.charRegions, statecodestr);
+            for (int c = 0; c < pipeline_data.charRegions.size(); c++)
               humanInputs[c] = tempdata[c];
           }
           else if (waitkey == SPACE_KEY)
@@ -227,7 +227,7 @@ int main( int argc, const char** argv )
                 break;
               }
             }
-            for (int c = 0; c < charSegmenter.characters.size(); c++)
+            for (int c = 0; c < pipeline_data.charRegions.size(); c++)
             {
               if (humanInputs[c] != ' ')
               {
@@ -238,7 +238,7 @@ int main( int argc, const char** argv )
             // Save
             if (somethingSelected && chardataTagged)
             {
-              for (int c = 0; c < charSegmenter.characters.size(); c++)
+              for (int c = 0; c < pipeline_data.charRegions.size(); c++)
               {
                 if (humanInputs[c] == ' ')
                   continue;
@@ -249,7 +249,7 @@ int main( int argc, const char** argv )
                     continue;
 
                   stringstream filename;
-                  Mat cropped = pipeline_data.thresholds[t](charSegmenter.characters[c]);
+                  Mat cropped = pipeline_data.thresholds[t](pipeline_data.charRegions[c]);
                   filename << outDir << "/" << humanInputs[c] << "-" << t << "-" << files[i];
                   imwrite(filename.str(), cropped);
                   cout << "Writing char image: " << filename.str() << endl;
