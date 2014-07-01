@@ -16,6 +16,7 @@ PipelineData::PipelineData(Mat colorImage, Rect regionOfInterest, Config* config
 
 PipelineData::~PipelineData()
 {
+  clearThresholds();
 }
 
 void PipelineData::clearThresholds()
