@@ -2,8 +2,9 @@
 #ifndef OPENALPR_PIPELINEDATA_H
 #define OPENALPR_PIPELINEDATA_H
 
-#include "segmentation/segment.h"
-#include "segmentation/segmentationgroup.h"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "utility.h"
+#include "config.h"
 
 class PipelineData
 {
@@ -36,9 +37,7 @@ class PipelineData
     std::vector<LineSegment> horizontalLines;
     std::vector<LineSegment> verticalLines;
 
-    // Segmentation
-    std::vector<Segment> segments;
-    std::vector<SegmentationGroup> segmentGroups;
+
 
     // OCR
     

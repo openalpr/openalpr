@@ -11,3 +11,7 @@ PipelineData::PipelineData(Mat colorImage, Rect regionOfInterest, Config* config
   this->regionOfInterest = regionOfInterest;
   this->config = config;
 }
+
+PipelineData::~PipelineData()
+{
+}
