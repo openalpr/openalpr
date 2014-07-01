@@ -20,17 +20,20 @@ class PipelineData
     cv::Mat grayImg;
     cv::Rect regionOfInterest;
     
-    
     cv::Mat crop_gray;
     cv::Mat plate_mask;    
+    std::vector<cv::Mat> thresholds;
+    
+    std::vector<cv::Point2f> plate_corners;
+
     
     // Outputs
+    bool plate_inverted;
+    
     std::string region_code;
     float region_confidence;
     
     float overall_confidence;
-    
-    std::vector<cv::Mat> thresholds;
     
     
     // Plate Lines

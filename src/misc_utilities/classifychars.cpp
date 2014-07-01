@@ -124,13 +124,14 @@ int main( int argc, const char** argv )
 
         imshow ("Original", frame);
 
+	PipelineData pipeline_data(frame, Rect(0, 0, frame.cols, frame.rows), &config);
         char statecode[3];
         statecode[0] = files[i][0];
         statecode[1] = files[i][1];
         statecode[2] = '\0';
         string statecodestr(statecode);
 
-        CharacterRegion regionizer(frame, &config);
+        CharacterRegion regionizer(&pipeline_data);
 
         if (abs(regionizer.getTopLine().angle) > 4)
         {
@@ -143,9 +144,10 @@ int main( int argc, const char** argv )
           warpAffine( frame, rotated, rot_mat, frame.size() );
 
           rotated.copyTo(frame);
+	  pipeline_data.crop_gray = rotated;
         }
 
-        CharacterSegmenter charSegmenter(frame, regionizer.thresholdsInverted(), &config);
+        CharacterSegmenter charSegmenter(&pipeline_data);
 
         //ocr.cleanCharRegions(charSegmenter.thresholds, charSegmenter.characters);
 

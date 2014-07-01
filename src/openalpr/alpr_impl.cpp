@@ -213,8 +213,8 @@ void plateAnalysisThread(void* arg)
       
       for (int pointidx = 0; pointidx < 4; pointidx++)
       {
-	plateResult.plate_points[pointidx].x = (int) lp.plateCorners[pointidx].x;
-	plateResult.plate_points[pointidx].y = (int) lp.plateCorners[pointidx].y;
+	plateResult.plate_points[pointidx].x = (int) pipeline_data.plate_corners[pointidx].x;
+	plateResult.plate_points[pointidx].y = (int) pipeline_data.plate_corners[pointidx].y;
       }
       
       if (dispatcher->detectRegion)

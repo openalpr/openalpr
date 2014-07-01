@@ -22,9 +22,10 @@
 using namespace cv;
 using namespace std;
 
-CharacterSegmenter::CharacterSegmenter(Mat img_gray, bool invertedColors, Config* config)
+CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
 {
-  this->config = config;
+  this->pipeline_data = pipeline_data;
+  this->config = pipeline_data->config;
 
   this->confidence = 0;
 
@@ -37,12 +38,12 @@ CharacterSegmenter::CharacterSegmenter(Mat img_gray, bool invertedColors, Config
   getTime(&startTime);
 
 
-  medianBlur(img_gray, img_gray, 3);
+  medianBlur(pipeline_data->crop_gray, pipeline_data->crop_gray, 3);
 
-  if (invertedColors)
-    bitwise_not(img_gray, img_gray);
+  if (pipeline_data->plate_inverted)
+    bitwise_not(pipeline_data->crop_gray, pipeline_data->crop_gray);
 
-  charAnalysis = new CharacterAnalysis(img_gray, config);
+  charAnalysis = new CharacterAnalysis(pipeline_data);
   charAnalysis->analyze();
 
   if (this->config->debugCharSegmenter)

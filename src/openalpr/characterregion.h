@@ -25,23 +25,21 @@
 #include "utility.h"
 #include "characteranalysis.h"
 #include "config.h"
-
+#include "pipeline_data.h"
 
 class CharacterRegion
 {
 
   public:
-    CharacterRegion(cv::Mat img, Config* config);
+    CharacterRegion(PipelineData* pipeline_data);
     virtual ~CharacterRegion();
 
     CharacterAnalysis *charAnalysis;
 
     int confidence;
-    cv::Mat getPlateMask();
 
     LineSegment getTopLine();
     LineSegment getBottomLine();
-    //vector<Point> getLinePolygon();
     std::vector<cv::Point> getCharArea();
 
     LineSegment getCharBoxTop();
@@ -49,7 +47,6 @@ class CharacterRegion
     LineSegment getCharBoxLeft();
     LineSegment getCharBoxRight();
 
-    bool thresholdsInverted();
 
   protected:
     Config* config;

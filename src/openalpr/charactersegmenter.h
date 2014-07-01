@@ -44,7 +44,7 @@ class CharacterSegmenter
 {
 
   public:
-    CharacterSegmenter(cv::Mat img, bool invertedColors, Config* config);
+    CharacterSegmenter(PipelineData* pipeline_data);
     virtual ~CharacterSegmenter();
 
     std::vector<cv::Rect> characters;
@@ -54,7 +54,8 @@ class CharacterSegmenter
 
   private:
     Config* config;
-
+    PipelineData* pipeline_data;
+    
     CharacterAnalysis* charAnalysis;
 
     LineSegment top;

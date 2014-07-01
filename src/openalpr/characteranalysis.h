@@ -24,13 +24,13 @@
 #include "constants.h"
 #include "utility.h"
 #include "config.h"
-
+#include "pipeline_data.h"
 
 class CharacterAnalysis
 {
 
   public:
-    CharacterAnalysis(cv::Mat img, Config* config);
+    CharacterAnalysis(PipelineData* pipeline_data);
     virtual ~CharacterAnalysis();
 
     bool hasPlateMask;
@@ -64,9 +64,8 @@ class CharacterAnalysis
     cv::Mat getCharacterMask();
 
   private:
+    PipelineData* pipeline_data;
     Config* config;
-
-    cv::Mat img_gray;
 
     cv::Mat findOuterBoxMask( );
 

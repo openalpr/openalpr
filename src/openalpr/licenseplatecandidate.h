@@ -48,11 +48,9 @@ class LicensePlateCandidate
 
     float confidence;		// 0-100
     //vector<Point> points;	// top-left, top-right, bottom-right, bottom-left
-    std::vector<cv::Point2f> plateCorners;
 
     void recognize();
 
-    cv::Mat deskewed;
     CharacterSegmenter* charSegmenter;
 
   private:

@@ -50,14 +50,14 @@ void LicensePlateCandidate::recognize()
   resize(pipeline_data->crop_gray, pipeline_data->crop_gray, Size(config->templateWidthPx, config->templateHeightPx));
   
   
-  CharacterRegion charRegion(pipeline_data->crop_gray, config);
+  CharacterRegion charRegion(pipeline_data);
 
   if (charRegion.confidence > 10)
   {
     PlateLines plateLines(config);
     //Mat boogedy = charRegion.getPlateMask();
 
-    plateLines.processImage(charRegion.getPlateMask(), &charRegion, 1.10);
+    plateLines.processImage(pipeline_data->plate_mask, &charRegion, 1.10);
     plateLines.processImage(pipeline_data->crop_gray, &charRegion, 0.9);
 
     PlateCorners cornerFinder(pipeline_data->crop_gray, &plateLines, &charRegion, config);
@@ -65,11 +65,11 @@ void LicensePlateCandidate::recognize()
 
     if (cornerFinder.confidence > 0)
     {
-      this->plateCorners = transformPointsToOriginalImage(this->pipeline_data->grayImg, pipeline_data->crop_gray, expandedRegion, smallPlateCorners);
+      pipeline_data->plate_corners = transformPointsToOriginalImage(this->pipeline_data->grayImg, pipeline_data->crop_gray, expandedRegion, smallPlateCorners);
 
-      this->deskewed = deSkewPlate(this->pipeline_data->grayImg, this->plateCorners);
+      pipeline_data->crop_gray = deSkewPlate(this->pipeline_data->grayImg, pipeline_data->plate_corners);
 
-      charSegmenter = new CharacterSegmenter(deskewed, charRegion.thresholdsInverted(), config);
+      charSegmenter = new CharacterSegmenter(pipeline_data);
 
       //this->recognizedText = ocr->recognizedText;
       //strcpy(this->recognizedText, ocr.recognizedText);

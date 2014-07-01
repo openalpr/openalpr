@@ -104,6 +104,8 @@ int main( int argc, const char** argv )
         plateCoords.y = 0;
         plateCoords.width = frame.cols;
         plateCoords.height = frame.rows;
+	
+	PipelineData pipeline_data(frame, plateCoords, config);
 
         char statecode[3];
         statecode[0] = files[i][0];
@@ -111,7 +113,7 @@ int main( int argc, const char** argv )
         statecode[2] = '\0';
         string statecodestr(statecode);
 
-        CharacterRegion charRegion(frame, config);
+        CharacterRegion charRegion(&pipeline_data);
 
         if (abs(charRegion.getTopLine().angle) > 4)
         {
@@ -124,9 +126,10 @@ int main( int argc, const char** argv )
           warpAffine( frame, rotated, rot_mat, frame.size() );
 
           rotated.copyTo(frame);
+	  pipeline_data.crop_gray = frame;
         }
 
-        CharacterSegmenter charSegmenter(frame, charRegion.thresholdsInverted(), config);
+        CharacterSegmenter charSegmenter(&pipeline_data);
         ocr->performOCR(charSegmenter.getThresholds(), charSegmenter.characters);
         ocr->postProcessor->analyze(statecode, 25);
 

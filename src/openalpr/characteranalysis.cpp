@@ -22,22 +22,16 @@
 using namespace cv;
 using namespace std;
 
-CharacterAnalysis::CharacterAnalysis(Mat img, Config* config)
+CharacterAnalysis::CharacterAnalysis(PipelineData* pipeline_data)
 {
-  this->config = config;
+  this->pipeline_data = pipeline_data;
+  this->config = pipeline_data->config;
 
   this->hasPlateMask = false;
 
   if (this->config->debugCharAnalysis)
     cout << "Starting CharacterAnalysis identification" << endl;
 
-  if (img.type() != CV_8U)
-    cvtColor( img, this->img_gray, CV_BGR2GRAY );
-  else
-  {
-    img_gray = Mat(img.size(), img.type());
-    img.copyTo(img_gray);
-  }
 }
 
 CharacterAnalysis::~CharacterAnalysis()
@@ -51,21 +45,9 @@ CharacterAnalysis::~CharacterAnalysis()
 
 void CharacterAnalysis::analyze()
 {
-  thresholds = produceThresholds(img_gray, config);
+  thresholds = produceThresholds(pipeline_data->crop_gray, config);
 
-  /*
-    // Morph Close the gray image to make it easier to detect blobs
-    int morph_elem  = 1;
-    int morph_size = 1;
-    Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
 
-    for (int i = 0; i < thresholds.size(); i++)
-    {
-      //morphologyEx( mask, mask, MORPH_CLOSE, element );
-      morphologyEx( thresholds[i], thresholds[i], MORPH_OPEN, element );
-      //dilate( thresholds[i], thresholds[i],  element );
-    }
-  */
 
   timespec startTime;
   getTime(&startTime);
@@ -181,7 +163,7 @@ void CharacterAnalysis::analyze()
 
   //charsegments = this->getPossibleCharRegions(img_threshold, allContours, allHierarchy, STARTING_MIN_HEIGHT + (bestFitIndex * HEIGHT_STEP), STARTING_MAX_HEIGHT + (bestFitIndex * HEIGHT_STEP));
 
-  this->linePolygon =  getBestVotedLines(img_gray, bestContours, bestCharSegments);
+  this->linePolygon =  getBestVotedLines(pipeline_data->crop_gray, bestContours, bestCharSegments);
 
   if (this->linePolygon.size() > 0)
   {
