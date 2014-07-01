@@ -25,6 +25,7 @@
 #include "featurematcher.h"
 #include "utility.h"
 #include "config.h"
+#include "pipeline_data.h"
 
 class StateIdentifier
 {
@@ -33,8 +34,7 @@ class StateIdentifier
     StateIdentifier(Config* config);
     virtual ~StateIdentifier();
 
-    int recognize(cv::Mat img, cv::Rect frame, char* stateCode);
-    int recognize(cv::Mat img, char* stateCode);
+    bool recognize(PipelineData* pipeline_data);
 
     //int confidence;
 
