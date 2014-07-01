@@ -34,7 +34,6 @@ class CharacterRegion
     CharacterRegion(PipelineData* pipeline_data);
     virtual ~CharacterRegion();
 
-    CharacterAnalysis *charAnalysis;
 
     int confidence;
 
@@ -52,6 +51,7 @@ class CharacterRegion
     Config* config;
     bool debug;
 
+    CharacterAnalysis *charAnalysis;
     cv::Mat findOuterBoxMask(std::vector<cv::Mat> thresholds, std::vector<std::vector<std::vector<cv::Point> > > allContours, std::vector<std::vector<cv::Vec4i> > allHierarchy);
 
     std::vector<bool> filter(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy);
