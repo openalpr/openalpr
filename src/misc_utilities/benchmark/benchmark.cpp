@@ -130,7 +130,7 @@ int main( int argc, const char** argv )
         }
 
         CharacterSegmenter charSegmenter(&pipeline_data);
-        ocr->performOCR(charSegmenter.getThresholds(), charSegmenter.characters);
+        ocr->performOCR(&pipeline_data);
         ocr->postProcessor->analyze(statecode, 25);
 
         cout << files[i] << "," << statecode << "," << ocr->postProcessor->bestChars << endl;
@@ -237,7 +237,7 @@ int main( int argc, const char** argv )
             lpAnalysisPositiveTimes.push_back(analysisTime);
 
             getTime(&startTime);
-            ocr.performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
+            ocr.performOCR(&pipeline_data);
             getTime(&endTime);
             double ocrTime = diffclock(startTime, endTime);
             cout << "\tRegion " << z << ": OCR time: " << ocrTime << "ms." << endl;

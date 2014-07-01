@@ -17,3 +17,12 @@ PipelineData::PipelineData(Mat colorImage, Rect regionOfInterest, Config* config
 PipelineData::~PipelineData()
 {
 }
+
+void PipelineData::clearThresholds()
+{
+  for (int i = 0; i < thresholds.size(); i++)
+  {
+    thresholds[i].release();
+  }
+  thresholds.clear();
+}

@@ -230,7 +230,7 @@ void plateAnalysisThread(void* arg)
       
       // Tesseract OCR does not appear to be threadsafe
       dispatcher->ocrMutex.lock();
-      dispatcher->ocr->performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
+      dispatcher->ocr->performOCR(&pipeline_data);
       dispatcher->ocr->postProcessor->analyze(plateResult.region, dispatcher->topN);
       const vector<PPResult> ppResults = dispatcher->ocr->postProcessor->getResults();
       dispatcher->ocrMutex.unlock();

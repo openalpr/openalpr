@@ -13,6 +13,8 @@ class PipelineData
     PipelineData(cv::Mat colorImage, cv::Rect regionOfInterest, Config* config);
     virtual ~PipelineData();
 
+    void clearThresholds();
+    
     // Inputs
     Config* config;
     
@@ -35,6 +37,7 @@ class PipelineData
     
     float overall_confidence;
     
+    std::vector<cv::Rect> charRegions;
     
     // Plate Lines
     std::vector<LineSegment> horizontalLines;

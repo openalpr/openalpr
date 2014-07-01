@@ -54,7 +54,6 @@ class CharacterAnalysis
 
     bool thresholdsInverted;
 
-    std::vector<cv::Mat> thresholds;
     std::vector<std::vector<std::vector<cv::Point> > > allContours;
     std::vector<std::vector<cv::Vec4i> > allHierarchy;
     std::vector<std::vector<bool> > charSegments;

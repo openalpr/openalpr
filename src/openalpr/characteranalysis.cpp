@@ -36,29 +36,26 @@ CharacterAnalysis::CharacterAnalysis(PipelineData* pipeline_data)
 
 CharacterAnalysis::~CharacterAnalysis()
 {
-  for (int i = 0; i < thresholds.size(); i++)
-  {
-    thresholds[i].release();
-  }
-  thresholds.clear();
+
 }
 
 void CharacterAnalysis::analyze()
 {
-  thresholds = produceThresholds(pipeline_data->crop_gray, config);
+  pipeline_data->clearThresholds();
+  pipeline_data->thresholds = produceThresholds(pipeline_data->crop_gray, config);
 
 
 
   timespec startTime;
   getTime(&startTime);
 
-  for (int i = 0; i < thresholds.size(); i++)
+  for (int i = 0; i < pipeline_data->thresholds.size(); i++)
   {
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
 
-    Mat tempThreshold(thresholds[i].size(), CV_8U);
-    thresholds[i].copyTo(tempThreshold);
+    Mat tempThreshold(pipeline_data->thresholds[i].size(), CV_8U);
+    pipeline_data->thresholds[i].copyTo(tempThreshold);
     findContours(tempThreshold,
                  contours, // a vector of contours
                  hierarchy,
@@ -79,9 +76,9 @@ void CharacterAnalysis::analyze()
 
   getTime(&startTime);
 
-  for (int i = 0; i < thresholds.size(); i++)
+  for (int i = 0; i < pipeline_data->thresholds.size(); i++)
   {
-    vector<bool> goodIndices = this->filter(thresholds[i], allContours[i], allHierarchy[i]);
+    vector<bool> goodIndices = this->filter(pipeline_data->thresholds[i], allContours[i], allHierarchy[i]);
     charSegments.push_back(goodIndices);
 
     if (config->debugCharAnalysis)
@@ -100,7 +97,7 @@ void CharacterAnalysis::analyze()
   if (hasPlateMask)
   {
     // Filter out bad contours now that we have an outer box mask...
-    for (int i = 0; i < thresholds.size(); i++)
+    for (int i = 0; i < pipeline_data->thresholds.size(); i++)
     {
       charSegments[i] = filterByOuterMask(allContours[i], allHierarchy[i], charSegments[i]);
     }
@@ -108,7 +105,7 @@ void CharacterAnalysis::analyze()
 
   int bestFitScore = -1;
   int bestFitIndex = -1;
-  for (int i = 0; i < thresholds.size(); i++)
+  for (int i = 0; i < pipeline_data->thresholds.size(); i++)
   {
     //vector<bool> goodIndices = this->filter(thresholds[i], allContours[i], allHierarchy[i]);
     //charSegments.push_back(goodIndices);
@@ -120,7 +117,7 @@ void CharacterAnalysis::analyze()
       bestFitScore = segmentCount;
       bestFitIndex = i;
       bestCharSegments = charSegments[i];
-      bestThreshold = thresholds[i];
+      bestThreshold = pipeline_data->thresholds[i];
       bestContours = allContours[i];
       bestHierarchy = allHierarchy[i];
       bestCharSegmentsCount = segmentCount;
@@ -272,7 +269,7 @@ Mat CharacterAnalysis::findOuterBoxMask()
       }
     }
 
-    Mat mask = Mat::zeros(thresholds[winningIndex].size(), CV_8U);
+    Mat mask = Mat::zeros(pipeline_data->thresholds[winningIndex].size(), CV_8U);
 
     // get rid of the outline by drawing a 1 pixel width black line
     drawContours(mask, allContours[winningIndex],
@@ -316,7 +313,7 @@ Mat CharacterAnalysis::findOuterBoxMask()
 
     if (biggestContourIndex != -1)
     {
-      mask = Mat::zeros(thresholds[winningIndex].size(), CV_8U);
+      mask = Mat::zeros(pipeline_data->thresholds[winningIndex].size(), CV_8U);
 
       vector<Point> smoothedMaskPoints;
       approxPolyDP(contoursSecondRound[biggestContourIndex], smoothedMaskPoints, 2, true);
@@ -337,12 +334,12 @@ Mat CharacterAnalysis::findOuterBoxMask()
     if (this->config->debugCharAnalysis)
     {
       vector<Mat> debugImgs;
-      Mat debugImgMasked = Mat::zeros(thresholds[winningIndex].size(), CV_8U);
+      Mat debugImgMasked = Mat::zeros(pipeline_data->thresholds[winningIndex].size(), CV_8U);
 
-      thresholds[winningIndex].copyTo(debugImgMasked, mask);
+      pipeline_data->thresholds[winningIndex].copyTo(debugImgMasked, mask);
 
       debugImgs.push_back(mask);
-      debugImgs.push_back(thresholds[winningIndex]);
+      debugImgs.push_back(pipeline_data->thresholds[winningIndex]);
       debugImgs.push_back(debugImgMasked);
 
       Mat dashboard = drawImageDashboard(debugImgs, CV_8U, 1);
@@ -354,7 +351,7 @@ Mat CharacterAnalysis::findOuterBoxMask()
   }
 
   hasPlateMask = false;
-  Mat fullMask = Mat::zeros(thresholds[0].size(), CV_8U);
+  Mat fullMask = Mat::zeros(pipeline_data->thresholds[0].size(), CV_8U);
   bitwise_not(fullMask, fullMask);
   return fullMask;
 }

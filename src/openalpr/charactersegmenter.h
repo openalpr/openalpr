@@ -50,7 +50,6 @@ class CharacterSegmenter
     std::vector<cv::Rect> characters;
     int confidence;
 
-    std::vector<cv::Mat> getThresholds();
 
   private:
     Config* config;

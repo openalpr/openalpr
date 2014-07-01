@@ -26,6 +26,7 @@
 #include "utility.h"
 #include "postprocess.h"
 #include "config.h"
+#include "pipeline_data.h"
 
 #include "constants.h"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -39,7 +40,7 @@ class OCR
     OCR(Config* config);
     virtual ~OCR();
 
-    void performOCR(std::vector<cv::Mat> thresholds, std::vector<cv::Rect> charRegions);
+    void performOCR(PipelineData* pipeline_data);
 
     PostProcess* postProcessor;
     //string recognizedText;

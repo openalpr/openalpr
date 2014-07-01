@@ -151,12 +151,12 @@ int main( int argc, const char** argv )
 
         //ocr.cleanCharRegions(charSegmenter.thresholds, charSegmenter.characters);
 
-        ocr.performOCR(charSegmenter.getThresholds(), charSegmenter.characters);
+        ocr.performOCR(&pipeline_data);
         ocr.postProcessor->analyze(statecodestr, 25);
         cout << "OCR results: " << ocr.postProcessor->bestChars << endl;
 
-        vector<bool> selectedBoxes(charSegmenter.getThresholds().size());
-        for (int z = 0; z < charSegmenter.getThresholds().size(); z++)
+        vector<bool> selectedBoxes(pipeline_data.thresholds.size());
+        for (int z = 0; z < pipeline_data.thresholds.size(); z++)
           selectedBoxes[z] = false;
 
         int curDashboardSelection = 0;
@@ -166,7 +166,7 @@ int main( int argc, const char** argv )
         for (int z = 0; z < charSegmenter.characters.size(); z++)
           humanInputs[z] = ' ';
 
-        showDashboard(charSegmenter.getThresholds(), selectedBoxes, 0);
+        showDashboard(pipeline_data.thresholds, selectedBoxes, 0);
 
         char waitkey = (char) waitKey(50);
 
@@ -176,50 +176,50 @@ int main( int argc, const char** argv )
           {
             if (curDashboardSelection > 0)
               curDashboardSelection--;
-            showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
+            showDashboard(pipeline_data.thresholds, selectedBoxes, curDashboardSelection);
           }
           else if (waitkey == RIGHT_ARROW_KEY) // right arrow key
           {
-            if (curDashboardSelection < charSegmenter.getThresholds().size() - 1)
+            if (curDashboardSelection < pipeline_data.thresholds.size() - 1)
               curDashboardSelection++;
-            showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
+            showDashboard(pipeline_data.thresholds, selectedBoxes, curDashboardSelection);
           }
           else if (waitkey == DOWN_ARROW_KEY)
           {
-            if (curDashboardSelection + DASHBOARD_COLUMNS <= charSegmenter.getThresholds().size() - 1)
+            if (curDashboardSelection + DASHBOARD_COLUMNS <= pipeline_data.thresholds.size() - 1)
               curDashboardSelection += DASHBOARD_COLUMNS;
-            showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
+            showDashboard(pipeline_data.thresholds, selectedBoxes, curDashboardSelection);
           }
           else if (waitkey == UP_ARROW_KEY)
           {
             if (curDashboardSelection - DASHBOARD_COLUMNS >= 0)
               curDashboardSelection -= DASHBOARD_COLUMNS;
-            showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
+            showDashboard(pipeline_data.thresholds, selectedBoxes, curDashboardSelection);
           }
           else if (waitkey == ENTER_KEY)
           {
-            vector<char> tempdata = showCharSelection(charSegmenter.getThresholds()[curDashboardSelection], charSegmenter.characters, statecodestr);
+            vector<char> tempdata = showCharSelection(pipeline_data.thresholds[curDashboardSelection], charSegmenter.characters, statecodestr);
             for (int c = 0; c < charSegmenter.characters.size(); c++)
               humanInputs[c] = tempdata[c];
           }
           else if (waitkey == SPACE_KEY)
           {
             selectedBoxes[curDashboardSelection] = !selectedBoxes[curDashboardSelection];
-            showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
+            showDashboard(pipeline_data.thresholds, selectedBoxes, curDashboardSelection);
           }
           else if (waitkey == 's' || waitkey == 'S' || waitkey == 'W')
           {
             if (waitkey == 'W')
             {
               selectedBoxes[curDashboardSelection] = true;
-              showDashboard(charSegmenter.getThresholds(), selectedBoxes, curDashboardSelection);
+              showDashboard(pipeline_data.thresholds, selectedBoxes, curDashboardSelection);
               const std::string& ocr_str = ocr.postProcessor->bestChars;
               humanInputs.assign(ocr_str.begin(), ocr_str.end());
             }
 
             bool somethingSelected = false;
             bool chardataTagged = false;
-            for (int c = 0; c < charSegmenter.getThresholds().size(); c++)
+            for (int c = 0; c < pipeline_data.thresholds.size(); c++)
             {
               if (selectedBoxes[c])
               {
@@ -243,13 +243,13 @@ int main( int argc, const char** argv )
                 if (humanInputs[c] == ' ')
                   continue;
 
-                for (int t = 0; t < charSegmenter.getThresholds().size(); t++)
+                for (int t = 0; t < pipeline_data.thresholds.size(); t++)
                 {
                   if (selectedBoxes[t] == false)
                     continue;
 
                   stringstream filename;
-                  Mat cropped = charSegmenter.getThresholds()[t](charSegmenter.characters[c]);
+                  Mat cropped = pipeline_data.thresholds[t](charSegmenter.characters[c]);
                   filename << outDir << "/" << humanInputs[c] << "-" << t << "-" << files[i];
                   imwrite(filename.str(), cropped);
                   cout << "Writing char image: " << filename.str() << endl;

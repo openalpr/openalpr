@@ -51,12 +51,12 @@ class LicensePlateCandidate
 
     void recognize();
 
-    CharacterSegmenter* charSegmenter;
 
   private:
     PipelineData* pipeline_data;
     Config* config;
 
+    CharacterSegmenter* charSegmenter;
 
     cv::Mat filterByCharacterHue(std::vector<std::vector<cv::Point> > charRegionContours);
     std::vector<cv::Point> findPlateCorners(cv::Mat inputImage, PlateLines plateLines, CharacterRegion charRegion);	// top-left, top-right, bottom-right, bottom-left
