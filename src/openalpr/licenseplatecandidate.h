@@ -46,8 +46,6 @@ class LicensePlateCandidate
     LicensePlateCandidate(PipelineData* pipeline_data);
     virtual ~LicensePlateCandidate();
 
-    float confidence;		// 0-100
-    //vector<Point> points;	// top-left, top-right, bottom-right, bottom-left
 
     void recognize();
 

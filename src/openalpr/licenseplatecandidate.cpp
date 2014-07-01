@@ -39,7 +39,7 @@ void LicensePlateCandidate::recognize()
 {
   charSegmenter = NULL;
 
-  this->confidence = 0;
+  pipeline_data->plate_area_confidence = 0;
 
   int expandX = round(this->pipeline_data->regionOfInterest.width * 0.20);
   int expandY = round(this->pipeline_data->regionOfInterest.height * 0.15);
@@ -55,7 +55,6 @@ void LicensePlateCandidate::recognize()
   if (charRegion.confidence > 10)
   {
     PlateLines plateLines(config);
-    //Mat boogedy = charRegion.getPlateMask();
 
     plateLines.processImage(pipeline_data->plate_mask, &charRegion, 1.10);
     plateLines.processImage(pipeline_data->crop_gray, &charRegion, 0.9);
@@ -74,7 +73,7 @@ void LicensePlateCandidate::recognize()
       //this->recognizedText = ocr->recognizedText;
       //strcpy(this->recognizedText, ocr.recognizedText);
 
-      this->confidence = 100;
+      pipeline_data->plate_area_confidence = 100;
     }
     charRegion.confidence = 0;
   }

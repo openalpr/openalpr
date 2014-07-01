@@ -196,7 +196,7 @@ void plateAnalysisThread(void* arg)
     lp.recognize();
 
     
-    if (lp.confidence <= 10)
+    if (pipeline_data.plate_area_confidence <= 10)
     {
       // Not a valid plate
       // Check if this plate has any children, if so, send them back up to the dispatcher for processing

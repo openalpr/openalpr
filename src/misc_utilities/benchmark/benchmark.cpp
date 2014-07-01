@@ -232,7 +232,7 @@ int main( int argc, const char** argv )
           double analysisTime = diffclock(startTime, endTime);
           cout << "\tRegion " << z << ": Analysis time: " << analysisTime << "ms." << endl;
 
-          if (lp.confidence > 10)
+          if (pipeline_data.plate_area_confidence > 10)
           {
             lpAnalysisPositiveTimes.push_back(analysisTime);
 

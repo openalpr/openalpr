@@ -35,13 +35,11 @@ class PipelineData
     std::string region_code;
     float region_confidence;
     
-    float overall_confidence;
+
+    float plate_area_confidence;
     
     std::vector<cv::Rect> charRegions;
     
-    // Plate Lines
-    std::vector<LineSegment> horizontalLines;
-    std::vector<LineSegment> verticalLines;
 
 
 
