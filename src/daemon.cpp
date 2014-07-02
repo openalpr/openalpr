@@ -274,20 +274,26 @@ void streamRecognitionThread(void* arg)
 
 bool writeToQueue(std::string jsonResult)
 {
-  
-  Beanstalk::Client client(BEANSTALK_QUEUE_HOST, BEANSTALK_PORT);
-  client.use(BEANSTALK_TUBE_NAME);
-
-  int id = client.put(jsonResult);
-  
-  if (id <= 0)
+  try
   {
-    LOG4CPLUS_ERROR(logger, "Failed to write data to queue");
-    return false;
-  }
-  
-  LOG4CPLUS_INFO(logger, "put job id: " << id );
+    Beanstalk::Client client(BEANSTALK_QUEUE_HOST, BEANSTALK_PORT);
+    client.use(BEANSTALK_TUBE_NAME);
 
+    int id = client.put(jsonResult);
+    
+    if (id <= 0)
+    {
+      LOG4CPLUS_ERROR(logger, "Failed to write data to queue");
+      return false;
+    }
+    
+    LOG4CPLUS_INFO(logger, "put job id: " << id );
+
+  }
+  catch (const std::runtime_error& error)
+  {
+    LOG4CPLUS_WARN(logger, "Error writing to Beanstalk.  Result has not been saved.");
+  }
   return true;
 }
 
@@ -302,33 +308,49 @@ void dataUploadThread(void* arg)
   
   UploadThreadData* udata = (UploadThreadData*) arg;
   
-  Beanstalk::Client client(BEANSTALK_QUEUE_HOST, BEANSTALK_PORT);
 
   
-  client.watch(BEANSTALK_TUBE_NAME);
   
   while(daemon_active)
   {
-    Beanstalk::Job job;
-    
-    client.reserve(job);
-    
-    if (job.id() > 0)
+    try
     {
-      LOG4CPLUS_DEBUG(logger, job.body() );
-      if (uploadPost(udata->upload_url, job.body()))
-      {
-	client.del(job.id());
-	LOG4CPLUS_INFO(logger, "Job: " << job.id() << " successfully uploaded" );
-      }
-      else
-      {
-	client.release(job);
-	LOG4CPLUS_WARN(logger, "Job: " << job.id() << " failed to upload.  Will retry." );
-      }
-    }
+      Beanstalk::Client client(BEANSTALK_QUEUE_HOST, BEANSTALK_PORT);
+      
+      client.watch(BEANSTALK_TUBE_NAME);
     
-    usleep(10000);
+      while (daemon_active)
+      {
+	Beanstalk::Job job;
+	
+	client.reserve(job);
+	
+	if (job.id() > 0)
+	{
+	  LOG4CPLUS_DEBUG(logger, job.body() );
+	  if (uploadPost(udata->upload_url, job.body()))
+	  {
+	    client.del(job.id());
+	    LOG4CPLUS_INFO(logger, "Job: " << job.id() << " successfully uploaded" );
+	  }
+	  else
+	  {
+	    client.release(job);
+	    LOG4CPLUS_WARN(logger, "Job: " << job.id() << " failed to upload.  Will retry." );
+	  }
+	}
+	
+	// Wait 10ms
+	usleep(10000);
+      }
+      
+    }
+    catch (const std::runtime_error& error)
+    {
+      LOG4CPLUS_WARN(logger, "Error connecting to Beanstalk.  Will retry." );
+    }
+    // wait 5 seconds
+    usleep(5000000);
   }
   
   curl_global_cleanup();
