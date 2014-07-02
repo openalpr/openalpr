@@ -67,7 +67,7 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
 
   // Create a mask that is dilated based on the detected characters
   vector<vector<Point> > polygons;
-  polygons.push_back(charRegion->charAnalysis->charArea);
+  polygons.push_back(charRegion->getCharArea());
   
   Mat mask = Mat::zeros(inputImage.size(), CV_8U);
   fillPoly(mask, polygons, Scalar(255,255,255));

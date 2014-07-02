@@ -17,34 +17,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENALPR_STATEIDENTIFIER_H
-#define OPENALPR_STATEIDENTIFIER_H
+#ifndef OPENALPR_SEGMENT_H
+#define OPENALPR_SEGMENT_H
+
+#include <vector>
+#include <stdio.h>
 
 #include "opencv2/imgproc/imgproc.hpp"
-#include "constants.h"
-#include "featurematcher.h"
-#include "utility.h"
-#include "config.h"
-#include "pipeline_data.h"
 
-class StateIdentifier
+class Segment
 {
 
   public:
-    StateIdentifier(Config* config);
-    virtual ~StateIdentifier();
+    Segment(cv::Rect newSegment);
+    virtual ~Segment();
 
-    bool recognize(PipelineData* pipeline_data);
-
-    //int confidence;
-
-  protected:
-    Config* config;
-
-  private:
-
-    FeatureMatcher* featureMatcher;
-
+    cv::Rect segment;
+    
+    bool matches(cv::Rect newSegment);
+    
 };
 
-#endif // OPENALPR_STATEIDENTIFIER_H
+#endif // OPENALPR_SEGMENTATIONGROUP_H

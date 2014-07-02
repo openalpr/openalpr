@@ -52,7 +52,7 @@ OCR::~OCR()
   delete tesseract;
 }
 
-void OCR::performOCR(vector<Mat> thresholds, vector<Rect> charRegions)
+void OCR::performOCR(PipelineData* pipeline_data)
 {
   timespec startTime;
   getTime(&startTime);
@@ -60,18 +60,20 @@ void OCR::performOCR(vector<Mat> thresholds, vector<Rect> charRegions)
   postProcessor->clear();
   
   // Don't waste time on OCR processing if it is impossible to get sufficient characters
-  if (charRegions.size() < config->postProcessMinCharacters)
+  if (pipeline_data->charRegions.size() < config->postProcessMinCharacters)
     return;
 
-  for (int i = 0; i < thresholds.size(); i++)
+  for (int i = 0; i < pipeline_data->thresholds.size(); i++)
   {
     // Make it black text on white background
-    bitwise_not(thresholds[i], thresholds[i]);
-    tesseract->SetImage((uchar*) thresholds[i].data, thresholds[i].size().width, thresholds[i].size().height, thresholds[i].channels(), thresholds[i].step1());
+    bitwise_not(pipeline_data->thresholds[i], pipeline_data->thresholds[i]);
+    tesseract->SetImage((uchar*) pipeline_data->thresholds[i].data, 
+			pipeline_data->thresholds[i].size().width, pipeline_data->thresholds[i].size().height, 
+			pipeline_data->thresholds[i].channels(), pipeline_data->thresholds[i].step1());
 
-    for (int j = 0; j < charRegions.size(); j++)
+    for (int j = 0; j < pipeline_data->charRegions.size(); j++)
     {
-      Rect expandedRegion = expandRect( charRegions[j], 2, 2, thresholds[i].cols, thresholds[i].rows) ;
+      Rect expandedRegion = expandRect( pipeline_data->charRegions[j], 2, 2, pipeline_data->thresholds[i].cols, pipeline_data->thresholds[i].rows) ;
 
       tesseract->SetRectangle(expandedRegion.x, expandedRegion.y, expandedRegion.width, expandedRegion.height);
       tesseract->Recognize(NULL);

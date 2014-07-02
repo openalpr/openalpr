@@ -37,6 +37,8 @@
 
 #include "cjson.h"
 
+#include "pipeline_data.h"
+
 #include <opencv2/core/core.hpp>
    
 

@@ -40,10 +40,6 @@ PlateCorners::PlateCorners(Mat inputImage, PlateLines* plateLines, CharacterRegi
   Point bottomPoint = charRegion->getBottomLine().closestPointOnSegmentTo(topPoint);
   this->charHeight = distanceBetweenPoints(topPoint, bottomPoint);
 
-  //this->charHeight = distanceBetweenPoints(charRegion->getCharArea()[0], charRegion->getCharArea()[3]);
-  //this->charHeight = this->charHeight - 2;	// Adjust since this height is a box around our char.
-  // Adjust the char height for the difference in size...
-  //this->charHeight = ((float) inputImage.size().height / (float) TEMPLATE_PLATE_HEIGHT) * this->charHeight;
 
   this->charAngle = angleBetweenPoints(charRegion->getCharArea()[0], charRegion->getCharArea()[1]);
 }

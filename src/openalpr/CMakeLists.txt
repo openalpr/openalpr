@@ -21,6 +21,7 @@ set(lpr_source_files
  platecorners.cpp
  colorfilter.cpp
  characteranalysis.cpp
+ pipeline_data.cpp
  trex.c
  cjson.c
 )

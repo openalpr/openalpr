@@ -79,31 +79,26 @@ int main( int argc, const char** argv )
         cout << fullpath << endl;
         frame = imread( fullpath.c_str() );
 
-        char code[4];
-        int confidence = identifier.recognize(frame, code);
+	PipelineData pipeline_data(frame, Rect(0, 0, frame.cols, frame.rows), &config);
+        identifier.recognize(&pipeline_data);
 
-        if (confidence <= 20)
+        if (pipeline_data.region_confidence <= 20)
         {
-          code[0] = 'z';
-          code[1] = 'z';
-          confidence = 100;
+	  pipeline_data.region_code = 'zz';
+          pipeline_data.region_confidence = 100;
         }
-
-        //imshow("Plate", frame);
-        if (confidence > 20)
-        {
-          cout << confidence << " : " << code;
+        else
+	{
+          cout << pipeline_data.region_confidence << " : " << pipeline_data.region_code;
 
           ostringstream convert;   // stream used for the conversion
           convert << i;      // insert the textual representation of 'Number' in the characters in the stream
 
-          string copyCommand = "cp \"" + fullpath + "\" " + outDir + code + convert.str() + ".png";
+          string copyCommand = "cp \"" + fullpath + "\" " + outDir + pipeline_data.region_code + convert.str() + ".png";
           system( copyCommand.c_str() );
           waitKey(50);
           //while ((char) waitKey(50) != 'c') { }
         }
-        else
-          waitKey(50);
       }
     }
   }

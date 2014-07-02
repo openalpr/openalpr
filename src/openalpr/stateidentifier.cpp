@@ -43,26 +43,18 @@ StateIdentifier::~StateIdentifier()
   delete featureMatcher;
 }
 
-int StateIdentifier::recognize(Mat img, Rect frame, char* stateCode)
-{
-  Mat croppedImage = Mat(img, frame);
 
-  return this->recognize(croppedImage, stateCode);
-}
-// Attempts to recognize the plate.  Returns a confidence level.  Updates teh "stateCode" variable
-// with the value of the country/state
-int StateIdentifier::recognize(Mat img, char* stateCode)
+// Attempts to recognize the plate.  Returns a confidence level.  Updates the region code and confidence
+// If region is found, returns true.
+bool StateIdentifier::recognize(PipelineData* pipeline_data)
 {
   timespec startTime;
   getTime(&startTime);
 
-  cvtColor(img, img, CV_BGR2GRAY);
+  Mat plateImg = Mat(pipeline_data->grayImg, pipeline_data->regionOfInterest);
 
-  resize(img, img, getSizeMaintainingAspect(img, config->stateIdImageWidthPx, config->stateIdimageHeightPx));
+  resize(plateImg, plateImg, getSizeMaintainingAspect(plateImg, config->stateIdImageWidthPx, config->stateIdimageHeightPx));
 
-  Mat plateImg(img.size(), img.type());
-  //plateImg = equalizeBrightness(img);
-  img.copyTo(plateImg);
 
   Mat debugImg(plateImg.size(), plateImg.type());
   plateImg.copyTo(debugImg);
@@ -87,7 +79,11 @@ int StateIdentifier::recognize(Mat img, char* stateCode)
   if (result.haswinner == false)
     return 0;
 
-  strcpy(stateCode, result.winner.c_str());
-
-  return result.confidence;
+  pipeline_data->region_code = result.winner;
+  pipeline_data->region_confidence = result.confidence;
+  
+  if (result.confidence >= 10)
+    return true;
+  
+  return false;
 }
