@@ -292,7 +292,7 @@ bool writeToQueue(std::string jsonResult)
   }
   catch (const std::runtime_error& error)
   {
-    LOG4CPLUS_WARN(logger, "Error writing to Beanstalk.  Result has not been saved.");
+    LOG4CPLUS_WARN(logger, "Error connecting to Beanstalk.  Result has not been saved.");
     return false;
   }
   return true;
