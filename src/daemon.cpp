@@ -41,6 +41,8 @@ struct CaptureThreadData
   std::string site_id;
   int camera_id;
   
+  bool clock_on;
+  
   std::string config_file;
   std::string country_code;
   bool output_images;
@@ -62,6 +64,7 @@ int main( int argc, const char** argv )
   daemon_active = true;
 
   bool noDaemon = false;
+  bool clockOn = false;
   std::string logFile;
   int topn;
   
@@ -76,6 +79,7 @@ int main( int argc, const char** argv )
   TCLAP::ValueArg<std::string> logFileArg("l","log","Log file to write to.  Default=" + DEFAULT_LOG_FILE_PATH,false, DEFAULT_LOG_FILE_PATH ,"topN");
 
   TCLAP::SwitchArg daemonOffSwitch("f","foreground","Set this flag for debugging.  Disables forking the process as a daemon and runs in the foreground.  Default=off", cmd, false);
+  TCLAP::SwitchArg clockSwitch("","clock","Display timing information to log.  Default=off", cmd, false);
 
   try
   {
@@ -96,6 +100,7 @@ int main( int argc, const char** argv )
     logFile = logFileArg.getValue();
     topn = topNArg.getValue();
     noDaemon = daemonOffSwitch.getValue();
+    clockOn = clockSwitch.getValue();
   }
   catch (TCLAP::ArgException &e)    // catch any exceptions
   {
@@ -184,6 +189,7 @@ int main( int argc, const char** argv )
       tdata->country_code = country;
       tdata->site_id = site_id;
       tdata->top_n = topn;
+      tdata->clock_on = clockOn;
       
       tthread::thread* thread_recognize = new tthread::thread(streamRecognitionThread, (void*) tdata);
       
@@ -250,9 +256,10 @@ void streamRecognitionThread(void* arg)
       getTime(&endTime);
       double totalProcessingTime = diffclock(startTime, endTime);
       
-      std::stringstream ss;
-      ss << "Processed frame in: " << totalProcessingTime << " ms.";
-      LOG4CPLUS_INFO(logger, ss.str());
+      if (tdata->clock_on)
+      {
+	LOG4CPLUS_INFO(logger, "Camera " << tdata->camera_id << " processed frame in: " << totalProcessingTime << " ms.");
+      }
       
       if (results.size() > 0)
       {
