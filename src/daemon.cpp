@@ -328,21 +328,23 @@ void dataUploadThread(void* arg)
 	
 	if (job.id() > 0)
 	{
-	  LOG4CPLUS_DEBUG(logger, job.body() );
+	  //LOG4CPLUS_DEBUG(logger, job.body() );
 	  if (uploadPost(udata->upload_url, job.body()))
 	  {
 	    client.del(job.id());
 	    LOG4CPLUS_INFO(logger, "Job: " << job.id() << " successfully uploaded" );
+	    // Wait 10ms
+	    usleep(10000);
 	  }
 	  else
 	  {
 	    client.release(job);
 	    LOG4CPLUS_WARN(logger, "Job: " << job.id() << " failed to upload.  Will retry." );
+	    // Wait 2 seconds
+	    usleep(2000000);
 	  }
 	}
 	
-	// Wait 10ms
-	usleep(10000);
       }
       
     }
