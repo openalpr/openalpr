@@ -161,23 +161,36 @@ int main( int argc, const char** argv )
   
   LOG4CPLUS_INFO(logger, "Using: " << imageFolder << " for storing valid plate images");
   
+  pid_t pid;
+  
   for (int i = 0; i < stream_urls.size(); i++)
   {
-    CaptureThreadData* tdata = new CaptureThreadData();
-    tdata->stream_url = stream_urls[i];
-    tdata->camera_id = i + 1;
-    tdata->config_file = configFile;
-    tdata->output_image_folder = imageFolder;
-    tdata->country_code = country;
-    tdata->site_id = site_id;
-    
-    tthread::thread* t = new tthread::thread(streamRecognitionThread, (void*) tdata);
+    pid = fork();
+    if (pid == (pid_t) 0)
+    {
+      // This is the child process, kick off the capture data and upload threads
+      CaptureThreadData* tdata = new CaptureThreadData();
+      tdata->stream_url = stream_urls[i];
+      tdata->camera_id = i + 1;
+      tdata->config_file = configFile;
+      tdata->output_image_folder = imageFolder;
+      tdata->country_code = country;
+      tdata->site_id = site_id;
+      
+      tthread::thread* thread_recognize = new tthread::thread(streamRecognitionThread, (void*) tdata);
+      
+      // Kick off the data upload thread
+      UploadThreadData* udata = new UploadThreadData();
+      udata->upload_url = upload_url;
+      tthread::thread* thread_upload = new tthread::thread(dataUploadThread, (void*) udata );
+      
+      break;
+    }
+
+    // Parent process will continue and spawn more children
   }
 
-  // Kick off the data upload thread
-  UploadThreadData* udata = new UploadThreadData();
-  udata->upload_url = upload_url;
-  tthread::thread* t = new tthread::thread(dataUploadThread, (void*) udata );
+
 
   while (daemon_active)
   {
@@ -224,6 +237,10 @@ void streamRecognitionThread(void* arg)
       timespec endTime;
       getTime(&endTime);
       double totalProcessingTime = diffclock(startTime, endTime);
+      
+      std::stringstream ss;
+      ss << "Processed frame in: " << totalProcessingTime << " ms.";
+      LOG4CPLUS_INFO(logger, ss.str());
       
       if (results.size() > 0)
       {
