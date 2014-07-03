@@ -119,8 +119,10 @@ Please post questions or comments to the Google group list: https://groups.googl
 
 Donations
 ---------
-Every little bit helps.  Donations will be used to improve the library.
-Bitcoin: 14RovAFhtAAtVj8c23tJ4CorFGETJB3gWT
+OpenALPR provides bounties for open issues.  Other developers can fix/enhance the library and claim those bounties.  The best way to donate to the project is to add a bounty to one or more of the open issues on BountyShare
+
+[![Bountysource](https://www.bountysource.com/badge/team?team_id=830&style=bounties_received)](https://www.bountysource.com/teams/openalpr/issues?utm_source=OpenALPR&utm_medium=shield&utm_campaign=bounties_received)
+
 
 License
 -------
