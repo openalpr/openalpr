@@ -25,10 +25,10 @@ class VideoDispatcher
     
     int getLatestFrame(cv::Mat* frame)
     {
+      tthread::lock_guard<tthread::mutex> guard(mMutex);
+      
       if (latestFrameNumber == lastFrameRead)
 	return -1;
-      
-      tthread::lock_guard<tthread::mutex> guard(mMutex);
       
       frame->create(latestFrame->size(), latestFrame->type());
       latestFrame->copyTo(*frame);
@@ -40,6 +40,7 @@ class VideoDispatcher
     
     void setLatestFrame(cv::Mat* frame)
     {      
+      tthread::lock_guard<tthread::mutex> guard(mMutex);
       this->latestFrame = frame;
       
       this->latestFrameNumber++;
