@@ -43,6 +43,7 @@ struct CaptureThreadData
   
   std::string config_file;
   std::string country_code;
+  bool output_images;
   std::string output_image_folder;
 };
 
@@ -157,7 +158,8 @@ int main( int argc, const char** argv )
     return 1;
   }
   
-  std::string imageFolder = ini.GetValue("daemon", "image_folder", "/tmp/");
+  bool storePlates = ini.GetBoolValue("daemon", "store_plates", false);
+  std::string imageFolder = ini.GetValue("daemon", "store_plates_location", "/tmp/");
   std::string upload_url = ini.GetValue("daemon", "upload_address", "");
   std::string site_id = ini.GetValue("daemon", "site_id", "");
   
@@ -175,6 +177,7 @@ int main( int argc, const char** argv )
       tdata->stream_url = stream_urls[i];
       tdata->camera_id = i + 1;
       tdata->config_file = configFile;
+      tdata->output_images = storePlates;
       tdata->output_image_folder = imageFolder;
       tdata->country_code = country;
       tdata->site_id = site_id;
@@ -250,10 +253,13 @@ void streamRecognitionThread(void* arg)
 	std::string uuid = newUUID();
 	
 	// Save the image to disk (using the UUID)
-	std::stringstream ss;
-	ss << tdata->output_image_folder << "/" << uuid << ".jpg";
-	
-	cv::imwrite(ss.str(), latestFrame);
+	if (tdata->output_images)
+	{
+	  std::stringstream ss;
+	  ss << tdata->output_image_folder << "/" << uuid << ".jpg";
+	  
+	  cv::imwrite(ss.str(), latestFrame);
+	}
 	
 	// Update the JSON content to include UUID and camera ID
   
