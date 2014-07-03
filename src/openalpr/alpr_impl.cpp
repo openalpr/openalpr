@@ -146,7 +146,9 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img)
 
     
     displayImage(config, "Main Image", img);
-    cv::waitKey(1);
+    
+    // Sleep 1ms
+    usleep(1000);
     
   }
   

@@ -154,7 +154,7 @@ int main( int argc, const char** argv )
     while (cap.read(frame))
     {
       detectandshow(&alpr, frame, "", outputJson);
-      cv::waitKey(1);
+      usleep(1000);
       framenum++;
     }
   }
@@ -177,7 +177,8 @@ int main( int argc, const char** argv )
         detectandshow( &alpr, latestFrame, "", outputJson);
       }
       
-      cv::waitKey(10);
+      // Sleep 10ms
+      usleep(10000);
     }
     
     videoBuffer.disconnect();
@@ -205,7 +206,7 @@ int main( int argc, const char** argv )
 
         detectandshow( &alpr, frame, "", outputJson);
         //create a 1ms delay
-        cv::waitKey(1);
+        usleep(1000);
         framenum++;
       }
     }
