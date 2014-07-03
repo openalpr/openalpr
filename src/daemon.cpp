@@ -45,6 +45,7 @@ struct CaptureThreadData
   std::string country_code;
   bool output_images;
   std::string output_image_folder;
+  int top_n;
 };
 
 struct UploadThreadData
@@ -71,7 +72,7 @@ int main( int argc, const char** argv )
 
   TCLAP::ValueArg<std::string> countryCodeArg("c","country","Country code to identify (either us for USA or eu for Europe).  Default=us",false, "us" ,"country_code");
   TCLAP::ValueArg<std::string> configFileArg("","config","Path to the openalpr.conf file.",false, "" ,"config_file");
-  TCLAP::ValueArg<int> topNArg("n","topn","Max number of possible plate numbers to return.  Default=10",false, 10 ,"topN");
+  TCLAP::ValueArg<int> topNArg("n","topn","Max number of possible plate numbers to return.  Default=25",false, 25 ,"topN");
   TCLAP::ValueArg<std::string> logFileArg("l","log","Log file to write to.  Default=" + DEFAULT_LOG_FILE_PATH,false, DEFAULT_LOG_FILE_PATH ,"topN");
 
   TCLAP::SwitchArg daemonOffSwitch("f","foreground","Set this flag for debugging.  Disables forking the process as a daemon and runs in the foreground.  Default=off", cmd, false);
@@ -181,6 +182,7 @@ int main( int argc, const char** argv )
       tdata->output_image_folder = imageFolder;
       tdata->country_code = country;
       tdata->site_id = site_id;
+      tdata->top_n = topn;
       
       tthread::thread* thread_recognize = new tthread::thread(streamRecognitionThread, (void*) tdata);
       
@@ -213,6 +215,7 @@ void streamRecognitionThread(void* arg)
   LOG4CPLUS_INFO(logger, "Stream " << tdata->camera_id << ": " << tdata->stream_url);
   
   Alpr alpr(tdata->country_code, tdata->config_file);
+  alpr.setTopN(tdata->top_n);
   
   
   int framenum = 0;
