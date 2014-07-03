@@ -40,7 +40,7 @@ class VideoDispatcher
     
     void setLatestFrame(cv::Mat* frame)
     {      
-      tthread::lock_guard<tthread::mutex> guard(mMutex);
+      //tthread::lock_guard<tthread::mutex> guard(mMutex);
       this->latestFrame = frame;
       
       this->latestFrameNumber++;
