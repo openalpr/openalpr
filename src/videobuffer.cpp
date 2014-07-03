@@ -128,10 +128,10 @@ void imageCollectionThread(void* arg)
       
 
       // Delay 15ms
-      cv::waitKey(15);      
+      usleep(15000);    
     }
     
     // Delay 100ms
-    cv::waitKey(100);
+    usleep(100000);
   }
 }
