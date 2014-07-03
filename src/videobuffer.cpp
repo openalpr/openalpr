@@ -21,6 +21,7 @@
 
 
 void imageCollectionThread(void* arg);
+void getALPRImages(cv::VideoCapture cap, VideoDispatcher* dispatcher);
 
 
 VideoBuffer::VideoBuffer()
@@ -102,42 +103,8 @@ void imageCollectionThread(void* arg)
       cv::VideoCapture cap=cv::VideoCapture();
       cap.open(dispatcher->mjpeg_url);
       
-      cv::Mat frame;
+      getALPRImages(cap, dispatcher);
 
-      while (dispatcher->active)
-      {
-	while (dispatcher->active)
-	{
-	  
-	  dispatcher->mMutex.lock();
-	  bool hasImage = false;
-	  try
-	  {
-	    hasImage = cap.read(frame);
-	    dispatcher->setLatestFrame(&frame);
-	  }
-	  catch (int e)
-	  {
-	    // Error occured while trying to gather image.  Retry, don't exit.
-	    std::cerr << "Exception happened " << e << std::endl;
-	  }
-	  // Double check the image to make sure it's valid.
-	  if (frame.cols == 0 || frame.rows == 0)
-	    hasImage = false;
-	  
-	  dispatcher->mMutex.unlock();
-	  
-	  if (hasImage == false)
-	    break;
-	  
-
-	  // Delay 15ms
-	  usleep(15000);    
-	}
-	
-	// Delay 100ms
-	usleep(100000);
-      }
     }
     catch (const std::runtime_error& error)
     {
@@ -150,4 +117,54 @@ void imageCollectionThread(void* arg)
   }
 
   
+}
+
+
+// Continuously grabs images from the video capture.  If there is an error,
+// it returns so that the video capture can be recreated.
+void getALPRImages(cv::VideoCapture cap, VideoDispatcher* dispatcher)
+{
+  cv::Mat frame;
+  
+  while (dispatcher->active)
+  {
+    while (dispatcher->active)
+    {
+      
+      dispatcher->mMutex.lock();
+      bool hasImage = false;
+      try
+      {
+	hasImage = cap.read(frame);
+	// Double check the image to make sure it's valid.
+	if (frame.cols == 0 || frame.rows == 0)
+	{
+	  dispatcher->mMutex.unlock();
+	  return;
+	}
+	
+	dispatcher->setLatestFrame(&frame);
+      }
+      catch (const std::runtime_error& error)
+      {
+	// Error occured while trying to gather image.  Retry, don't exit.
+	std::cerr << "Exception happened " <<  error.what() << std::endl;
+	dispatcher->mMutex.unlock();
+	return;
+      }
+
+      
+      dispatcher->mMutex.unlock();
+      
+      if (hasImage == false)
+	break;
+      
+
+      // Delay 15ms
+      usleep(15000);    
+    }
+    
+    // Delay 100ms
+    usleep(100000);
+  }
 }
