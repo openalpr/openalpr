@@ -29,7 +29,7 @@ void dataUploadThread(void* arg);
 
 // Constants
 const std::string DEFAULT_LOG_FILE_PATH="/var/log/openalpr.log";
-const std::string DAEMON_CONFIG_FILE_PATH="/etc/openalpr/daemon.conf";
+const std::string DAEMON_CONFIG_FILE_PATH="/etc/openalpr/alprd.conf";
 
 const std::string BEANSTALK_QUEUE_HOST="127.0.0.1";
 const int BEANSTALK_PORT=11300;
