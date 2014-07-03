@@ -62,7 +62,7 @@ include_directories(./openalpr )
 set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall ")
 ADD_EXECUTABLE( alpr  main.cpp videobuffer.cpp )
 
-ADD_EXECUTABLE( alprd  daemon.cpp videobuffer.cpp beanstalk.c beanstalk.cc uuid.cpp )
+ADD_EXECUTABLE( alprd  daemon.cpp videobuffer.cpp daemon/beanstalk.c daemon/beanstalk.cc daemon/uuid.cpp )
 
 
 TARGET_LINK_LIBRARIES(alpr
