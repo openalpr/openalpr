@@ -117,6 +117,11 @@ Questions
 ---------
 Please post questions or comments to the Google group list: https://groups.google.com/forum/#!forum/openalpr
 
+
+Contributions
+-------------
+Code contributions are not the only way to help out.  Do you have a large library of license plate images?  Do you have time to "tag" plate images in an input image?  If so, please add a note to the forum.
+
 Donations
 ---------
 OpenALPR provides bounties for open issues.  Other developers can fix/enhance the library and claim those bounties.  The best way to donate to the project is to add a bounty to one or more of the open issues on BountyShare
