@@ -22,9 +22,9 @@
 using namespace cv;
 using namespace std;
 
-CharacterRegion::CharacterRegion(Mat img, Config* config)
+CharacterRegion::CharacterRegion(PipelineData* pipeline_data)
 {
-  this->config = config;
+  this->config = pipeline_data->config;
   this->debug = config->debugCharRegions;
 
   this->confidence = 0;
@@ -35,16 +35,18 @@ CharacterRegion::CharacterRegion(Mat img, Config* config)
   timespec startTime;
   getTime(&startTime);
 
-  charAnalysis = new CharacterAnalysis(img, config);
+  charAnalysis = new CharacterAnalysis(pipeline_data);
   charAnalysis->analyze();
+  pipeline_data->plate_inverted = charAnalysis->thresholdsInverted;
+  pipeline_data->plate_mask = charAnalysis->plateMask;
 
   if (this->debug && charAnalysis->linePolygon.size() > 0)
   {
     vector<Mat> tempDash;
-    for (int z = 0; z < charAnalysis->thresholds.size(); z++)
+    for (int z = 0; z < pipeline_data->thresholds.size(); z++)
     {
-      Mat tmp(charAnalysis->thresholds[z].size(), charAnalysis->thresholds[z].type());
-      charAnalysis->thresholds[z].copyTo(tmp);
+      Mat tmp(pipeline_data->thresholds[z].size(), pipeline_data->thresholds[z].type());
+      pipeline_data->thresholds[z].copyTo(tmp);
       cvtColor(tmp, tmp, CV_GRAY2BGR);
 
       tempDash.push_back(tmp);
@@ -100,10 +102,6 @@ CharacterRegion::~CharacterRegion()
   delete(charAnalysis);
 }
 
-Mat CharacterRegion::getPlateMask()
-{
-  return charAnalysis->plateMask;
-}
 
 LineSegment CharacterRegion::getTopLine()
 {
@@ -140,7 +138,3 @@ LineSegment CharacterRegion::getCharBoxRight()
   return charAnalysis->charBoxRight;
 }
 
-bool CharacterRegion::thresholdsInverted()
-{
-  return charAnalysis->thresholdsInverted;
-}

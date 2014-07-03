@@ -24,13 +24,13 @@
 #include "constants.h"
 #include "utility.h"
 #include "config.h"
-
+#include "pipeline_data.h"
 
 class CharacterAnalysis
 {
 
   public:
-    CharacterAnalysis(cv::Mat img, Config* config);
+    CharacterAnalysis(PipelineData* pipeline_data);
     virtual ~CharacterAnalysis();
 
     bool hasPlateMask;
@@ -54,7 +54,6 @@ class CharacterAnalysis
 
     bool thresholdsInverted;
 
-    std::vector<cv::Mat> thresholds;
     std::vector<std::vector<std::vector<cv::Point> > > allContours;
     std::vector<std::vector<cv::Vec4i> > allHierarchy;
     std::vector<std::vector<bool> > charSegments;
@@ -64,9 +63,8 @@ class CharacterAnalysis
     cv::Mat getCharacterMask();
 
   private:
+    PipelineData* pipeline_data;
     Config* config;
-
-    cv::Mat img_gray;
 
     cv::Mat findOuterBoxMask( );
 

@@ -109,7 +109,7 @@ void displayImage(Config* config, string windowName, cv::Mat frame)
 
 vector<Mat> produceThresholds(const Mat img_gray, Config* config)
 {
-  const int THRESHOLD_COUNT = 4;
+  const int THRESHOLD_COUNT = 3;
   //Mat img_equalized = equalizeBrightness(img_gray);
 
   timespec startTime;
@@ -145,9 +145,9 @@ vector<Mat> produceThresholds(const Mat img_gray, Config* config)
   k = 1;
   NiblackSauvolaWolfJolion (img_gray, thresholds[i++], SAUVOLA, 12, 12, 0.18 * k);
   bitwise_not(thresholds[i-1], thresholds[i-1]);
-  k=2;
-  NiblackSauvolaWolfJolion (img_gray, thresholds[i++], SAUVOLA, 12, 12, 0.18 * k);
-  bitwise_not(thresholds[i-1], thresholds[i-1]);
+  //k=2;
+  //NiblackSauvolaWolfJolion (img_gray, thresholds[i++], SAUVOLA, 12, 12, 0.18 * k);
+  //bitwise_not(thresholds[i-1], thresholds[i-1]);
 
   if (config->debugTiming)
   {

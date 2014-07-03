@@ -16,11 +16,12 @@ set(lpr_source_files
  binarize_wolf.cpp
  platelines.cpp
  characterregion.cpp
- charactersegmenter.cpp
+ segmentation/charactersegmenter.cpp
+ segmentation/verticalhistogram.cpp
  platecorners.cpp
  colorfilter.cpp
  characteranalysis.cpp
- verticalhistogram.cpp
+ pipeline_data.cpp
  trex.c
  cjson.c
 )

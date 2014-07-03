@@ -146,7 +146,9 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img)
 
     
     displayImage(config, "Main Image", img);
-    cv::waitKey(1);
+    
+    // Sleep 1ms
+    usleep(1000);
     
   }
   
@@ -186,17 +188,17 @@ void plateAnalysisThread(void* arg)
     if (dispatcher->config->debugGeneral)
       cout << "Thread: " << tthread::this_thread::get_id() << " loop " << ++loop_count << endl;
       
-    Mat img = dispatcher->getImageCopy();
+    PipelineData pipeline_data(dispatcher->getImageCopy(), plateRegion.rect, dispatcher->config);
     
     timespec platestarttime;
     getTime(&platestarttime);
     
-    LicensePlateCandidate lp(img, plateRegion.rect, dispatcher->config);
+    LicensePlateCandidate lp(&pipeline_data);
     
     lp.recognize();
 
     
-    if (lp.confidence <= 10)
+    if (pipeline_data.plate_area_confidence <= 10)
     {
       // Not a valid plate
       // Check if this plate has any children, if so, send them back up to the dispatcher for processing
@@ -213,14 +215,14 @@ void plateAnalysisThread(void* arg)
       
       for (int pointidx = 0; pointidx < 4; pointidx++)
       {
-	plateResult.plate_points[pointidx].x = (int) lp.plateCorners[pointidx].x;
-	plateResult.plate_points[pointidx].y = (int) lp.plateCorners[pointidx].y;
+	plateResult.plate_points[pointidx].x = (int) pipeline_data.plate_corners[pointidx].x;
+	plateResult.plate_points[pointidx].y = (int) pipeline_data.plate_corners[pointidx].y;
       }
       
       if (dispatcher->detectRegion)
       {
 	char statecode[4];
-	plateResult.regionConfidence = dispatcher->stateIdentifier->recognize(img, plateRegion.rect, statecode);
+	plateResult.regionConfidence = dispatcher->stateIdentifier->recognize(&pipeline_data);
 	if (plateResult.regionConfidence > 0)
 	{
 	  plateResult.region = statecode;
@@ -230,7 +232,7 @@ void plateAnalysisThread(void* arg)
       
       // Tesseract OCR does not appear to be threadsafe
       dispatcher->ocrMutex.lock();
-      dispatcher->ocr->performOCR(lp.charSegmenter->getThresholds(), lp.charSegmenter->characters);
+      dispatcher->ocr->performOCR(&pipeline_data);
       dispatcher->ocr->postProcessor->analyze(plateResult.region, dispatcher->topN);
       const vector<PPResult> ppResults = dispatcher->ocr->postProcessor->getResults();
       dispatcher->ocrMutex.unlock();

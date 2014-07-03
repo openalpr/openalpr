@@ -30,12 +30,14 @@
 #include "regiondetector.h"
 #include "licenseplatecandidate.h"
 #include "stateidentifier.h"
-#include "charactersegmenter.h"
+#include "segmentation/charactersegmenter.h"
 #include "ocr.h"
 
 #include "constants.h"
 
 #include "cjson.h"
+
+#include "pipeline_data.h"
 
 #include <opencv2/core/core.hpp>
    

@@ -22,6 +22,9 @@
 using namespace cv;
 using namespace std;
 
+const float MIN_CONFIDENCE = 0.3;
+    
+    
 PlateLines::PlateLines(Config* config)
 {
   this->config = config;
@@ -67,20 +70,20 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
 
   // Create a mask that is dilated based on the detected characters
   vector<vector<Point> > polygons;
-  polygons.push_back(charRegion->charAnalysis->charArea);
+  polygons.push_back(charRegion->getCharArea());
   
   Mat mask = Mat::zeros(inputImage.size(), CV_8U);
   fillPoly(mask, polygons, Scalar(255,255,255));
 
-  dilate(mask, mask, element);
+  dilate(mask, mask, getStructuringElement( 1, Size( 1 + 1, 2*1+1 ), Point( 1, 1 ) ));
   bitwise_not(mask, mask);
   
   // AND canny edges with the character mask
   bitwise_and(edges, mask, edges);
   
   
-  vector<LineSegment> hlines = this->getLines(edges, sensitivity, false);
-  vector<LineSegment> vlines = this->getLines(edges, sensitivity, true);
+  vector<PlateLine> hlines = this->getLines(edges, sensitivity, false);
+  vector<PlateLine> vlines = this->getLines(edges, sensitivity, true);
   for (int i = 0; i < hlines.size(); i++)
     this->horizontalLines.push_back(hlines[i]);
   for (int i = 0; i < vlines.size(); i++)
@@ -98,12 +101,12 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
 
     for( size_t i = 0; i < this->horizontalLines.size(); i++ )
     {
-      line( debugImgHoriz, this->horizontalLines[i].p1, this->horizontalLines[i].p2, Scalar(0,0,255), 1, CV_AA);
+      line( debugImgHoriz, this->horizontalLines[i].line.p1, this->horizontalLines[i].line.p2, Scalar(0,0,255), 1, CV_AA);
     }
 
     for( size_t i = 0; i < this->verticalLines.size(); i++ )
     {
-      line( debugImgVert, this->verticalLines[i].p1, this->verticalLines[i].p2, Scalar(0,0,255), 1, CV_AA);
+      line( debugImgVert, this->verticalLines[i].line.p1, this->verticalLines[i].line.p2, Scalar(0,0,255), 1, CV_AA);
     }
 
     vector<Mat> images;
@@ -126,7 +129,7 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
 
 
 
-vector<LineSegment> PlateLines::getLines(Mat edges, float sensitivityMultiplier, bool vertical)
+vector<PlateLine> PlateLines::getLines(Mat edges, float sensitivityMultiplier, bool vertical)
 {
   if (this->debug)
     cout << "PlateLines::getLines" << endl;
@@ -135,7 +138,7 @@ vector<LineSegment> PlateLines::getLines(Mat edges, float sensitivityMultiplier,
   static int VERTICAL_SENSITIVITY = config->plateLinesSensitivityVertical;
 
   vector<Vec2f> allLines;
-  vector<LineSegment> filteredLines;
+  vector<PlateLine> filteredLines;
 
   int sensitivity;
   if (vertical)
@@ -176,7 +179,11 @@ vector<LineSegment> PlateLines::getLines(Mat edges, float sensitivityMultiplier,
         LineSegment bottom(0, edges.rows, edges.cols, edges.rows);
         Point p1 = line.intersection(bottom);
         Point p2 = line.intersection(top);
-        filteredLines.push_back(LineSegment(p1.x, p1.y, p2.x, p2.y));
+
+	PlateLine plateLine;
+	plateLine.line = LineSegment(p1.x, p1.y, p2.x, p2.y);
+	plateLine.confidence = (1.0 - MIN_CONFIDENCE) * ((float) (allLines.size() - i)) / ((float)allLines.size()) + MIN_CONFIDENCE;
+        filteredLines.push_back(plateLine);
       }
     }
     else
@@ -196,7 +203,10 @@ vector<LineSegment> PlateLines::getLines(Mat edges, float sensitivityMultiplier,
         int newY1 = line.getPointAt(0);
         int newY2 = line.getPointAt(edges.cols);
 
-        filteredLines.push_back(LineSegment(0, newY1, edges.cols, newY2));
+	PlateLine plateLine;
+	plateLine.line = LineSegment(0, newY1, edges.cols, newY2);
+	plateLine.confidence = (1.0 - MIN_CONFIDENCE) * ((float) (allLines.size() - i)) / ((float)allLines.size()) + MIN_CONFIDENCE;
+        filteredLines.push_back(plateLine);
       }
     }
   }

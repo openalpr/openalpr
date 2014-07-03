@@ -27,6 +27,11 @@
 #include "config.h"
 #include "characterregion.h"
 
+struct PlateLine
+{
+  LineSegment line;
+  float confidence;
+};
 
 class PlateLines
 {
@@ -37,18 +42,19 @@ class PlateLines
 
     void processImage(cv::Mat img, CharacterRegion* charRegion, float sensitivity=1.0);
 
-    std::vector<LineSegment> horizontalLines;
-    std::vector<LineSegment> verticalLines;
+    std::vector<PlateLine> horizontalLines;
+    std::vector<PlateLine> verticalLines;
 
     std::vector<cv::Point> winningCorners;
 
   private:
+    
     Config* config;
     bool debug;
 
     cv::Mat customGrayscaleConversion(cv::Mat src);
     void findLines(cv::Mat inputImage);
-    std::vector<LineSegment> getLines(cv::Mat edges, float sensitivityMultiplier, bool vertical);
+    std::vector<PlateLine> getLines(cv::Mat edges, float sensitivityMultiplier, bool vertical);
 };
 
 #endif // OPENALPR_PLATELINES_H

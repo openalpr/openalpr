@@ -17,34 +17,34 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENALPR_STATEIDENTIFIER_H
-#define OPENALPR_STATEIDENTIFIER_H
+#ifndef OPENALPR_SEGMENTATIONGROUP_H
+#define OPENALPR_SEGMENTATIONGROUP_H
+
+#include <vector>
+#include <stdio.h>
 
 #include "opencv2/imgproc/imgproc.hpp"
-#include "constants.h"
-#include "featurematcher.h"
-#include "utility.h"
-#include "config.h"
-#include "pipeline_data.h"
 
-class StateIdentifier
+#include "segment.h"
+
+
+class SegmentationGroup
 {
 
   public:
-    StateIdentifier(Config* config);
-    virtual ~StateIdentifier();
+    SegmentationGroup();
+    virtual ~SegmentationGroup();
 
-    bool recognize(PipelineData* pipeline_data);
-
-    //int confidence;
-
-  protected:
-    Config* config;
+    void add(int segmentID);
+    
+    std::vector<int> segmentIDs;
+    
+    bool equals(SegmentationGroup otherGroup);
+    
 
   private:
-
-    FeatureMatcher* featureMatcher;
-
+    float strength;	// Debuggin purposes -- how many threshold segmentations match this one perfectly
+    
 };
 
-#endif // OPENALPR_STATEIDENTIFIER_H
+#endif // OPENALPR_SEGMENTATIONGROUP_H
