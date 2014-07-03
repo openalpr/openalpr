@@ -161,6 +161,7 @@ int main( int argc, const char** argv )
   
   bool storePlates = ini.GetBoolValue("daemon", "store_plates", false);
   std::string imageFolder = ini.GetValue("daemon", "store_plates_location", "/tmp/");
+  bool uploadData = ini.GetBoolValue("daemon", "upload_data", false);
   std::string upload_url = ini.GetValue("daemon", "upload_address", "");
   std::string site_id = ini.GetValue("daemon", "site_id", "");
   
@@ -186,10 +187,13 @@ int main( int argc, const char** argv )
       
       tthread::thread* thread_recognize = new tthread::thread(streamRecognitionThread, (void*) tdata);
       
-      // Kick off the data upload thread
-      UploadThreadData* udata = new UploadThreadData();
-      udata->upload_url = upload_url;
-      tthread::thread* thread_upload = new tthread::thread(dataUploadThread, (void*) udata );
+      if (uploadData)
+      {
+	// Kick off the data upload thread
+	UploadThreadData* udata = new UploadThreadData();
+	udata->upload_url = upload_url;
+	tthread::thread* thread_upload = new tthread::thread(dataUploadThread, (void*) udata );
+      }
       
       break;
     }
