@@ -1,15 +1,17 @@
 
+
 #include <unistd.h>
 #include <sstream>
 
+#include "daemon/beanstalk.hpp"
+#include "daemon/uuid.h"
+
 #include "tclap/CmdLine.h"
-#include "beanstalk.hpp"
 #include "alpr.h"
 #include "openalpr/simpleini/simpleini.h"
 #include "openalpr/cjson.h"
 #include "support/tinythread.h"
 #include "videobuffer.h"
-#include "uuid.h"
 #include <curl/curl.h>
 #include "support/timing.h"
 
@@ -27,7 +29,7 @@ void dataUploadThread(void* arg);
 
 // Constants
 const std::string DEFAULT_LOG_FILE_PATH="/var/log/openalpr.log";
-const std::string WTS_CONFIG_FILE_PATH="/etc/openalpr/wts.conf";
+const std::string DAEMON_CONFIG_FILE_PATH="/etc/openalpr/daemon.conf";
 
 const std::string BEANSTALK_QUEUE_HOST="127.0.0.1";
 const int BEANSTALK_PORT=11300;
@@ -131,7 +133,7 @@ int main( int argc, const char** argv )
   CSimpleIniA ini;
   ini.SetMultiKey();
   
-  ini.LoadFile(WTS_CONFIG_FILE_PATH.c_str());
+  ini.LoadFile(DAEMON_CONFIG_FILE_PATH.c_str());
   
   std::vector<std::string> stream_urls;
   
