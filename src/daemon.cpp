@@ -288,6 +288,11 @@ void streamRecognitionThread(void* arg)
 	free(out);
 	
 	// Push the results to the Beanstalk queue
+	for (int j = 0; j < results.size(); j++)
+	{
+	  LOG4CPLUS_DEBUG(logger, "Writing plate " << results[j].bestPlate.characters << " (" <<  uuid << ") to queue.");
+	}
+	
 	writeToQueue(response);
       }
     }
@@ -319,7 +324,7 @@ bool writeToQueue(std::string jsonResult)
       return false;
     }
     
-    LOG4CPLUS_INFO(logger, "put job id: " << id );
+    LOG4CPLUS_DEBUG(logger, "put job id: " << id );
 
   }
   catch (const std::runtime_error& error)
