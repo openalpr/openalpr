@@ -95,43 +95,59 @@ void imageCollectionThread(void* arg)
   
   VideoDispatcher* dispatcher = (VideoDispatcher*) arg;
 
-  cv::VideoCapture cap=cv::VideoCapture();
-  cap.open(dispatcher->mjpeg_url);
-  
-  cv::Mat frame;
-  
   while (dispatcher->active)
   {
-    while (dispatcher->active)
+    try
     {
+      cv::VideoCapture cap=cv::VideoCapture();
+      cap.open(dispatcher->mjpeg_url);
       
-      dispatcher->mMutex.lock();
-      bool hasImage = false;
-      try
-      {
-	hasImage = cap.read(frame);
-	dispatcher->setLatestFrame(&frame);
-      }
-      catch (int e)
-      {
-	// Error occured while trying to gather image.  Retry, don't exit.
-	std::cerr << "Exception happened " << e << std::endl;
-      }
-      // Double check the image to make sure it's valid.
-      if (frame.cols == 0 || frame.rows == 0)
-	hasImage = false;
-      
-      dispatcher->mMutex.unlock();
-      
-      if (hasImage == false)
-	break;
-      
+      cv::Mat frame;
 
-      // Delay 15ms
-      usleep(15000);    
+      while (dispatcher->active)
+      {
+	while (dispatcher->active)
+	{
+	  
+	  dispatcher->mMutex.lock();
+	  bool hasImage = false;
+	  try
+	  {
+	    hasImage = cap.read(frame);
+	    dispatcher->setLatestFrame(&frame);
+	  }
+	  catch (int e)
+	  {
+	    // Error occured while trying to gather image.  Retry, don't exit.
+	    std::cerr << "Exception happened " << e << std::endl;
+	  }
+	  // Double check the image to make sure it's valid.
+	  if (frame.cols == 0 || frame.rows == 0)
+	    hasImage = false;
+	  
+	  dispatcher->mMutex.unlock();
+	  
+	  if (hasImage == false)
+	    break;
+	  
+
+	  // Delay 15ms
+	  usleep(15000);    
+	}
+	
+	// Delay 100ms
+	usleep(100000);
+      }
     }
+    catch (const std::runtime_error& error)
+    {
+      // Error occured while trying to gather image.  Retry, don't exit.
+      std::cerr << "VideoBuffer exception: " << error.what() << std::endl;
+    }
+    // Delay 1 second
+    usleep(1000000);
     
-    // Delay 100ms
-    usleep(100000);
   }
+
+  
 }

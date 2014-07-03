@@ -2,6 +2,7 @@
 #define OPENALPR_VIDEOBUFFER_H
 
 #include <cstdio>
+#include <stdexcept>
 
 #include "opencv2/highgui/highgui.hpp"
 
