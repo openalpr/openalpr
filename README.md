@@ -117,6 +117,11 @@ Questions
 ---------
 Please post questions or comments to the Google group list: https://groups.google.com/forum/#!forum/openalpr
 
+Donations
+---------
+Every little bit helps.  Donations will be used to improve the library.
+Bitcoin: 14RovAFhtAAtVj8c23tJ4CorFGETJB3gWT
+
 License
 -------
 
