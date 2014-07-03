@@ -84,7 +84,7 @@ int main( int argc, const char** argv )
 
         if (pipeline_data.region_confidence <= 20)
         {
-	  pipeline_data.region_code = 'zz';
+	  pipeline_data.region_code = "zz";
           pipeline_data.region_confidence = 100;
         }
         else
