@@ -98,8 +98,10 @@ vector<PlateRegion> RegionDetector::doCascade(Mat frame)
   timespec startTime;
   getTime(&startTime);
 
+  float maxWidth = ((float) w) * (config->maxPlateWidthPercent / 100.0f) * this->scale_factor;
+  float maxHeight = ((float) h) * (config->maxPlateHeightPercent / 100.0f) * this->scale_factor;
   Size minSize(config->minPlateSizeWidthPx * this->scale_factor, config->minPlateSizeHeightPx * this->scale_factor);
-  Size maxSize(w * config->maxPlateWidthPercent * this->scale_factor, h * config->maxPlateHeightPercent * this->scale_factor);
+  Size maxSize(maxWidth, maxHeight);
 
   plate_cascade->detectMultiScale( frame, plates, config->detection_iteration_increase, config->detectionStrictness,
 				    0,
