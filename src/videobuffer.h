@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <stdexcept>
+#include <sstream>
 
 #include "opencv2/highgui/highgui.hpp"
 
@@ -47,6 +48,15 @@ class VideoDispatcher
       this->latestFrameNumber++;
     }
     
+    virtual void log_info(std::string message)
+    {
+      std::cout << message << std::endl;
+    }
+    virtual void log_error(std::string error)
+    {
+      std::cerr << error << std::endl;
+    }
+    
     bool active;
     
     int latestFrameNumber;
@@ -69,12 +79,17 @@ class VideoBuffer
     virtual ~VideoBuffer();
 
     void connect(std::string mjpeg_url, int fps);
+    
 
     // If a new frame is available, the function sets "frame" to it and returns the frame number
     // If no frames are available, or the latest has already been grabbed, returns -1.
     int getLatestFrame(cv::Mat* frame);
 
     void disconnect();
+    
+  protected:
+  
+    virtual VideoDispatcher* createDispatcher(std::string mjpeg_url, int fps);
     
   private:
     

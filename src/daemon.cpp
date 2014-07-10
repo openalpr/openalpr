@@ -5,13 +5,13 @@
 
 #include "daemon/beanstalk.hpp"
 #include "daemon/uuid.h"
+#include "daemon/logging_videobuffer.h"
 
 #include "tclap/CmdLine.h"
 #include "alpr.h"
 #include "openalpr/simpleini/simpleini.h"
 #include "openalpr/cjson.h"
 #include "support/tinythread.h"
-#include "videobuffer.h"
 #include <curl/curl.h>
 #include "support/timing.h"
 
@@ -230,7 +230,7 @@ void streamRecognitionThread(void* arg)
   
   int framenum = 0;
   
-  VideoBuffer videoBuffer;
+  LoggingVideoBuffer videoBuffer(logger);
   
   videoBuffer.connect(tdata->stream_url, 5);
   

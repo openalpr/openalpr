@@ -38,6 +38,10 @@ VideoBuffer::~VideoBuffer()
   }
 }
 
+VideoDispatcher* VideoBuffer::createDispatcher(std::string mjpeg_url, int fps)
+{
+  return new VideoDispatcher(mjpeg_url, fps);
+}
 
 void VideoBuffer::connect(std::string mjpeg_url, int fps)
 {
@@ -62,7 +66,7 @@ void VideoBuffer::connect(std::string mjpeg_url, int fps)
 
     }
     
-    dispatcher = new VideoDispatcher(mjpeg_url, fps);
+    dispatcher = createDispatcher(mjpeg_url, fps);
       
     tthread::thread* t = new tthread::thread(imageCollectionThread, (void*) dispatcher);
     
@@ -103,14 +107,33 @@ void imageCollectionThread(void* arg)
       cv::VideoCapture cap=cv::VideoCapture();
       cap.open(dispatcher->mjpeg_url);
       
-      getALPRImages(cap, dispatcher);
+      if (cap.isOpened())
+      {
+	getALPRImages(cap, dispatcher);
+      }
+      else
+      {
+	std::stringstream ss;
+	ss << "Stream " << dispatcher->mjpeg_url << " failed to open.";
+	dispatcher->log_error(ss.str());
+      }
 
     }
     catch (const std::runtime_error& error)
     {
       // Error occured while trying to gather image.  Retry, don't exit.
-      std::cerr << "VideoBuffer exception: " << error.what() << std::endl;
+      std::stringstream ss;
+      ss << "VideoBuffer exception: " << error.what();
+      dispatcher->log_error( ss.str() );
     }
+    catch (cv::Exception e)
+    {
+      // OpenCV Exception occured while trying to gather image.  Retry, don't exit.
+      std::stringstream ss;
+      ss << "VideoBuffer OpenCV exception: " << e.what();
+      dispatcher->log_error( ss.str() );
+    }
+    
     // Delay 1 second
     usleep(1000000);
     
@@ -137,9 +160,12 @@ void getALPRImages(cv::VideoCapture cap, VideoDispatcher* dispatcher)
       {
 	hasImage = cap.read(frame);
 	// Double check the image to make sure it's valid.
-	if (frame.cols == 0 || frame.rows == 0)
+	if (!frame.data || frame.empty())
 	{
 	  dispatcher->mMutex.unlock();
+	  std::stringstream ss;
+	  ss << "Stream " << dispatcher->mjpeg_url << " received invalid frame";
+	  dispatcher->log_error(ss.str());
 	  return;
 	}
 	
@@ -148,7 +174,9 @@ void getALPRImages(cv::VideoCapture cap, VideoDispatcher* dispatcher)
       catch (const std::runtime_error& error)
       {
 	// Error occured while trying to gather image.  Retry, don't exit.
-	std::cerr << "Exception happened " <<  error.what() << std::endl;
+	std::stringstream ss;
+	ss << "Exception happened " <<  error.what();
+	dispatcher->log_error(ss.str());
 	dispatcher->mMutex.unlock();
 	return;
       }
