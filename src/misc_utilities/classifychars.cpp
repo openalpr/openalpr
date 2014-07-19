@@ -125,6 +125,8 @@ int main( int argc, const char** argv )
         imshow ("Original", frame);
 
 	PipelineData pipeline_data(frame, Rect(0, 0, frame.cols, frame.rows), &config);
+	cvtColor(frame, frame, CV_BGR2GRAY);
+	pipeline_data.crop_gray = Mat(frame, Rect(0, 0, frame.cols, frame.rows));
         char statecode[3];
         statecode[0] = files[i][0];
         statecode[1] = files[i][1];
@@ -198,9 +200,16 @@ int main( int argc, const char** argv )
           }
           else if (waitkey == ENTER_KEY)
           {
-            vector<char> tempdata = showCharSelection(pipeline_data.thresholds[curDashboardSelection], pipeline_data.charRegions, statecodestr);
-            for (int c = 0; c < pipeline_data.charRegions.size(); c++)
-              humanInputs[c] = tempdata[c];
+	    if (pipeline_data.charRegions.size() > 0)
+	    {
+	      vector<char> tempdata = showCharSelection(pipeline_data.thresholds[curDashboardSelection], pipeline_data.charRegions, statecodestr);
+	      for (int c = 0; c < pipeline_data.charRegions.size(); c++)
+		humanInputs[c] = tempdata[c];
+	    }
+	    else
+	    {
+	      cout << "No character regions available in this image" << endl;
+	    }
           }
           else if (waitkey == SPACE_KEY)
           {
