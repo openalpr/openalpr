@@ -84,6 +84,7 @@ int main( int argc, const char** argv )
   try
   {
     
+    cmd.add( countryCodeArg );
     cmd.add( topNArg );
     cmd.add( configFileArg );
     cmd.add( logFileArg );
