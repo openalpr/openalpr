@@ -222,7 +222,10 @@ int main( int argc, const char** argv )
     {
       frame = cv::imread( filename );
 
-      detectandshow( &alpr, frame, "", outputJson);
+      bool plate_found = detectandshow( &alpr, frame, "", outputJson);
+      
+      if (!plate_found)
+	std::cout << "No license plates found." << std::endl;
     }
     else
     {
