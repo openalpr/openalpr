@@ -64,7 +64,7 @@ static int xPos1 = 0;
 static int yPos1 = 0;
 static int xPos2 = 0;
 static int yPos2 = 0;
-const float ASPECT_RATIO = 2.0;
+const float ASPECT_RATIO = 4.33333;
 
 static bool rdragging = false;
 static int rDragStartX = 0;
@@ -220,10 +220,10 @@ int main( int argc, const char** argv )
       // Write the data to disk
       ofstream outputdatafile;
 
-      std::string outputTextFile = outDir + "/" + filenameWithoutExtension(files[i]) + ".txt";
+      std::string outputTextFile = outDir + "/" + filenameWithoutExtension(imgFiles[i]) + ".txt";
       outputdatafile.open(outputTextFile.c_str());
       
-      outputdatafile << files[i] << "\t" << xPos1 << "\t" << yPos1 << "\t" << (xPos2 - xPos1) << "\t" << (yPos2 - yPos1) << "\t" << curplatetag << endl;
+      outputdatafile << imgFiles[i] << "\t" << xPos1 << "\t" << yPos1 << "\t" << (xPos2 - xPos1) << "\t" << (yPos2 - yPos1) << "\t" << curplatetag << endl;
       outputdatafile.close();
     }
     
