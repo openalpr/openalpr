@@ -92,7 +92,7 @@ int main( int argc, const char** argv )
 
     for (int i = 0; i< files.size(); i++)
     {
-      if (hasEnding(files[i], ".png"))
+      if (hasEnding(files[i], ".png") || hasEnding(files[i], ".jpg"))
       {
         string fullpath = inDir + "/" + files[i];
 
@@ -150,7 +150,7 @@ int main( int argc, const char** argv )
 
     for (int i = 0; i< files.size(); i++)
     {
-      if (hasEnding(files[i], ".png"))
+      if (hasEnding(files[i], ".png") || hasEnding(files[i], ".jpg"))
       {
         string fullpath = inDir + "/" + files[i];
         frame = imread( fullpath.c_str() );
@@ -190,7 +190,7 @@ int main( int argc, const char** argv )
 
     for (int i = 0; i< files.size(); i++)
     {
-      if (hasEnding(files[i], ".png"))
+      if (hasEnding(files[i], ".png") || hasEnding(files[i], ".jpg"))
       {
         cout << "Image: " << files[i] << endl;
 
