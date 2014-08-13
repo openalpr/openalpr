@@ -104,7 +104,10 @@ void drawAndWait(cv::Mat* frame)
 void displayImage(Config* config, string windowName, cv::Mat frame)
 {
   if (config->debugShowImages)
+  {
     imshow(windowName, frame);
+    cv::waitKey(5);
+  }
 }
 
 vector<Mat> produceThresholds(const Mat img_gray, Config* config)
