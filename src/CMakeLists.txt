@@ -13,9 +13,9 @@ add_definitions( -DOPENALPR_MAJOR_VERSION=${OPENALPR_MAJOR_VERSION})
 add_definitions( -DOPENALPR_MINOR_VERSION=${OPENALPR_MINOR_VERSION})
 add_definitions( -DOPENALPR_PATCH_VERSION=${OPENALPR_PATCH_VERSION})
 
-
-SET(OpenCV_DIR "${CMAKE_SOURCE_DIR}/../libraries/opencv/")
-SET(Tesseract_DIR "${CMAKE_SOURCE_DIR}/../libraries/tesseract-ocr")
+# Update these values if you are compiling either Tesseract or OpenCV yourself and it is not installed on the system.
+#SET(OpenCV_DIR "${CMAKE_SOURCE_DIR}/../libraries/opencv/")
+#SET(Tesseract_DIR "${CMAKE_SOURCE_DIR}/../libraries/tesseract-ocr")
 
 include_directories(
 	${Tesseract_DIR}/api
