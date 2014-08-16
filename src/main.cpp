@@ -29,7 +29,7 @@
 #include "tclap/CmdLine.h"
 #include "support/filesystem.h"
 #include "support/timing.h"
-#include "videobuffer.h"
+#include "video/videobuffer.h"
 #include "alpr.h"
 
 const std::string MAIN_WINDOW_NAME = "ALPR main window";

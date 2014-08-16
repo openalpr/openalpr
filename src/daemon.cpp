@@ -5,7 +5,7 @@
 
 #include "daemon/beanstalk.hpp"
 #include "daemon/uuid.h"
-#include "daemon/logging_videobuffer.h"
+#include "video/logging_videobuffer.h"
 
 #include "tclap/CmdLine.h"
 #include "alpr.h"

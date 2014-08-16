@@ -1,6 +1,6 @@
 #ifndef OPENALPR_LOGGING_VIDEOBUFFER_H
 #define OPENALPR_LOGGING_VIDEOBUFFER_H
-#include "../videobuffer.h"
+#include "videobuffer.h"
 
 #include <log4cplus/logger.h>
 #include <log4cplus/loggingmacros.h>

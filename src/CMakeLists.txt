@@ -60,22 +60,24 @@ include_directories(./openalpr )
 
 
 set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall ")
-ADD_EXECUTABLE( alpr  main.cpp videobuffer.cpp )
+ADD_EXECUTABLE( alpr  main.cpp )
 
 TARGET_LINK_LIBRARIES(alpr
 	openalpr
 	support
+        video
 	${OpenCV_LIBS}
 	${Tesseract_LIBS}
   )
 
 # Compile the alprd library on Unix-based OS
 IF (NOT WIN32)
-  ADD_EXECUTABLE( alprd  daemon.cpp videobuffer.cpp daemon/beanstalk.c daemon/beanstalk.cc daemon/uuid.cpp )
+  ADD_EXECUTABLE( alprd  daemon.cpp daemon/beanstalk.c daemon/beanstalk.cc daemon/uuid.cpp )
 
   TARGET_LINK_LIBRARIES(alprd
 	  openalpr
 	  support
+          video
 	  uuid
 	  curl
 	  log4cplus
@@ -89,6 +91,7 @@ ENDIF()
 
 add_subdirectory(openalpr)
 add_subdirectory(misc_utilities)
+add_subdirectory(video)
 
 
 
