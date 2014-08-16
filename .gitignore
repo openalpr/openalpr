@@ -12,3 +12,11 @@ benchmarks/
 website/
 utilities/
 samples/
+nbproject/
+runtime_data/keypoints/source.txt
+*.deb
+*.rpm
+openalpr_*.tar.gz
+openalpr-*.asc
+openalpr-*.sig
+openalpr-*.tar.gz
