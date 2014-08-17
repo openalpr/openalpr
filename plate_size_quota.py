@@ -4,7 +4,7 @@ import shutil
 BYTES_IN_A_MEGABYTE = 1048576
 
 size_quota_mb=200000
-size_quota_bytes = size_quota_mb * 1048576
+size_quota_bytes = size_quota_mb * BYTES_IN_A_MEGABYTE
 dir='/var/www/html/plates/'
 
 
