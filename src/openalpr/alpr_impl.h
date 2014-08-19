@@ -43,6 +43,7 @@
    
 
 #include "support/tinythread.h"
+#include "support/platform.h"
 
 #define DEFAULT_TOPN 25
 #define DEFAULT_DETECT_REGION false

@@ -29,6 +29,7 @@
 #include "tclap/CmdLine.h"
 #include "support/filesystem.h"
 #include "support/timing.h"
+#include "support/platform.h"
 #include "video/videobuffer.h"
 #include "alpr.h"
 
@@ -154,7 +155,7 @@ int main( int argc, const char** argv )
     while (cap.read(frame))
     {
       detectandshow(&alpr, frame, "", outputJson);
-      usleep(1000);
+      sleep_ms(1000);
       framenum++;
     }
   }
@@ -179,7 +180,7 @@ int main( int argc, const char** argv )
       }
       
       // Sleep 10ms
-      usleep(10000);
+      sleep_ms(10000);
     }
     
     videoBuffer.disconnect();
@@ -207,7 +208,7 @@ int main( int argc, const char** argv )
 
         detectandshow( &alpr, frame, "", outputJson);
         //create a 1ms delay
-        usleep(1000);
+        sleep_ms(1000);
         framenum++;
       }
     }

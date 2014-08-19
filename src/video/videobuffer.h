@@ -9,6 +9,7 @@
 
 #include "support/filesystem.h"
 #include "support/tinythread.h"
+#include "support/platform.h"
 
 
 

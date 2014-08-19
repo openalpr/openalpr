@@ -159,7 +159,7 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
     displayImage(config, "Main Image", img);
     
     // Sleep 1ms
-    usleep(1000);
+    sleep_ms(1000);
     
   }
   
