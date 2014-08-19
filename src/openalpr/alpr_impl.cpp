@@ -68,8 +68,19 @@ bool AlprImpl::isLoaded()
 
 AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img)
 {
+  std::vector<cv::Rect> regionsOfInterest;
+  regionsOfInterest.push_back(cv::Rect(0, 0, img.cols, img.rows));
+  
+  return this->recognizeFullDetails(img, regionsOfInterest);
+}
+
+AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect> regionsOfInterest)
+{
   timespec startTime;
   getTime(&startTime);
+  
+  if (regionsOfInterest.size() == 0)
+    regionsOfInterest.push_back(cv::Rect(0, 0, img.cols, img.rows));
   
   AlprFullDetails response;
 
@@ -89,7 +100,7 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img)
   }
 
   // Find all the candidate regions
-  response.plateRegions = plateDetector->detect(img);
+  response.plateRegions = plateDetector->detect(img, regionsOfInterest);
 
   // Get the number of threads specified and make sure the value is sane (cannot be greater than CPU cores or less than 1)
   int numThreads = config->multithreading_cores;
@@ -165,12 +176,27 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img)
   return response;
 }
 
-std::vector<AlprResult> AlprImpl::recognize(cv::Mat img)
+
+std::vector<AlprResult> AlprImpl::recognize(std::string filepath, std::vector<AlprRegionOfInterest> regionsOfInterest)
 {
-  AlprFullDetails fullDetails = recognizeFullDetails(img);
-  return fullDetails.results;
+  cv::Mat img = cv::imread(filepath, CV_LOAD_IMAGE_COLOR);
+  
+  return this->recognize(img, this->convertRects(regionsOfInterest));
 }
 
+std::vector<AlprResult> AlprImpl::recognize(std::vector<unsigned char> imageBuffer, std::vector<AlprRegionOfInterest> regionsOfInterest)
+{
+  cv::Mat img = cv::imdecode(cv::Mat(imageBuffer), 1);
+  
+  return this->recognize(img, this->convertRects(regionsOfInterest));
+}
+
+std::vector<AlprResult> AlprImpl::recognize(cv::Mat img, std::vector<cv::Rect> regionsOfInterest)
+{
+  
+  AlprFullDetails fullDetails = recognizeFullDetails(img, regionsOfInterest);
+  return fullDetails.results;
+}
 void plateAnalysisThread(void* arg)
 {
   PlateDispatcher* dispatcher = (PlateDispatcher*) arg;
@@ -291,6 +317,17 @@ void plateAnalysisThread(void* arg)
   if (dispatcher->config->debugGeneral)
     cout << "Thread: " << tthread::this_thread::get_id() << " Complete" << endl;
 }
+
+ std::vector<cv::Rect> AlprImpl::convertRects(std::vector<AlprRegionOfInterest> regionsOfInterest)
+ {
+   std::vector<cv::Rect> rectRegions;
+   for (int i = 0; i < regionsOfInterest.size(); i++)
+   {
+     rectRegions.push_back(cv::Rect(regionsOfInterest[i].x, regionsOfInterest[i].y, regionsOfInterest[i].width, regionsOfInterest[i].height));
+   }
+   
+   return rectRegions;
+ }
 
 string AlprImpl::toJson(const vector< AlprResult > results, double processing_time_ms)
 {

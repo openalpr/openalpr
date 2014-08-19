@@ -25,7 +25,7 @@ class VideoDispatcher
     }
     
     
-    int getLatestFrame(cv::Mat* frame)
+    int getLatestFrame(cv::Mat* frame, std::vector<cv::Rect>& regionsOfInterest)
     {
       tthread::lock_guard<tthread::mutex> guard(mMutex);
       
@@ -37,6 +37,10 @@ class VideoDispatcher
       
       this->lastFrameRead = this->latestFrameNumber;
       
+      // Copy the regionsOfInterest array
+      for (int i = 0; i < this->latestRegionsOfInterest.size(); i++)
+          regionsOfInterest.push_back(this->latestRegionsOfInterest[i]);
+      
       return this->lastFrameRead;
     }
     
@@ -44,6 +48,7 @@ class VideoDispatcher
     {      
       //tthread::lock_guard<tthread::mutex> guard(mMutex);
       this->latestFrame = frame;
+      this->latestRegionsOfInterest = calculateRegionsOfInterest(frame);
       
       this->latestFrameNumber++;
     }
@@ -57,6 +62,16 @@ class VideoDispatcher
       std::cerr << error << std::endl;
     }
     
+    std::vector<cv::Rect> calculateRegionsOfInterest(cv::Mat* frame)
+    {
+        cv::Rect rect(0, 0, frame->cols, frame->rows);
+        
+        std::vector<cv::Rect> rois;
+        rois.push_back(rect);
+        
+        return rois;
+    }
+    
     bool active;
     
     int latestFrameNumber;
@@ -68,7 +83,7 @@ class VideoDispatcher
     
   private:
     cv::Mat* latestFrame;
-
+    std::vector<cv::Rect> latestRegionsOfInterest;
 };
 
 class VideoBuffer
@@ -83,7 +98,8 @@ class VideoBuffer
 
     // If a new frame is available, the function sets "frame" to it and returns the frame number
     // If no frames are available, or the latest has already been grabbed, returns -1.
-    int getLatestFrame(cv::Mat* frame);
+    // regionsOfInterest is set to a list of good regions to check for license plates.  Default is one rectangle for the entire frame.
+    int getLatestFrame(cv::Mat* frame, std::vector<cv::Rect>& regionsOfInterest);
 
     void disconnect();
     

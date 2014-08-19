@@ -170,7 +170,8 @@ int main( int argc, const char** argv )
     
     while (program_active)
     {
-      int response = videoBuffer.getLatestFrame(&latestFrame);
+      std::vector<cv::Rect> regionsOfInterest;
+      int response = videoBuffer.getLatestFrame(&latestFrame, regionsOfInterest);
       
       if (response != -1)
       {

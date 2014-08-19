@@ -34,16 +34,24 @@ Alpr::~Alpr()
 
 std::vector<AlprResult> Alpr::recognize(std::string filepath)
 {
-  cv::Mat img = cv::imread(filepath, CV_LOAD_IMAGE_COLOR);
-  return impl->recognize(img);
+  std::vector<AlprRegionOfInterest> regionsOfInterest;
+  return this->recognize(filepath, regionsOfInterest);
+}
+
+std::vector<AlprResult> Alpr::recognize(std::string filepath, std::vector<AlprRegionOfInterest> regionsOfInterest)
+{
+  return impl->recognize(filepath, regionsOfInterest);
 }
 
 std::vector<AlprResult> Alpr::recognize(std::vector<unsigned char> imageBuffer)
 {
-  // Not sure if this actually works
-  cv::Mat img = cv::imdecode(cv::Mat(imageBuffer), 1);
+  std::vector<AlprRegionOfInterest> regionsOfInterest;
+  return this->recognize(imageBuffer, regionsOfInterest);
+}
 
-  return impl->recognize(img);
+std::vector<AlprResult> Alpr::recognize(std::vector<unsigned char> imageBuffer, std::vector<AlprRegionOfInterest> regionsOfInterest)
+{
+  return impl->recognize(imageBuffer, regionsOfInterest);
 }
 
 std::string Alpr::toJson(const std::vector< AlprResult > results, double processing_time_ms)

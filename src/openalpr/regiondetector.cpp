@@ -53,19 +53,18 @@ bool RegionDetector::isLoaded()
   return this->loaded;
 }
 
-vector<PlateRegion> RegionDetector::detect(Mat frame)
+vector<PlateRegion> RegionDetector::detect(Mat frame, std::vector<cv::Rect> regionsOfInterest)
 {
 
   Mat frame_gray;
   cvtColor( frame, frame_gray, CV_BGR2GRAY );
   
-  vector<PlateRegion> regionsOfInterest = doCascade(frame_gray);
+  vector<PlateRegion> detectedRegions = doCascade(frame_gray, regionsOfInterest);
 
-  return regionsOfInterest;
+  return detectedRegions;
 }
 
-/** @function detectAndDisplay */
-vector<PlateRegion> RegionDetector::doCascade(Mat frame)
+vector<PlateRegion> RegionDetector::doCascade(Mat frame, std::vector<cv::Rect> regionsOfInterest)
 {
 
   

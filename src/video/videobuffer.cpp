@@ -72,12 +72,12 @@ void VideoBuffer::connect(std::string mjpeg_url, int fps)
     
 }
 
-int VideoBuffer::getLatestFrame(cv::Mat* frame)
+int VideoBuffer::getLatestFrame(cv::Mat* frame, std::vector<cv::Rect>& regionsOfInterest)
 {
   if (dispatcher == NULL)
     return -1;
   
-  return dispatcher->getLatestFrame(frame);
+  return dispatcher->getLatestFrame(frame, regionsOfInterest);
 }
 
 

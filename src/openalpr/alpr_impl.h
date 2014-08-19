@@ -64,7 +64,11 @@ class AlprImpl
     virtual ~AlprImpl();
 
     AlprFullDetails recognizeFullDetails(cv::Mat img);
-    std::vector<AlprResult> recognize(cv::Mat img);
+    AlprFullDetails recognizeFullDetails(cv::Mat img, std::vector<cv::Rect> regionsOfInterest);
+    
+    std::vector<AlprResult> recognize(std::string filepath, std::vector<AlprRegionOfInterest> regionsOfInterest);
+    std::vector<AlprResult> recognize(std::vector<unsigned char> imageBuffer, std::vector<AlprRegionOfInterest> regionsOfInterest);
+    std::vector<AlprResult> recognize(cv::Mat img, std::vector<cv::Rect> regionsOfInterest);
     
     void applyRegionTemplate(AlprResult* result, std::string region);
     
@@ -88,6 +92,8 @@ class AlprImpl
     int topN;
     bool detectRegion;
     std::string defaultRegion;
+    
+    std::vector<cv::Rect> convertRects(std::vector<AlprRegionOfInterest> regionsOfInterest);
     
     cJSON* createJsonObj(const AlprResult* result);
 };

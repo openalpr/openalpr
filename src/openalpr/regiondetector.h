@@ -46,7 +46,7 @@ class RegionDetector
     virtual ~RegionDetector();
 
     bool isLoaded();
-    std::vector<PlateRegion> detect(cv::Mat frame);
+    std::vector<PlateRegion> detect(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);
 
   private:
     Config* config;
@@ -56,7 +56,7 @@ class RegionDetector
 
     bool loaded;
 
-    std::vector<PlateRegion> doCascade(cv::Mat frame);
+    std::vector<PlateRegion> doCascade(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);
 
     std::vector<PlateRegion> aggregateRegions(std::vector<cv::Rect> regions);
 };
