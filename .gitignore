@@ -20,3 +20,17 @@ openalpr_*.tar.gz
 openalpr-*.asc
 openalpr-*.sig
 openalpr-*.tar.gz
+
+# Visual Studio files
+*.vcxproj
+*.vcxproj.*
+*.suo
+*.sln
+*.sdf
+*.opensdf
+*.dir/
+Debug/
+Release/
+
+
+cmake_install.cmake
