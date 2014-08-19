@@ -21,9 +21,9 @@ TARGET_LINK_LIBRARIES(classifychars
   
   
 ADD_EXECUTABLE(benchmark  EXCLUDE_FROM_ALL
-		benchmark/benchmark.cpp 
-		benchmark/benchmark_utils.cpp 
-		benchmark/endtoendtest.cpp 
+		benchmarks/benchmark.cpp 
+		benchmarks/benchmark_utils.cpp 
+		benchmarks/endtoendtest.cpp 
 )
 TARGET_LINK_LIBRARIES(benchmark 
     openalpr-static
