@@ -120,7 +120,9 @@ Please post questions or comments to the Google group list: https://groups.googl
 
 Contributions
 -------------
-Code contributions are not the only way to help out.  Do you have a large library of license plate images?  Do you have time to "tag" plate images in an input image?  If so, please add a note to the forum.
+Improvements to the OpenALPR library are always welcome.  Please review the [OpenALPR design description](https://github.com/openalpr/openalpr/wiki/OpenALPR-Design) and get started.
+
+Code contributions are not the only way to help out.  Do you have a large library of license plate images?  If so, please upload your data to the anonymous FTP located at upload.openalpr.com.  Do you have time to "tag" plate images in an input image or help in other ways?  Please let everyone know by posting a note in the forum.
 
 Donations
 ---------
