@@ -46,6 +46,7 @@ class RegionDetector
     virtual ~RegionDetector();
 
     bool isLoaded();
+    std::vector<PlateRegion> detect(cv::Mat frame);
     std::vector<PlateRegion> detect(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);
 
   private:

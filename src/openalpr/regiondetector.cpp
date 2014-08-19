@@ -53,6 +53,13 @@ bool RegionDetector::isLoaded()
   return this->loaded;
 }
 
+vector<PlateRegion> RegionDetector::detect(cv::Mat frame)
+{
+  std::vector<cv::Rect> regionsOfInterest;
+  regionsOfInterest.push_back(Rect(0, 0, frame.cols, frame.rows));
+  return this->detect(frame, regionsOfInterest);
+}
+
 vector<PlateRegion> RegionDetector::detect(Mat frame, std::vector<cv::Rect> regionsOfInterest)
 {
 

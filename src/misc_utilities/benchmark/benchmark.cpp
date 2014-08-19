@@ -198,7 +198,9 @@ int main( int argc, const char** argv )
         frame = imread( fullpath.c_str() );
 
         getTime(&startTime);
-        alpr.recognize(frame);
+        vector<Rect> regionsOfInterest;
+        regionsOfInterest.push_back(Rect(0, 0, frame.cols, frame.rows));
+        alpr.recognize(frame, regionsOfInterest);
         getTime(&endTime);
         double endToEndTime = diffclock(startTime, endTime);
         cout << " -- End to End recognition time: " << endToEndTime << "ms." << endl;
