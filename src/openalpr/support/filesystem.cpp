@@ -2,7 +2,7 @@
 
 bool startsWith(std::string const &fullString, std::string const &prefix)
 {
-  if(fullString.substr(0, prefix.size()) == prefix) {
+  if(fullString.substr(0, prefix.size()).compare(prefix) == 0) {
       return true;
   }  
   
