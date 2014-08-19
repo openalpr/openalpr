@@ -30,6 +30,7 @@
 
 #include "constants.h"
 #include "opencv2/imgproc/imgproc.hpp"
+#include "support/filesystem.h"
 
 #include "tesseract/baseapi.h"
 

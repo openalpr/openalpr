@@ -33,7 +33,7 @@ OCR::OCR(Config* config)
 
   tesseract=new TessBaseAPI();
 
-  if (tesseract->Version() != EXPECTED_TESSERACT_VERSION)
+  if (startsWith(tesseract->Version(), EXPECTED_TESSERACT_VERSION) == false)
   {
     std::cerr << "Warning: You are running an unsupported version of Tesseract." << endl;
     std::cerr << "Expecting version " << EXPECTED_TESSERACT_VERSION << ", your version is: " << tesseract->Version() << endl;
