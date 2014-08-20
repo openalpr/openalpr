@@ -30,7 +30,6 @@ struct AlprPlate
   float overall_confidence;
 
   bool matches_template;
-  //int char_confidence[];
 };
 
 struct AlprCoordinate
