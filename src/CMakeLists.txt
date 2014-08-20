@@ -38,7 +38,8 @@ IF (WIN32)
 	add_definitions( -DNOMINMAX)
 
 	# Extra linker dependencies for Windows
-	SET (Extra_LIBS
+	SET (Tesseract_LIBRARIES
+		${Tesseract_LIBRARIES}
 		ws2_32.lib
 	)
 ELSE()
