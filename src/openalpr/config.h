@@ -45,7 +45,6 @@ class Config
     
     std::string country;
     
-    bool opencl_enabled;
     int multithreading_cores;
     
     float detection_iteration_increase;
