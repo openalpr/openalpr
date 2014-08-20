@@ -8,7 +8,7 @@ TARGET_LINK_LIBRARIES(sortstate
     openalpr-static
     support
     ${OpenCV_LIBS} 
-	${Tesseract_LIBS}
+	${Tesseract_LIBRARIES}
   )
   
 ADD_EXECUTABLE( classifychars EXCLUDE_FROM_ALL classifychars.cpp )
@@ -16,7 +16,7 @@ TARGET_LINK_LIBRARIES(classifychars
     openalpr-static
     support
     ${OpenCV_LIBS} 
-	${Tesseract_LIBS}
+	${Tesseract_LIBRARIES}
   )
   
   
@@ -30,7 +30,7 @@ TARGET_LINK_LIBRARIES(benchmark
     support
     pthread
     ${OpenCV_LIBS} 
-	${Tesseract_LIBS}
+	${Tesseract_LIBRARIES}
   )
   
   

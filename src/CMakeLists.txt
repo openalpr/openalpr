@@ -13,45 +13,37 @@ add_definitions( -DOPENALPR_MAJOR_VERSION=${OPENALPR_MAJOR_VERSION})
 add_definitions( -DOPENALPR_MINOR_VERSION=${OPENALPR_MINOR_VERSION})
 add_definitions( -DOPENALPR_PATCH_VERSION=${OPENALPR_PATCH_VERSION})
 
-
-SET(OpenCV_DIR "${CMAKE_SOURCE_DIR}/../libraries/opencv/")
-#SET(Tesseract_DIR "${CMAKE_SOURCE_DIR}/../libraries/tesseract-ocr")
-
-include_directories(
-	${Tesseract_DIR}/api
-	${Tesseract_DIR}/ccutil/
-	${Tesseract_DIR}/ccstruct/
-	${Tesseract_DIR}/ccmain/
-)
-
-IF (WIN32)
-	add_definitions( -DWINDOWS)
-	add_definitions( -DNOMINMAX)
-
-	link_directories( ${Tesseract_DIR}/lib/ )
-	include_directories(${Tesseract_DIR}/include/ )
-	
-	# Extra linker dependencies for Windows
-	SET(Tesseract_LIBS 		
-		libtesseract303-static
-		liblept170
-		ws2_32.lib)
-ELSE()
-
-	link_directories( ${Tesseract_DIR}/api/.libs/ )
-	
-	SET(Tesseract_LIBS tesseract)
-ENDIF()
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
 
 
+FIND_PACKAGE( Tesseract REQUIRED )
+
+include_directories(${Tesseract_INCLUDE_DIRS})
+
+# Discover OpenCV directory automatically
+find_path(OpenCV_DIR
+  NAMES OpenCVConfig.cmake
+  HINTS ${CMAKE_SOURCE_DIR}/../libraries/opencv/)
+		
 # Opencv Package
 FIND_PACKAGE( OpenCV REQUIRED )
 IF (${OpenCV_VERSION} VERSION_LESS 2.4.8)
 	MESSAGE(FATAL_ERROR "OpenCV version is not compatible : ${OpenCV_VERSION}")
 ENDIF()
 
+include_directories(./openalpr )
 
-include_directories(./openalpr ) 
+IF (WIN32)
+	add_definitions( -DWINDOWS)
+	add_definitions( -DNOMINMAX)
+
+	# Extra linker dependencies for Windows
+	SET (Tesseract_LIBRARIES
+		${Tesseract_LIBRARIES}
+		ws2_32.lib
+	)
+
+ENDIF()
 
 
 set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall ")
@@ -60,9 +52,9 @@ ADD_EXECUTABLE( alpr  main.cpp )
 TARGET_LINK_LIBRARIES(alpr
 	openalpr-static
 	support
-        video
+    video
 	${OpenCV_LIBS}
-	${Tesseract_LIBS}
+	${Tesseract_LIBRARIES}
   )
 
 # Compile the alprd library on Unix-based OS
@@ -72,13 +64,16 @@ IF (NOT WIN32)
   TARGET_LINK_LIBRARIES(alprd
 	  openalpr
 	  support
-          video
+      video
 	  uuid
 	  curl
 	  log4cplus
 	  ${OpenCV_LIBS}
-	  ${Tesseract_LIBS}
+	  ${Tesseract_LIBRARIES}
     )
+	
+	# Don't include misc utilities for Windows
+	add_subdirectory(misc_utilities)
 ENDIF()
   
 
@@ -86,12 +81,6 @@ ENDIF()
 
 add_subdirectory(openalpr)
 add_subdirectory(video)
-
-IF (NOT WIN32)
-	# Don't include misc utilities for Windows
-	add_subdirectory(misc_utilities)
-ENDIF()
-
 
 
 install (TARGETS alpr DESTINATION bin)
