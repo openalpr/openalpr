@@ -26,6 +26,20 @@ std::string getExeDir()
 		}
 		return directory;
 	#else
-		return "";
+                char buffer[2048];
+                
+                readlink("/proc/self/exe", buffer, 2048);
+                
+		std::stringstream ss;
+		ss << buffer;
+		std::string exeFile = ss.str();
+		std::string directory;
+                
+                const size_t last_slash_idx = exeFile.rfind('/');
+		if (std::string::npos != last_slash_idx)
+		{
+			directory = exeFile.substr(0, last_slash_idx);
+		}
+		return directory;
 	#endif
 }
