@@ -52,7 +52,7 @@ find_library(Tesseract_LIB
 )
 
 find_library(Leptonica_LIB
-  NAMES liblept170 liblept
+  NAMES liblept170 liblept lept
   HINTS "/usr/lib"
         "/usr/local/lib"
         ${Tesseract_PKGCONF_LIBRARY_DIRS}
