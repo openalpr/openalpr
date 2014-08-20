@@ -21,6 +21,7 @@
 
 
 
+#define RUNTIME_DIR 		"/runtime_data"
 #define CONFIG_FILE 		"/openalpr.conf"
 #define KEYPOINTS_DIR		"/keypoints"
 #define CASCADE_DIR		"/region/"

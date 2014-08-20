@@ -46,6 +46,11 @@ Config::Config(const std::string country, const std::string config_file, const s
     configFile = envConfigFile;
     debug_message = "Config file location provided via environment variable: " + string(ENV_VARIABLE_CONFIG_FILE);
   }
+  else if (DirectoryExists(getExeDir().c_str()) && fileExists((getExeDir() + CONFIG_FILE).c_str()))
+  {
+	configFile = getExeDir() + CONFIG_FILE;
+    debug_message = "Config file location provided via exe location";
+  }
   else
   {
     // Use the default
@@ -83,6 +88,14 @@ Config::Config(const std::string country, const std::string config_file, const s
     this->runtimeBaseDir = runtime_dir;
   }
   
+  if ((DirectoryExists(this->runtimeBaseDir.c_str()) == false) &&
+	  (DirectoryExists((getExeDir() + RUNTIME_DIR).c_str())))
+  {
+	  // Runtime dir in the config is invalid and there is a runtime dir in the same dir as the exe.
+    this->runtimeBaseDir = getExeDir() + RUNTIME_DIR;
+
+  }
+
   if (DirectoryExists(this->runtimeBaseDir.c_str()) == false)
   {
     std::cerr << "--(!) Runtime directory '" << this->runtimeBaseDir << "' does not exist!" << endl;

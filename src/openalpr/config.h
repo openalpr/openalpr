@@ -24,6 +24,7 @@
 
 #include "simpleini/simpleini.h"
 #include "support/filesystem.h"
+#include "support/platform.h"
 
 #include "constants.h"
 
