@@ -38,9 +38,13 @@ IF (WIN32)
 	add_definitions( -DNOMINMAX)
 
 	# Extra linker dependencies for Windows
-	SET (Tesseract_LIBRARIES
-		${Tesseract_LIBRARIES}
+	SET (Extra_LIBS
 		ws2_32.lib
+	)
+ELSE()
+
+	SET (Extra_LIBS
+		pthread
 	)
 
 ENDIF()
@@ -55,6 +59,7 @@ TARGET_LINK_LIBRARIES(alpr
     video
 	${OpenCV_LIBS}
 	${Tesseract_LIBRARIES}
+        ${Extra_LIBS}
   )
 
 # Compile the alprd library on Unix-based OS
@@ -70,6 +75,7 @@ IF (NOT WIN32)
 	  log4cplus
 	  ${OpenCV_LIBS}
 	  ${Tesseract_LIBRARIES}
+          ${Extra_LIBS}
     )
 	
 	# Don't include misc utilities for Windows
