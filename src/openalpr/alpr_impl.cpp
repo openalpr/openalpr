@@ -37,7 +37,7 @@ AlprImpl::AlprImpl(const std::string country, const std::string configFile, cons
     return;
   }
   
-  plateDetector = new RegionDetector(config);
+  plateDetector = createDetector(config);
   stateIdentifier = new StateIdentifier(config);
   ocr = new OCR(config);
   setNumThreads(0);

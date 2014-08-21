@@ -30,6 +30,7 @@
 
 #include "endtoendtest.h"
 
+#include "detection/detectorfactory.h"
 #include "support/filesystem.h"
 
 using namespace std;
@@ -146,7 +147,7 @@ int main( int argc, const char** argv )
   else if (benchmarkName.compare("detection") == 0)
   {
     Config config(country);
-    RegionDetector plateDetector(&config);
+    Detector* plateDetector = createDetector(&config);
 
     for (int i = 0; i< files.size(); i++)
     {
@@ -155,12 +156,14 @@ int main( int argc, const char** argv )
         string fullpath = inDir + "/" + files[i];
         frame = imread( fullpath.c_str() );
 
-        vector<PlateRegion> regions = plateDetector.detect(frame);
+        vector<PlateRegion> regions = plateDetector->detect(frame);
 
         imshow("Current LP", frame);
         waitKey(5);
       }
     }
+    
+    delete plateDetector;
   }
   else if (benchmarkName.compare("speed") == 0)
   {
@@ -176,7 +179,7 @@ int main( int argc, const char** argv )
     alpr.config->debugOff();
     alpr.setDetectRegion(true);
 
-    RegionDetector plateDetector(&config);
+    Detector* plateDetector = createDetector(&config);
     StateIdentifier stateIdentifier(&config);
     OCR ocr(&config);
 
@@ -207,7 +210,7 @@ int main( int argc, const char** argv )
         endToEndTimes.push_back(endToEndTime);
 
         getTime(&startTime);
-        vector<PlateRegion> regions = plateDetector.detect(frame);
+        vector<PlateRegion> regions = plateDetector->detect(frame);
         getTime(&endTime);
 
         double regionDetectionTime = diffclock(startTime, endTime);

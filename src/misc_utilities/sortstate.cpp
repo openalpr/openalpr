@@ -24,7 +24,6 @@
 #include <stdio.h>
 #include <sys/stat.h>
 
-#include "regiondetector.h"
 #include "licenseplatecandidate.h"
 #include "stateidentifier.h"
 #include "utility.h"

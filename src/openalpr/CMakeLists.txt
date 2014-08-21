@@ -6,7 +6,8 @@ set(lpr_source_files
  alpr.cpp
  alpr_impl.cpp
  config.cpp
- regiondetector.cpp
+ detection/detector.cpp
+ detection/detectorcpu.cpp
  licenseplatecandidate.cpp
  utility.cpp
  stateidentifier.cpp

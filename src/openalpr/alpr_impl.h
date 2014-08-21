@@ -27,7 +27,9 @@
 #include "alpr.h"
 #include "config.h"
 
-#include "regiondetector.h"
+#include "detection/detector.h"
+#include "detection/detectorfactory.h"
+
 #include "licenseplatecandidate.h"
 #include "stateidentifier.h"
 #include "segmentation/charactersegmenter.h"
@@ -86,7 +88,7 @@ class AlprImpl
     
   private:
     
-    RegionDetector* plateDetector;
+    Detector* plateDetector;
     StateIdentifier* stateIdentifier;
     OCR* ocr;
   

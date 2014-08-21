@@ -17,128 +17,46 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "regiondetector.h"
+#include "detector.h"
 
 using namespace cv;
 using namespace std;
 
-RegionDetector::RegionDetector(Config* config)
+Detector::Detector(Config* config)
 {
   this->config = config;
   this->scale_factor = 1.0f;
 
-  // Load either the regular or OpenCL version of the cascade classifier
-  this->plate_cascade = new CascadeClassifier();
-  
-
-  if( this->plate_cascade->load( config->getCascadeRuntimeDir() + config->country + ".xml" ) )
-  {
-    this->loaded = true;
-  }
-  else
-  {
-    this->loaded = false;
-    printf("--(!)Error loading classifier\n");
-  }
-
 }
 
-RegionDetector::~RegionDetector()
+Detector::~Detector()
 {
-  delete this->plate_cascade;
+  
 }
 
-bool RegionDetector::isLoaded()
+bool Detector::isLoaded()
 {
   return this->loaded;
 }
 
-vector<PlateRegion> RegionDetector::detect(cv::Mat frame)
+vector<PlateRegion> Detector::detect(cv::Mat frame)
 {
   std::vector<cv::Rect> regionsOfInterest;
   regionsOfInterest.push_back(Rect(0, 0, frame.cols, frame.rows));
   return this->detect(frame, regionsOfInterest);
 }
 
-vector<PlateRegion> RegionDetector::detect(Mat frame, std::vector<cv::Rect> regionsOfInterest)
+vector<PlateRegion> Detector::detect(Mat frame, std::vector<cv::Rect> regionsOfInterest)
 {
-
-  Mat frame_gray;
-  cvtColor( frame, frame_gray, CV_BGR2GRAY );
-  
-  vector<PlateRegion> detectedRegions = doCascade(frame_gray, regionsOfInterest);
-
-  return detectedRegions;
+  // Must be implemented by subclass
+  std::vector<PlateRegion> rois;
+  return rois;
 }
 
-vector<PlateRegion> RegionDetector::doCascade(Mat frame, std::vector<cv::Rect> regionsOfInterest)
-{
-
-  
-  if (frame.cols > config->maxDetectionInputWidth)
-  {
-    // The frame is too wide
-    this->scale_factor = ((float) config->maxDetectionInputWidth) / ((float) frame.cols);
-    
-    if (config->debugGeneral)
-      std::cout << "Input detection image is too wide.  Resizing with scale: " << this->scale_factor << endl;
-  }
-  else if (frame.rows > config->maxDetectionInputHeight)
-  {
-    // The frame is too tall
-    this->scale_factor = ((float) config->maxDetectionInputHeight) / ((float) frame.rows);
-    
-    if (config->debugGeneral)
-      std::cout << "Input detection image is too tall.  Resizing with scale: " << this->scale_factor << endl;
-  }
-  
-  int w = frame.size().width;
-  int h = frame.size().height;
-
-  vector<Rect> plates;
-
-  equalizeHist( frame, frame );
-  resize(frame, frame, Size(w * this->scale_factor, h * this->scale_factor));
-
-  //-- Detect plates
-  timespec startTime;
-  getTime(&startTime);
-
-  float maxWidth = ((float) w) * (config->maxPlateWidthPercent / 100.0f) * this->scale_factor;
-  float maxHeight = ((float) h) * (config->maxPlateHeightPercent / 100.0f) * this->scale_factor;
-  Size minSize(config->minPlateSizeWidthPx * this->scale_factor, config->minPlateSizeHeightPx * this->scale_factor);
-  Size maxSize(maxWidth, maxHeight);
-
-  plate_cascade->detectMultiScale( frame, plates, config->detection_iteration_increase, config->detectionStrictness,
-				    0,
-				    //0|CV_HAAR_SCALE_IMAGE,
-				    minSize, maxSize );
-  
-
-  if (config->debugTiming)
-  {
-    timespec endTime;
-    getTime(&endTime);
-    cout << "LBP Time: " << diffclock(startTime, endTime) << "ms." << endl;
-  }
-
-  for( int i = 0; i < plates.size(); i++ )
-  {
-    plates[i].x = plates[i].x / scale_factor;
-    plates[i].y = plates[i].y / scale_factor;
-    plates[i].width = plates[i].width / scale_factor;
-    plates[i].height = plates[i].height / scale_factor;
-  }
-
-  vector<PlateRegion> orderedRegions = aggregateRegions(plates);
-  
-  return orderedRegions;
-
-}
 
 bool rectHasLargerArea(cv::Rect a, cv::Rect b) { return a.area() < b.area(); };
 
-vector<PlateRegion> RegionDetector::aggregateRegions(vector<Rect> regions)
+vector<PlateRegion> Detector::aggregateRegions(vector<Rect> regions)
 {
   // Combines overlapping regions into a parent->child order.
   // The largest regions will be parents, and they will have children if they are within them.
@@ -185,25 +103,7 @@ vector<PlateRegion> RegionDetector::aggregateRegions(vector<Rect> regions)
     }
     
   }
-  
-  /*
-  cv::Mat debugFrame = Mat::zeros( 700, 1300, CV_8UC3);
-  
-  for (int i = 0; i < regions.size(); i++)
-  {
-    // Draw all level
-    cv::rectangle(debugFrame, regions[i], Scalar(0, 0, 255), 2);
-  }
-  
-  for (int i = 0; i < topLevelRegions.size(); i++)
-  {
-    // Draw top level
-    cv::rectangle(debugFrame, topLevelRegions[i].rect, Scalar(255, 0, 0), 2);
-  }
-  
-  drawAndWait(&debugFrame);
-  */
-  
+
   
   return topLevelRegions;
 }
