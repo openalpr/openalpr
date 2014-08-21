@@ -23,10 +23,6 @@
 #include <iostream>
 #include <stdio.h>
 
-#include "opencv2/objdetect/objdetect.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/core/core.hpp"
-#include "opencv2/ml/ml.hpp"
 
 #include "utility.h"
 #include "support/timing.h"
@@ -38,28 +34,28 @@ struct PlateRegion
   std::vector<PlateRegion> children;
 };
 
-class RegionDetector
+
+class Detector
 {
 
   public:
-    RegionDetector(Config* config);
-    virtual ~RegionDetector();
+    Detector(Config* config);
+    virtual ~Detector();
 
     bool isLoaded();
     std::vector<PlateRegion> detect(cv::Mat frame);
-    std::vector<PlateRegion> detect(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);
+    virtual std::vector<PlateRegion> detect(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);
 
-  private:
+  protected:
     Config* config;
 
-    float scale_factor;
-    cv::CascadeClassifier* plate_cascade;
-
     bool loaded;
-
-    std::vector<PlateRegion> doCascade(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);
-
+    float scale_factor;
+    
     std::vector<PlateRegion> aggregateRegions(std::vector<cv::Rect> regions);
+    
+
+
 };
 
 #endif // OPENALPR_REGIONDETECTOR_H
