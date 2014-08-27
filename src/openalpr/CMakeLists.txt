@@ -8,6 +8,7 @@ set(lpr_source_files
  config.cpp
  detection/detector.cpp
  detection/detectorcpu.cpp
+ detection/detectorfactory.cpp
  licenseplatecandidate.cpp
  utility.cpp
  stateidentifier.cpp

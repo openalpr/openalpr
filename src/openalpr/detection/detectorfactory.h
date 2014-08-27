@@ -21,11 +21,9 @@
 #define	OPENALPR_DETECTORFACTORY_H
 
 #include "detectorcpu.h"
+#include "config.h"
 
-Detector* createDetector(Config* config)
-{
-    return new DetectorCPU(config);
-}
+Detector* createDetector(Config* config);
 
-#endif	/* DETECTORFACTORY_H */
+#endif	/* OPENALPR_DETECTORFACTORY_H */
 
