@@ -135,7 +135,7 @@ void imageCollectionThread(void* arg)
     }
     
     // Delay 1 second
-    sleep_ms(1000000);
+    sleep_ms(1000);
     
   }
 
@@ -189,10 +189,10 @@ void getALPRImages(cv::VideoCapture cap, VideoDispatcher* dispatcher)
       
 
       // Delay 15ms
-      sleep_ms(15000);    
+      sleep_ms(15);    
     }
     
     // Delay 100ms
-    sleep_ms(100000);
+    sleep_ms(100);
   }
 }

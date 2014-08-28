@@ -155,7 +155,7 @@ int main( int argc, const char** argv )
     while (cap.read(frame))
     {
       detectandshow(&alpr, frame, "", outputJson);
-      sleep_ms(1000);
+      sleep_ms(10);
       framenum++;
     }
   }
@@ -180,7 +180,7 @@ int main( int argc, const char** argv )
       }
       
       // Sleep 10ms
-      sleep_ms(10000);
+      sleep_ms(10);
     }
     
     videoBuffer.disconnect();
@@ -208,7 +208,7 @@ int main( int argc, const char** argv )
 
         detectandshow( &alpr, frame, "", outputJson);
         //create a 1ms delay
-        sleep_ms(1000);
+        sleep_ms(1);
         framenum++;
       }
     }
