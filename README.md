@@ -93,6 +93,13 @@ Where:
 ```
 
 
+Binaries
+----------
+
+Pre-compiled binaries are located here: https://github.com/openalpr/openalpr/releases
+
+These are typically built with each new release. 
+
 Compiling
 -----------
 
