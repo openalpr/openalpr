@@ -1,8 +1,4 @@
 
-target_link_libraries(openalpr)
-
-
-
 ADD_EXECUTABLE( sortstate EXCLUDE_FROM_ALL sortstate.cpp  )
 TARGET_LINK_LIBRARIES(sortstate 
     openalpr-static
