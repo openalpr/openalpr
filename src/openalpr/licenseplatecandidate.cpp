@@ -83,7 +83,7 @@ void LicensePlateCandidate::recognize()
 vector<Point2f> LicensePlateCandidate::transformPointsToOriginalImage(Mat bigImage, Mat smallImage, Rect region, vector<Point> corners)
 {
   vector<Point2f> cornerPoints;
-  for (int i = 0; i < corners.size(); i++)
+  for (uint i = 0; i < corners.size(); i++)
   {
     float bigX = (corners[i].x * ((float) region.width / smallImage.cols));
     float bigY = (corners[i].y * ((float) region.height / smallImage.rows));

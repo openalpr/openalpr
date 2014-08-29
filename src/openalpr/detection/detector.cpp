@@ -70,17 +70,17 @@ vector<PlateRegion> Detector::aggregateRegions(vector<Rect> regions)
   std::sort(regions.begin(), regions.end(), rectHasLargerArea);
   
   // Create new PlateRegions and attach the rectangles to each
-  for (int i = 0; i < regions.size(); i++)
+  for (uint i = 0; i < regions.size(); i++)
   {
     PlateRegion newRegion;
     newRegion.rect = regions[i];
     orderedRegions.push_back(newRegion);
   }
   
-  for (int i = 0; i < orderedRegions.size(); i++)
+  for (uint i = 0; i < orderedRegions.size(); i++)
   {
     bool foundParent = false;
-    for (int k = i + 1; k < orderedRegions.size(); k++)
+    for (uint k = i + 1; k < orderedRegions.size(); k++)
     {
       Point center( orderedRegions[i].rect.x + (orderedRegions[i].rect.width / 2),
 		    orderedRegions[i].rect.y + (orderedRegions[i].rect.height / 2));

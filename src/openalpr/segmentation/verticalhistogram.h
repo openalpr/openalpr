@@ -58,7 +58,7 @@ class VerticalHistogram
     void analyzeImage(cv::Mat inputImage, cv::Mat mask);
     void findValleys();
 
-    HistogramDirection getHistogramDirection(int index);
+    HistogramDirection getHistogramDirection(uint index);
 };
 
 #endif // OPENALPR_VERTICALHISTOGRAM_H

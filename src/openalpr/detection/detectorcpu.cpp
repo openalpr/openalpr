@@ -103,7 +103,7 @@ vector<PlateRegion> DetectorCPU::doCascade(Mat frame, std::vector<cv::Rect> regi
     cout << "LBP Time: " << diffclock(startTime, endTime) << "ms." << endl;
   }
 
-  for( int i = 0; i < plates.size(); i++ )
+  for( uint i = 0; i < plates.size(); i++ )
   {
     plates[i].x = plates[i].x / scale_factor;
     plates[i].y = plates[i].y / scale_factor;

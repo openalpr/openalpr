@@ -49,7 +49,7 @@ void CharacterAnalysis::analyze()
   timespec startTime;
   getTime(&startTime);
 
-  for (int i = 0; i < pipeline_data->thresholds.size(); i++)
+  for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
   {
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
@@ -76,7 +76,7 @@ void CharacterAnalysis::analyze()
 
   getTime(&startTime);
 
-  for (int i = 0; i < pipeline_data->thresholds.size(); i++)
+  for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
   {
     vector<bool> goodIndices = this->filter(pipeline_data->thresholds[i], allContours[i], allHierarchy[i]);
     charSegments.push_back(goodIndices);
@@ -97,7 +97,7 @@ void CharacterAnalysis::analyze()
   if (hasPlateMask)
   {
     // Filter out bad contours now that we have an outer box mask...
-    for (int i = 0; i < pipeline_data->thresholds.size(); i++)
+    for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
     {
       charSegments[i] = filterByOuterMask(allContours[i], allHierarchy[i], charSegments[i]);
     }
@@ -105,7 +105,7 @@ void CharacterAnalysis::analyze()
 
   int bestFitScore = -1;
   int bestFitIndex = -1;
-  for (int i = 0; i < pipeline_data->thresholds.size(); i++)
+  for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
   {
     //vector<bool> goodIndices = this->filter(thresholds[i], allContours[i], allHierarchy[i]);
     //charSegments.push_back(goodIndices);
@@ -139,7 +139,7 @@ void CharacterAnalysis::analyze()
     cvtColor(img_contours, img_contours, CV_GRAY2RGB);
 
     vector<vector<Point> > allowedContours;
-    for (int i = 0; i < bestContours.size(); i++)
+    for (uint i = 0; i < bestContours.size(); i++)
     {
       if (bestCharSegments[i])
         allowedContours.push_back(bestContours[i]);
@@ -186,7 +186,7 @@ void CharacterAnalysis::analyze()
 int CharacterAnalysis::getGoodIndicesCount(vector<bool> goodIndices)
 {
   int count = 0;
-  for (int i = 0; i < goodIndices.size(); i++)
+  for (uint i = 0; i < goodIndices.size(); i++)
   {
     if (goodIndices[i])
       count++;
@@ -207,14 +207,14 @@ Mat CharacterAnalysis::findOuterBoxMask()
   if (this->config->debugCharAnalysis)
     cout << "CharacterAnalysis::findOuterBoxMask" << endl;
 
-  for (int imgIndex = 0; imgIndex < allContours.size(); imgIndex++)
+  for (uint imgIndex = 0; imgIndex < allContours.size(); imgIndex++)
   {
     //vector<bool> charContours = filter(thresholds[imgIndex], allContours[imgIndex], allHierarchy[imgIndex]);
 
     int charsRecognized = 0;
     int parentId = -1;
     bool hasParent = false;
-    for (int i = 0; i < charSegments[imgIndex].size(); i++)
+    for (uint i = 0; i < charSegments[imgIndex].size(); i++)
     {
       if (charSegments[imgIndex][i]) charsRecognized++;
       if (charSegments[imgIndex][i] && allHierarchy[imgIndex][i][3] != -1)
@@ -253,9 +253,9 @@ Mat CharacterAnalysis::findOuterBoxMask()
     int longestChildIndex = -1;
     double longestChildLength = 0;
     // Find the child with the longest permiter/arc length ( just for kicks)
-    for (int i = 0; i < allContours[winningIndex].size(); i++)
+    for (uint i = 0; i < allContours[winningIndex].size(); i++)
     {
-      for (int j = 0; j < allContours[winningIndex].size(); j++)
+      for (uint j = 0; j < allContours[winningIndex].size(); j++)
       {
         if (allHierarchy[winningIndex][j][3] == winningParentId)
         {
@@ -301,7 +301,7 @@ Mat CharacterAnalysis::findOuterBoxMask()
     findContours(mask, contoursSecondRound, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
     int biggestContourIndex = -1;
     double largestArea = 0;
-    for (int c = 0; c < contoursSecondRound.size(); c++)
+    for (uint c = 0; c < contoursSecondRound.size(); c++)
     {
       double area = contourArea(contoursSecondRound[c]);
       if (area > largestArea)
@@ -360,7 +360,7 @@ Mat CharacterAnalysis::getCharacterMask()
 {
   Mat charMask = Mat::zeros(bestThreshold.size(), CV_8U);
 
-  for (int i = 0; i < bestContours.size(); i++)
+  for (uint i = 0; i < bestContours.size(); i++)
   {
     if (bestCharSegments[i] == false)
       continue;
@@ -389,7 +389,7 @@ vector<Point> CharacterAnalysis::getBestVotedLines(Mat img, vector<vector<Point>
 
   vector<Rect> charRegions;
 
-  for (int i = 0; i < contours.size(); i++)
+  for (uint i = 0; i < contours.size(); i++)
   {
     if (goodIndices[i])
       charRegions.push_back(boundingRect(contours[i]));
@@ -405,9 +405,9 @@ vector<Point> CharacterAnalysis::getBestVotedLines(Mat img, vector<vector<Point>
     vector<LineSegment> topLines;
     vector<LineSegment> bottomLines;
     // Iterate through each possible char and find all possible lines for the top and bottom of each char segment
-    for (int i = 0; i < charRegions.size() - 1; i++)
+    for (uint i = 0; i < charRegions.size() - 1; i++)
     {
-      for (int k = i+1; k < charRegions.size(); k++)
+      for (uint k = i+1; k < charRegions.size(); k++)
       {
         //Mat tempImg;
         //result.copyTo(tempImg);
@@ -471,13 +471,13 @@ vector<Point> CharacterAnalysis::getBestVotedLines(Mat img, vector<vector<Point>
     int bestScoreDistance = -1; // Line segment distance is used as a tie breaker
 
     // Now, among all possible lines, find the one that is the best fit
-    for (int i = 0; i < topLines.size(); i++)
+    for (uint i = 0; i < topLines.size(); i++)
     {
       float SCORING_MIN_THRESHOLD = 0.97;
       float SCORING_MAX_THRESHOLD = 1.03;
 
       int curScore = 0;
-      for (int charidx = 0; charidx < charRegions.size(); charidx++)
+      for (uint charidx = 0; charidx < charRegions.size(); charidx++)
       {
         float topYPos = topLines[i].getPointAt(charRegions[charidx].x);
         float botYPos = bottomLines[i].getPointAt(charRegions[charidx].x);
@@ -550,7 +550,7 @@ vector<bool> CharacterAnalysis::filter(Mat img, vector<vector<Point> > contours,
     int goodIndicesCount;
 
     vector<bool> goodIndices(contours.size());
-    for (int z = 0; z < goodIndices.size(); z++) goodIndices[z] = true;
+    for (uint z = 0; z < goodIndices.size(); z++) goodIndices[z] = true;
 
     goodIndices = this->filterByBoxSize(contours, goodIndices, STARTING_MIN_HEIGHT + (i * HEIGHT_STEP), STARTING_MAX_HEIGHT + (i * HEIGHT_STEP));
 
@@ -585,10 +585,10 @@ vector<bool> CharacterAnalysis::filterByBoxSize(vector< vector< Point> > contour
   float aspecttolerance=0.25;
 
   vector<bool> includedIndices(contours.size());
-  for (int j = 0; j < contours.size(); j++)
+  for (uint j = 0; j < contours.size(); j++)
     includedIndices.push_back(false);
 
-  for (int i = 0; i < contours.size(); i++)
+  for (uint i = 0; i < contours.size(); i++)
   {
     if (goodIndices[i] == false)
       continue;
@@ -614,10 +614,10 @@ vector<bool> CharacterAnalysis::filterByBoxSize(vector< vector< Point> > contour
 vector< bool > CharacterAnalysis::filterContourHoles(vector< vector< Point > > contours, vector< Vec4i > hierarchy, vector< bool > goodIndices)
 {
   vector<bool> includedIndices(contours.size());
-  for (int j = 0; j < contours.size(); j++)
+  for (uint j = 0; j < contours.size(); j++)
     includedIndices.push_back(false);
 
-  for (int i = 0; i < contours.size(); i++)
+  for (uint i = 0; i < contours.size(); i++)
   {
     if (goodIndices[i] == false)
       continue;
@@ -646,13 +646,13 @@ vector< bool > CharacterAnalysis::filterContourHoles(vector< vector< Point > > c
 vector<bool> CharacterAnalysis::filterByParentContour( vector< vector< Point> > contours, vector<Vec4i> hierarchy, vector<bool> goodIndices)
 {
   vector<bool> includedIndices(contours.size());
-  for (int j = 0; j < contours.size(); j++)
+  for (uint j = 0; j < contours.size(); j++)
     includedIndices[j] = false;
 
   vector<int> parentIDs;
   vector<int> votes;
 
-  for (int i = 0; i < contours.size(); i++)
+  for (uint i = 0; i < contours.size(); i++)
   {
     if (goodIndices[i] == false)
       continue;
@@ -660,7 +660,7 @@ vector<bool> CharacterAnalysis::filterByParentContour( vector< vector< Point> > 
     int voteIndex = -1;
     int parentID = hierarchy[i][3];
     // check if parentID is already in the lsit
-    for (int j = 0; j < parentIDs.size(); j++)
+    for (uint j = 0; j < parentIDs.size(); j++)
     {
       if (parentIDs[j] == parentID)
       {
@@ -683,7 +683,7 @@ vector<bool> CharacterAnalysis::filterByParentContour( vector< vector< Point> > 
   int totalVotes = 0;
   int winningParentId = 0;
   int highestVotes = 0;
-  for (int i = 0; i < parentIDs.size(); i++)
+  for (uint i = 0; i < parentIDs.size(); i++)
   {
     if (votes[i] > highestVotes)
     {
@@ -694,7 +694,7 @@ vector<bool> CharacterAnalysis::filterByParentContour( vector< vector< Point> > 
   }
 
   // Now filter out all the contours with a different parent ID (assuming the totalVotes > 2)
-  for (int i = 0; i < contours.size(); i++)
+  for (uint i = 0; i < contours.size(); i++)
   {
     if (goodIndices[i] == false)
       continue;
@@ -718,7 +718,7 @@ vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<Point>
   static float MAX_DISTANCE_PERCENT_FROM_LINES = 0.15;
 
   vector<bool> includedIndices(contours.size());
-  for (int j = 0; j < contours.size(); j++)
+  for (uint j = 0; j < contours.size(); j++)
     includedIndices[j] = false;
 
   if (outerPolygon.size() == 0)
@@ -741,7 +741,7 @@ vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<Point>
   fillConvexPoly(outerMask, outerPolygon.data(), outerPolygon.size(), Scalar(255,255,255));
 
   // For each contour, determine if enough of it is between the lines to qualify
-  for (int i = 0; i < contours.size(); i++)
+  for (uint i = 0; i < contours.size(); i++)
   {
     if (goodIndices[i] == false)
       continue;
@@ -767,7 +767,7 @@ vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<Point>
     double totalArea = contourArea(contours[i]);
     double areaBetweenLines = 0;
 
-    for (int tempContourIdx = 0; tempContourIdx < tempContours.size(); tempContourIdx++)
+    for (uint tempContourIdx = 0; tempContourIdx < tempContours.size(); tempContourIdx++)
     {
       areaBetweenLines += contourArea(tempContours[tempContourIdx]);
     }
@@ -789,7 +789,7 @@ vector<bool> CharacterAnalysis::filterBetweenLines(Mat img, vector<vector<Point>
     int highPointValue = 999999999;
     int lowPointIndex = 0;
     int lowPointValue = 0;
-    for (int cidx = 0; cidx < contours[i].size(); cidx++)
+    for (uint cidx = 0; cidx < contours[i].size(); cidx++)
     {
       if (contours[i][cidx].y < highPointValue)
       {
@@ -831,7 +831,7 @@ std::vector< bool > CharacterAnalysis::filterByOuterMask(vector< vector< Point >
     return goodIndices;
 
   vector<bool> passingIndices;
-  for (int i = 0; i < goodIndices.size(); i++)
+  for (uint i = 0; i < goodIndices.size(); i++)
     passingIndices.push_back(false);
 
   Mat tempMaskedContour = Mat::zeros(plateMask.size(), CV_8U);
@@ -840,7 +840,7 @@ std::vector< bool > CharacterAnalysis::filterByOuterMask(vector< vector< Point >
   int charsInsideMask = 0;
   int totalChars = 0;
 
-  for (int i=0; i < goodIndices.size(); i++)
+  for (uint i=0; i < goodIndices.size(); i++)
   {
     if (goodIndices[i] == false)
       continue;
@@ -921,12 +921,12 @@ vector<Point> CharacterAnalysis::getCharArea()
   int leftX = MAX;
   int rightX = MIN;
 
-  for (int i = 0; i < bestContours.size(); i++)
+  for (uint i = 0; i < bestContours.size(); i++)
   {
     if (bestCharSegments[i] == false)
       continue;
 
-    for (int z = 0; z < bestContours[i].size(); z++)
+    for (uint z = 0; z < bestContours[i].size(); z++)
     {
       if (bestContours[i][z].x < leftX)
         leftX = bestContours[i][z].x;

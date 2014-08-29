@@ -167,7 +167,7 @@ class PlateDispatcher
     OCR* ocr;
     Config* config;
   
-    int topN;
+    uint topN;
     bool detectRegion;
     std::string defaultRegion;
     

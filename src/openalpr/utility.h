@@ -84,7 +84,7 @@ double median(int array[], int arraySize);
 
 std::vector<cv::Mat> produceThresholds(const cv::Mat img_gray, Config* config);
 
-cv::Mat drawImageDashboard(std::vector<cv::Mat> images, int imageType, int numColumns);
+cv::Mat drawImageDashboard(std::vector<cv::Mat> images, int imageType, uint numColumns);
 
 void displayImage(Config* config, std::string windowName, cv::Mat frame);
 void drawAndWait(cv::Mat* frame);
@@ -108,6 +108,7 @@ cv::Mat addLabel(cv::Mat input, std::string label);
 
 
 std::string toString(int value);
+std::string toString(uint value);
 std::string toString(float value);
 std::string toString(double value);
 

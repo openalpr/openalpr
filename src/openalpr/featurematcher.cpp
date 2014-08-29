@@ -41,7 +41,7 @@ FeatureMatcher::FeatureMatcher(Config* config)
 
 FeatureMatcher::~FeatureMatcher()
 {
-  for (int i = 0; i < trainingImgKeypoints.size(); i++)
+  for (uint i = 0; i < trainingImgKeypoints.size(); i++)
     trainingImgKeypoints[i].clear();
   trainingImgKeypoints.clear();
 
@@ -85,7 +85,7 @@ void FeatureMatcher::_surfStyleMatching(const Mat& queryDescriptors, vector<vect
   //cout << "starting matcher" << matchesKnn.size() << endl;
   for (int descInd = 0; descInd < queryDescriptors.rows; descInd++)
   {
-    const std::vector<DMatch> & matches = matchesKnn[descInd];
+    //const std::vector<DMatch> & matches = matchesKnn[descInd];
     //cout << "two: " << descInd << ":" << matches.size() << endl;
 
     // Check to make sure we have 2 matches.  I think this is always the case, but it doesn't hurt to be sure
@@ -107,7 +107,7 @@ void FeatureMatcher::_surfStyleMatching(const Mat& queryDescriptors, vector<vect
       {
         bool already_exists = false;
         // Quickly run through the matches we've already added and make sure it's not a duplicate...
-        for (int q = 0; q < matches12.size(); q++)
+        for (uint q = 0; q < matches12.size(); q++)
         {
           if (matchesKnn[descInd][0].queryIdx == matches12[q].queryIdx)
           {
@@ -152,12 +152,12 @@ void FeatureMatcher::crisscrossFiltering(const vector<KeyPoint> queryKeypoints, 
   Rect crissCrossAreaVertical(0, 0, config->stateIdImageWidthPx, config->stateIdimageHeightPx * 2);
   Rect crissCrossAreaHorizontal(0, 0, config->stateIdImageWidthPx * 2, config->stateIdimageHeightPx);
 
-  for (int i = 0; i < billMapping.size(); i++)
+  for (uint i = 0; i < billMapping.size(); i++)
   {
     vector<DMatch> matchesForOnePlate;
-    for (int j = 0; j < inputMatches.size(); j++)
+    for (uint j = 0; j < inputMatches.size(); j++)
     {
-      if (inputMatches[j].imgIdx == i)
+      if (inputMatches[j].imgIdx == (int) i)
         matchesForOnePlate.push_back(inputMatches[j]);
     }
 
@@ -167,7 +167,7 @@ void FeatureMatcher::crisscrossFiltering(const vector<KeyPoint> queryKeypoints, 
     vector<LineSegment> hlines;
     vector<int> matchIdx;
 
-    for (int j = 0; j < matchesForOnePlate.size(); j++)
+    for (uint j = 0; j < matchesForOnePlate.size(); j++)
     {
       KeyPoint tkp = trainingImgKeypoints[i][matchesForOnePlate[j].trainIdx];
       KeyPoint qkp = queryKeypoints[matchesForOnePlate[j].queryIdx];
@@ -184,10 +184,10 @@ void FeatureMatcher::crisscrossFiltering(const vector<KeyPoint> queryKeypoints, 
       int mostIntersectionsIndex = -1;
       mostIntersections = 0;
 
-      for (int j = 0; j < vlines.size(); j++)
+      for (uint j = 0; j < vlines.size(); j++)
       {
         int intrCount = 0;
-        for (int q = 0; q < vlines.size(); q++)
+        for (uint q = 0; q < vlines.size(); q++)
         {
           Point vintr = vlines[j].intersection(vlines[q]);
           Point hintr = hlines[j].intersection(hlines[q]);
@@ -221,7 +221,7 @@ void FeatureMatcher::crisscrossFiltering(const vector<KeyPoint> queryKeypoints, 
     }
 
     // Push the non-crisscrosses back on the list
-    for (int j = 0; j < matchIdx.size(); j++)
+    for (uint j = 0; j < matchIdx.size(); j++)
     {
       outputMatches.push_back(matchesForOnePlate[matchIdx[j]]);
     }
@@ -240,7 +240,7 @@ bool FeatureMatcher::loadRecognitionSet(string country)
     vector<Mat> trainImages;
     vector<string> plateFiles = getFilesInDir(country_dir.c_str());
 
-    for (int i = 0; i < plateFiles.size(); i++)
+    for (uint i = 0; i < plateFiles.size(); i++)
     {
       if (hasEnding(plateFiles[i], ".jpg") == false)
         continue;
@@ -312,12 +312,12 @@ RecognitionResult FeatureMatcher::recognize( const Mat& queryImg, bool drawOnIma
   // Create and initialize the counts to 0
   std::vector<int> bill_match_counts( billMapping.size() );
 
-  for (int i = 0; i < billMapping.size(); i++)
+  for (uint i = 0; i < billMapping.size(); i++)
   {
     bill_match_counts[i] = 0;
   }
 
-  for (int i = 0; i < filteredMatches.size(); i++)
+  for (uint i = 0; i < filteredMatches.size(); i++)
   {
     bill_match_counts[filteredMatches[i].imgIdx]++;
     //if (filteredMatches[i].imgIdx
@@ -326,7 +326,7 @@ RecognitionResult FeatureMatcher::recognize( const Mat& queryImg, bool drawOnIma
   float max_count = 0;	// represented as a percent (0 to 100)
   int secondmost_count = 0;
   int maxcount_index = -1;
-  for (int i = 0; i < billMapping.size(); i++)
+  for (uint i = 0; i < billMapping.size(); i++)
   {
     if (bill_match_counts[i] > max_count && bill_match_counts[i] >= 4)
     {
@@ -354,7 +354,7 @@ RecognitionResult FeatureMatcher::recognize( const Mat& queryImg, bool drawOnIma
     if (drawOnImage)
     {
       vector<KeyPoint> positiveMatches;
-      for (int i = 0; i < filteredMatches.size(); i++)
+      for (uint i = 0; i < filteredMatches.size(); i++)
       {
         if (filteredMatches[i].imgIdx == maxcount_index)
         {
@@ -379,7 +379,7 @@ RecognitionResult FeatureMatcher::recognize( const Mat& queryImg, bool drawOnIma
 
   if (this->config->debugStateId)
   {
-    for (int i = 0; i < billMapping.size(); i++)
+    for (uint i = 0; i < billMapping.size(); i++)
     {
       cout << billMapping[i] << " : " << bill_match_counts[i] << endl;
     }

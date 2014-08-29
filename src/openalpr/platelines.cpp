@@ -84,9 +84,9 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
   
   vector<PlateLine> hlines = this->getLines(edges, sensitivity, false);
   vector<PlateLine> vlines = this->getLines(edges, sensitivity, true);
-  for (int i = 0; i < hlines.size(); i++)
+  for (uint i = 0; i < hlines.size(); i++)
     this->horizontalLines.push_back(hlines[i]);
-  for (int i = 0; i < vlines.size(); i++)
+  for (uint i = 0; i < vlines.size(); i++)
     this->verticalLines.push_back(vlines[i]);
 
   // if debug is enabled, draw the image
@@ -227,7 +227,7 @@ Mat PlateLines::customGrayscaleConversion(Mat src)
     for (int col = 0; col < img_hsv.cols; col++)
     {
       int h = (int) img_hsv.at<Vec3b>(row, col)[0];
-      int s = (int) img_hsv.at<Vec3b>(row, col)[1];
+      //int s = (int) img_hsv.at<Vec3b>(row, col)[1];
       int v = (int) img_hsv.at<Vec3b>(row, col)[2];
 
       int pixval = pow(v, 1.05);

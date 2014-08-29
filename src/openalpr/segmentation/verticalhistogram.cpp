@@ -105,7 +105,7 @@ int VerticalHistogram::getHeightAt(int x)
 
 void VerticalHistogram::findValleys()
 {
-  int MINIMUM_PEAK_HEIGHT = (int) (((float) highestPeak) * 0.75);
+  //int MINIMUM_PEAK_HEIGHT = (int) (((float) highestPeak) * 0.75);
 
   int totalWidth = colHeights.size();
 
@@ -114,7 +114,7 @@ void VerticalHistogram::findValleys()
   HistogramDirection prevDirection = FALLING;
 
   int relativePeakHeight = 0;
-  int valleyStart = 0;
+  //int valleyStart = 0;
 
   for (int i = 0; i < totalWidth; i++)
   {
@@ -143,7 +143,7 @@ void VerticalHistogram::findValleys()
   }
 }
 
-HistogramDirection VerticalHistogram::getHistogramDirection(int index)
+HistogramDirection VerticalHistogram::getHistogramDirection(uint index)
 {
   int EXTRA_WIDTH_TO_AVERAGE = 2;
 
@@ -153,7 +153,7 @@ HistogramDirection VerticalHistogram::getHistogramDirection(int index)
   int trailStartIndex = index - EXTRA_WIDTH_TO_AVERAGE;
   if (trailStartIndex < 0)
     trailStartIndex = 0;
-  int forwardEndIndex = index + EXTRA_WIDTH_TO_AVERAGE;
+  uint forwardEndIndex = index + EXTRA_WIDTH_TO_AVERAGE;
   if (forwardEndIndex >= colHeights.size())
     forwardEndIndex = colHeights.size() - 1;
 
@@ -163,7 +163,7 @@ HistogramDirection VerticalHistogram::getHistogramDirection(int index)
   }
   trailingAverage = trailingAverage / ((float) (1 + index - trailStartIndex));
 
-  for (int i = index; i <= forwardEndIndex; i++)
+  for (uint i = index; i <= forwardEndIndex; i++)
   {
     forwardAverage += colHeights[i];
   }

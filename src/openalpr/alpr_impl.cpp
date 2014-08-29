@@ -103,7 +103,7 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
   response.plateRegions = plateDetector->detect(img, regionsOfInterest);
 
   // Get the number of threads specified and make sure the value is sane (cannot be greater than CPU cores or less than 1)
-  int numThreads = config->multithreading_cores;
+  uint numThreads = config->multithreading_cores;
   if (numThreads > tthread::thread::hardware_concurrency())
     numThreads = tthread::thread::hardware_concurrency();
   if (numThreads <= 0)
@@ -116,7 +116,7 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
     
   // Spawn n threads to process all of the candidate regions and recognize
   list<tthread::thread*> threads;
-  for (int i = 0; i < numThreads; i++)
+  for (uint i = 0; i < numThreads; i++)
   {
     tthread::thread * t = new tthread::thread(plateAnalysisThread, (void *) &dispatcher);
     threads.push_back(t);
@@ -139,12 +139,12 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
   
   if (config->debugGeneral && config->debugShowImages)
   {
-    for (int i = 0; i < response.plateRegions.size(); i++)
+    for (uint i = 0; i < response.plateRegions.size(); i++)
     {
       rectangle(img, response.plateRegions[i].rect, Scalar(0, 0, 255), 2);
     }
     
-    for (int i = 0; i < dispatcher.getRecognitionResults().size(); i++)
+    for (uint i = 0; i < dispatcher.getRecognitionResults().size(); i++)
     {
       for (int z = 0; z < 4; z++)
       {
@@ -228,7 +228,7 @@ void plateAnalysisThread(void* arg)
     {
       // Not a valid plate
       // Check if this plate has any children, if so, send them back up to the dispatcher for processing
-      for (int childidx = 0; childidx < plateRegion.children.size(); childidx++)
+      for (uint childidx = 0; childidx < plateRegion.children.size(); childidx++)
       {
 	dispatcher->appendPlate(plateRegion.children[childidx]);
       }
@@ -265,7 +265,7 @@ void plateAnalysisThread(void* arg)
       
       int bestPlateIndex = 0;
       
-      for (int pp = 0; pp < ppResults.size(); pp++)
+      for (uint pp = 0; pp < ppResults.size(); pp++)
       {
 	if (pp >= dispatcher->topN)
 	  break;
@@ -321,7 +321,7 @@ void plateAnalysisThread(void* arg)
  std::vector<cv::Rect> AlprImpl::convertRects(std::vector<AlprRegionOfInterest> regionsOfInterest)
  {
    std::vector<cv::Rect> rectRegions;
-   for (int i = 0; i < regionsOfInterest.size(); i++)
+   for (uint i = 0; i < regionsOfInterest.size(); i++)
    {
      rectRegions.push_back(cv::Rect(regionsOfInterest[i].x, regionsOfInterest[i].y, regionsOfInterest[i].width, regionsOfInterest[i].height));
    }
@@ -341,7 +341,7 @@ string AlprImpl::toJson(const vector< AlprResult > results, double processing_ti
   }
   
   cJSON_AddItemToObject(root, "results", 		jsonResults=cJSON_CreateArray());
-  for (int i = 0; i < results.size(); i++)
+  for (uint i = 0; i < results.size(); i++)
   {
     cJSON *resultObj = createJsonObj( &results[i] );
     cJSON_AddItemToArray(jsonResults, resultObj);
@@ -389,7 +389,7 @@ cJSON* AlprImpl::createJsonObj(const AlprResult* result)
   
   
   cJSON_AddItemToObject(root, "candidates", 		candidates=cJSON_CreateArray());
-  for (int i = 0; i < result->topNPlates.size(); i++)
+  for (uint i = 0; i < result->topNPlates.size(); i++)
   {
     cJSON *candidate_object;
     candidate_object = cJSON_CreateObject();

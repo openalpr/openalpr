@@ -122,7 +122,6 @@ void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
   int x_lastth = im.cols-wxh-1;
   int y_lastth = im.rows-wyh-1;
   int y_firstth= wyh;
-  int mx, my;
 
   // Create local statistics and store them in a float matrices
   Mat map_m = Mat::zeros (im.rows, im.cols, CV_32F);

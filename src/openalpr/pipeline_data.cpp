@@ -21,7 +21,7 @@ PipelineData::~PipelineData()
 
 void PipelineData::clearThresholds()
 {
-  for (int i = 0; i < thresholds.size(); i++)
+  for (uint i = 0; i < thresholds.size(); i++)
   {
     thresholds[i].release();
   }

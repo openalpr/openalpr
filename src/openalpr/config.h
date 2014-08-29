@@ -93,9 +93,9 @@ class Config
     
     float postProcessMinConfidence;
     float postProcessConfidenceSkipLevel;
-    int postProcessMaxSubstitutions;
-    int postProcessMinCharacters;
-    int postProcessMaxCharacters;
+    uint postProcessMaxSubstitutions;
+    uint postProcessMinCharacters;
+    uint postProcessMaxCharacters;
 
     
     bool debugGeneral;

@@ -43,7 +43,7 @@ CharacterRegion::CharacterRegion(PipelineData* pipeline_data)
   if (this->debug && charAnalysis->linePolygon.size() > 0)
   {
     vector<Mat> tempDash;
-    for (int z = 0; z < pipeline_data->thresholds.size(); z++)
+    for (uint z = 0; z < pipeline_data->thresholds.size(); z++)
     {
       Mat tmp(pipeline_data->thresholds[z].size(), pipeline_data->thresholds[z].type());
       pipeline_data->thresholds[z].copyTo(tmp);
@@ -56,7 +56,7 @@ CharacterRegion::CharacterRegion(PipelineData* pipeline_data)
     charAnalysis->bestThreshold.copyTo(bestVal);
     cvtColor(bestVal, bestVal, CV_GRAY2BGR);
 
-    for (int z = 0; z < charAnalysis->bestContours.size(); z++)
+    for (uint z = 0; z < charAnalysis->bestContours.size(); z++)
     {
       Scalar dcolor(255,0,0);
       if (charAnalysis->bestCharSegments[z])

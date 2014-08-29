@@ -63,7 +63,7 @@ void OCR::performOCR(PipelineData* pipeline_data)
   if (pipeline_data->charRegions.size() < config->postProcessMinCharacters)
     return;
 
-  for (int i = 0; i < pipeline_data->thresholds.size(); i++)
+  for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
   {
     // Make it black text on white background
     bitwise_not(pipeline_data->thresholds[i], pipeline_data->thresholds[i]);
@@ -71,7 +71,7 @@ void OCR::performOCR(PipelineData* pipeline_data)
 			pipeline_data->thresholds[i].size().width, pipeline_data->thresholds[i].size().height, 
 			pipeline_data->thresholds[i].channels(), pipeline_data->thresholds[i].step1());
 
-    for (int j = 0; j < pipeline_data->charRegions.size(); j++)
+    for (uint j = 0; j < pipeline_data->charRegions.size(); j++)
     {
       Rect expandedRegion = expandRect( pipeline_data->charRegions[j], 2, 2, pipeline_data->thresholds[i].cols, pipeline_data->thresholds[i].rows) ;
 

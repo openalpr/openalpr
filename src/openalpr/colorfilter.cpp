@@ -119,7 +119,7 @@ void ColorFilter::findCharColors()
   vector<float> hMeans, sMeans, vMeans;
   vector<float> hStdDevs, sStdDevs, vStdDevs;
 
-  for (int i = 0; i < contours.size(); i++)
+  for (uint i = 0; i < contours.size(); i++)
   {
     if (hierarchy[i][3] != -1)
       continue;
@@ -372,11 +372,11 @@ int ColorFilter::getMajorityOpinion(vector<float> values, float minPercentAgreem
   float lowestOverallDiff = 1000000000;
   int bestPercentAgreementIndex = -1;
 
-  for (int i = 0; i < values.size(); i++)
+  for (uint i = 0; i < values.size(); i++)
   {
     int valuesInRange = 0;
     float overallDiff = 0;
-    for (int j = 0; j < values.size(); j++)
+    for (uint j = 0; j < values.size(); j++)
     {
       float diff = abs(values[i] - values[j]);
       if (diff < maxValDifference)
