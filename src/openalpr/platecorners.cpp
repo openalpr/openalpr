@@ -365,7 +365,7 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
   Point botLineSpot = bottom.closestPointOnSegmentTo(charAreaMidPoint);
 
   float topDistanceFromMiddle = distanceBetweenPoints(topLineSpot, charAreaMidPoint);
-  float bottomDistanceFromMiddle = distanceBetweenPoints(topLineSpot, charAreaMidPoint);
+  float bottomDistanceFromMiddle = distanceBetweenPoints(botLineSpot, charAreaMidPoint);
 
   float idealDistanceFromMiddle = idealPixelHeight / 2;
 
