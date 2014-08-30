@@ -199,6 +199,15 @@ void PlateCorners::scoreVerticals(int v1, int v2)
 
   score += (verticalAngleDiff) * SCORING_BOXINESS_WEIGHT;
 
+  /////////////////////////////////////////////////////////////////////////
+  // Score angle difference from detected character box
+  /////////////////////////////////////////////////////////////////////////
+  
+  float perpendicularCharAngle = charAngle - 90;
+  float charanglediff = abs(perpendicularCharAngle - left.angle) + abs(perpendicularCharAngle - right.angle);
+
+  score += charanglediff * SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT;
+  
   //////////////////////////////////////////////////////////////////////////
   // SCORE the shape wrt character position and height relative to position
   //////////////////////////////////////////////////////////////////////////
@@ -240,6 +249,10 @@ void PlateCorners::scoreVerticals(int v1, int v2)
       cout << " -- Distance Score: " << plateDistance << "  -- Weight (" << SCORING_DISTANCE_WEIGHT_VERTICAL << ")" << endl;
       scorecomponent = plateDistance * SCORING_DISTANCE_WEIGHT_VERTICAL;
       cout << " -- -- Score:       " << scorecomponent << " = " << scorecomponent / score * 100 << "% of score" << endl;
+      
+      cout << " -- Char angle Score: " << charanglediff << "  -- Weight (" << SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT << ")" << endl;
+      scorecomponent = charanglediff * SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT;
+      cout << " -- -- Score:         " << scorecomponent << " = " << scorecomponent / score * 100 << "% of score" << endl;
       
       cout << " -- Plate line confidence Score: " << confidenceDiff << "  -- Weight (" << SCORING_LINE_CONFIDENCE_WEIGHT << ")" << endl;
       scorecomponent = confidenceDiff * SCORING_LINE_CONFIDENCE_WEIGHT;
