@@ -226,7 +226,7 @@ int main( int argc, const char** argv )
 
       bool plate_found = detectandshow( &alpr, frame, "", outputJson);
       
-      if (!plate_found)
+      if (!plate_found && !outputJson)
 	std::cout << "No license plates found." << std::endl;
     }
     else
