@@ -4,6 +4,12 @@
 #include <iostream>
 #include <ctime>
 
+#ifdef WINDOWS
+    // Import windows only stuff
+#else
+    #include <sys/time.h>
+#endif
+
 // Support for OS X
 #ifdef __MACH__
 #include <mach/clock.h>
@@ -20,6 +26,6 @@
 void getTime(timespec* time);
 double diffclock(timespec time1,timespec time2);
 
-int getEpochTime();
+long getEpochTime();
 
 #endif

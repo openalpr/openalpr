@@ -97,6 +97,12 @@ timespec diff(timespec start, timespec end)
   return temp;
 }
 
+
+long getEpochTime()
+{
+  return std::time(0) * 1000;
+} 
+
 #else
 
 void getTime(timespec* time)
@@ -138,10 +144,14 @@ timespec diff(timespec start, timespec end)
   return temp;
 }
 
+
+long getEpochTime()
+{
+    struct timeval tp;
+    gettimeofday(&tp, NULL);
+    long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+} 
+
 #endif
 
 
-int getEpochTime()
-{
-    return std::time(0);
-}
