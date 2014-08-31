@@ -45,8 +45,6 @@ class Config
     
     std::string country;
     
-    int multithreading_cores;
-    
     float detection_iteration_increase;
     int detectionStrictness;
     float maxPlateWidthPercent;

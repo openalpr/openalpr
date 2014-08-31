@@ -23,6 +23,8 @@
 
 #include <list>
 #include <sstream>
+#include <vector>
+#include <queue>
 
 #include "alpr.h"
 #include "config.h"
@@ -43,8 +45,6 @@
 
 #include <opencv2/core/core.hpp>
    
-
-#include "support/tinythread.h"
 #include "support/platform.h"
 
 #define DEFAULT_TOPN 25
@@ -101,86 +101,6 @@ class AlprImpl
     cJSON* createJsonObj(const AlprResult* result);
 };
 
-class PlateDispatcher
-{
-  public:
-    PlateDispatcher(std::vector<PlateRegion> plateRegions, cv::Mat* image, 
-		    Config* config,
-		    StateIdentifier* stateIdentifier,
-		    OCR* ocr,
-		    int topN, bool detectRegion, std::string defaultRegion) 
-    {
-      this->plateRegions = plateRegions;
-      this->frame = image;
-      
-      this->config = config;
-      this->stateIdentifier = stateIdentifier;
-      this->ocr = ocr;
-      this->topN = topN;
-      this->detectRegion = detectRegion;
-      this->defaultRegion = defaultRegion;
-    }
 
-    cv::Mat getImageCopy()
-    {
-      tthread::lock_guard<tthread::mutex> guard(mMutex);
-
-      cv::Mat img(this->frame->size(), this->frame->type());
-      this->frame->copyTo(img);
-      
-      return img;
-    }
-
-    
-    bool nextPlate(PlateRegion* plateRegion)
-    {
-      tthread::lock_guard<tthread::mutex> guard(mMutex);
-      
-      if (plateRegions.size() == 0)
-	return false;
-      
-      *plateRegion = plateRegions[plateRegions.size() - 1];
-      plateRegions.pop_back();
-      
-      return true;
-    }
-    
-    void appendPlate(PlateRegion plate)
-    {
-      tthread::lock_guard<tthread::mutex> guard(mMutex);
-      
-      plateRegions.push_back(plate);
-    }
-    
-    void addResult(AlprResult recognitionResult)
-    {
-      tthread::lock_guard<tthread::mutex> guard(mMutex);
-      recognitionResults.push_back(recognitionResult);
-    }
-    
-    std::vector<AlprResult> getRecognitionResults()
-    {
-      return recognitionResults;
-    }
-    
-    StateIdentifier* stateIdentifier;
-    OCR* ocr;
-    Config* config;
-  
-    uint topN;
-    bool detectRegion;
-    std::string defaultRegion;
-    
-    tthread::mutex ocrMutex;
-    
-  private:
-    
-    tthread::mutex mMutex;
-    
-    cv::Mat* frame;
-    std::vector<PlateRegion> plateRegions;
-    std::vector<AlprResult> recognitionResults;
-
-};
 
 #endif // OPENALPR_ALPRIMPL_H

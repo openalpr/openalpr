@@ -102,33 +102,106 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
   // Find all the candidate regions
   response.plateRegions = plateDetector->detect(img, regionsOfInterest);
 
-  // Get the number of threads specified and make sure the value is sane (cannot be greater than CPU cores or less than 1)
-  uint numThreads = config->multithreading_cores;
-  if (numThreads > tthread::thread::hardware_concurrency())
-    numThreads = tthread::thread::hardware_concurrency();
-  if (numThreads <= 0)
-    numThreads = 1;
-
-
-  PlateDispatcher dispatcher(response.plateRegions, &img, 
-			     config, stateIdentifier, ocr, 
-			     topN, detectRegion, defaultRegion);
-    
-  // Spawn n threads to process all of the candidate regions and recognize
-  list<tthread::thread*> threads;
-  for (uint i = 0; i < numThreads; i++)
-  {
-    tthread::thread * t = new tthread::thread(plateAnalysisThread, (void *) &dispatcher);
-    threads.push_back(t);
-  }
+  queue<PlateRegion> plateQueue;
+  for (uint i = 0; i < response.plateRegions.size(); i++)
+    plateQueue.push(response.plateRegions[i]);
   
-  // Wait for all threads to finish
-  for(list<tthread::thread *>::iterator i = threads.begin(); i != threads.end(); ++ i)
+  while(!plateQueue.empty())
   {
-    tthread::thread* t = *i;
-    t->join();
-    delete t;
+    PlateRegion plateRegion = plateQueue.front();
+    plateQueue.pop();
+
+    PipelineData pipeline_data(img, plateRegion.rect, config);
+
+    timespec platestarttime;
+    getTime(&platestarttime);
+
+    LicensePlateCandidate lp(&pipeline_data);
+
+    lp.recognize();
+
+    bool plateDetected = false;
+    if (pipeline_data.plate_area_confidence > 10)
+    {
+      AlprResult plateResult;
+      plateResult.region = defaultRegion;
+      plateResult.regionConfidence = 0;
+
+      for (int pointidx = 0; pointidx < 4; pointidx++)
+      {
+        plateResult.plate_points[pointidx].x = (int) pipeline_data.plate_corners[pointidx].x;
+        plateResult.plate_points[pointidx].y = (int) pipeline_data.plate_corners[pointidx].y;
+      }
+
+      if (detectRegion)
+      {
+        char statecode[4];
+        plateResult.regionConfidence = stateIdentifier->recognize(&pipeline_data);
+        if (plateResult.regionConfidence > 0)
+        {
+          plateResult.region = statecode;
+        }
+      }
+
+
+
+      ocr->performOCR(&pipeline_data);
+      ocr->postProcessor->analyze(plateResult.region, topN);
+      const vector<PPResult> ppResults = ocr->postProcessor->getResults();
+
+
+      int bestPlateIndex = 0;
+
+      for (uint pp = 0; pp < ppResults.size(); pp++)
+      {
+        if (pp >= topN)
+          break;
+
+        // Set our "best plate" match to either the first entry, or the first entry with a postprocessor template match
+        if (bestPlateIndex == 0 && ppResults[pp].matchesTemplate)
+          bestPlateIndex = pp;
+
+        if (ppResults[pp].letters.size() >= config->postProcessMinCharacters &&
+          ppResults[pp].letters.size() <= config->postProcessMaxCharacters)
+        {
+          AlprPlate aplate;
+          aplate.characters = ppResults[pp].letters;
+          aplate.overall_confidence = ppResults[pp].totalscore;
+          aplate.matches_template = ppResults[pp].matchesTemplate;
+          plateResult.topNPlates.push_back(aplate);
+        }
+      }
+      plateResult.result_count = plateResult.topNPlates.size();
+
+      if (plateResult.topNPlates.size() > 0)
+        plateResult.bestPlate = plateResult.topNPlates[bestPlateIndex];
+
+      timespec plateEndTime;
+      getTime(&plateEndTime);
+      plateResult.processing_time_ms = diffclock(platestarttime, plateEndTime);
+
+      if (plateResult.result_count > 0)
+      {
+        plateDetected = true;
+        response.results.push_back(plateResult);
+      }
+    }
+    
+    if (!plateDetected)
+    {
+      // Not a valid plate
+      // Check if this plate has any children, if so, send them back up for processing
+      for (uint childidx = 0; childidx < plateRegion.children.size(); childidx++)
+      {
+        plateQueue.push(plateRegion.children[childidx]);
+      }
+    }
+  
+      
+      
+      
   }
+
 
   if (config->debugTiming)
   {
@@ -144,11 +217,11 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
       rectangle(img, response.plateRegions[i].rect, Scalar(0, 0, 255), 2);
     }
     
-    for (uint i = 0; i < dispatcher.getRecognitionResults().size(); i++)
+    for (uint i = 0; i < response.results.size(); i++)
     {
       for (int z = 0; z < 4; z++)
       {
-	AlprCoordinate* coords = dispatcher.getRecognitionResults()[i].plate_points;
+	AlprCoordinate* coords = response.results[i].plate_points;
 	Point p1(coords[z].x, coords[z].y);
 	Point p2(coords[(z + 1) % 4].x, coords[(z + 1) % 4].y);
 	line(img, p1, p2, Scalar(255,0,255), 2);
@@ -163,8 +236,6 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
     
   }
   
-  
-  response.results = dispatcher.getRecognitionResults();
   
   if (config->debugPauseOnFrame)
   {
@@ -197,126 +268,7 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img, std::vector<cv::Rect> r
   AlprFullDetails fullDetails = recognizeFullDetails(img, regionsOfInterest);
   return fullDetails.results;
 }
-void plateAnalysisThread(void* arg)
-{
-  PlateDispatcher* dispatcher = (PlateDispatcher*) arg;
-  
-  if (dispatcher->config->debugGeneral)
-    cout << "Thread: " << tthread::this_thread::get_id() << " Initialized" << endl;
-  
-  int loop_count = 0;
-  while (true)
-  {
-    PlateRegion plateRegion;
-    if (dispatcher->nextPlate(&plateRegion) == false)
-      break;
-    
-    if (dispatcher->config->debugGeneral)
-      cout << "Thread: " << tthread::this_thread::get_id() << " loop " << ++loop_count << endl;
-      
-    PipelineData pipeline_data(dispatcher->getImageCopy(), plateRegion.rect, dispatcher->config);
-    
-    timespec platestarttime;
-    getTime(&platestarttime);
-    
-    LicensePlateCandidate lp(&pipeline_data);
-    
-    lp.recognize();
 
-    
-    if (pipeline_data.plate_area_confidence <= 10)
-    {
-      // Not a valid plate
-      // Check if this plate has any children, if so, send them back up to the dispatcher for processing
-      for (uint childidx = 0; childidx < plateRegion.children.size(); childidx++)
-      {
-	dispatcher->appendPlate(plateRegion.children[childidx]);
-      }
-    }
-    else
-    {
-      AlprResult plateResult;
-      plateResult.region = dispatcher->defaultRegion;
-      plateResult.regionConfidence = 0;
-      
-      for (int pointidx = 0; pointidx < 4; pointidx++)
-      {
-	plateResult.plate_points[pointidx].x = (int) pipeline_data.plate_corners[pointidx].x;
-	plateResult.plate_points[pointidx].y = (int) pipeline_data.plate_corners[pointidx].y;
-      }
-      
-      if (dispatcher->detectRegion)
-      {
-	char statecode[4];
-	plateResult.regionConfidence = dispatcher->stateIdentifier->recognize(&pipeline_data);
-	if (plateResult.regionConfidence > 0)
-	{
-	  plateResult.region = statecode;
-	}
-      }
-  
-      
-      // Tesseract OCR does not appear to be threadsafe
-      dispatcher->ocrMutex.lock();
-      dispatcher->ocr->performOCR(&pipeline_data);
-      dispatcher->ocr->postProcessor->analyze(plateResult.region, dispatcher->topN);
-      const vector<PPResult> ppResults = dispatcher->ocr->postProcessor->getResults();
-      dispatcher->ocrMutex.unlock();
-      
-      int bestPlateIndex = 0;
-      
-      for (uint pp = 0; pp < ppResults.size(); pp++)
-      {
-	if (pp >= dispatcher->topN)
-	  break;
-	
-	// Set our "best plate" match to either the first entry, or the first entry with a postprocessor template match
-	if (bestPlateIndex == 0 && ppResults[pp].matchesTemplate)
-	  bestPlateIndex = pp;
-	
-	if (ppResults[pp].letters.size() >= dispatcher->config->postProcessMinCharacters &&
-	  ppResults[pp].letters.size() <= dispatcher->config->postProcessMaxCharacters)
-	{
-	  AlprPlate aplate;
-	  aplate.characters = ppResults[pp].letters;
-	  aplate.overall_confidence = ppResults[pp].totalscore;
-	  aplate.matches_template = ppResults[pp].matchesTemplate;
-	  plateResult.topNPlates.push_back(aplate);
-	}
-      }
-      plateResult.result_count = plateResult.topNPlates.size();
-      
-      if (plateResult.topNPlates.size() > 0)
-	plateResult.bestPlate = plateResult.topNPlates[bestPlateIndex];
-      
-      timespec plateEndTime;
-      getTime(&plateEndTime);
-      plateResult.processing_time_ms = diffclock(platestarttime, plateEndTime);
-      
-      if (plateResult.result_count > 0)
-      {
-	// Synchronized section
-	dispatcher->addResult(plateResult);
-	
-      }
-      
-    }
-      
-    
-      
-    if (dispatcher->config->debugTiming)
-    {
-      timespec plateEndTime;
-      getTime(&plateEndTime);
-      cout << "Thread: " << tthread::this_thread::get_id() << " Finished loop " << loop_count << " in " << diffclock(platestarttime, plateEndTime) << "ms." << endl;
-    }
-      
-      
-  }
-
-  if (dispatcher->config->debugGeneral)
-    cout << "Thread: " << tthread::this_thread::get_id() << " Complete" << endl;
-}
 
  std::vector<cv::Rect> AlprImpl::convertRects(std::vector<AlprRegionOfInterest> regionsOfInterest)
  {

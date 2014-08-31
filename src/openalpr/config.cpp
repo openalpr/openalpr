@@ -127,8 +127,6 @@ void Config::loadValues(string country)
   
   runtimeBaseDir = getString("common", "runtime_dir", "/usr/share/openalpr/runtime_data");
   
-  multithreading_cores = getInt("common", "multithreading_cores", 1);
-
   detection_iteration_increase = getFloat("common", "detection_iteration_increase", 1.1);
   detectionStrictness = getInt("common", "detection_strictness", 3);
   maxPlateWidthPercent = getFloat("common", "max_plate_width_percent", 100);
