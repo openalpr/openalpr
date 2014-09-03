@@ -27,7 +27,7 @@ find_path(OpenCV_DIR
 		
 # Opencv Package
 FIND_PACKAGE( OpenCV REQUIRED )
-IF (${OpenCV_VERSION} VERSION_LESS 2.4.8)
+IF (${OpenCV_VERSION} VERSION_LESS 2.4.7)
 	MESSAGE(FATAL_ERROR "OpenCV version is not compatible : ${OpenCV_VERSION}")
 ENDIF()
 
