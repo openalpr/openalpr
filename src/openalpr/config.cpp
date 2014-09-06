@@ -103,7 +103,7 @@ Config::Config(const std::string country, const std::string config_file, const s
     std::cerr << "--(!)                   to point to the correct location of your runtime_dir" << endl;
     return;
   }
-  else if (fileExists((this->runtimeBaseDir + "/ocr/tessdata/l" + country + ".traineddata").c_str()) == false)
+  else if (fileExists((this->runtimeBaseDir + "/ocr/tessdata/" + this->ocrLanguage + ".traineddata").c_str()) == false)
   {
     std::cerr << "--(!) Runtime directory '" << this->runtimeBaseDir << "' is invalid.  Missing OCR data for the country: '" << country<< "'!" << endl;
     return;
