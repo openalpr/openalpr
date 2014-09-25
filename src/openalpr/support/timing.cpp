@@ -116,7 +116,7 @@ void getTime(timespec* time)
   time->tv_sec = mts.tv_sec;
   time->tv_nsec = mts.tv_nsec;
 #else
-  clock_gettime(CLOCK_PROCESS_CPUTIME_ID, time);
+  clock_gettime(CLOCK_MONOTONIC, time);
 #endif
 }
 
