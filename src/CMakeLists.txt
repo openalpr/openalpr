@@ -27,7 +27,7 @@ find_path(OpenCV_DIR
 		
 # Opencv Package
 FIND_PACKAGE( OpenCV REQUIRED )
-IF (${OpenCV_VERSION} VERSION_LESS 2.4.8)
+IF (${OpenCV_VERSION} VERSION_LESS 2.4.7)
 	MESSAGE(FATAL_ERROR "OpenCV version is not compatible : ${OpenCV_VERSION}")
 ENDIF()
 
@@ -91,9 +91,11 @@ add_subdirectory(video)
 
 
 install (TARGETS alpr DESTINATION bin)
+install (TARGETS alprd DESTINATION bin)
 install (FILES ${CMAKE_SOURCE_DIR}/../doc/man/alpr.1 DESTINATION share/man/man1 COMPONENT doc)
 install (DIRECTORY ${CMAKE_SOURCE_DIR}/../runtime_data DESTINATION share/openalpr/)
 install (FILES ${CMAKE_SOURCE_DIR}/../config/openalpr.conf DESTINATION /etc/openalpr/ COMPONENT config)
+install (FILES ${CMAKE_SOURCE_DIR}/../config/alprd.conf DESTINATION /etc/openalpr/ COMPONENT config)
 
 
 
