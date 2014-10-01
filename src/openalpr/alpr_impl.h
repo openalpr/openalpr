@@ -79,7 +79,7 @@ class AlprImpl
     void setTopN(int topn);
     void setDefaultRegion(std::string region);
     
-    std::string toJson(const std::vector<AlprResult> results, double processing_time_ms = -1);
+    std::string toJson(const std::vector<AlprResult> results, double processing_time_ms = -1, long epoch_time = -1);
     static std::string getVersion();
     
     Config* config;

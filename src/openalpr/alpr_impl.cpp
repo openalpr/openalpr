@@ -281,12 +281,15 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img, std::vector<cv::Rect> r
    return rectRegions;
  }
 
-string AlprImpl::toJson(const vector< AlprResult > results, double processing_time_ms)
+string AlprImpl::toJson(const vector<AlprResult > results, double processing_time_ms, long epoch_time)
 {
   cJSON *root, *jsonResults;
   root = cJSON_CreateObject();
   
-  cJSON_AddNumberToObject(root,"epoch_time",		getEpochTime()  );
+  if (epoch_time <= 0)
+    epoch_time = getEpochTime();
+  
+  cJSON_AddNumberToObject(root,"epoch_time",	epoch_time	  );
   if (processing_time_ms >= 0)
   {
     cJSON_AddNumberToObject(root,"processing_time_ms",		processing_time_ms );
