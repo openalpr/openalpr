@@ -65,7 +65,7 @@ TARGET_LINK_LIBRARIES(alpr
 
 # Compile the alprd library on Unix-based OS
 IF (NOT WIN32)
-  ADD_EXECUTABLE( alprd  daemon.cpp daemon/beanstalk.c daemon/beanstalk.cc daemon/uuid.cpp )
+  ADD_EXECUTABLE( alprd  daemon.cpp daemon/beanstalk.c daemon/beanstalk.cc )
 
   TARGET_LINK_LIBRARIES(alprd
 	  openalpr

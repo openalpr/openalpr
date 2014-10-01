@@ -82,7 +82,7 @@ class Alpr
     std::vector<AlprResult> recognize(std::vector<unsigned char> imageBuffer);
     std::vector<AlprResult> recognize(std::vector<unsigned char> imageBuffer, std::vector<AlprRegionOfInterest> regionsOfInterest);
 
-    std::string toJson(const std::vector<AlprResult> results, double processing_time_ms = -1);
+    std::string toJson(const std::vector<AlprResult> results, double processing_time_ms = -1, long epoch_time = -1);
 
     bool isLoaded();
     

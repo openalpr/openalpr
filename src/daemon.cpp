@@ -4,7 +4,6 @@
 #include <sstream>
 
 #include "daemon/beanstalk.hpp"
-#include "daemon/uuid.h"
 #include "video/logging_videobuffer.h"
 
 #include "tclap/CmdLine.h"
@@ -265,24 +264,26 @@ void streamRecognitionThread(void* arg)
       
       if (results.size() > 0)
       {
-	// Create a UUID for the image
-	std::string uuid = newUUID();
+        long epoch_time = getEpochTime();
+        
+        std::stringstream uuid;
+        uuid << tdata->site_id << "-cam" << tdata->camera_id << "-" << epoch_time;
 	
 	// Save the image to disk (using the UUID)
 	if (tdata->output_images)
 	{
 	  std::stringstream ss;
-	  ss << tdata->output_image_folder << "/" << uuid << ".jpg";
+	  ss << tdata->output_image_folder << "/" << uuid.str() << ".jpg";
 	  
 	  cv::imwrite(ss.str(), latestFrame);
 	}
 	
 	// Update the JSON content to include UUID and camera ID
   
-	std::string json = alpr.toJson(results, totalProcessingTime);
+	std::string json = alpr.toJson(results, totalProcessingTime, epoch_time);
 	
 	cJSON *root = cJSON_Parse(json.c_str());
-	cJSON_AddStringToObject(root,	"uuid",		uuid.c_str());
+	cJSON_AddStringToObject(root,	"uuid",		uuid.str().c_str());
 	cJSON_AddNumberToObject(root,	"camera_id",	tdata->camera_id);
 	cJSON_AddStringToObject(root, 	"site_id", 	tdata->site_id.c_str());
 	cJSON_AddNumberToObject(root,	"img_width",	latestFrame.cols);
