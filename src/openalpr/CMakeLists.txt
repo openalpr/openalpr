@@ -46,8 +46,8 @@ set_target_properties(openalpr PROPERTIES SOVERSION ${OPENALPR_MAJOR_VERSION})
     )
 
 
-install (FILES alpr.h DESTINATION include)
-install (TARGETS openalpr DESTINATION lib)
+install (FILES   alpr.h     DESTINATION    /usr/include)
+install (TARGETS openalpr   DESTINATION    /usr/lib)
 
 # Add definition for default config file
 add_definitions(-DDEFAULT_CONFIG_FILE="/etc/openalpr/openalpr.conf")
