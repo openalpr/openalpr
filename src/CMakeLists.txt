@@ -71,7 +71,6 @@ IF (NOT WIN32)
 	  openalpr
 	  support
       video
-	  uuid
 	  curl
 	  log4cplus
 	  ${OpenCV_LIBS}
