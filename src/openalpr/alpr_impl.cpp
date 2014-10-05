@@ -290,6 +290,8 @@ string AlprImpl::toJson(const vector<AlprResult > results, double processing_tim
     epoch_time = getEpochTime();
   
   cJSON_AddNumberToObject(root,"epoch_time",	epoch_time	  );
+  cJSON_AddNumberToObject(root,"version",	2	  );
+  
   if (processing_time_ms >= 0)
   {
     cJSON_AddNumberToObject(root,"processing_time_ms",		processing_time_ms );
