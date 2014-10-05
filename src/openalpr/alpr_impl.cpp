@@ -90,12 +90,6 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
     if (this->config->debugGeneral)
       std::cerr << "Invalid image" << std::endl;
     
-    vector<AlprResult> emptyVector;
-    response.results = emptyVector;
-    
-    vector<PlateRegion> emptyVector2;
-    response.plateRegions = emptyVector2;
-    
     return response;
   }
 
@@ -123,7 +117,7 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
     bool plateDetected = false;
     if (pipeline_data.plate_area_confidence > 10)
     {
-      AlprResult plateResult;
+      AlprPlateResult plateResult;
       plateResult.region = defaultRegion;
       plateResult.regionConfidence = 0;
 
@@ -183,7 +177,7 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
       if (plateResult.result_count > 0)
       {
         plateDetected = true;
-        response.results.push_back(plateResult);
+        response.results.plates.push_back(plateResult);
       }
     }
     
@@ -217,11 +211,11 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
       rectangle(img, response.plateRegions[i].rect, Scalar(0, 0, 255), 2);
     }
     
-    for (uint i = 0; i < response.results.size(); i++)
+    for (uint i = 0; i < response.results.plates.size(); i++)
     {
       for (int z = 0; z < 4; z++)
       {
-	AlprCoordinate* coords = response.results[i].plate_points;
+	AlprCoordinate* coords = response.results.plates[i].plate_points;
 	Point p1(coords[z].x, coords[z].y);
 	Point p2(coords[(z + 1) % 4].x, coords[(z + 1) % 4].y);
 	line(img, p1, p2, Scalar(255,0,255), 2);
@@ -248,21 +242,32 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
 }
 
 
-std::vector<AlprResult> AlprImpl::recognize(std::string filepath, std::vector<AlprRegionOfInterest> regionsOfInterest)
-{
-  cv::Mat img = cv::imread(filepath, CV_LOAD_IMAGE_COLOR);
+
+AlprResults AlprImpl::recognize( std::vector<char> imageBytes, std::vector<AlprRegionOfInterest> regionsOfInterest )
+{  
+  cv::Mat img = cv::imdecode(cv::Mat(imageBytes), 1);
   
   return this->recognize(img, this->convertRects(regionsOfInterest));
 }
 
-std::vector<AlprResult> AlprImpl::recognize(std::vector<unsigned char> imageBuffer, std::vector<AlprRegionOfInterest> regionsOfInterest)
+AlprResults AlprImpl::recognize( unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest)
 {
-  cv::Mat img = cv::imdecode(cv::Mat(imageBuffer), 1);
+  
+  int arraySize = imgWidth * imgHeight * bytesPerPixel;
+  cv::Mat imgData = cv::Mat(arraySize, 1, CV_8U, pixelData);
+  cv::Mat img = imgData.reshape(bytesPerPixel, imgHeight);
+  
+  if (regionsOfInterest.size() == 0)
+  {
+    AlprRegionOfInterest fullFrame(0,0, img.cols, img.rows);
+
+    regionsOfInterest.push_back(fullFrame);
+  }
   
   return this->recognize(img, this->convertRects(regionsOfInterest));
 }
 
-std::vector<AlprResult> AlprImpl::recognize(cv::Mat img, std::vector<cv::Rect> regionsOfInterest)
+AlprResults AlprImpl::recognize(cv::Mat img, std::vector<cv::Rect> regionsOfInterest)
 {
   
   AlprFullDetails fullDetails = recognizeFullDetails(img, regionsOfInterest);
@@ -281,26 +286,24 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img, std::vector<cv::Rect> r
    return rectRegions;
  }
 
-string AlprImpl::toJson(const vector<AlprResult > results, double processing_time_ms, long epoch_time)
+string AlprImpl::toJson( const AlprResults results )
 {
   cJSON *root, *jsonResults;
   root = cJSON_CreateObject();
   
-  if (epoch_time <= 0)
-    epoch_time = getEpochTime();
   
-  cJSON_AddNumberToObject(root,"epoch_time",	epoch_time	  );
+  cJSON_AddNumberToObject(root,"epoch_time",	results.epoch_time	  );
   cJSON_AddNumberToObject(root,"version",	2	  );
   
-  if (processing_time_ms >= 0)
+  if (results.total_processing_time_ms >= 0)
   {
-    cJSON_AddNumberToObject(root,"processing_time_ms",		processing_time_ms );
+    cJSON_AddNumberToObject(root,"processing_time_ms",		results.total_processing_time_ms );
   }
   
   cJSON_AddItemToObject(root, "results", 		jsonResults=cJSON_CreateArray());
-  for (uint i = 0; i < results.size(); i++)
+  for (uint i = 0; i < results.plates.size(); i++)
   {
-    cJSON *resultObj = createJsonObj( &results[i] );
+    cJSON *resultObj = createJsonObj( &results.plates[i] );
     cJSON_AddItemToArray(jsonResults, resultObj);
   }
   
@@ -318,7 +321,7 @@ string AlprImpl::toJson(const vector<AlprResult > results, double processing_tim
 
 
 
-cJSON* AlprImpl::createJsonObj(const AlprResult* result)
+cJSON* AlprImpl::createJsonObj(const AlprPlateResult* result)
 {
   cJSON *root, *coords, *candidates;
   

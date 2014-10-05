@@ -32,31 +32,34 @@ Alpr::~Alpr()
   delete impl;
 }
 
-std::vector<AlprResult> Alpr::recognize(std::string filepath)
+AlprResults Alpr::recognize(std::string filepath)
+{
+
+  std::ifstream ifs(filepath.c_str(), std::ios::binary|std::ios::ate);
+  std::ifstream::pos_type pos = ifs.tellg();
+
+  std::vector<char>  buffer(pos);
+
+  ifs.seekg(0, std::ios::beg);
+  ifs.read(&buffer[0], pos);
+
+  return this->recognize( buffer );
+}
+
+AlprResults Alpr::recognize(std::vector<char> imageBytes)
 {
   std::vector<AlprRegionOfInterest> regionsOfInterest;
-  return this->recognize(filepath, regionsOfInterest);
+  return impl->recognize(imageBytes, regionsOfInterest);
 }
 
-std::vector<AlprResult> Alpr::recognize(std::string filepath, std::vector<AlprRegionOfInterest> regionsOfInterest)
+AlprResults Alpr::recognize(unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest)
 {
-  return impl->recognize(filepath, regionsOfInterest);
+  return impl->recognize(pixelData, bytesPerPixel, imgWidth, imgHeight, regionsOfInterest);
 }
 
-std::vector<AlprResult> Alpr::recognize(std::vector<unsigned char> imageBuffer)
+std::string Alpr::toJson( AlprResults results )
 {
-  std::vector<AlprRegionOfInterest> regionsOfInterest;
-  return this->recognize(imageBuffer, regionsOfInterest);
-}
-
-std::vector<AlprResult> Alpr::recognize(std::vector<unsigned char> imageBuffer, std::vector<AlprRegionOfInterest> regionsOfInterest)
-{
-  return impl->recognize(imageBuffer, regionsOfInterest);
-}
-
-std::string Alpr::toJson(const std::vector< AlprResult > results, double processing_time_ms, long epoch_time)
-{
-  return impl->toJson(results, processing_time_ms, epoch_time);
+  return impl->toJson(results);
 }
 
 void Alpr::setDetectRegion(bool detectRegion)
@@ -84,12 +87,4 @@ std::string Alpr::getVersion()
   return AlprImpl::getVersion();
 }
 
-// Results code
 
-AlprResult::AlprResult()
-{
-}
-
-AlprResult::~AlprResult()
-{
-}

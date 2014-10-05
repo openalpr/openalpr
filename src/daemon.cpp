@@ -250,8 +250,11 @@ void streamRecognitionThread(void* arg)
       
       timespec startTime;
       getTime(&startTime);
-      cv::imencode(".bmp", latestFrame, buffer );
-      std::vector<AlprResult> results = alpr.recognize(buffer);
+      
+      std::vector<AlprRegionOfInterest> regionsOfInterest;
+      regionsOfInterest.push_back(AlprRegionOfInterest(0,0, latestFrame.cols, latestFrame.rows));
+
+      AlprResults results = alpr.recognize(latestFrame.data, latestFrame.elemSize(), latestFrame.cols, latestFrame.rows, regionsOfInterest);
       
       timespec endTime;
       getTime(&endTime);
@@ -262,7 +265,7 @@ void streamRecognitionThread(void* arg)
 	LOG4CPLUS_INFO(logger, "Camera " << tdata->camera_id << " processed frame in: " << totalProcessingTime << " ms.");
       }
       
-      if (results.size() > 0)
+      if (results.plates.size() > 0)
       {
         long epoch_time = getEpochTime();
         
@@ -280,7 +283,7 @@ void streamRecognitionThread(void* arg)
 	
 	// Update the JSON content to include UUID and camera ID
   
-	std::string json = alpr.toJson(results, totalProcessingTime, epoch_time);
+	std::string json = alpr.toJson(results);
 	
 	cJSON *root = cJSON_Parse(json.c_str());
 	cJSON_AddStringToObject(root,	"uuid",		uuid.str().c_str());
@@ -298,9 +301,9 @@ void streamRecognitionThread(void* arg)
 	free(out);
 	
 	// Push the results to the Beanstalk queue
-	for (int j = 0; j < results.size(); j++)
+	for (int j = 0; j < results.plates.size(); j++)
 	{
-	  LOG4CPLUS_DEBUG(logger, "Writing plate " << results[j].bestPlate.characters << " (" <<  uuid << ") to queue.");
+	  LOG4CPLUS_DEBUG(logger, "Writing plate " << results.plates[j].bestPlate.characters << " (" <<  uuid << ") to queue.");
 	}
 	
 	writeToQueue(response);

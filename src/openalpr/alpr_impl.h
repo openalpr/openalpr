@@ -56,7 +56,7 @@
 struct AlprFullDetails
 {
   std::vector<PlateRegion> plateRegions;
-  std::vector<AlprResult> results;
+  AlprResults results;
 };
 
 class AlprImpl
@@ -69,17 +69,17 @@ class AlprImpl
     AlprFullDetails recognizeFullDetails(cv::Mat img);
     AlprFullDetails recognizeFullDetails(cv::Mat img, std::vector<cv::Rect> regionsOfInterest);
     
-    std::vector<AlprResult> recognize(std::string filepath, std::vector<AlprRegionOfInterest> regionsOfInterest);
-    std::vector<AlprResult> recognize(std::vector<unsigned char> imageBuffer, std::vector<AlprRegionOfInterest> regionsOfInterest);
-    std::vector<AlprResult> recognize(cv::Mat img, std::vector<cv::Rect> regionsOfInterest);
+    AlprResults recognize( std::vector<char> imageBytes, std::vector<AlprRegionOfInterest> regionsOfInterest );
+    AlprResults recognize( unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest );
+    AlprResults recognize( cv::Mat img, std::vector<cv::Rect> regionsOfInterest );
     
-    void applyRegionTemplate(AlprResult* result, std::string region);
+    void applyRegionTemplate(AlprPlateResult* result, std::string region);
     
     void setDetectRegion(bool detectRegion);
     void setTopN(int topn);
     void setDefaultRegion(std::string region);
     
-    std::string toJson(const std::vector<AlprResult> results, double processing_time_ms = -1, long epoch_time = -1);
+    std::string toJson( const AlprResults results );
     static std::string getVersion();
     
     Config* config;
@@ -98,7 +98,7 @@ class AlprImpl
     
     std::vector<cv::Rect> convertRects(std::vector<AlprRegionOfInterest> regionsOfInterest);
     
-    cJSON* createJsonObj(const AlprResult* result);
+    cJSON* createJsonObj(const AlprPlateResult* result);
 };
 
 
