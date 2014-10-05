@@ -100,6 +100,12 @@ Pre-compiled binaries are located here: https://github.com/openalpr/openalpr/rel
 
 These are typically built with each new release. 
 
+Install OpenALPR on Ubuntu 14.04 x64 with the following commands:
+
+    echo "deb [arch=amd64] http://deb.openalpr.com/master/ openalpr main" | sudo tee /etc/apt/sources.list.d/openalpr.list
+    sudo apt-get update
+    sudo apt-get install openalpr
+
 Compiling
 -----------
 
