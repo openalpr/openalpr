@@ -83,7 +83,11 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
     regionsOfInterest.push_back(cv::Rect(0, 0, img.cols, img.rows));
   
   AlprFullDetails response;
-
+  
+  response.results.epoch_time = getEpochTime();
+  response.results.img_width = img.cols;
+  response.results.img_height = img.rows;
+  
   if (!img.data)
   {
     // Invalid image
@@ -196,11 +200,12 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
       
   }
 
-
+  timespec endTime;
+  getTime(&endTime);
+  response.results.total_processing_time_ms = diffclock(startTime, endTime);
+  
   if (config->debugTiming)
   {
-    timespec endTime;
-    getTime(&endTime);
     cout << "Total Time to process image: " << diffclock(startTime, endTime) << "ms." << endl;
   }
   
@@ -294,11 +299,10 @@ string AlprImpl::toJson( const AlprResults results )
   
   cJSON_AddNumberToObject(root,"epoch_time",	results.epoch_time	  );
   cJSON_AddNumberToObject(root,"version",	2	  );
-  
-  if (results.total_processing_time_ms >= 0)
-  {
-    cJSON_AddNumberToObject(root,"processing_time_ms",		results.total_processing_time_ms );
-  }
+  cJSON_AddNumberToObject(root,"img_width",	results.img_width	  );
+  cJSON_AddNumberToObject(root,"img_height",	results.img_height	  );
+  cJSON_AddNumberToObject(root,"processing_time_ms", results.total_processing_time_ms );
+
   
   cJSON_AddItemToObject(root, "results", 		jsonResults=cJSON_CreateArray());
   for (uint i = 0; i < results.plates.size(); i++)
