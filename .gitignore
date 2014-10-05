@@ -9,6 +9,11 @@ CMakeCache.txt
 benchmarks/
 .kdev/
 *.kdev4
+src/CPackConfig.cmake
+src/CPackSourceConfig.cmake
+Makefile
+*.conf.local
+src/compile_commands.json
 website/
 utilities/
 samples/
