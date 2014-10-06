@@ -88,6 +88,12 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
   response.results.img_width = img.cols;
   response.results.img_height = img.rows;
   
+  for (uint i = 0; i < regionsOfInterest.size(); i++)
+  {
+    response.results.regionsOfInterest.push_back(AlprRegionOfInterest(regionsOfInterest[i].x, regionsOfInterest[i].y, 
+            regionsOfInterest[i].width, regionsOfInterest[i].height));
+  }
+  
   if (!img.data)
   {
     // Invalid image
@@ -303,6 +309,21 @@ string AlprImpl::toJson( const AlprResults results )
   cJSON_AddNumberToObject(root,"img_height",	results.img_height	  );
   cJSON_AddNumberToObject(root,"processing_time_ms", results.total_processing_time_ms );
 
+  // Add the regions of interest to the JSON
+  cJSON *rois;
+  cJSON_AddItemToObject(root, "regions_of_interest", 		rois=cJSON_CreateArray());
+  for (uint i=0;i<results.regionsOfInterest.size();i++)
+  {
+    cJSON *roi_object;
+    roi_object = cJSON_CreateObject();
+    cJSON_AddNumberToObject(roi_object, "x",  results.regionsOfInterest[i].x);
+    cJSON_AddNumberToObject(roi_object, "y",  results.regionsOfInterest[i].y);
+    cJSON_AddNumberToObject(roi_object, "width",  results.regionsOfInterest[i].width);
+    cJSON_AddNumberToObject(roi_object, "height",  results.regionsOfInterest[i].height);
+
+    cJSON_AddItemToArray(rois, roi_object);
+  }
+  
   
   cJSON_AddItemToObject(root, "results", 		jsonResults=cJSON_CreateArray());
   for (uint i = 0; i < results.plates.size(); i++)
