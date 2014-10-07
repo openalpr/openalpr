@@ -64,7 +64,7 @@ static int xPos1 = 0;
 static int yPos1 = 0;
 static int xPos2 = 0;
 static int yPos2 = 0;
-const float ASPECT_RATIO = 4.33333;
+const float ASPECT_RATIO = 1.404;
 
 static bool rdragging = false;
 static int rDragStartX = 0;
