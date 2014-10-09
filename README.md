@@ -109,6 +109,8 @@ Install OpenALPR on Ubuntu 14.04 x64 with the following commands:
 Compiling
 -----------
 
+[![Build Status](https://travis-ci.org/openalpr/openalpr.svg?branch=master)](https://travis-ci.org/openalpr/openalpr)
+
 OpenALPR compiles and runs on Linux, Mac OSX and Windows.
 
 OpenALPR requires the following additional libraries:
