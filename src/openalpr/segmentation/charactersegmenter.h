@@ -28,6 +28,7 @@
 #include "colorfilter.h"
 #include "verticalhistogram.h"
 #include "config.h"
+#include "textdetection/textcontours.h"
 
 
 //const float MIN_BOX_WIDTH_PX = 4; // 4 pixels
@@ -73,7 +74,7 @@ class CharacterSegmenter
     cv::Mat getCharacterMask(cv::Mat img_threshold, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
     cv::Mat getCharBoxMask(cv::Mat img_threshold, std::vector<cv::Rect> charBoxes);
 
-    void removeSmallContours(std::vector<cv::Mat> thresholds, std::vector<std::vector<std::vector<cv::Point > > > allContours, float avgCharWidth, float avgCharHeight);
+    void removeSmallContours(std::vector<cv::Mat> thresholds, std::vector<TextContours> contours, float avgCharWidth, float avgCharHeight);
 
     cv::Mat getVerticalHistogram(cv::Mat img, cv::Mat mask);
     std::vector<cv::Rect> getHistogramBoxes(VerticalHistogram histogram, float avgCharWidth, float avgCharHeight, float* score);

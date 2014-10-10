@@ -60,11 +60,11 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
     vector<vector<Point> > allowedContours;
     for (uint i = 0; i < charAnalysis->bestContours.size(); i++)
     {
-      if (charAnalysis->bestCharSegments[i])
-        allowedContours.push_back(charAnalysis->bestContours[i]);
+      if (charAnalysis->bestContours.goodIndices[i])
+        allowedContours.push_back(charAnalysis->bestContours.contours[i]);
     }
 
-    drawContours(img_contours, charAnalysis->bestContours,
+    drawContours(img_contours, charAnalysis->bestContours.contours,
                  -1, // draw all contours
                  cv::Scalar(255,0,0), // in blue
                  1); // with a thickness of 1
@@ -94,10 +94,10 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
 
     for (uint i = 0; i < charAnalysis->bestContours.size(); i++)
     {
-      if (charAnalysis->bestCharSegments[i] == false)
+      if (charAnalysis->bestContours.goodIndices[i] == false)
         continue;
 
-      Rect mr = boundingRect(charAnalysis->bestContours[i]);
+      Rect mr = boundingRect(charAnalysis->bestContours.contours[i]);
 
       charWidths.push_back(mr.width);
       charHeights.push_back(mr.height);
@@ -106,7 +106,7 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
     float avgCharWidth = median(charWidths.data(), charWidths.size());
     float avgCharHeight = median(charHeights.data(), charHeights.size());
 
-    removeSmallContours(pipeline_data->thresholds, charAnalysis->allContours, avgCharWidth, avgCharHeight);
+    removeSmallContours(pipeline_data->thresholds, charAnalysis->allTextContours, avgCharWidth, avgCharHeight);
 
     // Do the histogram analysis to figure out char regions
 
@@ -116,7 +116,7 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
     vector<Mat> allHistograms;
 
     vector<Rect> allBoxes;
-    for (uint i = 0; i < charAnalysis->allContours.size(); i++)
+    for (uint i = 0; i < charAnalysis->allTextContours.size(); i++)
     {
       Mat histogramMask = Mat::zeros(pipeline_data->thresholds[i].size(), CV_8U);
 
@@ -443,23 +443,23 @@ vector<Rect> CharacterSegmenter::get1DHits(Mat img, int yOffset)
   return hits;
 }
 
-void CharacterSegmenter::removeSmallContours(vector<Mat> thresholds, vector<vector<vector<Point > > > allContours, float avgCharWidth, float avgCharHeight)
+void CharacterSegmenter::removeSmallContours(vector<Mat> thresholds, vector<TextContours> contours, float avgCharWidth, float avgCharHeight)
 {
   //const float MIN_CHAR_AREA = 0.02 * avgCharWidth * avgCharHeight;	// To clear out the tiny specks
   const float MIN_CONTOUR_HEIGHT = 0.3 * avgCharHeight;
 
   for (uint i = 0; i < thresholds.size(); i++)
   {
-    for (uint c = 0; c < allContours[i].size(); c++)
+    for (uint c = 0; c < contours[i].contours.size(); c++)
     {
-      if (allContours[i][c].size() == 0)
+      if (contours[i].contours[c].size() == 0)
         continue;
 
-      Rect mr = boundingRect(allContours[i][c]);
+      Rect mr = boundingRect(contours[i].contours[c]);
       if (mr.height < MIN_CONTOUR_HEIGHT)
       {
         // Erase it
-        drawContours(thresholds[i], allContours[i], c, Scalar(0, 0, 0), -1);
+        drawContours(thresholds[i], contours[i].contours, c, Scalar(0, 0, 0), -1);
         continue;
       }
     }

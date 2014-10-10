@@ -36,9 +36,7 @@ cv::Mat PlateMask::getMask() {
   return this->plateMask;
 }
 
-void PlateMask::findOuterBoxMask(vector<vector<bool> > charSegments, 
-        vector<vector<vector<Point> > > allContours,
-      vector<vector<Vec4i> > allHierarchy)
+void PlateMask::findOuterBoxMask( vector<TextContours > contours )
 {
   double min_parent_area = pipeline_data->config->templateHeightPx * pipeline_data->config->templateWidthPx * 0.10;	// Needs to be at least 10% of the plate area to be considered.
 
@@ -50,19 +48,19 @@ void PlateMask::findOuterBoxMask(vector<vector<bool> > charSegments,
   if (pipeline_data->config->debugCharAnalysis)
     cout << "CharacterAnalysis::findOuterBoxMask" << endl;
 
-  for (uint imgIndex = 0; imgIndex < allContours.size(); imgIndex++)
+  for (uint imgIndex = 0; imgIndex < contours.size(); imgIndex++)
   {
     //vector<bool> charContours = filter(thresholds[imgIndex], allContours[imgIndex], allHierarchy[imgIndex]);
 
     int charsRecognized = 0;
     int parentId = -1;
     bool hasParent = false;
-    for (uint i = 0; i < charSegments[imgIndex].size(); i++)
+    for (uint i = 0; i < contours[imgIndex].goodIndices.size(); i++)
     {
-      if (charSegments[imgIndex][i]) charsRecognized++;
-      if (charSegments[imgIndex][i] && allHierarchy[imgIndex][i][3] != -1)
+      if (contours[imgIndex].goodIndices[i]) charsRecognized++;
+      if (contours[imgIndex].goodIndices[i] && contours[imgIndex].hierarchy[i][3] != -1)
       {
-        parentId = allHierarchy[imgIndex][i][3];
+        parentId = contours[imgIndex].hierarchy[i][3];
         hasParent = true;
       }
     }
@@ -72,7 +70,7 @@ void PlateMask::findOuterBoxMask(vector<vector<bool> > charSegments,
 
     if (hasParent)
     {
-      double boxArea = contourArea(allContours[imgIndex][parentId]);
+      double boxArea = contourArea(contours[imgIndex].contours[parentId]);
       if (boxArea < min_parent_area)
         continue;
 
@@ -96,13 +94,13 @@ void PlateMask::findOuterBoxMask(vector<vector<bool> > charSegments,
     int longestChildIndex = -1;
     double longestChildLength = 0;
     // Find the child with the longest permiter/arc length ( just for kicks)
-    for (uint i = 0; i < allContours[winningIndex].size(); i++)
+    for (uint i = 0; i < contours[winningIndex].size(); i++)
     {
-      for (uint j = 0; j < allContours[winningIndex].size(); j++)
+      for (uint j = 0; j < contours[winningIndex].size(); j++)
       {
-        if (allHierarchy[winningIndex][j][3] == winningParentId)
+        if (contours[winningIndex].hierarchy[j][3] == winningParentId)
         {
-          double arclength = arcLength(allContours[winningIndex][j], false);
+          double arclength = arcLength(contours[winningIndex].contours[j], false);
           if (arclength > longestChildLength)
           {
             longestChildIndex = j;
@@ -115,12 +113,12 @@ void PlateMask::findOuterBoxMask(vector<vector<bool> > charSegments,
     Mat mask = Mat::zeros(pipeline_data->thresholds[winningIndex].size(), CV_8U);
 
     // get rid of the outline by drawing a 1 pixel width black line
-    drawContours(mask, allContours[winningIndex],
+    drawContours(mask, contours[winningIndex].contours,
                  winningParentId, // draw this contour
                  cv::Scalar(255,255,255), // in
                  CV_FILLED,
                  8,
-                 allHierarchy[winningIndex],
+                 contours[winningIndex].hierarchy,
                  0
                 );
 
@@ -169,7 +167,7 @@ void PlateMask::findOuterBoxMask(vector<vector<bool> > charSegments,
                    cv::Scalar(255,255,255), // in
                    CV_FILLED,
                    8,
-                   allHierarchy[winningIndex],
+                   contours[winningIndex].hierarchy,
                    0
                   );
     }

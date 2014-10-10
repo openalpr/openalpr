@@ -25,6 +25,7 @@ set(lpr_source_files
  textdetection/characteranalysis.cpp
  textdetection/characteranalysis2l.cpp
  textdetection/platemask.cpp
+ textdetection/textcontours.cpp
  pipeline_data.cpp
  trex.c
  cjson.c

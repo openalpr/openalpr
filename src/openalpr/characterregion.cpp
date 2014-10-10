@@ -58,9 +58,9 @@ CharacterRegion::CharacterRegion(PipelineData* pipeline_data)
     for (uint z = 0; z < charAnalysis->bestContours.size(); z++)
     {
       Scalar dcolor(255,0,0);
-      if (charAnalysis->bestCharSegments[z])
+      if (charAnalysis->bestContours.goodIndices[z])
         dcolor = Scalar(0,255,0);
-      drawContours(bestVal, charAnalysis->bestContours, z, dcolor, 1);
+      drawContours(bestVal, charAnalysis->bestContours.contours, z, dcolor, 1);
     }
     tempDash.push_back(bestVal);
     displayImage(config, "Character Region Step 1 Thresholds", drawImageDashboard(tempDash, bestVal.type(), 3));
@@ -70,7 +70,7 @@ CharacterRegion::CharacterRegion(PipelineData* pipeline_data)
   if (charAnalysis->linePolygon.size() > 0)
   {
     int confidenceDrainers = 0;
-    int charSegmentCount = charAnalysis->bestCharSegmentsCount;
+    int charSegmentCount = charAnalysis->bestContours.getGoodIndicesCount();
     if (charSegmentCount == 1)
       confidenceDrainers += 91;
     else if (charSegmentCount < 5)

@@ -24,6 +24,8 @@
 #include "utility.h"
 #include "config.h"
 #include "pipeline_data.h"
+#include "textcontours.h"
+#include "platemask.h"
 
 class CharacterAnalysis
 {
@@ -34,10 +36,12 @@ class CharacterAnalysis
 
 
     cv::Mat bestThreshold;
-    std::vector<std::vector<cv::Point> > bestContours;
-    std::vector<cv::Vec4i> bestHierarchy;
-    std::vector<bool> bestCharSegments;
-    int bestCharSegmentsCount;
+    
+    TextContours bestContours;
+    //std::vector<std::vector<cv::Point> > bestContours;
+    //std::vector<cv::Vec4i> bestHierarchy;
+    //std::vector<bool> bestCharSegments;
+    //int bestCharSegmentsCount;
 
     LineSegment topLine;
     LineSegment bottomLine;
@@ -52,9 +56,10 @@ class CharacterAnalysis
     bool thresholdsInverted;
     bool isTwoLine;
 
-    std::vector<std::vector<std::vector<cv::Point> > > allContours;
-    std::vector<std::vector<cv::Vec4i> > allHierarchy;
-    std::vector<std::vector<bool> > charSegments;
+    std::vector<TextContours> allTextContours;
+    //std::vector<std::vector<std::vector<cv::Point> > > allContours;
+    //std::vector<std::vector<cv::Vec4i> > allHierarchy;
+    //std::vector<std::vector<bool> > charSegments;
 
     void analyze();
 
@@ -67,21 +72,19 @@ class CharacterAnalysis
     cv::Mat findOuterBoxMask( );
 
     bool isPlateInverted();
-    std::vector<bool> filter(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy);
+    void filter(cv::Mat img, TextContours& textContours);
 
-    std::vector<bool> filterByBoxSize(std::vector<std::vector<cv::Point> > contours, std::vector<bool> goodIndices, int minHeightPx, int maxHeightPx);
-    std::vector<bool> filterByParentContour( std::vector< std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
-    std::vector<bool> filterContourHoles(std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
-    std::vector<bool> filterByOuterMask(std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
+    void filterByBoxSize(TextContours& textContours, int minHeightPx, int maxHeightPx);
+    void filterByParentContour( TextContours& textContours );
+    void filterContourHoles(TextContours& textContours);
+    void filterByOuterMask(TextContours& textContours);
 
     std::vector<cv::Point> getCharArea();
-    std::vector<cv::Point> getBestVotedLines(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<bool> goodIndices);
-    //vector<Point> getCharSegmentsBetweenLines(Mat img, vector<vector<Point> > contours, vector<Point> outerPolygon);
-    std::vector<bool> filterBetweenLines(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<cv::Point> outerPolygon, std::vector<bool> goodIndices);
+    std::vector<cv::Point> getBestVotedLines(cv::Mat img, TextContours textContours);
+    void filterBetweenLines(cv::Mat img, TextContours& textContours, std::vector<cv::Point> outerPolygon );
 
     bool verifySize(cv::Mat r, float minHeightPx, float maxHeightPx);
 
-    int getGoodIndicesCount(std::vector<bool> goodIndices);
 
 };
 

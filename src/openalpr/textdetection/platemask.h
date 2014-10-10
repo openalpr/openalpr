@@ -22,6 +22,7 @@
 
 #include "opencv2/imgproc/imgproc.hpp"
 #include "pipeline_data.h"
+#include "textcontours.h"
 
 class PlateMask {
 public:
@@ -32,7 +33,7 @@ public:
   
   cv::Mat getMask();
   
-  void findOuterBoxMask(std::vector<std::vector<bool> > charSegments, std::vector<std::vector<std::vector<cv::Point> > > allContours, std::vector<std::vector<cv::Vec4i> > allHierarchy);
+  void findOuterBoxMask(std::vector<TextContours > contours);
   
 private:
   
