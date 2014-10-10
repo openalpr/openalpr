@@ -38,7 +38,6 @@ CharacterRegion::CharacterRegion(PipelineData* pipeline_data)
   charAnalysis = new CharacterAnalysis(pipeline_data);
   charAnalysis->analyze();
   pipeline_data->plate_inverted = charAnalysis->thresholdsInverted;
-  pipeline_data->plate_mask = charAnalysis->plateMask;
 
   if (this->debug && charAnalysis->linePolygon.size() > 0)
   {

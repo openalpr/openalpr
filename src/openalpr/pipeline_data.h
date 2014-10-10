@@ -23,7 +23,10 @@ class PipelineData
     cv::Rect regionOfInterest;
     
     cv::Mat crop_gray;
-    cv::Mat plate_mask;    
+    
+    bool hasPlateBorder;
+    cv::Mat plateBorderMask;    
+    
     std::vector<cv::Mat> thresholds;
     
     std::vector<cv::Point2f> plate_corners;

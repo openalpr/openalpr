@@ -18,6 +18,7 @@
 */
 
 #include "characteranalysis.h"
+#include "platemask.h"
 
 using namespace cv;
 using namespace std;
@@ -27,7 +28,7 @@ CharacterAnalysis::CharacterAnalysis(PipelineData* pipeline_data)
   this->pipeline_data = pipeline_data;
   this->config = pipeline_data->config;
 
-  this->hasPlateMask = false;
+  this->isTwoLine = true;
 
   if (this->config->debugCharAnalysis)
     cout << "Starting CharacterAnalysis identification" << endl;
@@ -92,9 +93,13 @@ void CharacterAnalysis::analyze()
     cout << "  -- Character Analysis Filter Time: " << diffclock(startTime, endTime) << "ms." << endl;
   }
 
-  this->plateMask = findOuterBoxMask();
+  PlateMask plateMask(pipeline_data);
+  plateMask.findOuterBoxMask(charSegments, allContours, allHierarchy);
+  
+  pipeline_data->hasPlateBorder = plateMask.hasPlateMask;
+  pipeline_data->plateBorderMask = plateMask.getMask();
 
-  if (hasPlateMask)
+  if (plateMask.hasPlateMask)
   {
     // Filter out bad contours now that we have an outer box mask...
     for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
@@ -195,166 +200,7 @@ int CharacterAnalysis::getGoodIndicesCount(vector<bool> goodIndices)
   return count;
 }
 
-Mat CharacterAnalysis::findOuterBoxMask()
-{
-  double min_parent_area = config->templateHeightPx * config->templateWidthPx * 0.10;	// Needs to be at least 10% of the plate area to be considered.
 
-  int winningIndex = -1;
-  int winningParentId = -1;
-  int bestCharCount = 0;
-  double lowestArea = 99999999999999;
-
-  if (this->config->debugCharAnalysis)
-    cout << "CharacterAnalysis::findOuterBoxMask" << endl;
-
-  for (uint imgIndex = 0; imgIndex < allContours.size(); imgIndex++)
-  {
-    //vector<bool> charContours = filter(thresholds[imgIndex], allContours[imgIndex], allHierarchy[imgIndex]);
-
-    int charsRecognized = 0;
-    int parentId = -1;
-    bool hasParent = false;
-    for (uint i = 0; i < charSegments[imgIndex].size(); i++)
-    {
-      if (charSegments[imgIndex][i]) charsRecognized++;
-      if (charSegments[imgIndex][i] && allHierarchy[imgIndex][i][3] != -1)
-      {
-        parentId = allHierarchy[imgIndex][i][3];
-        hasParent = true;
-      }
-    }
-
-    if (charsRecognized == 0)
-      continue;
-
-    if (hasParent)
-    {
-      double boxArea = contourArea(allContours[imgIndex][parentId]);
-      if (boxArea < min_parent_area)
-        continue;
-
-      if ((charsRecognized > bestCharCount) ||
-          (charsRecognized == bestCharCount && boxArea < lowestArea))
-        //(boxArea < lowestArea)
-      {
-        bestCharCount = charsRecognized;
-        winningIndex = imgIndex;
-        winningParentId = parentId;
-        lowestArea = boxArea;
-      }
-    }
-  }
-
-  if (this->config->debugCharAnalysis)
-    cout << "Winning image index (findOuterBoxMask) is: " << winningIndex << endl;
-
-  if (winningIndex != -1 && bestCharCount >= 3)
-  {
-    int longestChildIndex = -1;
-    double longestChildLength = 0;
-    // Find the child with the longest permiter/arc length ( just for kicks)
-    for (uint i = 0; i < allContours[winningIndex].size(); i++)
-    {
-      for (uint j = 0; j < allContours[winningIndex].size(); j++)
-      {
-        if (allHierarchy[winningIndex][j][3] == winningParentId)
-        {
-          double arclength = arcLength(allContours[winningIndex][j], false);
-          if (arclength > longestChildLength)
-          {
-            longestChildIndex = j;
-            longestChildLength = arclength;
-          }
-        }
-      }
-    }
-
-    Mat mask = Mat::zeros(pipeline_data->thresholds[winningIndex].size(), CV_8U);
-
-    // get rid of the outline by drawing a 1 pixel width black line
-    drawContours(mask, allContours[winningIndex],
-                 winningParentId, // draw this contour
-                 cv::Scalar(255,255,255), // in
-                 CV_FILLED,
-                 8,
-                 allHierarchy[winningIndex],
-                 0
-                );
-
-    // Morph Open the mask to get rid of any little connectors to non-plate portions
-    int morph_elem  = 2;
-    int morph_size = 3;
-    Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
-
-    //morphologyEx( mask, mask, MORPH_CLOSE, element );
-    morphologyEx( mask, mask, MORPH_OPEN, element );
-
-    //morph_size = 1;
-    //element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
-    //dilate(mask, mask, element);
-
-    // Drawing the edge black effectively erodes the image.  This may clip off some extra junk from the edges.
-    // We'll want to do the contour again and find the larges one so that we remove the clipped portion.
-
-    vector<vector<Point> > contoursSecondRound;
-
-    findContours(mask, contoursSecondRound, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-    int biggestContourIndex = -1;
-    double largestArea = 0;
-    for (uint c = 0; c < contoursSecondRound.size(); c++)
-    {
-      double area = contourArea(contoursSecondRound[c]);
-      if (area > largestArea)
-      {
-        biggestContourIndex = c;
-        largestArea = area;
-      }
-    }
-
-    if (biggestContourIndex != -1)
-    {
-      mask = Mat::zeros(pipeline_data->thresholds[winningIndex].size(), CV_8U);
-
-      vector<Point> smoothedMaskPoints;
-      approxPolyDP(contoursSecondRound[biggestContourIndex], smoothedMaskPoints, 2, true);
-
-      vector<vector<Point> > tempvec;
-      tempvec.push_back(smoothedMaskPoints);
-      //fillPoly(mask, smoothedMaskPoints.data(), smoothedMaskPoints, Scalar(255,255,255));
-      drawContours(mask, tempvec,
-                   0, // draw this contour
-                   cv::Scalar(255,255,255), // in
-                   CV_FILLED,
-                   8,
-                   allHierarchy[winningIndex],
-                   0
-                  );
-    }
-
-    if (this->config->debugCharAnalysis)
-    {
-      vector<Mat> debugImgs;
-      Mat debugImgMasked = Mat::zeros(pipeline_data->thresholds[winningIndex].size(), CV_8U);
-
-      pipeline_data->thresholds[winningIndex].copyTo(debugImgMasked, mask);
-
-      debugImgs.push_back(mask);
-      debugImgs.push_back(pipeline_data->thresholds[winningIndex]);
-      debugImgs.push_back(debugImgMasked);
-
-      Mat dashboard = drawImageDashboard(debugImgs, CV_8U, 1);
-      displayImage(config, "Winning outer box", dashboard);
-    }
-
-    hasPlateMask = true;
-    return mask;
-  }
-
-  hasPlateMask = false;
-  Mat fullMask = Mat::zeros(pipeline_data->thresholds[0].size(), CV_8U);
-  bitwise_not(fullMask, fullMask);
-  return fullMask;
-}
 
 Mat CharacterAnalysis::getCharacterMask()
 {
@@ -827,13 +673,15 @@ std::vector< bool > CharacterAnalysis::filterByOuterMask(vector< vector< Point >
   float MINIMUM_PERCENT_LEFT_AFTER_MASK = 0.1;
   float MINIMUM_PERCENT_OF_CHARS_INSIDE_PLATE_MASK = 0.6;
 
-  if (hasPlateMask == false)
+  if (this->pipeline_data->hasPlateBorder == false)
     return goodIndices;
 
   vector<bool> passingIndices;
   for (uint i = 0; i < goodIndices.size(); i++)
     passingIndices.push_back(false);
 
+  cv::Mat plateMask = pipeline_data->plateBorderMask;
+  
   Mat tempMaskedContour = Mat::zeros(plateMask.size(), CV_8U);
   Mat tempFullContour = Mat::zeros(plateMask.size(), CV_8U);
 

@@ -56,7 +56,9 @@ void LicensePlateCandidate::recognize()
   {
     PlateLines plateLines(config);
 
-    plateLines.processImage(pipeline_data->plate_mask, &charRegion, 1.10);
+    if (pipeline_data->hasPlateBorder)
+      plateLines.processImage(pipeline_data->plateBorderMask, &charRegion, 1.10);
+    
     plateLines.processImage(pipeline_data->crop_gray, &charRegion, 0.9);
 
     PlateCorners cornerFinder(pipeline_data->crop_gray, &plateLines, &charRegion, config);

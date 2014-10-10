@@ -32,8 +32,6 @@ class CharacterAnalysis
     CharacterAnalysis(PipelineData* pipeline_data);
     virtual ~CharacterAnalysis();
 
-    bool hasPlateMask;
-    cv::Mat plateMask;
 
     cv::Mat bestThreshold;
     std::vector<std::vector<cv::Point> > bestContours;
@@ -52,6 +50,7 @@ class CharacterAnalysis
     LineSegment charBoxRight;
 
     bool thresholdsInverted;
+    bool isTwoLine;
 
     std::vector<std::vector<std::vector<cv::Point> > > allContours;
     std::vector<std::vector<cv::Vec4i> > allHierarchy;
