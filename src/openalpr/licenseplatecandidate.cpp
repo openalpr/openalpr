@@ -54,14 +54,14 @@ void LicensePlateCandidate::recognize()
 
   if (charRegion.confidence > 10)
   {
-    PlateLines plateLines(config);
+    PlateLines plateLines(pipeline_data);
 
     if (pipeline_data->hasPlateBorder)
-      plateLines.processImage(pipeline_data->plateBorderMask, &charRegion, 1.10);
+      plateLines.processImage(pipeline_data->plateBorderMask, 1.10);
     
-    plateLines.processImage(pipeline_data->crop_gray, &charRegion, 0.9);
+    plateLines.processImage(pipeline_data->crop_gray, 0.9);
 
-    PlateCorners cornerFinder(pipeline_data->crop_gray, &plateLines, &charRegion, config);
+    PlateCorners cornerFinder(pipeline_data->crop_gray, &plateLines, pipeline_data);
     vector<Point> smallPlateCorners = cornerFinder.findPlateCorners();
 
     if (cornerFinder.confidence > 0)

@@ -17,34 +17,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TEXTCONTOURS_H
-#define	TEXTCONTOURS_H
 
-#include <vector>
-#include "opencv2/imgproc/imgproc.hpp"
+#ifndef OPENALPR_TEXTLINE_H
+#define	OPENALPR_TEXTLINE_H
 
-class TextContours {
+#include "utility.h"
+
+class TextLine {
 public:
-  TextContours();
-  TextContours(cv::Mat threshold);
-  virtual ~TextContours();
+  TextLine();
+  virtual ~TextLine();
   
-  void load(cv::Mat threshold);
-  
-  std::vector<bool> goodIndices;
-  std::vector<std::vector<cv::Point> > contours;
-  std::vector<cv::Vec4i> hierarchy;
-  
-  uint size();
-  int getGoodIndicesCount();
-  
-  std::vector<bool> getIndicesCopy();
-  void setIndices(std::vector<bool> newIndices);
+  std::vector<cv::Point> textArea;
+  LineSegment topLine;
+  LineSegment bottomLine;
+
+  LineSegment charBoxTop;
+  LineSegment charBoxBottom;
+  LineSegment charBoxLeft;
+  LineSegment charBoxRight;
   
 private:
-  
 
 };
 
-#endif	/* TEXTCONTOURS_H */
+#endif	/* OPENALPR_TEXTLINE_H */
 

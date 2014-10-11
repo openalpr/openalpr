@@ -5,6 +5,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "utility.h"
 #include "config.h"
+#include "textdetection/textline.h"
 
 class PipelineData
 {
@@ -26,6 +27,7 @@ class PipelineData
     
     bool hasPlateBorder;
     cv::Mat plateBorderMask;    
+    std::vector<TextLine> textLines;
     
     std::vector<cv::Mat> thresholds;
     

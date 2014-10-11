@@ -39,7 +39,6 @@ class CharacterRegion
 
     LineSegment getTopLine();
     LineSegment getBottomLine();
-    std::vector<cv::Point> getCharArea();
 
     LineSegment getCharBoxTop();
     LineSegment getCharBoxBottom();
@@ -54,20 +53,6 @@ class CharacterRegion
     CharacterAnalysis *charAnalysis;
     cv::Mat findOuterBoxMask(std::vector<cv::Mat> thresholds, std::vector<std::vector<std::vector<cv::Point> > > allContours, std::vector<std::vector<cv::Vec4i> > allHierarchy);
 
-    std::vector<bool> filter(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy);
-    std::vector<bool> filterByBoxSize(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<bool> goodIndices, float minHeightPx, float maxHeightPx);
-    std::vector<bool> filterByParentContour( std::vector< std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
-    std::vector<bool> filterContourHoles(std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
-
-    std::vector<cv::Point> getBestVotedLines(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<bool> goodIndices);
-    //vector<Point> getCharSegmentsBetweenLines(Mat img, vector<vector<Point> > contours, vector<Point> outerPolygon);
-    std::vector<bool> filterBetweenLines(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<cv::Point> outerPolygon, std::vector<bool> goodIndices);
-    cv::Mat getCharacterMask(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
-
-    std::vector<cv::Rect> wrapContours(std::vector<std::vector<cv::Point> > contours);
-    bool verifySize(cv::Mat r, float minHeightPx, float maxHeightPx);
-
-    int getGoodIndicesCount(std::vector<bool> goodIndices);
 
     bool isPlateInverted(cv::Mat threshold, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
 

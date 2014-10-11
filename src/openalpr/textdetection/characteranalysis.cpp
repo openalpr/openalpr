@@ -44,11 +44,13 @@ void CharacterAnalysis::analyze()
   pipeline_data->clearThresholds();
   pipeline_data->thresholds = produceThresholds(pipeline_data->crop_gray, config);
 
-
+  
 
   timespec startTime;
   getTime(&startTime);
 
+  TextLine textLine;
+  
   for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
   {
     TextContours tc(pipeline_data->thresholds[i]);
@@ -148,28 +150,28 @@ void CharacterAnalysis::analyze()
     displayImage(config, "Matching Contours", img_contours);
   }
 
-  //charsegments = this->getPossibleCharRegions(img_threshold, allContours, allHierarchy, STARTING_MIN_HEIGHT + (bestFitIndex * HEIGHT_STEP), STARTING_MAX_HEIGHT + (bestFitIndex * HEIGHT_STEP));
-
   this->linePolygon =  getBestVotedLines(pipeline_data->crop_gray, bestContours);
 
   if (this->linePolygon.size() > 0)
   {
-    this->topLine = LineSegment(this->linePolygon[0].x, this->linePolygon[0].y, this->linePolygon[1].x, this->linePolygon[1].y);
-    this->bottomLine = LineSegment(this->linePolygon[3].x, this->linePolygon[3].y, this->linePolygon[2].x, this->linePolygon[2].y);
-    //this->charArea = getCharSegmentsBetweenLines(bestThreshold, bestContours, this->linePolygon);
+    textLine.topLine = LineSegment(this->linePolygon[0].x, this->linePolygon[0].y, this->linePolygon[1].x, this->linePolygon[1].y);
+    textLine.bottomLine = LineSegment(this->linePolygon[3].x, this->linePolygon[3].y, this->linePolygon[2].x, this->linePolygon[2].y);
+
     filterBetweenLines(bestThreshold, bestContours, linePolygon);
 
-    this->charArea = getCharArea();
+    textLine.textArea = getCharArea(textLine.topLine, textLine.bottomLine);
 
-    if (this->charArea.size() > 0)
+    if (textLine.textArea.size() > 0)
     {
-      this->charBoxTop = LineSegment(this->charArea[0].x, this->charArea[0].y, this->charArea[1].x, this->charArea[1].y);
-      this->charBoxBottom = LineSegment(this->charArea[3].x, this->charArea[3].y, this->charArea[2].x, this->charArea[2].y);
-      this->charBoxLeft = LineSegment(this->charArea[3].x, this->charArea[3].y, this->charArea[0].x, this->charArea[0].y);
-      this->charBoxRight = LineSegment(this->charArea[2].x, this->charArea[2].y, this->charArea[1].x, this->charArea[1].y);
+      textLine.charBoxTop = LineSegment(textLine.textArea[0].x, textLine.textArea[0].y, textLine.textArea[1].x, textLine.textArea[1].y);
+      textLine.charBoxBottom = LineSegment(textLine.textArea[3].x, textLine.textArea[3].y, textLine.textArea[2].x, textLine.textArea[2].y);
+      textLine.charBoxLeft = LineSegment(textLine.textArea[3].x, textLine.textArea[3].y, textLine.textArea[0].x, textLine.textArea[0].y);
+      textLine.charBoxRight = LineSegment(textLine.textArea[2].x, textLine.textArea[2].y, textLine.textArea[1].x, textLine.textArea[1].y);
     }
   }
 
+  pipeline_data->textLines.push_back(textLine);
+  
   this->thresholdsInverted = isPlateInverted();
 }
 
@@ -733,7 +735,7 @@ bool CharacterAnalysis::verifySize(Mat r, float minHeightPx, float maxHeightPx)
     return false;
 }
 
-vector<Point> CharacterAnalysis::getCharArea()
+vector<Point> CharacterAnalysis::getCharArea(LineSegment topLine, LineSegment bottomLine)
 {
   const int MAX = 100000;
   const int MIN= -1;

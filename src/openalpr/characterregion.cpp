@@ -75,8 +75,9 @@ CharacterRegion::CharacterRegion(PipelineData* pipeline_data)
       confidenceDrainers += 91;
     else if (charSegmentCount < 5)
       confidenceDrainers += (5 - charSegmentCount) * 10;
-
-    int absangle = abs(charAnalysis->topLine.angle);
+    
+    // Use the angle for the first line -- assume they'll always be parallel for multi-line plates
+    int absangle = abs(pipeline_data->textLines[0].topLine.angle);
     if (absangle > config->maxPlateAngleDegrees)
       confidenceDrainers += 91;
     else if (absangle > 1)
@@ -101,39 +102,4 @@ CharacterRegion::~CharacterRegion()
   delete(charAnalysis);
 }
 
-
-LineSegment CharacterRegion::getTopLine()
-{
-  return charAnalysis->topLine;
-}
-
-LineSegment CharacterRegion::getBottomLine()
-{
-  return charAnalysis->bottomLine;
-}
-
-vector<Point> CharacterRegion::getCharArea()
-{
-  return charAnalysis->charArea;
-}
-
-LineSegment CharacterRegion::getCharBoxTop()
-{
-  return charAnalysis->charBoxTop;
-}
-
-LineSegment CharacterRegion::getCharBoxBottom()
-{
-  return charAnalysis->charBoxBottom;
-}
-
-LineSegment CharacterRegion::getCharBoxLeft()
-{
-  return charAnalysis->charBoxLeft;
-}
-
-LineSegment CharacterRegion::getCharBoxRight()
-{
-  return charAnalysis->charBoxRight;
-}
 

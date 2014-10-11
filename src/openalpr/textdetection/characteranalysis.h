@@ -43,15 +43,10 @@ class CharacterAnalysis
     //std::vector<bool> bestCharSegments;
     //int bestCharSegmentsCount;
 
-    LineSegment topLine;
-    LineSegment bottomLine;
-    std::vector<cv::Point> linePolygon;
-    std::vector<cv::Point> charArea;
 
-    LineSegment charBoxTop;
-    LineSegment charBoxBottom;
-    LineSegment charBoxLeft;
-    LineSegment charBoxRight;
+    std::vector<cv::Point> linePolygon;
+
+
 
     bool thresholdsInverted;
     bool isTwoLine;
@@ -79,7 +74,7 @@ class CharacterAnalysis
     void filterContourHoles(TextContours& textContours);
     void filterByOuterMask(TextContours& textContours);
 
-    std::vector<cv::Point> getCharArea();
+    std::vector<cv::Point> getCharArea(LineSegment topLine, LineSegment bottomLine);
     std::vector<cv::Point> getBestVotedLines(cv::Mat img, TextContours textContours);
     void filterBetweenLines(cv::Mat img, TextContours& textContours, std::vector<cv::Point> outerPolygon );
 

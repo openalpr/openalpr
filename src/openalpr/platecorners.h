@@ -47,7 +47,7 @@ class PlateCorners
 {
 
   public:
-    PlateCorners(cv::Mat inputImage, PlateLines* plateLines, CharacterRegion* charRegion, Config* config);
+    PlateCorners(cv::Mat inputImage, PlateLines* plateLines, PipelineData* pipelineData);
     virtual ~PlateCorners();
 
     std::vector<cv::Point> findPlateCorners();
@@ -56,7 +56,7 @@ class PlateCorners
 
   private:
 
-    Config* config;
+    PipelineData* pipelineData;
     cv::Mat inputImage;
     float charHeight;
     float charAngle;
@@ -69,7 +69,6 @@ class PlateCorners
     LineSegment bestRight;
 
     PlateLines* plateLines;
-    CharacterRegion* charRegion;
 
     void scoreHorizontals( int h1, int h2 );
     void scoreVerticals( int v1, int v2 );
