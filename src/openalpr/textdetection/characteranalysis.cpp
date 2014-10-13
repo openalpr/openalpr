@@ -49,7 +49,6 @@ void CharacterAnalysis::analyze()
   timespec startTime;
   getTime(&startTime);
 
-  TextLine textLine;
   
   for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
   {
@@ -154,23 +153,18 @@ void CharacterAnalysis::analyze()
 
   if (this->linePolygon.size() > 0)
   {
-    textLine.topLine = LineSegment(this->linePolygon[0].x, this->linePolygon[0].y, this->linePolygon[1].x, this->linePolygon[1].y);
-    textLine.bottomLine = LineSegment(this->linePolygon[3].x, this->linePolygon[3].y, this->linePolygon[2].x, this->linePolygon[2].y);
+    LineSegment topLine = LineSegment(this->linePolygon[0].x, this->linePolygon[0].y, this->linePolygon[1].x, this->linePolygon[1].y);
+    LineSegment bottomLine = LineSegment(this->linePolygon[3].x, this->linePolygon[3].y, this->linePolygon[2].x, this->linePolygon[2].y);
 
     filterBetweenLines(bestThreshold, bestContours, linePolygon);
 
-    textLine.textArea = getCharArea(textLine.topLine, textLine.bottomLine);
+    vector<Point> textArea = getCharArea(topLine, bottomLine);
 
-    if (textLine.textArea.size() > 0)
-    {
-      textLine.charBoxTop = LineSegment(textLine.textArea[0].x, textLine.textArea[0].y, textLine.textArea[1].x, textLine.textArea[1].y);
-      textLine.charBoxBottom = LineSegment(textLine.textArea[3].x, textLine.textArea[3].y, textLine.textArea[2].x, textLine.textArea[2].y);
-      textLine.charBoxLeft = LineSegment(textLine.textArea[3].x, textLine.textArea[3].y, textLine.textArea[0].x, textLine.textArea[0].y);
-      textLine.charBoxRight = LineSegment(textLine.textArea[2].x, textLine.textArea[2].y, textLine.textArea[1].x, textLine.textArea[1].y);
-    }
+    TextLine textLine(textArea, topLine, bottomLine);
+    
+    pipeline_data->textLines.push_back(textLine);
   }
 
-  pipeline_data->textLines.push_back(textLine);
   
   this->thresholdsInverted = isPlateInverted();
 }

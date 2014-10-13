@@ -38,23 +38,13 @@ class CharacterAnalysis
     cv::Mat bestThreshold;
     
     TextContours bestContours;
-    //std::vector<std::vector<cv::Point> > bestContours;
-    //std::vector<cv::Vec4i> bestHierarchy;
-    //std::vector<bool> bestCharSegments;
-    //int bestCharSegmentsCount;
-
 
     std::vector<cv::Point> linePolygon;
-
-
 
     bool thresholdsInverted;
     bool isTwoLine;
 
     std::vector<TextContours> allTextContours;
-    //std::vector<std::vector<std::vector<cv::Point> > > allContours;
-    //std::vector<std::vector<cv::Vec4i> > allHierarchy;
-    //std::vector<std::vector<bool> > charSegments;
 
     void analyze();
 

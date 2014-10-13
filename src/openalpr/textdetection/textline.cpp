@@ -20,7 +20,17 @@
 
 #include "textline.h"
 
-TextLine::TextLine() {
+TextLine::TextLine(std::vector<cv::Point> textArea, LineSegment topLine, LineSegment bottomLine) {
+  if (textArea.size() > 0)
+  {
+    this->textArea = textArea;
+    this->topLine = topLine;
+    this->bottomLine = bottomLine;
+    this->charBoxTop = LineSegment(textArea[0].x, textArea[0].y, textArea[1].x, textArea[1].y);
+    this->charBoxBottom = LineSegment(textArea[3].x, textArea[3].y, textArea[2].x, textArea[2].y);
+    this->charBoxLeft = LineSegment(textArea[3].x, textArea[3].y, textArea[0].x, textArea[0].y);
+    this->charBoxRight = LineSegment(textArea[2].x, textArea[2].y, textArea[1].x, textArea[1].y);
+  }
 }
 
 
