@@ -957,69 +957,6 @@ void CharacterSegmenter::filterEdgeBoxes(vector<Mat> thresholds, const vector<Re
     }
   }
 
-  // TECHNIQUE #2
-  // Check for tall skinny blobs on the edge boxes.  If they're too long and skinny, maks the whole char region
-  /*
-   *
-  float MIN_EDGE_CONTOUR_HEIGHT = avgCharHeight * 0.7;
-  float MIN_EDGE_CONTOUR_AREA_PCT = avgCharHeight * 0.1;
-
-  for (int i = 0; i < thresholds.size(); i++)
-  {
-      // Just check the first and last char box.  If the contour extends too far above/below the line.  Drop it.
-
-      for (int boxidx = 0; boxidx < charRegions.size(); boxidx++)
-      {
-  if (boxidx != 0 || boxidx != charRegions.size() -1)
-  {
-    // This is a middle box.  we never want to filter these here.
-    continue;
-  }
-
-  vector<vector<Point> > contours;
-  Mat mask = Mat::zeros(thresholds[i].size(),CV_8U);
-  rectangle(mask, charRegions[boxidx], Scalar(255,255,255), CV_FILLED);
-
-  bitwise_and(thresholds[i], mask, mask);
-  findContours(mask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-  //int tallContourIndex = isSkinnyLineInsideBox(thresholds[i], charRegions[boxidx], allContours[i], hierarchy[i], avgCharWidth, avgCharHeight);
-  float tallestContourHeight = 0;
-  float fattestContourWidth = 0;
-  float biggestContourArea = 0;
-  for (int c = 0; c < contours.size(); c++)
-  {
-      Rect r = boundingRect(contours[c]);
-      if (r.height > tallestContourHeight)
-        tallestContourHeight = r.height;
-      if (r.width > fattestContourWidth)
-        fattestContourWidth = r.width;
-      float a = r.area();
-      if (a > biggestContourArea)
-        biggestContourArea = a;
-  }
-
-  float minArea = charRegions[boxidx].area() * MIN_EDGE_CONTOUR_AREA_PCT;
-  if ((fattestContourWidth < MIN_BOX_WIDTH_PX) ||
-    (tallestContourHeight < MIN_EDGE_CONTOUR_HEIGHT) ||
-    (biggestContourArea < minArea)
-  )
-  {
-    // Find a good place to MASK this contour.
-    // for now, just mask the whole thing
-    if (this->debug)
-    {
-      rectangle(imgDbgCleanStages[i], charRegions[boxidx], COLOR_DEBUG_EDGE, 2);
-      cout << "Edge Filter: threshold " << i << " box " << boxidx << endl;
-    }
-    rectangle(thresholds[i], charRegions[boxidx], Scalar(0,0,0), -1);
-  }
-  else
-  {
-    filteredCharRegions.push_back(charRegions[boxidx]);
-  }
-      }
-  }
-  */
 }
 
 int CharacterSegmenter::getLongestBlobLengthBetweenLines(Mat img, int col)
