@@ -49,6 +49,7 @@ void CharacterAnalysis::analyze()
   timespec startTime;
   getTime(&startTime);
 
+  pipeline_data->textLines.clear();
   
   for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
   {
@@ -149,18 +150,19 @@ void CharacterAnalysis::analyze()
     displayImage(config, "Matching Contours", img_contours);
   }
 
-  this->linePolygon =  getBestVotedLines(pipeline_data->crop_gray, bestContours);
+  vector<Point> linePolygon =  getBestVotedLines(pipeline_data->crop_gray, bestContours);
 
-  if (this->linePolygon.size() > 0)
+  if (linePolygon.size() > 0)
   {
-    LineSegment topLine = LineSegment(this->linePolygon[0].x, this->linePolygon[0].y, this->linePolygon[1].x, this->linePolygon[1].y);
-    LineSegment bottomLine = LineSegment(this->linePolygon[3].x, this->linePolygon[3].y, this->linePolygon[2].x, this->linePolygon[2].y);
+    
+    LineSegment topLine = LineSegment(linePolygon[0].x, linePolygon[0].y, linePolygon[1].x, linePolygon[1].y);
+    LineSegment bottomLine = LineSegment(linePolygon[3].x, linePolygon[3].y, linePolygon[2].x, linePolygon[2].y);
 
     filterBetweenLines(bestThreshold, bestContours, linePolygon);
-
+    
     vector<Point> textArea = getCharArea(topLine, bottomLine);
 
-    TextLine textLine(textArea, topLine, bottomLine);
+    TextLine textLine(textArea, linePolygon);
     
     pipeline_data->textLines.push_back(textLine);
   }

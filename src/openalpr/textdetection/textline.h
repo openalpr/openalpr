@@ -25,9 +25,10 @@
 
 class TextLine {
 public:
-  TextLine(std::vector<cv::Point> textArea, LineSegment topLine, LineSegment bottomLine);
+  TextLine(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon);
   virtual ~TextLine();
   
+  std::vector<cv::Point> linePolygon;
   std::vector<cv::Point> textArea;
   LineSegment topLine;
   LineSegment bottomLine;

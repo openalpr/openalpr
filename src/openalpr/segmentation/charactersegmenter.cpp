@@ -51,7 +51,7 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
     displayImage(config, "CharacterSegmenter  Thresholds", drawImageDashboard(pipeline_data->thresholds, CV_8U, 3));
   }
 
-  if (this->config->debugCharSegmenter && charAnalysis->linePolygon.size() > 0)
+  if (this->config->debugCharSegmenter && pipeline_data->textLines.size() > 0)
   {
     Mat img_contours(charAnalysis->bestThreshold.size(), CV_8U);
     charAnalysis->bestThreshold.copyTo(img_contours);
@@ -74,20 +74,21 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
                  cv::Scalar(0,255,0), // in green
                  1); // with a thickness of 1
 
-    if (charAnalysis->linePolygon.size() > 0)
-    {
-      line(img_contours, charAnalysis->linePolygon[0], charAnalysis->linePolygon[1], Scalar(255, 0, 255), 1);
-      line(img_contours, charAnalysis->linePolygon[3], charAnalysis->linePolygon[2], Scalar(255, 0, 255), 1);
-    }
+
+    line(img_contours, pipeline_data->textLines[0].linePolygon[0], pipeline_data->textLines[0].linePolygon[1], Scalar(255, 0, 255), 1);
+    line(img_contours, pipeline_data->textLines[0].linePolygon[3], pipeline_data->textLines[0].linePolygon[2], Scalar(255, 0, 255), 1);
+
 
     Mat bordered = addLabel(img_contours, "Best Contours");
     imgDbgGeneral.push_back(bordered);
   }
 
-  if (charAnalysis->linePolygon.size() > 0)
+  if (pipeline_data->textLines.size() > 0)
   {
-    this->top = LineSegment(charAnalysis->linePolygon[0].x, charAnalysis->linePolygon[0].y, charAnalysis->linePolygon[1].x, charAnalysis->linePolygon[1].y);
-    this->bottom = LineSegment(charAnalysis->linePolygon[3].x, charAnalysis->linePolygon[3].y, charAnalysis->linePolygon[2].x, charAnalysis->linePolygon[2].y);
+    this->top = LineSegment(pipeline_data->textLines[0].linePolygon[0].x, pipeline_data->textLines[0].linePolygon[0].y, 
+            pipeline_data->textLines[0].linePolygon[1].x, pipeline_data->textLines[0].linePolygon[1].y);
+    this->bottom = LineSegment(pipeline_data->textLines[0].linePolygon[3].x, pipeline_data->textLines[0].linePolygon[3].y, 
+            pipeline_data->textLines[0].linePolygon[2].x, pipeline_data->textLines[0].linePolygon[2].y);
 
     vector<int> charWidths;
     vector<int> charHeights;
@@ -120,7 +121,7 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
     {
       Mat histogramMask = Mat::zeros(pipeline_data->thresholds[i].size(), CV_8U);
 
-      fillConvexPoly(histogramMask, charAnalysis->linePolygon.data(), charAnalysis->linePolygon.size(), Scalar(255,255,255));
+      fillConvexPoly(histogramMask, pipeline_data->textLines[0].linePolygon.data(), pipeline_data->textLines[0].linePolygon.size(), Scalar(255,255,255));
 
       VerticalHistogram vertHistogram(pipeline_data->thresholds[i], histogramMask);
 

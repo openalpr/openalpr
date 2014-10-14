@@ -20,12 +20,15 @@
 
 #include "textline.h"
 
-TextLine::TextLine(std::vector<cv::Point> textArea, LineSegment topLine, LineSegment bottomLine) {
+TextLine::TextLine(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon) {
   if (textArea.size() > 0)
   {
     this->textArea = textArea;
-    this->topLine = topLine;
-    this->bottomLine = bottomLine;
+    this->linePolygon = linePolygon;
+    
+    this->topLine = LineSegment(linePolygon[0].x, linePolygon[0].y, linePolygon[1].x, linePolygon[1].y);
+    this->bottomLine = LineSegment(linePolygon[3].x, linePolygon[3].y, linePolygon[2].x, linePolygon[2].y);
+
     this->charBoxTop = LineSegment(textArea[0].x, textArea[0].y, textArea[1].x, textArea[1].y);
     this->charBoxBottom = LineSegment(textArea[3].x, textArea[3].y, textArea[2].x, textArea[2].y);
     this->charBoxLeft = LineSegment(textArea[3].x, textArea[3].y, textArea[0].x, textArea[0].y);

@@ -39,7 +39,7 @@ CharacterRegion::CharacterRegion(PipelineData* pipeline_data)
   charAnalysis->analyze();
   pipeline_data->plate_inverted = charAnalysis->thresholdsInverted;
 
-  if (this->debug && charAnalysis->linePolygon.size() > 0)
+  if (this->debug && pipeline_data->textLines.size() > 0)
   {
     vector<Mat> tempDash;
     for (uint z = 0; z < pipeline_data->thresholds.size(); z++)
@@ -67,7 +67,7 @@ CharacterRegion::CharacterRegion(PipelineData* pipeline_data)
   }
 
 
-  if (charAnalysis->linePolygon.size() > 0)
+  if (pipeline_data->textLines.size() > 0)
   {
     int confidenceDrainers = 0;
     int charSegmentCount = charAnalysis->bestContours.getGoodIndicesCount();

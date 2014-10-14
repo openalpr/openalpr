@@ -39,8 +39,6 @@ class CharacterAnalysis
     
     TextContours bestContours;
 
-    std::vector<cv::Point> linePolygon;
-
     bool thresholdsInverted;
     bool isTwoLine;
 
