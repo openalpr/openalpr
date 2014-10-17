@@ -18,6 +18,7 @@
 */
 
 #include "characteranalysis.h"
+#include "linefinder.h"
 
 using namespace cv;
 using namespace std;
@@ -101,8 +102,6 @@ void CharacterAnalysis::analyze()
   int bestFitIndex = -1;
   for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
   {
-    //vector<bool> goodIndices = this->filter(thresholds[i], allContours[i], allHierarchy[i]);
-    //charSegments.push_back(goodIndices);
 
     int segmentCount = allTextContours[i].getGoodIndicesCount();
 
@@ -125,31 +124,16 @@ void CharacterAnalysis::analyze()
 
   if (this->config->debugCharAnalysis)
   {
-    Mat img_contours(bestThreshold.size(), CV_8U);
-    bestThreshold.copyTo(img_contours);
-    cvtColor(img_contours, img_contours, CV_GRAY2RGB);
-
-    vector<vector<Point> > allowedContours;
-    for (uint i = 0; i < bestContours.size(); i++)
-    {
-      if (bestContours.goodIndices[i])
-        allowedContours.push_back(bestContours.contours[i]);
-    }
-
-    drawContours(img_contours, bestContours.contours,
-                 -1, // draw all contours
-                 cv::Scalar(255,0,0), // in blue
-                 1); // with a thickness of 1
-
-    drawContours(img_contours, allowedContours,
-                 -1, // draw all contours
-                 cv::Scalar(0,255,0), // in green
-                 1); // with a thickness of 1
+    Mat img_contours = bestContours.drawDebugImage(bestThreshold);
 
     displayImage(config, "Matching Contours", img_contours);
   }
 
-  vector<Point> linePolygon =  getBestVotedLines(pipeline_data->crop_gray, bestContours);
+  LineFinder lf(pipeline_data);
+  lf.findLines(pipeline_data->crop_gray, bestContours);
+  
+  vector<Point> linePolygon;
+  //vector<Point> linePolygon =  getBestVotedLines(pipeline_data->crop_gray, bestContours);
 
   if (linePolygon.size() > 0)
   {
@@ -370,7 +354,7 @@ void CharacterAnalysis::filter(Mat img, TextContours& textContours)
     for (uint z = 0; z < textContours.size(); z++) textContours.goodIndices[z] = true;
 
     this->filterByBoxSize(textContours, STARTING_MIN_HEIGHT + (i * HEIGHT_STEP), STARTING_MAX_HEIGHT + (i * HEIGHT_STEP));
-
+    
     int goodIndices = textContours.getGoodIndicesCount();
     if ( goodIndices == 0 || goodIndices <= bestFitScore)	// Don't bother doing more filtering if we already lost...
       continue;
@@ -381,8 +365,8 @@ void CharacterAnalysis::filter(Mat img, TextContours& textContours)
     if ( goodIndices == 0 || goodIndices <= bestFitScore)	// Don't bother doing more filtering if we already lost...
       continue;
     
-    vector<Point> lines = getBestVotedLines(img, textContours);
-    this->filterBetweenLines(img, textContours, lines);
+    //vector<Point> lines = getBestVotedLines(img, textContours);
+    //this->filterBetweenLines(img, textContours, lines);
 
     int segmentCount = textContours.getGoodIndicesCount();
 
@@ -415,11 +399,13 @@ void CharacterAnalysis::filterByBoxSize(TextContours& textContours, int minHeigh
 
     float minWidth = mr.height * 0.2;
     //Crop image
-    //Mat auxRoi(img, mr);
+    
+    //cout << "Height: " << minHeightPx << " - " << mr.height << " - " << maxHeightPx << " ////// Width: " << mr.width << " - " << minWidth << endl;
     if(mr.height >= minHeightPx && mr.height <= maxHeightPx && mr.width > minWidth)
     {
       float charAspect= (float)mr.width/(float)mr.height;
 
+      //cout << "  -- stage 2 aspect: " << abs(charAspect) << " - " << aspecttolerance << endl;
       if (abs(charAspect - idealAspect) < aspecttolerance)
         textContours.goodIndices[i] = true;
     }
@@ -545,7 +531,7 @@ void CharacterAnalysis::filterBetweenLines(Mat img, TextContours& textContours, 
 
   // Create a white mask for the area inside the polygon
   Mat outerMask = Mat::zeros(img.size(), CV_8U);
-  Mat innerArea(img.size(), CV_8U);
+
   fillConvexPoly(outerMask, outerPolygon.data(), outerPolygon.size(), Scalar(255,255,255));
 
   // For each contour, determine if enough of it is between the lines to qualify
@@ -556,35 +542,14 @@ void CharacterAnalysis::filterBetweenLines(Mat img, TextContours& textContours, 
     
     textContours.goodIndices[i] = false;  // Set it to not included unless it proves 
 
-    innerArea.setTo(Scalar(0,0,0));
+    float percentInsideMask = getContourAreaPercentInsideMask(outerMask, 
+            textContours.contours,
+            textContours.hierarchy, 
+            (int) i);
     
-    drawContours(innerArea, textContours.contours,
-                 i, // draw this contour
-                 cv::Scalar(255,255,255), // in
-                 CV_FILLED,
-                 8,
-                 textContours.hierarchy,
-                 0
-                );
-
-    bitwise_and(innerArea, outerMask, innerArea);
-
-    vector<vector<Point> > tempContours;
-    findContours(innerArea, tempContours,
-                 CV_RETR_EXTERNAL, // retrieve the external contours
-                 CV_CHAIN_APPROX_SIMPLE  ); // all pixels of each contours );
-
-    double totalArea = contourArea(textContours.contours[i]);
-    double areaBetweenLines = 0;
-
-    for (uint tempContourIdx = 0; tempContourIdx < tempContours.size(); tempContourIdx++)
-    {
-      areaBetweenLines += contourArea(tempContours[tempContourIdx]);
-    }
-
-
     
-    if (areaBetweenLines / totalArea < MIN_AREA_PERCENT_WITHIN_LINES)
+
+    if (percentInsideMask < MIN_AREA_PERCENT_WITHIN_LINES)
     {
       // Not enough area is inside the lines.
       continue;

@@ -26,6 +26,7 @@
 #include "pipeline_data.h"
 #include "textcontours.h"
 #include "platemask.h"
+#include "linefinder.h"
 
 class CharacterAnalysis
 {
@@ -40,7 +41,6 @@ class CharacterAnalysis
     TextContours bestContours;
 
     bool thresholdsInverted;
-    bool isTwoLine;
 
     std::vector<TextContours> allTextContours;
 
@@ -68,7 +68,7 @@ class CharacterAnalysis
 
     bool verifySize(cv::Mat r, float minHeightPx, float maxHeightPx);
 
-
+    
 };
 
 #endif // OPENALPR_CHARACTERANALYSIS_H

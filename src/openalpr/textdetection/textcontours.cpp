@@ -50,6 +50,9 @@ void TextContours::load(cv::Mat threshold) {
 
   for (uint i = 0; i < contours.size(); i++)
     goodIndices.push_back(true);
+  
+  this->width = threshold.cols;
+  this->height = threshold.rows;
 }
 
 
@@ -96,3 +99,40 @@ void TextContours::setIndices(std::vector<bool> newIndices)
     assert("Invalid set operation on indices");
   }
 }
+
+Mat TextContours::drawDebugImage() {
+
+    Mat img_contours = Mat::zeros(Size(width, height), CV_8U);
+    
+    return drawDebugImage(img_contours);
+}
+
+Mat TextContours::drawDebugImage(Mat baseImage) {
+    Mat img_contours(baseImage.size(), CV_8U);
+    baseImage.copyTo(img_contours);
+    
+    cvtColor(img_contours, img_contours, CV_GRAY2RGB);
+
+    vector<vector<Point> > allowedContours;
+    for (uint i = 0; i < this->contours.size(); i++)
+    {
+      if (this->goodIndices[i])
+        allowedContours.push_back(this->contours[i]);
+    }
+
+    drawContours(img_contours, this->contours,
+                 -1, // draw all contours
+                 cv::Scalar(255,0,0), // in blue
+                 1); // with a thickness of 1
+
+    drawContours(img_contours, allowedContours,
+                 -1, // draw all contours
+                 cv::Scalar(0,255,0), // in green
+                 1); // with a thickness of 1
+
+    
+    return img_contours;
+}
+
+
+

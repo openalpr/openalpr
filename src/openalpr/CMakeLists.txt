@@ -27,6 +27,7 @@ set(lpr_source_files
  textdetection/platemask.cpp
  textdetection/textcontours.cpp
  textdetection/textline.cpp
+ textdetection/linefinder.cpp
  pipeline_data.cpp
  trex.c
  cjson.c

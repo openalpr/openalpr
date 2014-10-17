@@ -17,40 +17,32 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TEXTCONTOURS_H
-#define	TEXTCONTOURS_H
+// This class finds lines of text given an array of contours
 
-#include <vector>
+#ifndef OPENALPR_LINEFINDER_H
+#define	OPENALPR_LINEFINDER_H
+
 #include "opencv2/imgproc/imgproc.hpp"
+#include "textcontours.h"
+#include "textline.h"
+#include "pipeline_data.h"
 
-class TextContours {
+
+class LineFinder {
 public:
-  TextContours();
-  TextContours(cv::Mat threshold);
-  virtual ~TextContours();
+  LineFinder(PipelineData* pipeline_data);
+  virtual ~LineFinder();
   
-  void load(cv::Mat threshold);
-  
-  int width;
-  int height;
-  
-  std::vector<bool> goodIndices;
-  std::vector<std::vector<cv::Point> > contours;
-  std::vector<cv::Vec4i> hierarchy;
-  
-  uint size();
-  int getGoodIndicesCount();
-  
-  std::vector<bool> getIndicesCopy();
-  void setIndices(std::vector<bool> newIndices);
-  
-  cv::Mat drawDebugImage();
-  cv::Mat drawDebugImage(cv::Mat baseImage);
-  
+  std::vector<TextLine> findLines(cv::Mat image, const TextContours contours);
 private:
+  PipelineData* pipeline_data;
+          
+  std::vector<cv::Rect> getBoundingBoxes(const TextContours contours);
+  std::vector<cv::Point> getCharTops(std::vector<cv::Rect> boxes);
+  std::vector<cv::Point> getCharBottoms(std::vector<cv::Rect> boxes);
   
-
+  std::vector<cv::Point> getBestLine(const TextContours contours, std::vector<cv::Point> tops, std::vector<cv::Point> bottoms);
 };
 
-#endif	/* TEXTCONTOURS_H */
+#endif	/* OPENALPR_LINEFINDER_H */
 
