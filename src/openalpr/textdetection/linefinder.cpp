@@ -157,8 +157,18 @@ vector<Point> LineFinder::getBestLine(const TextContours contours, vector<Point>
           bottomRight = bottoms[i];
         }
         
-        topLines.push_back(LineSegment(topLeft, topRight));
-        bottomLines.push_back(LineSegment(bottomLeft, bottomRight));
+        
+        LineSegment top(topLeft, topRight);
+        LineSegment bottom(bottomLeft, bottomRight);
+        
+        // Only allow lines that have a sane angle
+        if (abs(top.angle) <= pipeline_data->config->maxPlateAngleDegrees &&
+            abs(bottom.angle) <= pipeline_data->config->maxPlateAngleDegrees)
+        {
+          topLines.push_back(top);
+          bottomLines.push_back(bottom);
+        }
+        
 
       }
     }
