@@ -40,6 +40,7 @@ void LicensePlateCandidate::recognize()
   charSegmenter = NULL;
 
   pipeline_data->plate_area_confidence = 0;
+  pipeline_data->isMultiline = config->multiline;
 
   int expandX = round(this->pipeline_data->regionOfInterest.width * 0.20);
   int expandY = round(this->pipeline_data->regionOfInterest.height * 0.15);

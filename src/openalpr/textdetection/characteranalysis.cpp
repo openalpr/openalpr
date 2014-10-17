@@ -27,7 +27,6 @@ CharacterAnalysis::CharacterAnalysis(PipelineData* pipeline_data)
   this->pipeline_data = pipeline_data;
   this->config = pipeline_data->config;
 
-  this->isTwoLine = true;
 
   if (this->config->debugCharAnalysis)
     cout << "Starting CharacterAnalysis identification" << endl;

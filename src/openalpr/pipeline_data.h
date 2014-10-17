@@ -23,6 +23,8 @@ class PipelineData
     cv::Mat grayImg;
     cv::Rect regionOfInterest;
     
+    bool isMultiline;
+    
     cv::Mat crop_gray;
     
     bool hasPlateBorder;
