@@ -13,8 +13,19 @@ add_definitions( -DOPENALPR_MAJOR_VERSION=${OPENALPR_MAJOR_VERSION})
 add_definitions( -DOPENALPR_MINOR_VERSION=${OPENALPR_MINOR_VERSION})
 add_definitions( -DOPENALPR_PATCH_VERSION=${OPENALPR_PATCH_VERSION})
 
+
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
 
+# TODO: switch to http://www.cmake.org/cmake/help/v2.8.5/cmake.html#module:GNUInstallDirs ?
+IF (NOT CMAKE_INSTALL_SYSCONFDIR) 
+  SET(CMAKE_INSTALL_SYSCONFDIR "${CMAKE_INSTALL_PREFIX}/etc")
+ENDIF()
+
+#MESSAGE( STATUS " kkjjkj
+
+IF (NOT WIN32 AND NOT SKIP_DAEMON)
+  SET(INSTALL_DAEMON ON)
+ENDIF()
 
 FIND_PACKAGE( Tesseract REQUIRED )
 
@@ -64,7 +75,7 @@ TARGET_LINK_LIBRARIES(alpr
   )
 
 # Compile the alprd library on Unix-based OS
-IF (NOT WIN32)
+IF (INSTALL_DAEMON)
   ADD_EXECUTABLE( alprd  daemon.cpp daemon/beanstalk.c daemon/beanstalk.cc )
 
   TARGET_LINK_LIBRARIES(alprd
@@ -89,12 +100,14 @@ add_subdirectory(openalpr)
 add_subdirectory(video)
 
 
-install (TARGETS    alpr DESTINATION   /usr/bin)
-install (TARGETS    alprd DESTINATION  /usr/bin)
-install (FILES      ${CMAKE_SOURCE_DIR}/../doc/man/alpr.1 DESTINATION       /usr/share/man/man1 COMPONENT doc)
-install (DIRECTORY  ${CMAKE_SOURCE_DIR}/../runtime_data DESTINATION         /usr/share/openalpr/)
-install (FILES      ${CMAKE_SOURCE_DIR}/../config/openalpr.conf DESTINATION /etc/openalpr/      COMPONENT config)
-install (FILES      ${CMAKE_SOURCE_DIR}/../config/alprd.conf DESTINATION    /etc/openalpr/      COMPONENT config)
+install (TARGETS    alpr DESTINATION   ${CMAKE_INSTALL_PREFIX}/${BINDIR})
+IF (INSTALL_DAEMON)
+  install (TARGETS    alprd DESTINATION  ${CMAKE_INSTALL_PREFIX}/${BINDIR})
+ENDIF()
+install (FILES      ${CMAKE_SOURCE_DIR}/../doc/man/alpr.1 DESTINATION       ${CMAKE_INSTALL_PREFIX}/share/man/man1 COMPONENT doc)
+install (DIRECTORY  ${CMAKE_SOURCE_DIR}/../runtime_data DESTINATION         ${CMAKE_INSTALL_PREFIX}/share/openalpr)
+install (FILES      ${CMAKE_SOURCE_DIR}/../config/openalpr.conf DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/openalpr      COMPONENT config)
+install (FILES      ${CMAKE_SOURCE_DIR}/../config/alprd.conf DESTINATION    ${CMAKE_INSTALL_SYSCONFDIR}/openalpr      COMPONENT config)
 
 
 SET(CPACK_PACKAGE_VERSION ${OPENALPR_VERSION})
@@ -119,3 +132,14 @@ SET (CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}_${C
 SET (CPACK_COMPONENTS_ALL Libraries ApplicationData)
 
 INCLUDE(CPack)
+
+# ----------------------------------------------------------------------------
+# Uninstall target, for "make uninstall"
+# http://www.cmake.org/Wiki/CMake_FAQ#Can_I_do_.22make_uninstall.22_with_CMake.3F
+# ----------------------------------------------------------------------------
+CONFIGURE_FILE(
+  "${CMAKE_MODULE_PATH}/templates/cmake_uninstall.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+  @ONLY)
+
+ADD_CUSTOM_TARGET(uninstall COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
