@@ -100,9 +100,9 @@ add_subdirectory(openalpr)
 add_subdirectory(video)
 
 
-install (TARGETS    alpr DESTINATION   ${CMAKE_INSTALL_PREFIX}/${BINDIR})
+install (TARGETS    alpr DESTINATION   ${CMAKE_INSTALL_PREFIX}/bin)
 IF (INSTALL_DAEMON)
-  install (TARGETS    alprd DESTINATION  ${CMAKE_INSTALL_PREFIX}/${BINDIR})
+  install (TARGETS    alprd DESTINATION  ${CMAKE_INSTALL_PREFIX}/bin)
 ENDIF()
 install (FILES      ${CMAKE_SOURCE_DIR}/../doc/man/alpr.1 DESTINATION       ${CMAKE_INSTALL_PREFIX}/share/man/man1 COMPONENT doc)
 install (DIRECTORY  ${CMAKE_SOURCE_DIR}/../runtime_data DESTINATION         ${CMAKE_INSTALL_PREFIX}/share/openalpr)
