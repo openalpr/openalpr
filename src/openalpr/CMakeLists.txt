@@ -1,5 +1,4 @@
 
-SET(Tesseract_DIR "/Users/alex/work/lp/tesseract-ocr")
 
 
 set(lpr_source_files
