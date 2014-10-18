@@ -20,10 +20,16 @@ IF (NOT CMAKE_INSTALL_SYSCONFDIR)
   SET(CMAKE_INSTALL_SYSCONFDIR "${CMAKE_INSTALL_PREFIX}/etc")
 ENDIF()
 
-IF (NOT WIN32 AND NOT SKIP_DAEMON)
-  SET(INSTALL_DAEMON ON)
+IF ( NOT DEFINED WITH_DAEMON )
+  SET(WITH_DAEMON ON)
 ENDIF()
 
+IF (WIN32 AND WITH_DAEMON) 
+  MESSAGE(WARNING "Skipping alprd daemon installation, as it is not supported in Windows.")
+  SET(WITH_DAEMON OFF)
+ENDIF()
+
+MESSAGE(STATUS "WITH_DAEMON: ${WITH_DAEMON}")
 FIND_PACKAGE( Tesseract REQUIRED )
 
 include_directories(${Tesseract_INCLUDE_DIRS})
@@ -72,7 +78,7 @@ TARGET_LINK_LIBRARIES(alpr
   )
 
 # Compile the alprd library on Unix-based OS
-IF (INSTALL_DAEMON)
+IF (WITH_DAEMON)
   ADD_EXECUTABLE( alprd  daemon.cpp daemon/beanstalk.c daemon/beanstalk.cc )
 
   TARGET_LINK_LIBRARIES(alprd
@@ -98,13 +104,14 @@ add_subdirectory(video)
 
 
 install (TARGETS    alpr DESTINATION   ${CMAKE_INSTALL_PREFIX}/bin)
-IF (INSTALL_DAEMON)
-  install (TARGETS    alprd DESTINATION  ${CMAKE_INSTALL_PREFIX}/bin)
-ENDIF()
 install (FILES      ${CMAKE_SOURCE_DIR}/../doc/man/alpr.1 DESTINATION       ${CMAKE_INSTALL_PREFIX}/share/man/man1 COMPONENT doc)
 install (DIRECTORY  ${CMAKE_SOURCE_DIR}/../runtime_data DESTINATION         ${CMAKE_INSTALL_PREFIX}/share/openalpr)
 install (FILES      ${CMAKE_SOURCE_DIR}/../config/openalpr.conf DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/openalpr      COMPONENT config)
-install (FILES      ${CMAKE_SOURCE_DIR}/../config/alprd.conf DESTINATION    ${CMAKE_INSTALL_SYSCONFDIR}/openalpr      COMPONENT config)
+
+IF (WITH_DAEMON)
+  install (TARGETS    alprd DESTINATION  ${CMAKE_INSTALL_PREFIX}/bin)
+  install (FILES      ${CMAKE_SOURCE_DIR}/../config/alprd.conf DESTINATION    ${CMAKE_INSTALL_SYSCONFDIR}/openalpr      COMPONENT config)
+ENDIF()
 
 
 SET(CPACK_PACKAGE_VERSION ${OPENALPR_VERSION})
