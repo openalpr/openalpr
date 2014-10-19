@@ -160,7 +160,6 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
       cout << "  -- Character Segmentation Create and Score Histograms Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
 
-    //ColorFilter colorFilter(img, charAnalysis->getCharacterMask());
     vector<Rect> candidateBoxes = getBestCharBoxes(pipeline_data->thresholds[0], allBoxes, medianCharWidth);
 
     if (this->config->debugCharSegmenter)
@@ -287,7 +286,7 @@ vector<Rect> CharacterSegmenter::getHistogramBoxes(VerticalHistogram histogram, 
 
 vector<Rect> CharacterSegmenter::getBestCharBoxes(Mat img, vector<Rect> charBoxes, float avgCharWidth)
 {
-  float MAX_SEGMENT_WIDTH = avgCharWidth * 1.55;
+  float MAX_SEGMENT_WIDTH = avgCharWidth * 1.65;
 
   // This histogram is based on how many char boxes (from ALL of the many thresholded images) are covering each column
   // Makes a sort of histogram from all the previous char boxes.  Figures out the best fit from that.
