@@ -41,11 +41,14 @@ TextLine::TextLine(std::vector<cv::Point> textArea, std::vector<cv::Point> lineP
     this->charBoxLeft = LineSegment(textArea[3].x, textArea[3].y, textArea[0].x, textArea[0].y);
     this->charBoxRight = LineSegment(textArea[2].x, textArea[2].y, textArea[1].x, textArea[1].y);
     
- 
+    // Calculate line height
     float x = ((float) linePolygon[1].x) / 2;
     Point midpoint = Point(x, bottomLine.getPointAt(x));
     Point acrossFromMidpoint = topLine.closestPointOnSegmentTo(midpoint);
     this->lineHeight = distanceBetweenPoints(midpoint, acrossFromMidpoint);
+    
+    this->angle = (topLine.angle + bottomLine.angle) / 2;
+    
   }
 }
 
@@ -63,20 +66,16 @@ cv::Mat TextLine::drawDebugImage(cv::Mat baseImage) {
   
   fillConvexPoly(debugImage, linePolygon.data(), linePolygon.size(), Scalar(0,0,165));
 
-  drawAndWait(&debugImage);
   fillConvexPoly(debugImage, textArea.data(), textArea.size(), Scalar(125,255,0));
   
-  drawAndWait(&debugImage);
   line(debugImage, topLine.p1, topLine.p2, Scalar(255,0,0), 1);
   line(debugImage, bottomLine.p1, bottomLine.p2, Scalar(255,0,0), 1);
   
-  drawAndWait(&debugImage);
   line(debugImage, charBoxTop.p1, charBoxTop.p2, Scalar(0,125,125), 1);
   line(debugImage, charBoxLeft.p1, charBoxLeft.p2, Scalar(0,125,125), 1);
   line(debugImage, charBoxRight.p1, charBoxRight.p2, Scalar(0,125,125), 1);
   line(debugImage, charBoxBottom.p1, charBoxBottom.p2, Scalar(0,125,125), 1);
   
-  drawAndWait(&debugImage);
   
   return debugImage;
 }

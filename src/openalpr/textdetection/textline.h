@@ -40,6 +40,7 @@ public:
   LineSegment charBoxRight;
   
   float lineHeight;
+  float angle;
 
   cv::Mat drawDebugImage(cv::Mat baseImage);
 private:
