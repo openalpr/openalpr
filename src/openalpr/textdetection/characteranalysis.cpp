@@ -17,6 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <opencv2/imgproc/imgproc.hpp>
+
 #include "characteranalysis.h"
 #include "linefinder.h"
 
@@ -128,7 +130,7 @@ void CharacterAnalysis::analyze()
 
     displayImage(config, "Matching Contours", img_contours);
   }
-
+  
   LineFinder lf(pipeline_data);
   vector<vector<Point> > linePolygons = lf.findLines(pipeline_data->crop_gray, bestContours);
   
@@ -149,6 +151,8 @@ void CharacterAnalysis::analyze()
     pipeline_data->textLines.push_back(textLine);
   }
   
+  cout << "Good contours inverted left: " << bestContours.getGoodIndicesCount() << endl;
+  
   filterBetweenLines(bestThreshold, bestContours, pipeline_data->textLines);
 
   for (uint i = 0; i < pipeline_data->textLines.size(); i++)
@@ -160,7 +164,10 @@ void CharacterAnalysis::analyze()
     drawAndWait(&debugImage);
   }
   
+  cout << "Good contours inverted left: " << bestContours.getGoodIndicesCount() << endl;
+  
   this->thresholdsInverted = isPlateInverted();
+  cout << "Plate inverted: " << this->thresholdsInverted << endl;
 }
 
 
@@ -189,161 +196,6 @@ Mat CharacterAnalysis::getCharacterMask()
   return charMask;
 }
 
-// Returns a polygon "stripe" across the width of the character region.  The lines are voted and the polygon starts at 0 and extends to image width
-vector<Point> CharacterAnalysis::getBestVotedLines(Mat img, TextContours textContours)
-{
-  //if (this->debug)
-  //  cout << "CharacterAnalysis::getBestVotedLines" << endl;
-
-  vector<Point> bestStripe;
-
-  vector<Rect> charRegions;
-
-  for (uint i = 0; i < textContours.size(); i++)
-  {
-    if (textContours.goodIndices[i])
-      charRegions.push_back(boundingRect(textContours.contours[i]));
-  }
-
-  // Find the best fit line segment that is parallel with the most char segments
-  if (charRegions.size() <= 1)
-  {
-    // Maybe do something about this later, for now let's just ignore
-  }
-  else
-  {
-    vector<LineSegment> topLines;
-    vector<LineSegment> bottomLines;
-    // Iterate through each possible char and find all possible lines for the top and bottom of each char segment
-    for (uint i = 0; i < charRegions.size() - 1; i++)
-    {
-      for (uint k = i+1; k < charRegions.size(); k++)
-      {
-        //Mat tempImg;
-        //result.copyTo(tempImg);
-
-        Rect* leftRect;
-        Rect* rightRect;
-        if (charRegions[i].x < charRegions[k].x)
-        {
-          leftRect = &charRegions[i];
-          rightRect = &charRegions[k];
-        }
-        else
-        {
-          leftRect = &charRegions[k];
-          rightRect = &charRegions[i];
-        }
-
-        //rectangle(tempImg, *leftRect, Scalar(0, 255, 0), 2);
-        //rectangle(tempImg, *rightRect, Scalar(255, 255, 255), 2);
-
-        int x1, y1, x2, y2;
-
-        if (leftRect->y > rightRect->y)	// Rising line, use the top left corner of the rect
-        {
-          x1 = leftRect->x;
-          x2 = rightRect->x;
-        }
-        else					// falling line, use the top right corner of the rect
-        {
-          x1 = leftRect->x + leftRect->width;
-          x2 = rightRect->x + rightRect->width;
-        }
-        y1 = leftRect->y;
-        y2 = rightRect->y;
-
-        //cv::line(tempImg, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255));
-        topLines.push_back(LineSegment(x1, y1, x2, y2));
-
-        if (leftRect->y > rightRect->y)	// Rising line, use the bottom right corner of the rect
-        {
-          x1 = leftRect->x + leftRect->width;
-          x2 = rightRect->x + rightRect->width;
-        }
-        else					// falling line, use the bottom left corner of the rect
-        {
-          x1 = leftRect->x;
-          x2 = rightRect->x;
-        }
-        y1 = leftRect->y + leftRect->height;
-        y2 = rightRect->y + leftRect->height;
-
-        //cv::line(tempImg, Point(x1, y1), Point(x2, y2), Scalar(0, 0, 255));
-        bottomLines.push_back(LineSegment(x1, y1, x2, y2));
-
-      }
-    }
-
-    int bestScoreIndex = 0;
-    int bestScore = -1;
-    int bestScoreDistance = -1; // Line segment distance is used as a tie breaker
-
-    // Now, among all possible lines, find the one that is the best fit
-    for (uint i = 0; i < topLines.size(); i++)
-    {
-      float SCORING_MIN_THRESHOLD = 0.97;
-      float SCORING_MAX_THRESHOLD = 1.03;
-
-      int curScore = 0;
-      for (uint charidx = 0; charidx < charRegions.size(); charidx++)
-      {
-        float topYPos = topLines[i].getPointAt(charRegions[charidx].x);
-        float botYPos = bottomLines[i].getPointAt(charRegions[charidx].x);
-
-        float minTop = charRegions[charidx].y * SCORING_MIN_THRESHOLD;
-        float maxTop = charRegions[charidx].y * SCORING_MAX_THRESHOLD;
-        float minBot = (charRegions[charidx].y + charRegions[charidx].height) * SCORING_MIN_THRESHOLD;
-        float maxBot = (charRegions[charidx].y + charRegions[charidx].height) * SCORING_MAX_THRESHOLD;
-        if ( (topYPos >= minTop && topYPos <= maxTop) &&
-             (botYPos >= minBot && botYPos <= maxBot))
-        {
-          curScore++;
-        }
-
-        //cout << "Slope: " << topslope << " yPos: " << topYPos << endl;
-        //drawAndWait(&tempImg);
-      }
-
-      // Tie goes to the one with longer line segments
-      if ((curScore > bestScore) ||
-          (curScore == bestScore && topLines[i].length > bestScoreDistance))
-      {
-        bestScore = curScore;
-        bestScoreIndex = i;
-        // Just use x distance for now
-        bestScoreDistance = topLines[i].length;
-      }
-    }
-
-    if (this->config->debugCharAnalysis)
-    {
-      cout << "The winning score is: " << bestScore << endl;
-      // Draw the winning line segment
-      //Mat tempImg;
-      //result.copyTo(tempImg);
-      //cv::line(tempImg, topLines[bestScoreIndex].p1, topLines[bestScoreIndex].p2, Scalar(0, 0, 255), 2);
-      //cv::line(tempImg, bottomLines[bestScoreIndex].p1, bottomLines[bestScoreIndex].p2, Scalar(0, 0, 255), 2);
-
-      //displayImage(config, "Lines", tempImg);
-    }
-
-    //winningLines.push_back(topLines[bestScoreIndex]);
-    //winningLines.push_back(bottomLines[bestScoreIndex]);
-
-    Point topLeft 		= Point(0, topLines[bestScoreIndex].getPointAt(0) );
-    Point topRight 		= Point(img.cols, topLines[bestScoreIndex].getPointAt(img.cols));
-    Point bottomRight 	= Point(img.cols, bottomLines[bestScoreIndex].getPointAt(img.cols));
-    Point bottomLeft 	= Point(0, bottomLines[bestScoreIndex].getPointAt(0));
-
-    bestStripe.push_back(topLeft);
-    bestStripe.push_back(topRight);
-    bestStripe.push_back(bottomRight);
-    bestStripe.push_back(bottomLeft);
-  }
-
-  return bestStripe;
-}
 
 void CharacterAnalysis::filter(Mat img, TextContours& textContours)
 {
@@ -374,8 +226,6 @@ void CharacterAnalysis::filter(Mat img, TextContours& textContours)
     if ( goodIndices == 0 || goodIndices <= bestFitScore)	// Don't bother doing more filtering if we already lost...
       continue;
     
-    //vector<Point> lines = getBestVotedLines(img, textContours);
-    //this->filterBetweenLines(img, textContours, lines);
 
     int segmentCount = textContours.getGoodIndicesCount();
 
@@ -554,47 +404,42 @@ void CharacterAnalysis::filterBetweenLines(Mat img, TextContours& textContours, 
     if (percentInsideMask < MIN_AREA_PERCENT_WITHIN_LINES)
     {
       // Not enough area is inside the lines.
+      if (config->debugCharAnalysis)
+        cout << "Rejecting due to insufficient area" << endl;
       continue;
     }
     
+    textContours.goodIndices[i] = true;
     
     // now check to make sure that the top and bottom of the contour are near enough to the lines
     
     // First get the high and low point for the contour
     // Remember that origin is top-left, so the top Y values are actually closer to 0.
-    int highPointIndex = 0;
-    int highPointValue = 999999999;
-    int lowPointIndex = 0;
-    int lowPointValue = 0;
-    for (uint cidx = 0; cidx < textContours.contours[i].size(); cidx++)
-    {
-      if (textContours.contours[i][cidx].y < highPointValue)
-      {
-	highPointIndex = cidx;
-	highPointValue = textContours.contours[i][cidx].y;
-      }
-      if (textContours.contours[i][cidx].y > lowPointValue)
-      {
-	lowPointIndex = cidx;
-	lowPointValue = textContours.contours[i][cidx].y;
-      }
-    }
+    Rect brect = boundingRect(textContours.contours[i]);
+    int xmiddle = brect.x + (brect.width / 2);
+    Point topMiddle = Point(xmiddle, brect.y);
+    Point botMiddle = Point(xmiddle, brect.y+brect.height);
     
     // Get the absolute distance from the top and bottom lines
     
     for (uint i = 0; i < textLines.size(); i++)
     {
-      Point closestTopPoint = textLines[i].topLine.closestPointOnSegmentTo(textContours.contours[i][highPointIndex]);
-      Point closestBottomPoint = textLines[i].bottomLine.closestPointOnSegmentTo(textContours.contours[i][lowPointIndex]);
+      Point closestTopPoint = textLines[i].topLine.closestPointOnSegmentTo(topMiddle);
+      Point closestBottomPoint = textLines[i].bottomLine.closestPointOnSegmentTo(botMiddle);
 
-      float absTopDistance = distanceBetweenPoints(closestTopPoint, textContours.contours[i][highPointIndex]);
-      float absBottomDistance = distanceBetweenPoints(closestBottomPoint, textContours.contours[i][lowPointIndex]);
+      float absTopDistance = distanceBetweenPoints(closestTopPoint, topMiddle);
+      float absBottomDistance = distanceBetweenPoints(closestBottomPoint, botMiddle);
 
       float maxDistance = textLines[i].lineHeight * MAX_DISTANCE_PERCENT_FROM_LINES;
 
+      cout << "Distances: " << absTopDistance  << " : " << maxDistance << " - " << absBottomDistance << " : " << maxDistance << endl; 
       if (absTopDistance < maxDistance && absBottomDistance < maxDistance)
       {
         textContours.goodIndices[i] = true;
+      }
+      else if (config->debugCharAnalysis)
+      {
+          cout << "Rejecting due to top/bottom points that are out of range" << endl;
       }
     }
     
@@ -663,6 +508,8 @@ void CharacterAnalysis::filterByOuterMask(TextContours& textContours)
 bool CharacterAnalysis::isPlateInverted()
 {
   Mat charMask = getCharacterMask();
+  
+  drawAndWait(&charMask);
 
   Scalar meanVal = mean(bestThreshold, charMask)[0];
 
