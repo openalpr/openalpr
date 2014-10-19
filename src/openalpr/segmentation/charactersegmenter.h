@@ -55,7 +55,6 @@ class CharacterSegmenter
     Config* config;
     PipelineData* pipeline_data;
     
-    CharacterAnalysis* charAnalysis;
 
     LineSegment top;
     LineSegment bottom;
