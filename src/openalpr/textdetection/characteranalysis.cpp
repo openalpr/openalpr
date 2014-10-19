@@ -134,7 +134,7 @@ void CharacterAnalysis::analyze()
   LineFinder lf(pipeline_data);
   vector<vector<Point> > linePolygons = lf.findLines(pipeline_data->crop_gray, bestContours);
   
-
+  vector<TextLine> tempTextLines;
   for (uint i = 0; i < linePolygons.size(); i++)
   {
     vector<Point> linePolygon = linePolygons[i];
@@ -148,15 +148,21 @@ void CharacterAnalysis::analyze()
 
     TextLine textLine(textArea, linePolygon);
     
-    pipeline_data->textLines.push_back(textLine);
+    tempTextLines.push_back(textLine);
   }
   
   cout << "Good contours inverted left: " << bestContours.getGoodIndicesCount() << endl;
   
-  filterBetweenLines(bestThreshold, bestContours, pipeline_data->textLines);
+  filterBetweenLines(bestThreshold, bestContours, tempTextLines);
 
-  for (uint i = 0; i < pipeline_data->textLines.size(); i++)
+  // Now that we've filtered a few more contours, re-do the text area.
+  for (uint i = 0; i < tempTextLines.size(); i++)
   {
+    vector<Point> updatedTextArea = getCharArea(tempTextLines[i].topLine, tempTextLines[i].bottomLine);
+    vector<Point> linePolygon = tempTextLines[i].linePolygon;
+    pipeline_data->textLines.push_back(TextLine(updatedTextArea, linePolygon));
+    
+    
     cout << "Test1" << endl;
     Mat debugImage = pipeline_data->textLines[i].drawDebugImage(bestThreshold);
     
@@ -392,8 +398,6 @@ void CharacterAnalysis::filterBetweenLines(Mat img, TextContours& textContours, 
     if (textContours.goodIndices[i] == false)
       continue;
     
-    textContours.goodIndices[i] = false;  // Set it to not included unless it proves 
-
     float percentInsideMask = getContourAreaPercentInsideMask(outerMask, 
             textContours.contours,
             textContours.hierarchy, 
@@ -406,10 +410,11 @@ void CharacterAnalysis::filterBetweenLines(Mat img, TextContours& textContours, 
       // Not enough area is inside the lines.
       if (config->debugCharAnalysis)
         cout << "Rejecting due to insufficient area" << endl;
+      textContours.goodIndices[i] = false; 
+
       continue;
     }
     
-    textContours.goodIndices[i] = true;
     
     // now check to make sure that the top and bottom of the contour are near enough to the lines
     
@@ -435,10 +440,13 @@ void CharacterAnalysis::filterBetweenLines(Mat img, TextContours& textContours, 
       cout << "Distances: " << absTopDistance  << " : " << maxDistance << " - " << absBottomDistance << " : " << maxDistance << endl; 
       if (absTopDistance < maxDistance && absBottomDistance < maxDistance)
       {
-        textContours.goodIndices[i] = true;
+        // It's ok, leave it as-is.
       }
-      else if (config->debugCharAnalysis)
+      else
       {
+        
+        textContours.goodIndices[i] = false; 
+        if (config->debugCharAnalysis)
           cout << "Rejecting due to top/bottom points that are out of range" << endl;
       }
     }
