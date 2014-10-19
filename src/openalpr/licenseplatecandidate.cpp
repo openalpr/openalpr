@@ -17,6 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <opencv2/core/core.hpp>
+
 #include "licenseplatecandidate.h"
 
 using namespace std;
@@ -67,14 +69,49 @@ void LicensePlateCandidate::recognize()
 
     if (cornerFinder.confidence > 0)
     {
+      cout << "Transforming" << endl;
+      
+
+      Mat originalCrop = pipeline_data->crop_gray;
+      
       pipeline_data->plate_corners = transformPointsToOriginalImage(this->pipeline_data->grayImg, pipeline_data->crop_gray, expandedRegion, smallPlateCorners);
 
-      pipeline_data->crop_gray = deSkewPlate(this->pipeline_data->grayImg, pipeline_data->plate_corners);
+      Size outputImageSize = getOutputImageSize(pipeline_data->plate_corners);
+      Mat transmtx = getTransformationMatrix(pipeline_data->plate_corners, outputImageSize);
+      pipeline_data->crop_gray = deSkewPlate(this->pipeline_data->grayImg, outputImageSize, transmtx);
 
+      cout << "Size: " << outputImageSize.width << " - " << outputImageSize.height << endl;
+      
+      
+      // Apply a perspective transformation to the TextLine objects
+      // to match the newly deskewed license plate crop
+      vector<TextLine> newLines;
+      for (uint i = 0; i < pipeline_data->textLines.size(); i++)
+      {        
+        vector<Point2f> textArea = transformPointsToOriginalImage(this->pipeline_data->grayImg, originalCrop, expandedRegion, 
+                pipeline_data->textLines[i].textArea);
+        vector<Point2f> linePolygon = transformPointsToOriginalImage(this->pipeline_data->grayImg, originalCrop, expandedRegion, 
+                pipeline_data->textLines[i].linePolygon);
+        
+        vector<Point2f> textAreaRemapped;
+        vector<Point2f> linePolygonRemapped;
+        
+        perspectiveTransform(textArea, textAreaRemapped, transmtx);
+        perspectiveTransform(linePolygon, linePolygonRemapped, transmtx);
+        
+        newLines.push_back(TextLine(textAreaRemapped, linePolygonRemapped));
+      }
+      
+      pipeline_data->textLines.clear();
+      for (uint i = 0; i < newLines.size(); i++)
+        pipeline_data->textLines.push_back(newLines[i]);
+      
+      
+      Mat debugImg = pipeline_data->textLines[0].drawDebugImage(pipeline_data->crop_gray);
+      drawAndWait(&debugImg);
+      
       charSegmenter = new CharacterSegmenter(pipeline_data);
 
-      //this->recognizedText = ocr->recognizedText;
-      //strcpy(this->recognizedText, ocr.recognizedText);
 
       pipeline_data->plate_area_confidence = 100;
     }
@@ -100,13 +137,9 @@ vector<Point2f> LicensePlateCandidate::transformPointsToOriginalImage(Mat bigIma
   return cornerPoints;
 }
 
-Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, vector<Point2f> corners)
+Size LicensePlateCandidate::getOutputImageSize(vector<Point2f> corners)
 {
-  
-  timespec startTime;
-  getTime(&startTime);
-  
-  // Figure out the appoximate width/height of the license plate region, so we can maintain the aspect ratio.
+  // Figure out the approximate width/height of the license plate region, so we can maintain the aspect ratio.
   LineSegment leftEdge(round(corners[3].x), round(corners[3].y), round(corners[0].x), round(corners[0].y));
   LineSegment rightEdge(round(corners[2].x), round(corners[2].y), round(corners[1].x), round(corners[1].y));
   LineSegment topEdge(round(corners[0].x), round(corners[0].y), round(corners[1].x), round(corners[1].y));
@@ -115,7 +148,6 @@ Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, vector<Point2f> corners)
   float w = distanceBetweenPoints(leftEdge.midpoint(), rightEdge.midpoint());
   float h = distanceBetweenPoints(bottomEdge.midpoint(), topEdge.midpoint());
   float aspect = w/h;
-
   int width = config->ocrImageWidthPx;
   int height = round(((float) width) / aspect);
   if (height > config->ocrImageHeightPx)
@@ -123,22 +155,37 @@ Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, vector<Point2f> corners)
     height = config->ocrImageHeightPx;
     width = round(((float) height) * aspect);
   }
+  
+  return Size(width, height);
+}
 
-  Mat deskewed(height, width, this->pipeline_data->grayImg.type());
-
+Mat LicensePlateCandidate::getTransformationMatrix(vector<Point2f> corners, Size outputImageSize)
+{
   // Corners of the destination image
   vector<Point2f> quad_pts;
   quad_pts.push_back(Point2f(0, 0));
-  quad_pts.push_back(Point2f(deskewed.cols, 0));
-  quad_pts.push_back(Point2f(deskewed.cols, deskewed.rows));
-  quad_pts.push_back(Point2f(0, deskewed.rows));
+  quad_pts.push_back(Point2f(outputImageSize.width, 0));
+  quad_pts.push_back(Point2f(outputImageSize.width, outputImageSize.height));
+  quad_pts.push_back(Point2f(0, outputImageSize.height));
 
   // Get transformation matrix
   Mat transmtx = getPerspectiveTransform(corners, quad_pts);
 
-  // Apply perspective transformation
-  warpPerspective(inputImage, deskewed, transmtx, deskewed.size(), INTER_CUBIC);
+  return transmtx;
+}
 
+Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, Size outputImageSize, Mat transformationMatrix)
+{
+  
+  timespec startTime;
+  getTime(&startTime);
+  
+  Mat deskewed(outputImageSize, this->pipeline_data->grayImg.type());
+  
+  // Apply perspective transformation to the image
+  warpPerspective(inputImage, deskewed, transformationMatrix, deskewed.size(), INTER_CUBIC);
+
+  
   if (config->debugTiming)
   {
     timespec endTime;
@@ -151,4 +198,9 @@ Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, vector<Point2f> corners)
 
   return deskewed;
 }
+
+//void LicensePlateCandidate::remapTextArea(cv::Mat inputImage, std::vector<cv::Point2f> corners) {
+//
+//}
+
 

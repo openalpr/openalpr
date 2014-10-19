@@ -59,9 +59,11 @@ class LicensePlateCandidate
     cv::Mat filterByCharacterHue(std::vector<std::vector<cv::Point> > charRegionContours);
     std::vector<cv::Point> findPlateCorners(cv::Mat inputImage, PlateLines plateLines, CharacterRegion charRegion);	// top-left, top-right, bottom-right, bottom-left
 
+    cv::Size getOutputImageSize(std::vector<cv::Point2f> corners);
     std::vector<cv::Point2f> transformPointsToOriginalImage(cv::Mat bigImage, cv::Mat smallImage, cv::Rect region, std::vector<cv::Point> corners);
-    cv::Mat deSkewPlate(cv::Mat inputImage, std::vector<cv::Point2f> corners);
-
+    cv::Mat getTransformationMatrix(std::vector<cv::Point2f> corners, cv::Size outputImageSize);
+    cv::Mat deSkewPlate(cv::Mat inputImage, cv::Size outputImageSize, cv::Mat transformationMatrix);
+    
 };
 
 #endif // OPENALPR_LICENSEPLATECANDIDATE_H

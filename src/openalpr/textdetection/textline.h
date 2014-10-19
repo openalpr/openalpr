@@ -27,7 +27,9 @@
 class TextLine {
 public:
   TextLine(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon);
+  TextLine(std::vector<cv::Point2f> textArea, std::vector<cv::Point2f> linePolygon);
   virtual ~TextLine();
+  
   
   std::vector<cv::Point> linePolygon;
   std::vector<cv::Point> textArea;
@@ -45,6 +47,7 @@ public:
   cv::Mat drawDebugImage(cv::Mat baseImage);
 private:
 
+  void initialize(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon);
 };
 
 #endif	/* OPENALPR_TEXTLINE_H */
