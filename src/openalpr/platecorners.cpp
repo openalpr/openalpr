@@ -139,8 +139,8 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   {
     //return;
 
-    left = tlc.centerVerticalLine.getParallelLine(idealPixelWidth / 2);
-    right = tlc.centerVerticalLine.getParallelLine(-1 * idealPixelWidth / 2 );
+    left = tlc.centerVerticalLine.getParallelLine(-1 * idealPixelWidth / 2);
+    right = tlc.centerVerticalLine.getParallelLine(idealPixelWidth / 2 );
 
     missingSegmentPenalty += SCORING_MISSING_SEGMENT_PENALTY_VERTICAL * 2;
     confidenceDiff += 2;
