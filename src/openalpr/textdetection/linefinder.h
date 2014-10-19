@@ -27,21 +27,28 @@
 #include "textline.h"
 #include "pipeline_data.h"
 
+class CharPointInfo
+{
+public:
+  CharPointInfo(std::vector<cv::Point> contour, int index);
+  
+  cv::Rect boundingBox;
+  cv::Point top;
+  cv::Point bottom;
+  int contourIndex;
+  
+};
 
 class LineFinder {
 public:
   LineFinder(PipelineData* pipeline_data);
   virtual ~LineFinder();
   
-  std::vector<TextLine> findLines(cv::Mat image, const TextContours contours);
+  std::vector<std::vector<cv::Point> > findLines(cv::Mat image, const TextContours contours);
 private:
   PipelineData* pipeline_data;
           
-  std::vector<cv::Rect> getBoundingBoxes(const TextContours contours);
-  std::vector<cv::Point> getCharTops(std::vector<cv::Rect> boxes);
-  std::vector<cv::Point> getCharBottoms(std::vector<cv::Rect> boxes);
-  
-  std::vector<cv::Point> getBestLine(const TextContours contours, std::vector<cv::Point> tops, std::vector<cv::Point> bottoms);
+  std::vector<cv::Point> getBestLine(const TextContours contours, std::vector<CharPointInfo> charPoints);
 };
 
 #endif	/* OPENALPR_LINEFINDER_H */

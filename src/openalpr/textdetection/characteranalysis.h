@@ -64,7 +64,7 @@ class CharacterAnalysis
 
     std::vector<cv::Point> getCharArea(LineSegment topLine, LineSegment bottomLine);
     std::vector<cv::Point> getBestVotedLines(cv::Mat img, TextContours textContours);
-    void filterBetweenLines(cv::Mat img, TextContours& textContours, std::vector<cv::Point> outerPolygon );
+    void filterBetweenLines(cv::Mat img, TextContours& textContours, std::vector<TextLine> textLines );
 
     bool verifySize(cv::Mat r, float minHeightPx, float maxHeightPx);
 

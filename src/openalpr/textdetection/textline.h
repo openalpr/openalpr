@@ -22,6 +22,7 @@
 #define	OPENALPR_TEXTLINE_H
 
 #include "utility.h"
+#include "opencv2/imgproc/imgproc.hpp"
 
 class TextLine {
 public:
@@ -38,6 +39,9 @@ public:
   LineSegment charBoxLeft;
   LineSegment charBoxRight;
   
+  float lineHeight;
+
+  cv::Mat drawDebugImage(cv::Mat baseImage);
 private:
 
 };

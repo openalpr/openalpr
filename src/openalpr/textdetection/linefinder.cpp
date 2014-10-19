@@ -33,35 +33,51 @@ LineFinder::LineFinder(PipelineData* pipeline_data) {
 LineFinder::~LineFinder() {
 }
 
-vector<TextLine> LineFinder::findLines(Mat image, const TextContours contours)
+vector<vector<Point> > LineFinder::findLines(Mat image, const TextContours contours)
 {
-  vector<TextLine> linesFound;
+  vector<vector<Point> > linesFound;
   
   
   cvtColor(image, image, CV_GRAY2BGR);
-  vector<Rect> boxes = this->getBoundingBoxes(contours);
   
-  vector<Point> tops = this->getCharTops(boxes);
-  vector<Point> bottoms = this->getCharBottoms(boxes);
+  vector<CharPointInfo> charPoints;
   
-  for (uint i = 0; i < tops.size(); i++)
+  for (uint i = 0; i < contours.contours.size(); i++)
   {
-    circle(image, tops[i], 1, Scalar(255, 0, 0), 2);
-    circle(image, bottoms[i], 1, Scalar(0, 0, 255), 2);
+    if (contours.goodIndices[i] == false)
+      continue;
+    
+    charPoints.push_back( CharPointInfo(contours.contours[i], i) );
   }
   
-  drawAndWait(&image);
+  vector<Point> bestLine = getBestLine(contours, charPoints);
   
-  vector<Point> bestLine = getBestLine(contours, tops, bottoms);
+  if (bestLine.size() > 0)
+    linesFound.push_back(bestLine);
   
   if (pipeline_data->isMultiline)
   {
     // we have a two-line plate.  Find the next best line, removing the tops/bottoms from before.
-  }
-  
-  for (uint i = 0; i < contours.goodIndices.size(); i++)
-  {
+    // Create a mask from the bestLine area, and remove all contours with tops that fall inside of it.
     
+    vector<CharPointInfo> remainingPoints;
+    for (uint i = 0; i < charPoints.size(); i++)
+    {
+      Mat mask = Mat::zeros(Size(contours.width, contours.height), CV_8U);
+      fillConvexPoly(mask, bestLine.data(), bestLine.size(), Scalar(255,255,255));
+      
+      float percentInside = getContourAreaPercentInsideMask(mask, contours.contours, contours.hierarchy, charPoints[i].contourIndex);
+      
+      if (percentInside < .85)
+      {
+        remainingPoints.push_back(charPoints[i]);
+      }
+    }
+    
+    vector<Point> nextBestLine = getBestLine(contours, remainingPoints);
+    
+    if (nextBestLine.size() > 0)
+      linesFound.push_back(nextBestLine);
   }
   
   
@@ -69,64 +85,15 @@ vector<TextLine> LineFinder::findLines(Mat image, const TextContours contours)
 }
 
 
-vector<Rect> LineFinder::getBoundingBoxes(const TextContours contours) {
-  
-  vector<Rect> boxes;
-  for (uint i = 0; i < contours.goodIndices.size(); i++)
-  {
-    if (contours.goodIndices[i] == false)
-      continue;
-    
-    Rect bRect = cv::boundingRect( Mat(contours.contours[i]) );
-    
-    boxes.push_back(bRect);
-  }
-  
-  return boxes;
-}
-
-
-vector<Point> LineFinder::getCharTops(vector<Rect> boxes) {
-  
-  vector<Point> tops;
-  for (uint i = 0; i < boxes.size(); i++)
-  {
-    int x = boxes[i].x + (boxes[i].width / 2);
-    int y = boxes[i].y;
-    
-    tops.push_back(Point(x, y));
-  }
-
-  return tops;
-}
-
-vector<Point> LineFinder::getCharBottoms(vector<Rect> boxes) {
-  
-  vector<Point> bottoms;
-  for (uint i = 0; i < boxes.size(); i++)
-  {
-    int x = boxes[i].x + (boxes[i].width / 2);
-    int y = boxes[i].y + boxes[i].height;
-    
-    bottoms.push_back(Point(x, y));
-  }
-
-  return bottoms;
-}
-
-
-
-
-
 // Returns a polygon "stripe" across the width of the character region.  The lines are voted and the polygon starts at 0 and extends to image width
-vector<Point> LineFinder::getBestLine(const TextContours contours, vector<Point> tops, vector<Point> bottoms)
+vector<Point> LineFinder::getBestLine(const TextContours contours, vector<CharPointInfo> charPoints)
 {
 
 
   vector<Point> bestStripe;
 
   // Find the best fit line segment that is parallel with the most char segments
-  if (tops.size() <= 1)
+  if (charPoints.size() <= 1)
   {
     // Maybe do something about this later, for now let's just ignore
   }
@@ -135,31 +102,26 @@ vector<Point> LineFinder::getBestLine(const TextContours contours, vector<Point>
     vector<LineSegment> topLines;
     vector<LineSegment> bottomLines;
     // Iterate through each possible char and find all possible lines for the top and bottom of each char segment
-    for (uint i = 0; i < tops.size() - 1; i++)
+    for (uint i = 0; i < charPoints.size() - 1; i++)
     {
-      for (uint k = i+1; k < tops.size(); k++)
+      for (uint k = i+1; k < charPoints.size(); k++)
       {
         
-        Point topLeft, topRight;
-        Point bottomLeft, bottomRight;
-        if (tops[i].x < tops[k].x)
+        int leftCPIndex, rightCPIndex;
+        if (charPoints[i].top.x < charPoints[k].top.x)
         {
-          topLeft = tops[i];
-          topRight = tops[k];
-          bottomLeft = bottoms[i];
-          bottomRight = bottoms[k];
+          leftCPIndex = i;
+          rightCPIndex = k;
         }
         else
         {
-          topLeft = tops[k];
-          topRight = tops[i];
-          bottomLeft = bottoms[k];
-          bottomRight = bottoms[i];
+          leftCPIndex = k;
+          rightCPIndex = i;
         }
         
         
-        LineSegment top(topLeft, topRight);
-        LineSegment bottom(bottomLeft, bottomRight);
+        LineSegment top(charPoints[leftCPIndex].top, charPoints[rightCPIndex].top);
+        LineSegment bottom(charPoints[leftCPIndex].bottom, charPoints[rightCPIndex].bottom);
         
         // Only allow lines that have a sane angle
         if (abs(top.angle) <= pipeline_data->config->maxPlateAngleDegrees &&
@@ -184,15 +146,15 @@ vector<Point> LineFinder::getBestLine(const TextContours contours, vector<Point>
       float SCORING_MAX_THRESHOLD = 1.03;
 
       int curScore = 0;
-      for (uint charidx = 0; charidx < tops.size(); charidx++)
+      for (uint charidx = 0; charidx < charPoints.size(); charidx++)
       {
-        float topYPos = topLines[i].getPointAt(tops[charidx].x);
-        float botYPos = bottomLines[i].getPointAt(bottoms[charidx].x);
+        float topYPos = topLines[i].getPointAt(charPoints[charidx].top.x);
+        float botYPos = bottomLines[i].getPointAt(charPoints[charidx].bottom.x);
 
-        float minTop = tops[charidx].y * SCORING_MIN_THRESHOLD;
-        float maxTop = tops[charidx].y * SCORING_MAX_THRESHOLD;
-        float minBot = (bottoms[charidx].y) * SCORING_MIN_THRESHOLD;
-        float maxBot = (bottoms[charidx].y) * SCORING_MAX_THRESHOLD;
+        float minTop = charPoints[charidx].top.y * SCORING_MIN_THRESHOLD;
+        float maxTop = charPoints[charidx].top.y * SCORING_MAX_THRESHOLD;
+        float minBot = (charPoints[charidx].bottom.y) * SCORING_MIN_THRESHOLD;
+        float maxBot = (charPoints[charidx].bottom.y) * SCORING_MAX_THRESHOLD;
         if ( (topYPos >= minTop && topYPos <= maxTop) &&
              (botYPos >= minBot && botYPos <= maxBot))
         {
@@ -202,7 +164,7 @@ vector<Point> LineFinder::getBestLine(const TextContours contours, vector<Point>
         //cout << "Slope: " << topslope << " yPos: " << topYPos << endl;
         //drawAndWait(&tempImg);
       }
-
+      
       // Tie goes to the one with longer line segments
       if ((curScore > bestScore) ||
           (curScore == bestScore && topLines[i].length > bestScoreDistance))
@@ -239,4 +201,24 @@ vector<Point> LineFinder::getBestLine(const TextContours contours, vector<Point>
   }
 
   return bestStripe;
+}
+
+CharPointInfo::CharPointInfo(vector<Point> contour, int index) {
+
+    
+  this->contourIndex = index;
+  
+  this->boundingBox = cv::boundingRect( Mat(contour) );
+      
+ 
+  int x = boundingBox.x + (boundingBox.width / 2);
+  int y = boundingBox.y;
+
+  this->top = Point(x, y);
+ 
+  x = boundingBox.x + (boundingBox.width / 2);
+  y = boundingBox.y + boundingBox.height;
+
+  this->bottom = Point(x,y);
+  
 }

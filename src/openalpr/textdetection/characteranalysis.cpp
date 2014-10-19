@@ -130,18 +130,17 @@ void CharacterAnalysis::analyze()
   }
 
   LineFinder lf(pipeline_data);
-  lf.findLines(pipeline_data->crop_gray, bestContours);
+  vector<vector<Point> > linePolygons = lf.findLines(pipeline_data->crop_gray, bestContours);
   
-  vector<Point> linePolygon;
-  //vector<Point> linePolygon =  getBestVotedLines(pipeline_data->crop_gray, bestContours);
 
-  if (linePolygon.size() > 0)
+  for (uint i = 0; i < linePolygons.size(); i++)
   {
+    vector<Point> linePolygon = linePolygons[i];
+   
+    cout << "Polygon: " << linePolygon[0] << " - " << linePolygon[1] << " - " << linePolygon[2] << " - " << linePolygon[3] << endl;
     
     LineSegment topLine = LineSegment(linePolygon[0].x, linePolygon[0].y, linePolygon[1].x, linePolygon[1].y);
     LineSegment bottomLine = LineSegment(linePolygon[3].x, linePolygon[3].y, linePolygon[2].x, linePolygon[2].y);
-
-    filterBetweenLines(bestThreshold, bestContours, linePolygon);
     
     vector<Point> textArea = getCharArea(topLine, bottomLine);
 
@@ -149,7 +148,17 @@ void CharacterAnalysis::analyze()
     
     pipeline_data->textLines.push_back(textLine);
   }
+  
+  filterBetweenLines(bestThreshold, bestContours, pipeline_data->textLines);
 
+  for (uint i = 0; i < pipeline_data->textLines.size(); i++)
+  {
+    cout << "Test1" << endl;
+    Mat debugImage = pipeline_data->textLines[i].drawDebugImage(bestThreshold);
+    
+    cout << "Test2" << endl;
+    drawAndWait(&debugImage);
+  }
   
   this->thresholdsInverted = isPlateInverted();
 }
@@ -510,29 +519,22 @@ void CharacterAnalysis::filterByParentContour( TextContours& textContours)
 
 }
 
-void CharacterAnalysis::filterBetweenLines(Mat img, TextContours& textContours, vector<Point> outerPolygon )
+void CharacterAnalysis::filterBetweenLines(Mat img, TextContours& textContours, vector<TextLine> textLines )
 {
   static float MIN_AREA_PERCENT_WITHIN_LINES = 0.88;
   static float MAX_DISTANCE_PERCENT_FROM_LINES = 0.15;
 
-  if (outerPolygon.size() == 0)
+  if (textLines.size() == 0)
     return;
 
   vector<Point> validPoints;
 
-  // Figure out the line height
-  LineSegment topLine(outerPolygon[0].x, outerPolygon[0].y, outerPolygon[1].x, outerPolygon[1].y);
-  LineSegment bottomLine(outerPolygon[3].x, outerPolygon[3].y, outerPolygon[2].x, outerPolygon[2].y);
-
-  float x = ((float) img.cols) / 2;
-  Point midpoint = Point(x, bottomLine.getPointAt(x));
-  Point acrossFromMidpoint = topLine.closestPointOnSegmentTo(midpoint);
-  float lineHeight = distanceBetweenPoints(midpoint, acrossFromMidpoint);
 
   // Create a white mask for the area inside the polygon
   Mat outerMask = Mat::zeros(img.size(), CV_8U);
 
-  fillConvexPoly(outerMask, outerPolygon.data(), outerPolygon.size(), Scalar(255,255,255));
+  for (uint i = 0; i < textLines.size(); i++)
+    fillConvexPoly(outerMask, textLines[i].linePolygon.data(), textLines[i].linePolygon.size(), Scalar(255,255,255));
 
   // For each contour, determine if enough of it is between the lines to qualify
   for (uint i = 0; i < textContours.size(); i++)
@@ -579,19 +581,23 @@ void CharacterAnalysis::filterBetweenLines(Mat img, TextContours& textContours, 
     }
     
     // Get the absolute distance from the top and bottom lines
-    Point closestTopPoint = topLine.closestPointOnSegmentTo(textContours.contours[i][highPointIndex]);
-    Point closestBottomPoint = bottomLine.closestPointOnSegmentTo(textContours.contours[i][lowPointIndex]);
     
-    float absTopDistance = distanceBetweenPoints(closestTopPoint, textContours.contours[i][highPointIndex]);
-    float absBottomDistance = distanceBetweenPoints(closestBottomPoint, textContours.contours[i][lowPointIndex]);
-    
-    float maxDistance = lineHeight * MAX_DISTANCE_PERCENT_FROM_LINES;
-     
-    if (absTopDistance < maxDistance && absBottomDistance < maxDistance)
+    for (uint i = 0; i < textLines.size(); i++)
     {
-      textContours.goodIndices[i] = true;
-    }
+      Point closestTopPoint = textLines[i].topLine.closestPointOnSegmentTo(textContours.contours[i][highPointIndex]);
+      Point closestBottomPoint = textLines[i].bottomLine.closestPointOnSegmentTo(textContours.contours[i][lowPointIndex]);
 
+      float absTopDistance = distanceBetweenPoints(closestTopPoint, textContours.contours[i][highPointIndex]);
+      float absBottomDistance = distanceBetweenPoints(closestBottomPoint, textContours.contours[i][lowPointIndex]);
+
+      float maxDistance = textLines[i].lineHeight * MAX_DISTANCE_PERCENT_FROM_LINES;
+
+      if (absTopDistance < maxDistance && absBottomDistance < maxDistance)
+      {
+        textContours.goodIndices[i] = true;
+      }
+    }
+    
   }
 
 }
