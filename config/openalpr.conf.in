@@ -1,7 +1,7 @@
 [common]
 
 ; Specify the path to the runtime data directory
-runtime_dir = /usr/share/openalpr/runtime_data
+runtime_dir = ${CMAKE_INSTALL_PREFIX}/share/openalpr/runtime_data
 
 
 ocr_img_size_percent = 1.33333333
