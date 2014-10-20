@@ -17,6 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <opencv2/core/core.hpp>
+
 #include "charactersegmenter.h"
 
 using namespace cv;
@@ -37,8 +39,11 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
   timespec startTime;
   getTime(&startTime);
 
+  if (pipeline_data->plate_inverted)
+    bitwise_not(pipeline_data->crop_gray, pipeline_data->crop_gray);
   pipeline_data->clearThresholds();
   pipeline_data->thresholds = produceThresholds(pipeline_data->crop_gray, config);
+    
 
   medianBlur(pipeline_data->crop_gray, pipeline_data->crop_gray, 3);
 
