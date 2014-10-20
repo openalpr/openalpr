@@ -25,6 +25,8 @@
 using namespace cv;
 using namespace std;
 
+bool sort_text_line(TextLine i, TextLine j) { return (i.topLine.p1.y < j.topLine.p1.y); }
+
 CharacterAnalysis::CharacterAnalysis(PipelineData* pipeline_data)
 {
   this->pipeline_data = pipeline_data;
@@ -155,6 +157,9 @@ void CharacterAnalysis::analyze()
   
   filterBetweenLines(bestThreshold, bestContours, tempTextLines);
 
+  // Sort the lines from top to bottom.
+  std::sort(tempTextLines.begin(), tempTextLines.end(), sort_text_line);
+  
   // Now that we've filtered a few more contours, re-do the text area.
   for (uint i = 0; i < tempTextLines.size(); i++)
   {

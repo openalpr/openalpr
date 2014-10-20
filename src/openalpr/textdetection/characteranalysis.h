@@ -20,6 +20,7 @@
 #ifndef OPENALPR_CHARACTERANALYSIS_H
 #define OPENALPR_CHARACTERANALYSIS_H
 
+#include <algorithm>
 #include "opencv2/imgproc/imgproc.hpp"
 #include "utility.h"
 #include "config.h"
