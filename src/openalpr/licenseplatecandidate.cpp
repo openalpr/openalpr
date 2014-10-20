@@ -69,8 +69,10 @@ void LicensePlateCandidate::recognize()
 
     if (cornerFinder.confidence > 0)
     {
-      cout << "Transforming" << endl;
-      
+
+      timespec startTime;
+      getTime(&startTime);
+
 
       Mat originalCrop = pipeline_data->crop_gray;
       
@@ -109,6 +111,13 @@ void LicensePlateCandidate::recognize()
       
       Mat debugImg = pipeline_data->textLines[0].drawDebugImage(pipeline_data->crop_gray);
       drawAndWait(&debugImg);
+      
+      if (config->debugTiming)
+      {
+        timespec endTime;
+        getTime(&endTime);
+        cout << "deskew Time: " << diffclock(startTime, endTime) << "ms." << endl;
+      }
       
       charSegmenter = new CharacterSegmenter(pipeline_data);
 
@@ -177,8 +186,6 @@ Mat LicensePlateCandidate::getTransformationMatrix(vector<Point2f> corners, Size
 Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, Size outputImageSize, Mat transformationMatrix)
 {
   
-  timespec startTime;
-  getTime(&startTime);
   
   Mat deskewed(outputImageSize, this->pipeline_data->grayImg.type());
   
@@ -186,12 +193,6 @@ Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, Size outputImageSize, Mat
   warpPerspective(inputImage, deskewed, transformationMatrix, deskewed.size(), INTER_CUBIC);
 
   
-  if (config->debugTiming)
-  {
-    timespec endTime;
-    getTime(&endTime);
-    cout << "deskew Time: " << diffclock(startTime, endTime) << "ms." << endl;
-  }
   
   if (this->config->debugGeneral)
     displayImage(config, "quadrilateral", deskewed);
@@ -199,8 +200,5 @@ Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, Size outputImageSize, Mat
   return deskewed;
 }
 
-//void LicensePlateCandidate::remapTextArea(cv::Mat inputImage, std::vector<cv::Point2f> corners) {
-//
-//}
 
 
