@@ -141,8 +141,6 @@ void CharacterAnalysis::analyze()
   {
     vector<Point> linePolygon = linePolygons[i];
    
-    cout << "Polygon: " << linePolygon[0] << " - " << linePolygon[1] << " - " << linePolygon[2] << " - " << linePolygon[3] << endl;
-    
     LineSegment topLine = LineSegment(linePolygon[0].x, linePolygon[0].y, linePolygon[1].x, linePolygon[1].y);
     LineSegment bottomLine = LineSegment(linePolygon[3].x, linePolygon[3].y, linePolygon[2].x, linePolygon[2].y);
     
@@ -152,8 +150,6 @@ void CharacterAnalysis::analyze()
     
     tempTextLines.push_back(textLine);
   }
-  
-  cout << "Good contours inverted left: " << bestContours.getGoodIndicesCount() << endl;
   
   filterBetweenLines(bestThreshold, bestContours, tempTextLines);
 
@@ -171,10 +167,8 @@ void CharacterAnalysis::analyze()
     
   }
   
-  cout << "Good contours inverted left: " << bestContours.getGoodIndicesCount() << endl;
   
   this->thresholdsInverted = isPlateInverted();
-  cout << "Plate inverted: " << this->thresholdsInverted << endl;
 }
 
 
@@ -438,7 +432,6 @@ void CharacterAnalysis::filterBetweenLines(Mat img, TextContours& textContours, 
 
       float maxDistance = textLines[i].lineHeight * MAX_DISTANCE_PERCENT_FROM_LINES;
 
-      cout << "Distances: " << absTopDistance  << " : " << maxDistance << " - " << absBottomDistance << " : " << maxDistance << endl; 
       if (absTopDistance < maxDistance && absBottomDistance < maxDistance)
       {
         // It's ok, leave it as-is.

@@ -82,8 +82,7 @@ void LicensePlateCandidate::recognize()
       Mat transmtx = getTransformationMatrix(pipeline_data->plate_corners, outputImageSize);
       pipeline_data->crop_gray = deSkewPlate(this->pipeline_data->grayImg, outputImageSize, transmtx);
 
-      cout << "Size: " << outputImageSize.width << " - " << outputImageSize.height << endl;
-      
+
       
       // Apply a perspective transformation to the TextLine objects
       // to match the newly deskewed license plate crop
