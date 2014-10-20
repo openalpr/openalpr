@@ -23,7 +23,6 @@ set(lpr_source_files
  platecorners.cpp
  colorfilter.cpp
  textdetection/characteranalysis.cpp
- textdetection/characteranalysis2l.cpp
  textdetection/platemask.cpp
  textdetection/textcontours.cpp
  textdetection/textline.cpp
