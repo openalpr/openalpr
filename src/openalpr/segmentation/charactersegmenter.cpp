@@ -84,6 +84,8 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
 //    imgDbgGeneral.push_back(bordered);
 //  }
 
+  
+  
   for (uint lineidx = 0; lineidx < pipeline_data->textLines.size(); lineidx++)
   {
     this->top = pipeline_data->textLines[lineidx].topLine;
@@ -104,7 +106,7 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
 
     vector<Mat> allHistograms;
 
-    vector<Rect> allBoxes;
+    vector<Rect> lineBoxes;
     for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
     {
       Mat histogramMask = Mat::zeros(pipeline_data->thresholds[i].size(), CV_8U);
@@ -139,16 +141,16 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
       }
 
       for (uint z = 0; z < charBoxes.size(); z++)
-        allBoxes.push_back(charBoxes[z]);
+        lineBoxes.push_back(charBoxes[z]);
       //drawAndWait(&histogramMask);
     }
 
     float medianCharWidth = avgCharWidth;
     vector<int> widthValues;
     // Compute largest char width
-    for (uint i = 0; i < allBoxes.size(); i++)
+    for (uint i = 0; i < lineBoxes.size(); i++)
     {
-      widthValues.push_back(allBoxes[i].width);
+      widthValues.push_back(lineBoxes[i].width);
     }
 
     medianCharWidth = median(widthValues.data(), widthValues.size());
@@ -160,7 +162,7 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
       cout << "  -- Character Segmentation Create and Score Histograms Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
 
-    vector<Rect> candidateBoxes = getBestCharBoxes(pipeline_data->thresholds[0], allBoxes, medianCharWidth);
+    vector<Rect> candidateBoxes = getBestCharBoxes(pipeline_data->thresholds[0], lineBoxes, medianCharWidth);
 
     if (this->config->debugCharSegmenter)
     {
@@ -182,18 +184,14 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
     getTime(&startTime);
 
     filterEdgeBoxes(pipeline_data->thresholds, candidateBoxes, medianCharWidth, avgCharHeight);
-
     candidateBoxes = filterMostlyEmptyBoxes(pipeline_data->thresholds, candidateBoxes);
-
     candidateBoxes = combineCloseBoxes(candidateBoxes, medianCharWidth);
-
-    cleanCharRegions(pipeline_data->thresholds, candidateBoxes);
     cleanMostlyFullBoxes(pipeline_data->thresholds, candidateBoxes);
 
-    //cleanBasedOnColor(thresholds, colorFilter.colorMask, candidateBoxes);
-
     candidateBoxes = filterMostlyEmptyBoxes(pipeline_data->thresholds, candidateBoxes);
-    pipeline_data->charRegions = candidateBoxes;
+    
+    for (uint cbox = 0; cbox < candidateBoxes.size(); cbox++)
+      pipeline_data->charRegions.push_back(candidateBoxes[cbox]);
 
     if (config->debugTiming)
     {
@@ -214,6 +212,9 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
       displayImage(config, "Segmentation Clean Filters", cleanImgDash);
     }
   }
+  
+  cleanCharRegions(pipeline_data->thresholds, pipeline_data->charRegions);
+    drawAndWait(&pipeline_data->thresholds[0]);
 
   if (config->debugTiming)
   {
