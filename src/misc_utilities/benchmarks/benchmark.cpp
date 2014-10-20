@@ -116,14 +116,15 @@ int main( int argc, const char** argv )
 
         CharacterRegion charRegion(&pipeline_data);
 
-        if (abs(charRegion.getTopLine().angle) > 4)
+        if (pipeline_data.textLines.size() > 0 &&
+            abs(pipeline_data.textLines[0].angle) > 4)
         {
           // Rotate image:
           Mat rotated(frame.size(), frame.type());
           Mat rot_mat( 2, 3, CV_32FC1 );
           Point center = Point( frame.cols/2, frame.rows/2 );
 
-          rot_mat = getRotationMatrix2D( center, charRegion.getTopLine().angle, 1.0 );
+          rot_mat = getRotationMatrix2D( center, pipeline_data.textLines[0].angle, 1.0 );
           warpAffine( frame, rotated, rot_mat, frame.size() );
 
           rotated.copyTo(frame);
