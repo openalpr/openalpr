@@ -109,8 +109,6 @@ void LicensePlateCandidate::recognize()
         pipeline_data->textLines.push_back(newLines[i]);
       
       
-      Mat debugImg = pipeline_data->textLines[0].drawDebugImage(pipeline_data->crop_gray);
-      drawAndWait(&debugImg);
       
       if (config->debugTiming)
       {

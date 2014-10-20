@@ -167,12 +167,8 @@ void CharacterAnalysis::analyze()
     vector<Point> linePolygon = tempTextLines[i].linePolygon;
     pipeline_data->textLines.push_back(TextLine(updatedTextArea, linePolygon));
     
-    
-    cout << "Test1" << endl;
     Mat debugImage = pipeline_data->textLines[i].drawDebugImage(bestThreshold);
     
-    cout << "Test2" << endl;
-    drawAndWait(&debugImage);
   }
   
   cout << "Good contours inverted left: " << bestContours.getGoodIndicesCount() << endl;
@@ -522,7 +518,6 @@ bool CharacterAnalysis::isPlateInverted()
 {
   Mat charMask = getCharacterMask();
   
-  drawAndWait(&charMask);
 
   Scalar meanVal = mean(bestThreshold, charMask)[0];
 

@@ -204,7 +204,7 @@ vector<Point> LineFinder::getBestLine(const TextContours contours, vector<CharPo
   if (bestScore < 0)
     return bestStripe;
 
-  if (true)
+  if (pipeline_data->config->debugCharAnalysis)
   {
     cout << "The winning score is: " << bestScore << endl;
     // Draw the winning line segment
@@ -215,7 +215,7 @@ vector<Point> LineFinder::getBestLine(const TextContours contours, vector<CharPo
     cv::line(tempImg, topLines[bestScoreIndex].p1, topLines[bestScoreIndex].p2, Scalar(0, 0, 255), 2);
     cv::line(tempImg, bottomLines[bestScoreIndex].p1, bottomLines[bestScoreIndex].p2, Scalar(0, 0, 255), 2);
 
-    drawAndWait(&tempImg);
+    displayImage(pipeline_data->config, "Winning lines", tempImg);
   }
 
   Point topLeft 		= Point(0, topLines[bestScoreIndex].getPointAt(0) );

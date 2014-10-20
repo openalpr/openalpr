@@ -219,7 +219,6 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
   }
   
   cleanCharRegions(pipeline_data->thresholds, pipeline_data->charRegions);
-    drawAndWait(&pipeline_data->thresholds[0]);
 
   if (config->debugTiming)
   {

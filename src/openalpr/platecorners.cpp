@@ -478,11 +478,14 @@ TextLineCollection::TextLineCollection(PipelineData* pipelineData) {
   findCenterVertical();
   // Center Vertical Line
   
-  Mat debugImage = Mat::zeros(pipelineData->crop_gray.size(), CV_8U);
-  line(debugImage, this->centerHorizontalLine.p1, this->centerHorizontalLine.p2, Scalar(255,255,255), 2);
-  line(debugImage, this->centerVerticalLine.p1, this->centerVerticalLine.p2, Scalar(255,255,255), 2);
-  
-  drawAndWait(&debugImage);
+  if (pipelineData->config->debugPlateCorners)
+  {
+    Mat debugImage = Mat::zeros(pipelineData->crop_gray.size(), CV_8U);
+    line(debugImage, this->centerHorizontalLine.p1, this->centerHorizontalLine.p2, Scalar(255,255,255), 2);
+    line(debugImage, this->centerVerticalLine.p1, this->centerVerticalLine.p2, Scalar(255,255,255), 2);
+
+    displayImage(pipelineData->config, "Plate Corner Center lines", debugImage);
+  }
 }
 
 // Returns 1 for above, 0 for within, and -1 for below
