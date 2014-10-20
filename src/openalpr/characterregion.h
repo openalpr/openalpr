@@ -37,13 +37,6 @@ class CharacterRegion
 
     int confidence;
 
-    LineSegment getTopLine();
-    LineSegment getBottomLine();
-
-    LineSegment getCharBoxTop();
-    LineSegment getCharBoxBottom();
-    LineSegment getCharBoxLeft();
-    LineSegment getCharBoxRight();
 
 
   protected:
