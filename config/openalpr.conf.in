@@ -83,6 +83,8 @@ segmentation_max_segment_width_percent_vs_average = 1.35;
 plate_width_mm = 304.8
 plate_height_mm = 152.4
 
+multiline = 0
+
 char_height_mm = 70
 char_width_mm = 35
 char_whitespace_top_mm = 38
@@ -102,6 +104,7 @@ min_plate_size_height_px = 35
 ocr_language = lus
 
 [eu]
+; One-line European style plates
 
 ; 35-50; 45-60, 55-70, 65-80, 75-90
 char_analysis_min_pct = 0.35
@@ -115,6 +118,8 @@ segmentation_max_segment_width_percent_vs_average = 2.0;
 
 plate_width_mm = 520
 plate_height_mm = 110
+
+multiline = 0
 
 char_height_mm = 80
 char_width_mm = 53
