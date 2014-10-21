@@ -83,6 +83,10 @@ CharacterRegion::CharacterRegion(PipelineData* pipeline_data)
     else if (absangle > 1)
       confidenceDrainers += (config->maxPlateAngleDegrees - absangle) ;
 
+    // If a multiline plate has only one line, disqualify
+    if (pipeline_data->isMultiline && pipeline_data->textLines.size() < 2)
+      confidenceDrainers += 95;
+    
     if (confidenceDrainers >= 100)
       this->confidence=1;
     else
