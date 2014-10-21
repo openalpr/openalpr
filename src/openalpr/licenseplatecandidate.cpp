@@ -44,11 +44,9 @@ void LicensePlateCandidate::recognize()
   pipeline_data->plate_area_confidence = 0;
   pipeline_data->isMultiline = config->multiline;
 
-  int expandX = round(this->pipeline_data->regionOfInterest.width * 0.20);
-  int expandY = round(this->pipeline_data->regionOfInterest.height * 0.15);
-  // expand box by 15% in all directions
-  Rect expandedRegion = expandRect( this->pipeline_data->regionOfInterest, expandX, expandY, this->pipeline_data->grayImg.cols, this->pipeline_data->grayImg.rows) ;
 
+  Rect expandedRegion = this->pipeline_data->regionOfInterest;
+  
   pipeline_data->crop_gray = Mat(this->pipeline_data->grayImg, expandedRegion);
   resize(pipeline_data->crop_gray, pipeline_data->crop_gray, Size(config->templateWidthPx, config->templateHeightPx));
   
