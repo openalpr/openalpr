@@ -134,14 +134,14 @@ int main( int argc, const char** argv )
 
         CharacterRegion regionizer(&pipeline_data);
 
-        if (abs(regionizer.getTopLine().angle) > 4)
+        if (abs(pipeline_data.textLines[0].angle) > 4)
         {
           // Rotate image:
           Mat rotated(frame.size(), frame.type());
           Mat rot_mat( 2, 3, CV_32FC1 );
           Point center = Point( frame.cols/2, frame.rows/2 );
 
-          rot_mat = getRotationMatrix2D( center, regionizer.getTopLine().angle, 1.0 );
+          rot_mat = getRotationMatrix2D( center, pipeline_data.textLines[0].angle, 1.0 );
           warpAffine( frame, rotated, rot_mat, frame.size() );
 
           rotated.copyTo(frame);
