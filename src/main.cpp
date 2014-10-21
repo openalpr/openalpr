@@ -43,6 +43,7 @@ std::string getJson(Alpr* alpr, std::vector<AlprResult> results);
 bool detectandshow(Alpr* alpr, cv::Mat frame, std::string region, bool writeJson);
 
 bool measureProcessingTime = false;
+std::string templateRegion;
 
 // This boolean is set to false when the user hits terminates (e.g., CTRL+C )
 // so we can end infinite loops for things like video processing.
@@ -55,7 +56,6 @@ int main( int argc, const char** argv )
   bool outputJson = false;
   int seektoms = 0;
   bool detectRegion = false;
-  std::string templateRegion;
   std::string country;
   int topn;
 
@@ -303,7 +303,11 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
 
       for (int k = 0; k < results[i].topNPlates.size(); k++)
       {
-        std::cout << "    - " << results[i].topNPlates[k].characters << "\t confidence: " << results[i].topNPlates[k].overall_confidence << "\t template_match: " << results[i].topNPlates[k].matches_template << std::endl;
+        std::cout << "    - " << results[i].topNPlates[k].characters << "\t confidence: " << results[i].topNPlates[k].overall_confidence;
+        if (templateRegion.size() > 0)
+          std::cout << "\t template_match: " << results[i].topNPlates[k].matches_template;
+        
+        std::cout << std::endl;
       }
     }
   }
