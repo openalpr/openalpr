@@ -161,9 +161,10 @@ void CharacterAnalysis::analyze()
   {
     vector<Point> updatedTextArea = getCharArea(tempTextLines[i].topLine, tempTextLines[i].bottomLine);
     vector<Point> linePolygon = tempTextLines[i].linePolygon;
-    pipeline_data->textLines.push_back(TextLine(updatedTextArea, linePolygon));
-    
-    Mat debugImage = pipeline_data->textLines[i].drawDebugImage(bestThreshold);
+    if (updatedTextArea.size() > 0 && linePolygon.size() > 0)
+    {
+      pipeline_data->textLines.push_back(TextLine(updatedTextArea, linePolygon));
+    }
     
   }
   
