@@ -21,7 +21,11 @@ set(lpr_source_files
  segmentation/verticalhistogram.cpp
  platecorners.cpp
  colorfilter.cpp
- characteranalysis.cpp
+ textdetection/characteranalysis.cpp
+ textdetection/platemask.cpp
+ textdetection/textcontours.cpp
+ textdetection/textline.cpp
+ textdetection/linefinder.cpp
  pipeline_data.cpp
  trex.c
  cjson.c

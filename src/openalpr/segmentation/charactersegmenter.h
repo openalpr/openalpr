@@ -28,6 +28,7 @@
 #include "colorfilter.h"
 #include "verticalhistogram.h"
 #include "config.h"
+#include "textdetection/textcontours.h"
 
 
 //const float MIN_BOX_WIDTH_PX = 4; // 4 pixels
@@ -54,7 +55,6 @@ class CharacterSegmenter
     Config* config;
     PipelineData* pipeline_data;
     
-    CharacterAnalysis* charAnalysis;
 
     LineSegment top;
     LineSegment bottom;
@@ -62,20 +62,10 @@ class CharacterSegmenter
     std::vector<cv::Mat> imgDbgGeneral;
     std::vector<cv::Mat> imgDbgCleanStages;
 
-    std::vector<bool> filter(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy);
-    std::vector<bool> filterByBoxSize(std::vector< std::vector<cv::Point> > contours, std::vector<bool> goodIndices, float minHeightPx, float maxHeightPx);
-    std::vector<bool> filterBetweenLines(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<cv::Point> outerPolygon, std::vector<bool> goodIndices);
-    std::vector<bool> filterContourHoles(std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
-
-    std::vector<cv::Point> getBestVotedLines(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<bool> goodIndices);
-    int getGoodIndicesCount(std::vector<bool> goodIndices);
-
-    cv::Mat getCharacterMask(cv::Mat img_threshold, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
     cv::Mat getCharBoxMask(cv::Mat img_threshold, std::vector<cv::Rect> charBoxes);
 
-    void removeSmallContours(std::vector<cv::Mat> thresholds, std::vector<std::vector<std::vector<cv::Point > > > allContours, float avgCharWidth, float avgCharHeight);
+    void removeSmallContours(std::vector<cv::Mat> thresholds, float avgCharHeight, TextLine textLine);
 
-    cv::Mat getVerticalHistogram(cv::Mat img, cv::Mat mask);
     std::vector<cv::Rect> getHistogramBoxes(VerticalHistogram histogram, float avgCharWidth, float avgCharHeight, float* score);
     std::vector<cv::Rect> getBestCharBoxes(cv::Mat img, std::vector<cv::Rect> charBoxes, float avgCharWidth);
     std::vector<cv::Rect> combineCloseBoxes( std::vector<cv::Rect> charBoxes, float avgCharWidth);
@@ -92,7 +82,6 @@ class CharacterSegmenter
 
     int isSkinnyLineInsideBox(cv::Mat threshold, cv::Rect box, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, float avgCharWidth, float avgCharHeight);
 
-    std::vector<cv::Point> getEncapsulatingLines(cv::Mat img, std::vector<std::vector<cv::Point> > contours, std::vector<bool> goodIndices);
 };
 
 #endif // OPENALPR_CHARACTERSEGMENTER_H

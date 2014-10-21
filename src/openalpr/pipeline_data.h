@@ -5,6 +5,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "utility.h"
 #include "config.h"
+#include "textdetection/textline.h"
 
 class PipelineData
 {
@@ -22,8 +23,14 @@ class PipelineData
     cv::Mat grayImg;
     cv::Rect regionOfInterest;
     
+    bool isMultiline;
+    
     cv::Mat crop_gray;
-    cv::Mat plate_mask;    
+    
+    bool hasPlateBorder;
+    cv::Mat plateBorderMask;    
+    std::vector<TextLine> textLines;
+    
     std::vector<cv::Mat> thresholds;
     
     std::vector<cv::Point2f> plate_corners;

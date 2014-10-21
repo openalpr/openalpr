@@ -17,6 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <opencv2/core/core.hpp>
+
 #include "charactersegmenter.h"
 
 using namespace cv;
@@ -37,76 +39,70 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
   timespec startTime;
   getTime(&startTime);
 
-
+  if (pipeline_data->plate_inverted)
+    bitwise_not(pipeline_data->crop_gray, pipeline_data->crop_gray);
+  pipeline_data->clearThresholds();
+  pipeline_data->thresholds = produceThresholds(pipeline_data->crop_gray, config);
+    
+  // TODO: Perhaps a bilateral filter would be better here.
   medianBlur(pipeline_data->crop_gray, pipeline_data->crop_gray, 3);
 
+  if (this->config->debugCharSegmenter)
+    cout << "Segmenter: inverted: " << pipeline_data->plate_inverted << endl;
+  
   if (pipeline_data->plate_inverted)
     bitwise_not(pipeline_data->crop_gray, pipeline_data->crop_gray);
 
-  charAnalysis = new CharacterAnalysis(pipeline_data);
-  charAnalysis->analyze();
 
   if (this->config->debugCharSegmenter)
   {
     displayImage(config, "CharacterSegmenter  Thresholds", drawImageDashboard(pipeline_data->thresholds, CV_8U, 3));
   }
 
-  if (this->config->debugCharSegmenter && charAnalysis->linePolygon.size() > 0)
+//  if (this->config->debugCharSegmenter && pipeline_data->textLines.size() > 0)
+//  {
+//    Mat img_contours(charAnalysis->bestThreshold.size(), CV_8U);
+//    charAnalysis->bestThreshold.copyTo(img_contours);
+//    cvtColor(img_contours, img_contours, CV_GRAY2RGB);
+//
+//    vector<vector<Point> > allowedContours;
+//    for (uint i = 0; i < charAnalysis->bestContours.size(); i++)
+//    {
+//      if (charAnalysis->bestContours.goodIndices[i])
+//        allowedContours.push_back(charAnalysis->bestContours.contours[i]);
+//    }
+//
+//    drawContours(img_contours, charAnalysis->bestContours.contours,
+//                 -1, // draw all contours
+//                 cv::Scalar(255,0,0), // in blue
+//                 1); // with a thickness of 1
+//
+//    drawContours(img_contours, allowedContours,
+//                 -1, // draw all contours
+//                 cv::Scalar(0,255,0), // in green
+//                 1); // with a thickness of 1
+//
+//
+//    line(img_contours, pipeline_data->textLines[0].linePolygon[0], pipeline_data->textLines[0].linePolygon[1], Scalar(255, 0, 255), 1);
+//    line(img_contours, pipeline_data->textLines[0].linePolygon[3], pipeline_data->textLines[0].linePolygon[2], Scalar(255, 0, 255), 1);
+//
+//
+//    Mat bordered = addLabel(img_contours, "Best Contours");
+//    imgDbgGeneral.push_back(bordered);
+//  }
+
+
+  
+  for (uint lineidx = 0; lineidx < pipeline_data->textLines.size(); lineidx++)
   {
-    Mat img_contours(charAnalysis->bestThreshold.size(), CV_8U);
-    charAnalysis->bestThreshold.copyTo(img_contours);
-    cvtColor(img_contours, img_contours, CV_GRAY2RGB);
+    this->top = pipeline_data->textLines[lineidx].topLine;
+    this->bottom = pipeline_data->textLines[lineidx].bottomLine;
+    
+    float avgCharHeight = pipeline_data->textLines[lineidx].lineHeight;
+    float height_to_width_ratio = pipeline_data->config->charHeightMM / pipeline_data->config->charWidthMM;
+    float avgCharWidth = avgCharHeight / height_to_width_ratio;
 
-    vector<vector<Point> > allowedContours;
-    for (uint i = 0; i < charAnalysis->bestContours.size(); i++)
-    {
-      if (charAnalysis->bestCharSegments[i])
-        allowedContours.push_back(charAnalysis->bestContours[i]);
-    }
-
-    drawContours(img_contours, charAnalysis->bestContours,
-                 -1, // draw all contours
-                 cv::Scalar(255,0,0), // in blue
-                 1); // with a thickness of 1
-
-    drawContours(img_contours, allowedContours,
-                 -1, // draw all contours
-                 cv::Scalar(0,255,0), // in green
-                 1); // with a thickness of 1
-
-    if (charAnalysis->linePolygon.size() > 0)
-    {
-      line(img_contours, charAnalysis->linePolygon[0], charAnalysis->linePolygon[1], Scalar(255, 0, 255), 1);
-      line(img_contours, charAnalysis->linePolygon[3], charAnalysis->linePolygon[2], Scalar(255, 0, 255), 1);
-    }
-
-    Mat bordered = addLabel(img_contours, "Best Contours");
-    imgDbgGeneral.push_back(bordered);
-  }
-
-  if (charAnalysis->linePolygon.size() > 0)
-  {
-    this->top = LineSegment(charAnalysis->linePolygon[0].x, charAnalysis->linePolygon[0].y, charAnalysis->linePolygon[1].x, charAnalysis->linePolygon[1].y);
-    this->bottom = LineSegment(charAnalysis->linePolygon[3].x, charAnalysis->linePolygon[3].y, charAnalysis->linePolygon[2].x, charAnalysis->linePolygon[2].y);
-
-    vector<int> charWidths;
-    vector<int> charHeights;
-
-    for (uint i = 0; i < charAnalysis->bestContours.size(); i++)
-    {
-      if (charAnalysis->bestCharSegments[i] == false)
-        continue;
-
-      Rect mr = boundingRect(charAnalysis->bestContours[i]);
-
-      charWidths.push_back(mr.width);
-      charHeights.push_back(mr.height);
-    }
-
-    float avgCharWidth = median(charWidths.data(), charWidths.size());
-    float avgCharHeight = median(charHeights.data(), charHeights.size());
-
-    removeSmallContours(pipeline_data->thresholds, charAnalysis->allContours, avgCharWidth, avgCharHeight);
+    removeSmallContours(pipeline_data->thresholds, avgCharHeight, pipeline_data->textLines[lineidx]);
 
     // Do the histogram analysis to figure out char regions
 
@@ -115,12 +111,12 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
 
     vector<Mat> allHistograms;
 
-    vector<Rect> allBoxes;
-    for (uint i = 0; i < charAnalysis->allContours.size(); i++)
+    vector<Rect> lineBoxes;
+    for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
     {
       Mat histogramMask = Mat::zeros(pipeline_data->thresholds[i].size(), CV_8U);
 
-      fillConvexPoly(histogramMask, charAnalysis->linePolygon.data(), charAnalysis->linePolygon.size(), Scalar(255,255,255));
+      fillConvexPoly(histogramMask, pipeline_data->textLines[lineidx].linePolygon.data(), pipeline_data->textLines[lineidx].linePolygon.size(), Scalar(255,255,255));
 
       VerticalHistogram vertHistogram(pipeline_data->thresholds[i], histogramMask);
 
@@ -150,16 +146,16 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
       }
 
       for (uint z = 0; z < charBoxes.size(); z++)
-        allBoxes.push_back(charBoxes[z]);
+        lineBoxes.push_back(charBoxes[z]);
       //drawAndWait(&histogramMask);
     }
 
     float medianCharWidth = avgCharWidth;
     vector<int> widthValues;
     // Compute largest char width
-    for (uint i = 0; i < allBoxes.size(); i++)
+    for (uint i = 0; i < lineBoxes.size(); i++)
     {
-      widthValues.push_back(allBoxes[i].width);
+      widthValues.push_back(lineBoxes[i].width);
     }
 
     medianCharWidth = median(widthValues.data(), widthValues.size());
@@ -171,8 +167,7 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
       cout << "  -- Character Segmentation Create and Score Histograms Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
 
-    //ColorFilter colorFilter(img, charAnalysis->getCharacterMask());
-    vector<Rect> candidateBoxes = getBestCharBoxes(pipeline_data->thresholds[0], allBoxes, medianCharWidth);
+    vector<Rect> candidateBoxes = getBestCharBoxes(pipeline_data->thresholds[0], lineBoxes, medianCharWidth);
 
     if (this->config->debugCharSegmenter)
     {
@@ -194,18 +189,14 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
     getTime(&startTime);
 
     filterEdgeBoxes(pipeline_data->thresholds, candidateBoxes, medianCharWidth, avgCharHeight);
-
     candidateBoxes = filterMostlyEmptyBoxes(pipeline_data->thresholds, candidateBoxes);
-
     candidateBoxes = combineCloseBoxes(candidateBoxes, medianCharWidth);
-
-    cleanCharRegions(pipeline_data->thresholds, candidateBoxes);
     cleanMostlyFullBoxes(pipeline_data->thresholds, candidateBoxes);
 
-    //cleanBasedOnColor(thresholds, colorFilter.colorMask, candidateBoxes);
-
     candidateBoxes = filterMostlyEmptyBoxes(pipeline_data->thresholds, candidateBoxes);
-    pipeline_data->charRegions = candidateBoxes;
+    
+    for (uint cbox = 0; cbox < candidateBoxes.size(); cbox++)
+      pipeline_data->charRegions.push_back(candidateBoxes[cbox]);
 
     if (config->debugTiming)
     {
@@ -226,6 +217,8 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
       displayImage(config, "Segmentation Clean Filters", cleanImgDash);
     }
   }
+  
+  cleanCharRegions(pipeline_data->thresholds, pipeline_data->charRegions);
 
   if (config->debugTiming)
   {
@@ -237,7 +230,7 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
 
 CharacterSegmenter::~CharacterSegmenter()
 {
-  delete charAnalysis;
+  
 }
 
 // Given a histogram and the horizontal line boundaries, respond with an array of boxes where the characters are
@@ -298,7 +291,7 @@ vector<Rect> CharacterSegmenter::getHistogramBoxes(VerticalHistogram histogram, 
 
 vector<Rect> CharacterSegmenter::getBestCharBoxes(Mat img, vector<Rect> charBoxes, float avgCharWidth)
 {
-  float MAX_SEGMENT_WIDTH = avgCharWidth * 1.55;
+  float MAX_SEGMENT_WIDTH = avgCharWidth * 1.65;
 
   // This histogram is based on how many char boxes (from ALL of the many thresholded images) are covering each column
   // Makes a sort of histogram from all the previous char boxes.  Figures out the best fit from that.
@@ -443,23 +436,33 @@ vector<Rect> CharacterSegmenter::get1DHits(Mat img, int yOffset)
   return hits;
 }
 
-void CharacterSegmenter::removeSmallContours(vector<Mat> thresholds, vector<vector<vector<Point > > > allContours, float avgCharWidth, float avgCharHeight)
+void CharacterSegmenter::removeSmallContours(vector<Mat> thresholds, float avgCharHeight,  TextLine textLine)
 {
   //const float MIN_CHAR_AREA = 0.02 * avgCharWidth * avgCharHeight;	// To clear out the tiny specks
   const float MIN_CONTOUR_HEIGHT = 0.3 * avgCharHeight;
 
+  Mat textLineMask = Mat::zeros(thresholds[0].size(), CV_8U);
+  fillConvexPoly(textLineMask, textLine.linePolygon.data(), textLine.linePolygon.size(), Scalar(255,255,255));
+  
   for (uint i = 0; i < thresholds.size(); i++)
   {
-    for (uint c = 0; c < allContours[i].size(); c++)
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
+    Mat thresholdsCopy = Mat::zeros(thresholds[i].size(), thresholds[i].type());
+    
+    thresholds[i].copyTo(thresholdsCopy, textLineMask);
+    findContours(thresholdsCopy, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
+    
+    for (uint c = 0; c < contours.size(); c++)
     {
-      if (allContours[i][c].size() == 0)
+      if (contours[c].size() == 0)
         continue;
 
-      Rect mr = boundingRect(allContours[i][c]);
+      Rect mr = boundingRect(contours[c]);
       if (mr.height < MIN_CONTOUR_HEIGHT)
       {
         // Erase it
-        drawContours(thresholds[i], allContours[i], c, Scalar(0, 0, 0), -1);
+        drawContours(thresholds[i], contours, c, Scalar(0, 0, 0), -1);
         continue;
       }
     }
@@ -956,69 +959,6 @@ void CharacterSegmenter::filterEdgeBoxes(vector<Mat> thresholds, const vector<Re
     }
   }
 
-  // TECHNIQUE #2
-  // Check for tall skinny blobs on the edge boxes.  If they're too long and skinny, maks the whole char region
-  /*
-   *
-  float MIN_EDGE_CONTOUR_HEIGHT = avgCharHeight * 0.7;
-  float MIN_EDGE_CONTOUR_AREA_PCT = avgCharHeight * 0.1;
-
-  for (int i = 0; i < thresholds.size(); i++)
-  {
-      // Just check the first and last char box.  If the contour extends too far above/below the line.  Drop it.
-
-      for (int boxidx = 0; boxidx < charRegions.size(); boxidx++)
-      {
-  if (boxidx != 0 || boxidx != charRegions.size() -1)
-  {
-    // This is a middle box.  we never want to filter these here.
-    continue;
-  }
-
-  vector<vector<Point> > contours;
-  Mat mask = Mat::zeros(thresholds[i].size(),CV_8U);
-  rectangle(mask, charRegions[boxidx], Scalar(255,255,255), CV_FILLED);
-
-  bitwise_and(thresholds[i], mask, mask);
-  findContours(mask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-  //int tallContourIndex = isSkinnyLineInsideBox(thresholds[i], charRegions[boxidx], allContours[i], hierarchy[i], avgCharWidth, avgCharHeight);
-  float tallestContourHeight = 0;
-  float fattestContourWidth = 0;
-  float biggestContourArea = 0;
-  for (int c = 0; c < contours.size(); c++)
-  {
-      Rect r = boundingRect(contours[c]);
-      if (r.height > tallestContourHeight)
-        tallestContourHeight = r.height;
-      if (r.width > fattestContourWidth)
-        fattestContourWidth = r.width;
-      float a = r.area();
-      if (a > biggestContourArea)
-        biggestContourArea = a;
-  }
-
-  float minArea = charRegions[boxidx].area() * MIN_EDGE_CONTOUR_AREA_PCT;
-  if ((fattestContourWidth < MIN_BOX_WIDTH_PX) ||
-    (tallestContourHeight < MIN_EDGE_CONTOUR_HEIGHT) ||
-    (biggestContourArea < minArea)
-  )
-  {
-    // Find a good place to MASK this contour.
-    // for now, just mask the whole thing
-    if (this->debug)
-    {
-      rectangle(imgDbgCleanStages[i], charRegions[boxidx], COLOR_DEBUG_EDGE, 2);
-      cout << "Edge Filter: threshold " << i << " box " << boxidx << endl;
-    }
-    rectangle(thresholds[i], charRegions[boxidx], Scalar(0,0,0), -1);
-  }
-  else
-  {
-    filteredCharRegions.push_back(charRegions[boxidx]);
-  }
-      }
-  }
-  */
 }
 
 int CharacterSegmenter::getLongestBlobLengthBetweenLines(Mat img, int col)

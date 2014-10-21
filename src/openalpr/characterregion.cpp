@@ -38,9 +38,8 @@ CharacterRegion::CharacterRegion(PipelineData* pipeline_data)
   charAnalysis = new CharacterAnalysis(pipeline_data);
   charAnalysis->analyze();
   pipeline_data->plate_inverted = charAnalysis->thresholdsInverted;
-  pipeline_data->plate_mask = charAnalysis->plateMask;
 
-  if (this->debug && charAnalysis->linePolygon.size() > 0)
+  if (this->debug && pipeline_data->textLines.size() > 0)
   {
     vector<Mat> tempDash;
     for (uint z = 0; z < pipeline_data->thresholds.size(); z++)
@@ -59,30 +58,35 @@ CharacterRegion::CharacterRegion(PipelineData* pipeline_data)
     for (uint z = 0; z < charAnalysis->bestContours.size(); z++)
     {
       Scalar dcolor(255,0,0);
-      if (charAnalysis->bestCharSegments[z])
+      if (charAnalysis->bestContours.goodIndices[z])
         dcolor = Scalar(0,255,0);
-      drawContours(bestVal, charAnalysis->bestContours, z, dcolor, 1);
+      drawContours(bestVal, charAnalysis->bestContours.contours, z, dcolor, 1);
     }
     tempDash.push_back(bestVal);
     displayImage(config, "Character Region Step 1 Thresholds", drawImageDashboard(tempDash, bestVal.type(), 3));
   }
 
 
-  if (charAnalysis->linePolygon.size() > 0)
+  if (pipeline_data->textLines.size() > 0)
   {
     int confidenceDrainers = 0;
-    int charSegmentCount = charAnalysis->bestCharSegmentsCount;
+    int charSegmentCount = charAnalysis->bestContours.getGoodIndicesCount();
     if (charSegmentCount == 1)
       confidenceDrainers += 91;
     else if (charSegmentCount < 5)
       confidenceDrainers += (5 - charSegmentCount) * 10;
-
-    int absangle = abs(charAnalysis->topLine.angle);
+    
+    // Use the angle for the first line -- assume they'll always be parallel for multi-line plates
+    int absangle = abs(pipeline_data->textLines[0].topLine.angle);
     if (absangle > config->maxPlateAngleDegrees)
       confidenceDrainers += 91;
     else if (absangle > 1)
       confidenceDrainers += (config->maxPlateAngleDegrees - absangle) ;
 
+    // If a multiline plate has only one line, disqualify
+    if (pipeline_data->isMultiline && pipeline_data->textLines.size() < 2)
+      confidenceDrainers += 95;
+    
     if (confidenceDrainers >= 100)
       this->confidence=1;
     else
@@ -102,39 +106,4 @@ CharacterRegion::~CharacterRegion()
   delete(charAnalysis);
 }
 
-
-LineSegment CharacterRegion::getTopLine()
-{
-  return charAnalysis->topLine;
-}
-
-LineSegment CharacterRegion::getBottomLine()
-{
-  return charAnalysis->bottomLine;
-}
-
-vector<Point> CharacterRegion::getCharArea()
-{
-  return charAnalysis->charArea;
-}
-
-LineSegment CharacterRegion::getCharBoxTop()
-{
-  return charAnalysis->charBoxTop;
-}
-
-LineSegment CharacterRegion::getCharBoxBottom()
-{
-  return charAnalysis->charBoxBottom;
-}
-
-LineSegment CharacterRegion::getCharBoxLeft()
-{
-  return charAnalysis->charBoxLeft;
-}
-
-LineSegment CharacterRegion::getCharBoxRight()
-{
-  return charAnalysis->charBoxRight;
-}
 

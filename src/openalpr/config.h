@@ -57,6 +57,8 @@ class Config
     float minPlateSizeWidthPx;
     float minPlateSizeHeightPx;
     
+    bool multiline;
+    
     float plateWidthMM;
     float plateHeightMM;
     

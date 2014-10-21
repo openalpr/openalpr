@@ -17,38 +17,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENALPR_CHARACTERREGION_H
-#define OPENALPR_CHARACTERREGION_H
+#ifndef OPENALPR_PLATEMASK_H
+#define	OPENALPR_PLATEMASK_H
 
 #include "opencv2/imgproc/imgproc.hpp"
-#include "constants.h"
-#include "utility.h"
-#include "textdetection/characteranalysis.h"
-#include "config.h"
 #include "pipeline_data.h"
+#include "textcontours.h"
 
-class CharacterRegion
-{
+class PlateMask {
+public:
+  PlateMask(PipelineData* pipeline_data);
+  virtual ~PlateMask();
+  
+  bool hasPlateMask;
+  
+  cv::Mat getMask();
+  
+  void findOuterBoxMask(std::vector<TextContours > contours);
+  
+private:
+  
+  PipelineData* pipeline_data;
+  cv::Mat plateMask;
 
-  public:
-    CharacterRegion(PipelineData* pipeline_data);
-    virtual ~CharacterRegion();
-
-
-    int confidence;
-
-
-
-  protected:
-    Config* config;
-    bool debug;
-
-    CharacterAnalysis *charAnalysis;
-    cv::Mat findOuterBoxMask(std::vector<cv::Mat> thresholds, std::vector<std::vector<std::vector<cv::Point> > > allContours, std::vector<std::vector<cv::Vec4i> > allHierarchy);
-
-
-    bool isPlateInverted(cv::Mat threshold, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
-
+    
 };
 
-#endif // OPENALPR_CHARACTERREGION_H
+#endif	/* OPENALPR_PLATEMASK_H */
+
