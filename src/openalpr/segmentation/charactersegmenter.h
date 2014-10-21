@@ -64,7 +64,7 @@ class CharacterSegmenter
 
     cv::Mat getCharBoxMask(cv::Mat img_threshold, std::vector<cv::Rect> charBoxes);
 
-    void removeSmallContours(std::vector<cv::Mat> thresholds, std::vector<TextContours> contours, float avgCharWidth, float avgCharHeight);
+    void removeSmallContours(std::vector<cv::Mat> thresholds, float avgCharHeight, TextLine textLine);
 
     std::vector<cv::Rect> getHistogramBoxes(VerticalHistogram histogram, float avgCharWidth, float avgCharHeight, float* score);
     std::vector<cv::Rect> getBestCharBoxes(cv::Mat img, std::vector<cv::Rect> charBoxes, float avgCharWidth);

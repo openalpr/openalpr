@@ -44,7 +44,7 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
   pipeline_data->clearThresholds();
   pipeline_data->thresholds = produceThresholds(pipeline_data->crop_gray, config);
     
-
+  // TODO: Perhaps a bilateral filter would be better here.
   medianBlur(pipeline_data->crop_gray, pipeline_data->crop_gray, 3);
 
   if (this->config->debugCharSegmenter)
@@ -91,20 +91,18 @@ CharacterSegmenter::CharacterSegmenter(PipelineData* pipeline_data)
 //    imgDbgGeneral.push_back(bordered);
 //  }
 
-  
+
   
   for (uint lineidx = 0; lineidx < pipeline_data->textLines.size(); lineidx++)
   {
     this->top = pipeline_data->textLines[lineidx].topLine;
     this->bottom = pipeline_data->textLines[lineidx].bottomLine;
     
-
     float avgCharHeight = pipeline_data->textLines[lineidx].lineHeight;
     float height_to_width_ratio = pipeline_data->config->charHeightMM / pipeline_data->config->charWidthMM;
     float avgCharWidth = avgCharHeight / height_to_width_ratio;
-    //float avgCharWidth = median(charWidths.data(), charWidths.size());
 
-    //removeSmallContours(pipeline_data->thresholds, charAnalysis->allTextContours, avgCharWidth, avgCharHeight);
+    removeSmallContours(pipeline_data->thresholds, avgCharHeight, pipeline_data->textLines[lineidx]);
 
     // Do the histogram analysis to figure out char regions
 
@@ -438,28 +436,38 @@ vector<Rect> CharacterSegmenter::get1DHits(Mat img, int yOffset)
   return hits;
 }
 
-//void CharacterSegmenter::removeSmallContours(vector<Mat> thresholds, vector<TextContours> contours, float avgCharWidth, float avgCharHeight)
-//{
-//  //const float MIN_CHAR_AREA = 0.02 * avgCharWidth * avgCharHeight;	// To clear out the tiny specks
-//  const float MIN_CONTOUR_HEIGHT = 0.3 * avgCharHeight;
-//
-//  for (uint i = 0; i < thresholds.size(); i++)
-//  {
-//    for (uint c = 0; c < contours[i].contours.size(); c++)
-//    {
-//      if (contours[i].contours[c].size() == 0)
-//        continue;
-//
-//      Rect mr = boundingRect(contours[i].contours[c]);
-//      if (mr.height < MIN_CONTOUR_HEIGHT)
-//      {
-//        // Erase it
-//        drawContours(thresholds[i], contours[i].contours, c, Scalar(0, 0, 0), -1);
-//        continue;
-//      }
-//    }
-//  }
-//}
+void CharacterSegmenter::removeSmallContours(vector<Mat> thresholds, float avgCharHeight,  TextLine textLine)
+{
+  //const float MIN_CHAR_AREA = 0.02 * avgCharWidth * avgCharHeight;	// To clear out the tiny specks
+  const float MIN_CONTOUR_HEIGHT = 0.3 * avgCharHeight;
+
+  Mat textLineMask = Mat::zeros(thresholds[0].size(), CV_8U);
+  fillConvexPoly(textLineMask, textLine.linePolygon.data(), textLine.linePolygon.size(), Scalar(255,255,255));
+  
+  for (uint i = 0; i < thresholds.size(); i++)
+  {
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
+    Mat thresholdsCopy = Mat::zeros(thresholds[i].size(), thresholds[i].type());
+    
+    thresholds[i].copyTo(thresholdsCopy, textLineMask);
+    findContours(thresholdsCopy, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
+    
+    for (uint c = 0; c < contours.size(); c++)
+    {
+      if (contours[c].size() == 0)
+        continue;
+
+      Rect mr = boundingRect(contours[c]);
+      if (mr.height < MIN_CONTOUR_HEIGHT)
+      {
+        // Erase it
+        drawContours(thresholds[i], contours, c, Scalar(0, 0, 0), -1);
+        continue;
+      }
+    }
+  }
+}
 
 vector<Rect> CharacterSegmenter::combineCloseBoxes( vector<Rect> charBoxes, float biggestCharWidth)
 {
