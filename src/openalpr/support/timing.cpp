@@ -149,7 +149,9 @@ long getEpochTime()
 {
     struct timeval tp;
     gettimeofday(&tp, NULL);
-    long int ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+    long ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+    
+    return ms;
 } 
 
 #endif
