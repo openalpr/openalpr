@@ -105,11 +105,13 @@ void imageCollectionThread(void* arg)
     try
     {
       cv::VideoCapture cap=cv::VideoCapture();
-      cap.open(dispatcher->mjpeg_url);
+	  std::cout << "Connecting..." << std::endl;
+	  cap.open(dispatcher->mjpeg_url);
       
       if (cap.isOpened())
       {
-	getALPRImages(cap, dispatcher);
+		  std::cout << "Connected" << std::endl;
+		  getALPRImages(cap, dispatcher);
       }
       else
       {
