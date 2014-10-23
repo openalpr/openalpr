@@ -17,38 +17,40 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENALPR_CHARACTERREGION_H
-#define OPENALPR_CHARACTERREGION_H
+#ifndef TEXTCONTOURS_H
+#define	TEXTCONTOURS_H
 
+#include <vector>
 #include "opencv2/imgproc/imgproc.hpp"
-#include "constants.h"
-#include "utility.h"
-#include "textdetection/characteranalysis.h"
-#include "config.h"
-#include "pipeline_data.h"
 
-class CharacterRegion
-{
-
-  public:
-    CharacterRegion(PipelineData* pipeline_data);
-    virtual ~CharacterRegion();
-
-
-    int confidence;
-
-
-
-  protected:
-    Config* config;
-    bool debug;
-
-    CharacterAnalysis *charAnalysis;
-    cv::Mat findOuterBoxMask(std::vector<cv::Mat> thresholds, std::vector<std::vector<std::vector<cv::Point> > > allContours, std::vector<std::vector<cv::Vec4i> > allHierarchy);
-
-
-    bool isPlateInverted(cv::Mat threshold, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
+class TextContours {
+public:
+  TextContours();
+  TextContours(cv::Mat threshold);
+  virtual ~TextContours();
+  
+  void load(cv::Mat threshold);
+  
+  int width;
+  int height;
+  
+  std::vector<bool> goodIndices;
+  std::vector<std::vector<cv::Point> > contours;
+  std::vector<cv::Vec4i> hierarchy;
+  
+  uint size();
+  int getGoodIndicesCount();
+  
+  std::vector<bool> getIndicesCopy();
+  void setIndices(std::vector<bool> newIndices);
+  
+  cv::Mat drawDebugImage();
+  cv::Mat drawDebugImage(cv::Mat baseImage);
+  
+private:
+  
 
 };
 
-#endif // OPENALPR_CHARACTERREGION_H
+#endif	/* TEXTCONTOURS_H */
+

@@ -22,26 +22,21 @@
 using namespace cv;
 using namespace std;
 
-PlateCorners::PlateCorners(Mat inputImage, PlateLines* plateLines, CharacterRegion* charRegion, Config* config)
+PlateCorners::PlateCorners(Mat inputImage, PlateLines* plateLines, PipelineData* pipelineData) :
+    tlc(pipelineData)
 {
-  this->config = config;
+  this->pipelineData = pipelineData;
 
-  if (this->config->debugPlateCorners)
+  if (pipelineData->config->debugPlateCorners)
     cout << "PlateCorners constructor" << endl;
 
   this->inputImage = inputImage;
   this->plateLines = plateLines;
-  this->charRegion = charRegion;
 
   this->bestHorizontalScore = 9999999999999;
   this->bestVerticalScore = 9999999999999;
 
-  Point topPoint = charRegion->getTopLine().midpoint();
-  Point bottomPoint = charRegion->getBottomLine().closestPointOnSegmentTo(topPoint);
-  this->charHeight = distanceBetweenPoints(topPoint, bottomPoint);
 
-
-  this->charAngle = angleBetweenPoints(charRegion->getCharArea()[0], charRegion->getCharArea()[1]);
 }
 
 PlateCorners::~PlateCorners()
@@ -50,7 +45,7 @@ PlateCorners::~PlateCorners()
 
 vector<Point> PlateCorners::findPlateCorners()
 {
-  if (this->config->debugPlateCorners)
+  if (pipelineData->config->debugPlateCorners)
     cout << "PlateCorners::findPlateCorners" << endl;
 
   timespec startTime;
@@ -81,21 +76,25 @@ vector<Point> PlateCorners::findPlateCorners()
     }
   }
 
-  if (this->config->debugPlateCorners)
+  if (pipelineData->config->debugPlateCorners)
   {
     cout << "Drawing debug stuff..." << endl;
 
     Mat imgCorners = Mat(inputImage.size(), inputImage.type());
     inputImage.copyTo(imgCorners);
-    for (int i = 0; i < 4; i++)
-      circle(imgCorners, charRegion->getCharArea()[i], 2, Scalar(0, 0, 0));
+    
+    for (uint linenum = 0; linenum < pipelineData->textLines.size(); linenum++)
+    {
+      for (int i = 0; i < 4; i++)
+        circle(imgCorners, pipelineData->textLines[linenum].textArea[i], 2, Scalar(0, 0, 0));
+    }
 
     line(imgCorners, this->bestTop.p1, this->bestTop.p2, Scalar(255, 0, 0), 1, CV_AA);
     line(imgCorners, this->bestRight.p1, this->bestRight.p2, Scalar(0, 0, 255), 1, CV_AA);
     line(imgCorners, this->bestBottom.p1, this->bestBottom.p2, Scalar(0, 0, 255), 1, CV_AA);
     line(imgCorners, this->bestLeft.p1, this->bestLeft.p2, Scalar(255, 0, 0), 1, CV_AA);
 
-    displayImage(config, "Winning top/bottom Boundaries", imgCorners);
+    displayImage(pipelineData->config, "Winning top/bottom Boundaries", imgCorners);
   }
 
   // Check if a left/right edge has been established.
@@ -112,7 +111,7 @@ vector<Point> PlateCorners::findPlateCorners()
   corners.push_back(bestBottom.intersection(bestRight));
   corners.push_back(bestBottom.intersection(bestLeft));
 
-  if (config->debugTiming)
+  if (pipelineData->config->debugTiming)
   {
     timespec endTime;
     getTime(&endTime);
@@ -129,8 +128,9 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   LineSegment left;
   LineSegment right;
 
-  float charHeightToPlateWidthRatio = config->plateWidthMM / config->charHeightMM;
-  float idealPixelWidth = this->charHeight *  (charHeightToPlateWidthRatio * 1.03);	// Add 3% so we don't clip any characters
+  
+  float charHeightToPlateWidthRatio = pipelineData->config->plateWidthMM / pipelineData->config->charHeightMM;
+  float idealPixelWidth = tlc.charHeight *  (charHeightToPlateWidthRatio * 1.03);	// Add 3% so we don't clip any characters
 
   float confidenceDiff = 0;
   float missingSegmentPenalty = 0;
@@ -138,12 +138,9 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   if (v1 == NO_LINE && v2 == NO_LINE)
   {
     //return;
-    Point centerTop = charRegion->getCharBoxTop().midpoint();
-    Point centerBottom = charRegion->getCharBoxBottom().midpoint();
-    LineSegment centerLine = LineSegment(centerBottom.x, centerBottom.y, centerTop.x, centerTop.y);
 
-    left = centerLine.getParallelLine(idealPixelWidth / 2);
-    right = centerLine.getParallelLine(-1 * idealPixelWidth / 2 );
+    left = tlc.centerVerticalLine.getParallelLine(-1 * idealPixelWidth / 2);
+    right = tlc.centerVerticalLine.getParallelLine(idealPixelWidth / 2 );
 
     missingSegmentPenalty += SCORING_MISSING_SEGMENT_PENALTY_VERTICAL * 2;
     confidenceDiff += 2;
@@ -173,12 +170,9 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   score += confidenceDiff * SCORING_LINE_CONFIDENCE_WEIGHT;
   score += missingSegmentPenalty;
 
-  // Make sure this line is to the left of our license plate letters
-  if (left.isPointBelowLine(charRegion->getCharBoxLeft().midpoint()) == false)
-    return;
-
-  // Make sure this line is to the right of our license plate letters
-  if (right.isPointBelowLine(charRegion->getCharBoxRight().midpoint()))
+  // Make sure that the left and right lines are to the left and right of our text 
+  // area
+  if (tlc.isLeftOfText(left) < 1 || tlc.isLeftOfText(right) > -1)
     return;
 
   /////////////////////////////////////////////////////////////////////////
@@ -203,7 +197,7 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   // Score angle difference from detected character box
   /////////////////////////////////////////////////////////////////////////
   
-  float perpendicularCharAngle = charAngle - 90;
+  float perpendicularCharAngle = tlc.charAngle - 90;
   float charanglediff = abs(perpendicularCharAngle - left.angle) + abs(perpendicularCharAngle - right.angle);
 
   score += charanglediff * SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT;
@@ -212,8 +206,8 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   // SCORE the shape wrt character position and height relative to position
   //////////////////////////////////////////////////////////////////////////
 
-  Point leftMidLinePoint = left.closestPointOnSegmentTo(charRegion->getCharBoxLeft().midpoint());
-  Point rightMidLinePoint = right.closestPointOnSegmentTo(charRegion->getCharBoxRight().midpoint());
+  Point leftMidLinePoint = left.closestPointOnSegmentTo(tlc.centerVerticalLine.midpoint());
+  Point rightMidLinePoint = right.closestPointOnSegmentTo(tlc.centerVerticalLine.midpoint());
 
   float plateDistance = abs(idealPixelWidth - distanceBetweenPoints(leftMidLinePoint, rightMidLinePoint));
 
@@ -223,9 +217,9 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   {
     float scorecomponent;
 
-    if (this->config->debugPlateCorners)
+    if (pipelineData->config->debugPlateCorners)
     {
-      cout << "xx xx Score: charHeight " << this->charHeight << endl;
+      cout << "xx xx Score: charHeight " << tlc.charHeight << endl;
       cout << "xx xx Score: idealwidth " << idealPixelWidth << endl;
       cout << "xx xx Score: v1,v2= " << v1 << "," << v2 << endl;
       cout << "xx xx Score: Left= " << left.str() << endl;
@@ -278,8 +272,8 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
   LineSegment top;
   LineSegment bottom;
 
-  float charHeightToPlateHeightRatio = config->plateHeightMM / config->charHeightMM;
-  float idealPixelHeight = this->charHeight *  charHeightToPlateHeightRatio;
+  float charHeightToPlateHeightRatio = pipelineData->config->plateHeightMM / pipelineData->config->charHeightMM;
+  float idealPixelHeight = tlc.charHeight *  charHeightToPlateHeightRatio;
 
   float confidenceDiff = 0;
   float missingSegmentPenalty = 0;
@@ -287,12 +281,10 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
   if (h1 == NO_LINE && h2 == NO_LINE)
   {
 //    return;
-    Point centerLeft = charRegion->getCharBoxLeft().midpoint();
-    Point centerRight = charRegion->getCharBoxRight().midpoint();
-    LineSegment centerLine = LineSegment(centerLeft.x, centerLeft.y, centerRight.x, centerRight.y);
 
-    top = centerLine.getParallelLine(idealPixelHeight / 2);
-    bottom = centerLine.getParallelLine(-1 * idealPixelHeight / 2 );
+
+    top = tlc.centerHorizontalLine.getParallelLine(idealPixelHeight / 2);
+    bottom = tlc.centerHorizontalLine.getParallelLine(-1 * idealPixelHeight / 2 );
 
     missingSegmentPenalty += SCORING_MISSING_SEGMENT_PENALTY_HORIZONTAL * 2;
     confidenceDiff += 2;
@@ -322,14 +314,11 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
   score += confidenceDiff * SCORING_LINE_CONFIDENCE_WEIGHT;
   score += missingSegmentPenalty;
 
-  // Make sure this line is above our license plate letters
-  if (top.isPointBelowLine(charRegion->getCharBoxTop().midpoint()) == false)
+  // Make sure that the top and bottom lines are above and below
+  // the text area
+  if (tlc.isAboveText(top) < 1 || tlc.isAboveText(bottom) > -1)
     return;
-
-  // Make sure this line is below our license plate letters
-  if (bottom.isPointBelowLine(charRegion->getCharBoxBottom().midpoint()))
-    return;
-
+  
   // We now have 4 possible lines.  Let's put them to the test and score them...
 
   /////////////////////////////////////////////////////////////////////////
@@ -352,8 +341,8 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
 
   // Get the height difference
 
-  float heightRatio = charHeight / plateHeightPx;
-  float idealHeightRatio = (config->charHeightMM / config->plateHeightMM);
+  float heightRatio = tlc.charHeight / plateHeightPx;
+  float idealHeightRatio = (pipelineData->config->charHeightMM / pipelineData->config->plateHeightMM);
   //if (leftRatio < MIN_CHAR_HEIGHT_RATIO || leftRatio > MAX_CHAR_HEIGHT_RATIO || rightRatio < MIN_CHAR_HEIGHT_RATIO || rightRatio > MAX_CHAR_HEIGHT_RATIO)
   float heightRatioDiff = abs(heightRatio - idealHeightRatio);
   // Ideal ratio == ~.45
@@ -373,7 +362,7 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
   // SCORE the middliness of the stuff.  We want our top and bottom line to have the characters right towards the middle
   //////////////////////////////////////////////////////////////////////////
 
-  Point charAreaMidPoint = charRegion->getCharBoxLeft().midpoint();
+  Point charAreaMidPoint = tlc.centerVerticalLine.midpoint();
   Point topLineSpot = top.closestPointOnSegmentTo(charAreaMidPoint);
   Point botLineSpot = bottom.closestPointOnSegmentTo(charAreaMidPoint);
 
@@ -395,7 +384,7 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
   // SCORE: the shape for angles matching the character region
   //////////////////////////////////////////////////////////////
 
-  float charanglediff = abs(charAngle - top.angle) + abs(charAngle - bottom.angle);
+  float charanglediff = abs(tlc.charAngle - top.angle) + abs(tlc.charAngle - bottom.angle);
 
   score += charanglediff * SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT;
 
@@ -406,9 +395,9 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
   {
     float scorecomponent;
 
-    if (this->config->debugPlateCorners)
+    if (pipelineData->config->debugPlateCorners)
     {
-      cout << "xx xx Score: charHeight " << this->charHeight << endl;
+      cout << "xx xx Score: charHeight " << tlc.charHeight << endl;
       cout << "xx xx Score: idealHeight " << idealPixelHeight << endl;
       cout << "xx xx Score: h1,h2= " << h1 << "," << h2 << endl;
       cout << "xx xx Score: Top= " << top.str() << endl;
@@ -448,3 +437,152 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
     bestBottom = LineSegment(bottom.p1.x, bottom.p1.y, bottom.p2.x, bottom.p2.y);
   }
 }
+
+TextLineCollection::TextLineCollection(PipelineData* pipelineData) {
+  
+  this->pipelineData = pipelineData;
+  
+  charHeight = 0;
+  charAngle = 0;
+  for (uint i = 0; i < pipelineData->textLines.size(); i++)
+  {
+    charHeight += pipelineData->textLines[i].lineHeight;
+    charAngle += pipelineData->textLines[i].angle;
+    
+  }
+  charHeight = charHeight / pipelineData->textLines.size();
+  charAngle = charAngle / pipelineData->textLines.size();
+  
+  this->topCharArea = pipelineData->textLines[0].charBoxTop;
+  this->bottomCharArea = pipelineData->textLines[0].charBoxBottom;
+  for (uint i = 1; i < pipelineData->textLines.size(); i++)
+  {
+    
+    if (this->topCharArea.isPointBelowLine(pipelineData->textLines[i].charBoxTop.midpoint()) == false)
+      this->topCharArea = pipelineData->textLines[i].charBoxTop;
+    
+    if (this->bottomCharArea.isPointBelowLine(pipelineData->textLines[i].charBoxBottom.midpoint()))
+      this->bottomCharArea = pipelineData->textLines[i].charBoxBottom;
+
+  }
+  
+  longerSegment = this->bottomCharArea;
+  shorterSegment = this->topCharArea;
+  if (this->topCharArea.length > this->bottomCharArea.length)
+  {
+    longerSegment = this->topCharArea;
+    shorterSegment = this->bottomCharArea;
+  }
+  
+  findCenterHorizontal();
+  findCenterVertical();
+  // Center Vertical Line
+  
+  if (pipelineData->config->debugPlateCorners)
+  {
+    Mat debugImage = Mat::zeros(pipelineData->crop_gray.size(), CV_8U);
+    line(debugImage, this->centerHorizontalLine.p1, this->centerHorizontalLine.p2, Scalar(255,255,255), 2);
+    line(debugImage, this->centerVerticalLine.p1, this->centerVerticalLine.p2, Scalar(255,255,255), 2);
+
+    displayImage(pipelineData->config, "Plate Corner Center lines", debugImage);
+  }
+}
+
+// Returns 1 for above, 0 for within, and -1 for below
+int TextLineCollection::isAboveText(LineSegment line) {
+  // Test four points (left and right corner of top and bottom line)
+  
+  Point topLeft = line.closestPointOnSegmentTo(topCharArea.p1);
+  Point topRight = line.closestPointOnSegmentTo(topCharArea.p2);
+  
+  bool lineIsBelowTop = topCharArea.isPointBelowLine(topLeft) || topCharArea.isPointBelowLine(topRight);
+  
+  if (!lineIsBelowTop)
+    return 1;
+  
+  Point bottomLeft = line.closestPointOnSegmentTo(bottomCharArea.p1);
+  Point bottomRight = line.closestPointOnSegmentTo(bottomCharArea.p2);
+  
+  bool lineIsBelowBottom = bottomCharArea.isPointBelowLine(bottomLeft) &&
+                          bottomCharArea.isPointBelowLine(bottomRight);
+  
+  if (lineIsBelowBottom)
+    return -1;
+  
+  return 0;
+  
+}
+
+// Returns 1 for left, 0 for within, and -1 for to the right
+int TextLineCollection::isLeftOfText(LineSegment line) {
+
+  LineSegment leftSide = LineSegment(bottomCharArea.p1, topCharArea.p1);
+  
+  Point topLeft = line.closestPointOnSegmentTo(leftSide.p2);
+  Point bottomLeft = line.closestPointOnSegmentTo(leftSide.p1);
+  
+  bool lineIsAboveLeft = (!leftSide.isPointBelowLine(topLeft)) && (!leftSide.isPointBelowLine(bottomLeft));
+  
+  if (lineIsAboveLeft)
+    return 1;
+  
+  LineSegment rightSide = LineSegment(bottomCharArea.p2, topCharArea.p2);
+  
+  Point topRight = line.closestPointOnSegmentTo(rightSide.p2);
+  Point bottomRight = line.closestPointOnSegmentTo(rightSide.p1);
+  
+  
+  bool lineIsBelowRight = rightSide.isPointBelowLine(topRight) && rightSide.isPointBelowLine(bottomRight);
+  
+  if (lineIsBelowRight)
+    return -1;
+  
+  return 0;
+}
+
+void TextLineCollection::findCenterHorizontal() {
+  // To find the center horizontal line:
+  // Find the longer of the lines (if multiline)
+  // Get the nearest point on the bottom-most line for the 
+  // left and right 
+  
+
+  
+  Point leftP1 =  shorterSegment.closestPointOnSegmentTo(longerSegment.p1);
+  Point leftP2 = longerSegment.p1;
+  LineSegment left = LineSegment(leftP1, leftP2);
+  
+  Point leftMidpoint = left.midpoint();
+  
+  
+  
+  Point rightP1 =  shorterSegment.closestPointOnSegmentTo(longerSegment.p2);
+  Point rightP2 = longerSegment.p2;
+  LineSegment right = LineSegment(rightP1, rightP2);
+  
+  Point rightMidpoint = right.midpoint();
+  
+  this->centerHorizontalLine = LineSegment(leftMidpoint, rightMidpoint);
+  
+}
+
+void TextLineCollection::findCenterVertical() {
+  // To find the center vertical line:
+  // Choose the longest line (if multiline)
+  // Get the midpoint
+  // Draw a line up/down using the closest point on the bottom line
+  
+
+  Point p1 = longerSegment.midpoint();
+  
+  Point p2 = shorterSegment.closestPointOnSegmentTo(p1);
+  
+  // Draw bottom to top
+  if (p1.y < p2.y)
+    this->centerVerticalLine = LineSegment(p1, p2);
+  else
+    this->centerVerticalLine = LineSegment(p2, p1);
+}
+
+
+

@@ -139,6 +139,8 @@ void Config::loadValues(string country)
   minPlateSizeWidthPx = getInt(country, "min_plate_size_width_px", 100);
   minPlateSizeHeightPx = getInt(country, "min_plate_size_height_px", 100);
     
+  multiline = 	getBoolean(country, "multiline",		false);
+  
   plateWidthMM = getFloat(country, "plate_width_mm", 100);
   plateHeightMM = getFloat(country, "plate_height_mm", 100);
   

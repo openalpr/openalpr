@@ -100,6 +100,8 @@ float angleBetweenPoints(cv::Point p1, cv::Point p2);
 
 cv::Size getSizeMaintainingAspect(cv::Mat inputImg, int maxWidth, int maxHeight);
 
+float getContourAreaPercentInsideMask(cv::Mat mask, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, int contourIndex);
+
 cv::Mat equalizeBrightness(cv::Mat img);
 
 cv::Rect expandRect(cv::Rect original, int expandXPixels, int expandYPixels, int maxX, int maxY);

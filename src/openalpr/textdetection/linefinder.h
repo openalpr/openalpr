@@ -17,38 +17,39 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENALPR_CHARACTERREGION_H
-#define OPENALPR_CHARACTERREGION_H
+// This class finds lines of text given an array of contours
+
+#ifndef OPENALPR_LINEFINDER_H
+#define	OPENALPR_LINEFINDER_H
 
 #include "opencv2/imgproc/imgproc.hpp"
-#include "constants.h"
-#include "utility.h"
-#include "textdetection/characteranalysis.h"
-#include "config.h"
+#include "textcontours.h"
+#include "textline.h"
 #include "pipeline_data.h"
 
-class CharacterRegion
+class CharPointInfo
 {
-
-  public:
-    CharacterRegion(PipelineData* pipeline_data);
-    virtual ~CharacterRegion();
-
-
-    int confidence;
-
-
-
-  protected:
-    Config* config;
-    bool debug;
-
-    CharacterAnalysis *charAnalysis;
-    cv::Mat findOuterBoxMask(std::vector<cv::Mat> thresholds, std::vector<std::vector<std::vector<cv::Point> > > allContours, std::vector<std::vector<cv::Vec4i> > allHierarchy);
-
-
-    bool isPlateInverted(cv::Mat threshold, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, std::vector<bool> goodIndices);
-
+public:
+  CharPointInfo(std::vector<cv::Point> contour, int index);
+  
+  cv::Rect boundingBox;
+  cv::Point top;
+  cv::Point bottom;
+  int contourIndex;
+  
 };
 
-#endif // OPENALPR_CHARACTERREGION_H
+class LineFinder {
+public:
+  LineFinder(PipelineData* pipeline_data);
+  virtual ~LineFinder();
+  
+  std::vector<std::vector<cv::Point> > findLines(cv::Mat image, const TextContours contours);
+private:
+  PipelineData* pipeline_data;
+          
+  std::vector<cv::Point> getBestLine(const TextContours contours, std::vector<CharPointInfo> charPoints);
+};
+
+#endif	/* OPENALPR_LINEFINDER_H */
+

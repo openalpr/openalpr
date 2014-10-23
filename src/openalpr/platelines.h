@@ -37,10 +37,10 @@ class PlateLines
 {
 
   public:
-    PlateLines(Config* config);
+    PlateLines(PipelineData* pipelineData);
     virtual ~PlateLines();
 
-    void processImage(cv::Mat img, CharacterRegion* charRegion, float sensitivity=1.0);
+    void processImage(cv::Mat img, float sensitivity=1.0);
 
     std::vector<PlateLine> horizontalLines;
     std::vector<PlateLine> verticalLines;
@@ -49,7 +49,7 @@ class PlateLines
 
   private:
     
-    Config* config;
+    PipelineData* pipelineData;
     bool debug;
 
     cv::Mat customGrayscaleConversion(cv::Mat src);

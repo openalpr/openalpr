@@ -38,11 +38,11 @@ const std::string MAIN_WINDOW_NAME = "ALPR main window";
 const bool SAVE_LAST_VIDEO_STILL = false;
 const std::string LAST_VIDEO_STILL_LOCATION = "/tmp/laststill.jpg";
 
-
 /** Function Headers */
 bool detectandshow(Alpr* alpr, cv::Mat frame, std::string region, bool writeJson);
 
 bool measureProcessingTime = false;
+std::string templateRegion;
 
 // This boolean is set to false when the user hits terminates (e.g., CTRL+C )
 // so we can end infinite loops for things like video processing.
@@ -55,7 +55,6 @@ int main( int argc, const char** argv )
   bool outputJson = false;
   int seektoms = 0;
   bool detectRegion = false;
-  std::string templateRegion;
   std::string country;
   int topn;
 
@@ -275,12 +274,12 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
 
   timespec startTime;
   getTime(&startTime);
-  
+
   std::vector<AlprRegionOfInterest> regionsOfInterest;
   regionsOfInterest.push_back(AlprRegionOfInterest(0,0, frame.cols, frame.rows));
   
   AlprResults results = alpr->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, regionsOfInterest );
-  
+
   timespec endTime;
   getTime(&endTime);
   double totalProcessingTime = diffclock(startTime, endTime);
@@ -296,7 +295,7 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
   {
     for (int i = 0; i < results.plates.size(); i++)
     {
-      std::cout << "plate" << i << ": " << results.plates[i].result_count << " results";
+      std::cout << "plate" << i << ": " << results.plates[i].topNPlates.size() << " results";
 	  if (measureProcessingTime)
 		std::cout << " -- Processing Time = " << results.plates[i].processing_time_ms << "ms.";
 	  std::cout << std::endl;
@@ -304,7 +303,11 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
 
       for (int k = 0; k < results.plates[i].topNPlates.size(); k++)
       {
-        std::cout << "    - " << results.plates[i].topNPlates[k].characters << "\t confidence: " << results.plates[i].topNPlates[k].overall_confidence << "\t template_match: " << results.plates[i].topNPlates[k].matches_template << std::endl;
+        std::cout << "    - " << results.plates[i].topNPlates[k].characters << "\t confidence: " << results.plates[i].topNPlates[k].overall_confidence;
+        if (templateRegion.size() > 0)
+          std::cout << "\t template_match: " << results.plates[i].topNPlates[k].matches_template;
+        
+        std::cout << std::endl;
       }
     }
   }

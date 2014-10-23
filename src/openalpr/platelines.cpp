@@ -25,10 +25,11 @@ using namespace std;
 const float MIN_CONFIDENCE = 0.3;
     
     
-PlateLines::PlateLines(Config* config)
+PlateLines::PlateLines(PipelineData* pipelineData)
 {
-  this->config = config;
-  this->debug = config->debugPlateLines;
+  this->pipelineData = pipelineData;
+  
+  this->debug = pipelineData->config->debugPlateLines;
 
   if (debug)
     cout << "PlateLines constructor" << endl;
@@ -38,7 +39,7 @@ PlateLines::~PlateLines()
 {
 }
 
-void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float sensitivity)
+void PlateLines::processImage(Mat inputImage, float sensitivity)
 {
   if (this->debug)
     cout << "PlateLines findLines" << endl;
@@ -59,7 +60,6 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
   adaptiveBilateralFilter(inputImage, smoothed, Size(3,3), 45, 45);
   
   
-  
   int morph_elem  = 2;
   int morph_size = 2;
   Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
@@ -69,11 +69,18 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
   Canny(smoothed, edges, 66, 133);
 
   // Create a mask that is dilated based on the detected characters
-  vector<vector<Point> > polygons;
-  polygons.push_back(charRegion->getCharArea());
+  
   
   Mat mask = Mat::zeros(inputImage.size(), CV_8U);
-  fillPoly(mask, polygons, Scalar(255,255,255));
+  
+  for (uint i = 0; i < pipelineData->textLines.size(); i++)
+  {
+    vector<vector<Point> > polygons;
+    polygons.push_back(pipelineData->textLines[i].textArea);
+    fillPoly(mask, polygons, Scalar(255,255,255));
+  }
+  
+  
 
   dilate(mask, mask, getStructuringElement( 1, Size( 1 + 1, 2*1+1 ), Point( 1, 1 ) ));
   bitwise_not(mask, mask);
@@ -114,10 +121,10 @@ void PlateLines::processImage(Mat inputImage, CharacterRegion* charRegion, float
     images.push_back(debugImgVert);
 
     Mat dashboard = drawImageDashboard(images, debugImgVert.type(), 1);
-    displayImage(config, "Hough Lines", dashboard);
+    displayImage(pipelineData->config, "Hough Lines", dashboard);
   }
 
-  if (config->debugTiming)
+  if (pipelineData->config->debugTiming)
   {
     timespec endTime;
     getTime(&endTime);
@@ -134,8 +141,8 @@ vector<PlateLine> PlateLines::getLines(Mat edges, float sensitivityMultiplier, b
   if (this->debug)
     cout << "PlateLines::getLines" << endl;
 
-  static int HORIZONTAL_SENSITIVITY = config->plateLinesSensitivityHorizontal;
-  static int VERTICAL_SENSITIVITY = config->plateLinesSensitivityVertical;
+  static int HORIZONTAL_SENSITIVITY = pipelineData->config->plateLinesSensitivityHorizontal;
+  static int VERTICAL_SENSITIVITY = pipelineData->config->plateLinesSensitivityVertical;
 
   vector<Vec2f> allLines;
   vector<PlateLine> filteredLines;

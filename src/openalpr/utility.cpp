@@ -17,6 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <opencv2/core/core.hpp>
+
 #include "utility.h"
 
 using namespace cv;
@@ -379,6 +381,36 @@ LineSegment LineSegment::getParallelLine(float distance)
   return result;
 }
 
+// Given a contour and a mask, this function determines what percentage of the contour (area)
+// is inside the masked area. 
+float getContourAreaPercentInsideMask(cv::Mat mask, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, int contourIndex)
+{
+  
+  
+  Mat innerArea = Mat::zeros(mask.size(), CV_8U);
+
+
+  drawContours(innerArea, contours,
+               contourIndex, // draw this contour
+               cv::Scalar(255,255,255), // in
+               CV_FILLED,
+               8,
+               hierarchy,
+               2
+              );
+  
+  
+  int startingPixels = cv::countNonZero(innerArea);
+  //drawAndWait(&innerArea);
+  
+  bitwise_and(innerArea, mask, innerArea);
+  
+  int endingPixels = cv::countNonZero(innerArea);
+  //drawAndWait(&innerArea);
+  
+  return ((float) endingPixels) / ((float) startingPixels);
+
+}
 
 std::string toString(int value)
 {

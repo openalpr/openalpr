@@ -43,11 +43,43 @@
 
 #define SCORING_VERTICALDISTANCE_FROMEDGE_WEIGHT	0.05
 
+class TextLineCollection
+{
+public:
+  TextLineCollection(PipelineData* pipelineData);
+  
+  int isLeftOfText(LineSegment line);
+  int isAboveText(LineSegment line);
+  
+  LineSegment centerHorizontalLine;
+  LineSegment centerVerticalLine;
+
+  float charHeight;
+  float charAngle;
+  
+  
+  
+private:
+  PipelineData* pipelineData;
+  
+  LineSegment topCharArea;
+  LineSegment bottomCharArea;
+  
+  LineSegment longerSegment;
+  LineSegment shorterSegment;
+    
+  cv::Mat textMask;
+  
+  void findCenterHorizontal();
+  void findCenterVertical();
+};
+
 class PlateCorners
 {
 
   public:
-    PlateCorners(cv::Mat inputImage, PlateLines* plateLines, CharacterRegion* charRegion, Config* config);
+    PlateCorners(cv::Mat inputImage, PlateLines* plateLines, PipelineData* pipelineData) ;
+    
     virtual ~PlateCorners();
 
     std::vector<cv::Point> findPlateCorners();
@@ -56,11 +88,11 @@ class PlateCorners
 
   private:
 
-    Config* config;
+    PipelineData* pipelineData;
     cv::Mat inputImage;
-    float charHeight;
-    float charAngle;
 
+    TextLineCollection tlc;
+    
     float bestHorizontalScore;
     float bestVerticalScore;
     LineSegment bestTop;
@@ -69,7 +101,6 @@ class PlateCorners
     LineSegment bestRight;
 
     PlateLines* plateLines;
-    CharacterRegion* charRegion;
 
     void scoreHorizontals( int h1, int h2 );
     void scoreVerticals( int v1, int v2 );
