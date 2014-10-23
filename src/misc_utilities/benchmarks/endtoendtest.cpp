@@ -77,14 +77,14 @@ void EndToEndTest::runTest(string country, vector<std::string> files)
       
     }
     
-    benchmarkResult.resultsFalsePositives = recognitionDetails.results.size();
+    benchmarkResult.resultsFalsePositives = recognitionDetails.results.plates.size();
     
     // Determine if the top result and the top N results match the correct value
-    for (int z = 0; z < recognitionDetails.results.size(); z++)
+    for (int z = 0; z < recognitionDetails.results.plates.size(); z++)
     {
       //cout << "Actual: " << plate_number << endl;
       //cout << "Candidate: " << recognitionDetails.results[z].bestPlate.characters << endl;
-      if (recognitionDetails.results[z].bestPlate.characters == plate_number)
+      if (recognitionDetails.results.plates[z].bestPlate.characters == plate_number)
       {
 	benchmarkResult.topResultCorrect = true;
 	benchmarkResult.top10ResultCorrect = true;
@@ -92,9 +92,9 @@ void EndToEndTest::runTest(string country, vector<std::string> files)
 	break;
       }
       
-      for (int idx = 0; idx < recognitionDetails.results[z].topNPlates.size(); idx++)
+      for (int idx = 0; idx < recognitionDetails.results.plates[z].topNPlates.size(); idx++)
       {
-	if (recognitionDetails.results[z].topNPlates[idx].characters == plate_number)
+	if (recognitionDetails.results.plates[z].topNPlates[idx].characters == plate_number)
 	{
 	  benchmarkResult.top10ResultCorrect = true;
 	  benchmarkResult.resultsFalsePositives--;
