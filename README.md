@@ -20,16 +20,16 @@ For example, the following output is created by analyzing this image:
 user@linux:~/openalpr$ alpr ./samplecar.png
 
 plate0: top 10 results -- Processing Time = 58.1879ms.
-    - PE3R2X     confidence: 88.9371	 template_match: 0
-    - PE32X      confidence: 78.1385	 template_match: 0
-    - PE3R2      confidence: 77.5444	 template_match: 0
-    - PE3R2Y     confidence: 76.1448	 template_match: 0
-    - P63R2X     confidence: 72.9016	 template_match: 0
-    - FE3R2X     confidence: 72.1147	 template_match: 0
-    - PE32       confidence: 66.7458	 template_match: 0
-    - PE32Y      confidence: 65.3462	 template_match: 0
-    - P632X      confidence: 62.1031	 template_match: 0
-    - P63R2      confidence: 61.5089	 template_match: 0
+    - PE3R2X     confidence: 88.9371
+    - PE32X      confidence: 78.1385
+    - PE3R2      confidence: 77.5444
+    - PE3R2Y     confidence: 76.1448
+    - P63R2X     confidence: 72.9016
+    - FE3R2X     confidence: 72.1147
+    - PE32       confidence: 66.7458
+    - PE32Y      confidence: 65.3462
+    - P632X      confidence: 62.1031
+    - P63R2      confidence: 61.5089
 
 ```
 
