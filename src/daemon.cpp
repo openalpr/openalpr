@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 #include <sstream>
+#include <execinfo.h>
 
 #include "daemon/beanstalk.hpp"
 #include "video/logging_videobuffer.h"
@@ -34,6 +35,7 @@ const std::string BEANSTALK_QUEUE_HOST="127.0.0.1";
 const int BEANSTALK_PORT=11300;
 const std::string BEANSTALK_TUBE_NAME="alprd";
 
+
 struct CaptureThreadData
 {
   std::string stream_url;
@@ -54,12 +56,26 @@ struct UploadThreadData
   std::string upload_url;
 };
 
+void segfault_handler(int sig) {
+  void *array[10];
+  size_t size;
+
+  // get void*'s for all entries on the stack
+  size = backtrace(array, 10);
+
+  // print out all the frames to stderr
+  fprintf(stderr, "Error: signal %d:\n", sig);
+  backtrace_symbols_fd(array, size, STDERR_FILENO);
+  exit(1);
+}
+
 bool daemon_active;
 
 static log4cplus::Logger logger;
 
 int main( int argc, const char** argv )
 {
+  signal(SIGSEGV, segfault_handler);   // install our segfault handler
   daemon_active = true;
 
   bool noDaemon = false;
