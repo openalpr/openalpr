@@ -80,6 +80,7 @@ class AlprImpl
     void setDefaultRegion(std::string region);
     
     std::string toJson( const AlprResults results );
+	AlprResults fromJson(std::string json);
     static std::string getVersion();
     
     Config* config;

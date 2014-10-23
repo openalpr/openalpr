@@ -63,7 +63,6 @@ class AlprPlateResult
     virtual ~AlprPlateResult() {};
 
     int requested_topn;
-    int result_count;
 
     AlprPlate bestPlate;
     std::vector<AlprPlate> topNPlates;
@@ -116,6 +115,7 @@ class Alpr
 
     
     std::string toJson(const AlprResults results);
+	AlprResults fromJson(std::string json);
 
     bool isLoaded();
     

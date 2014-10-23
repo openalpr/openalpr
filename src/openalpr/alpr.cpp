@@ -62,6 +62,11 @@ std::string Alpr::toJson( AlprResults results )
   return impl->toJson(results);
 }
 
+AlprResults Alpr::fromJson(std::string json) {
+  return impl->fromJson(json);
+}
+
+
 void Alpr::setDetectRegion(bool detectRegion)
 {
   impl->setDetectRegion(detectRegion);

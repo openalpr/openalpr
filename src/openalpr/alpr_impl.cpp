@@ -175,7 +175,6 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
           plateResult.topNPlates.push_back(aplate);
         }
       }
-      plateResult.result_count = plateResult.topNPlates.size();
 
       if (plateResult.topNPlates.size() > 0)
         plateResult.bestPlate = plateResult.topNPlates[bestPlateIndex];
@@ -184,7 +183,7 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
       getTime(&plateEndTime);
       plateResult.processing_time_ms = diffclock(platestarttime, plateEndTime);
 
-      if (plateResult.result_count > 0)
+      if (plateResult.topNPlates.size() > 0)
       {
         plateDetected = true;
         response.results.plates.push_back(plateResult);
@@ -360,6 +359,7 @@ cJSON* AlprImpl::createJsonObj(const AlprPlateResult* result)
   cJSON_AddNumberToObject(root,"region_confidence",	result->regionConfidence);
   
   cJSON_AddNumberToObject(root,"processing_time_ms",	result->processing_time_ms);
+  cJSON_AddNumberToObject(root,"requested_topn",	result->requested_topn);
   
   cJSON_AddItemToObject(root, "coordinates", 		coords=cJSON_CreateArray());
   for (int i=0;i<4;i++)
@@ -386,6 +386,81 @@ cJSON* AlprImpl::createJsonObj(const AlprPlateResult* result)
   }
   
   return root;
+}
+
+AlprResults AlprImpl::fromJson(std::string json) {
+  AlprResults allResults;
+  
+  cJSON* root = cJSON_Parse(json.c_str());
+  
+  int version = cJSON_GetObjectItem(root, "version")->valueint;
+  allResults.epoch_time = (long) cJSON_GetObjectItem(root, "epoch_time")->valuedouble; 
+  allResults.img_width = cJSON_GetObjectItem(root, "img_width")->valueint;
+  allResults.img_height = cJSON_GetObjectItem(root, "img_height")->valueint;
+  allResults.total_processing_time_ms = cJSON_GetObjectItem(root, "processing_time_ms")->valueint;
+
+  
+  cJSON* rois = cJSON_GetObjectItem(root,"regions_of_interest");
+  int numRois = cJSON_GetArraySize(rois);
+  for (int c = 0; c < numRois; c++)
+  {
+    cJSON* roi = cJSON_GetArrayItem(rois, c);
+    int x = cJSON_GetObjectItem(roi, "x")->valueint;
+    int y = cJSON_GetObjectItem(roi, "y")->valueint;
+    int width = cJSON_GetObjectItem(roi, "width")->valueint;
+    int height = cJSON_GetObjectItem(roi, "height")->valueint;
+
+    AlprRegionOfInterest alprRegion(x,y,width,height);
+    allResults.regionsOfInterest.push_back(alprRegion);
+  }
+  
+  cJSON* resultsArray = cJSON_GetObjectItem(root,"results");
+  int resultsSize = cJSON_GetArraySize(resultsArray);
+  
+  for (int i = 0; i < resultsSize; i++)
+  {
+    cJSON* item = cJSON_GetArrayItem(resultsArray, i);
+    AlprPlateResult plate;
+    
+    //plate.bestPlate = cJSON_GetObjectItem(item, "plate")->valuestring; 
+    plate.processing_time_ms = cJSON_GetObjectItem(item, "processing_time_ms")->valuedouble;
+    plate.region = cJSON_GetObjectItem(item, "region")->valuestring;
+    plate.regionConfidence = cJSON_GetObjectItem(item, "region_confidence")->valueint;
+    plate.requested_topn = cJSON_GetObjectItem(item, "requested_topn")->valueint;
+    
+    
+    cJSON* coordinates = cJSON_GetObjectItem(item,"coordinates");
+    for (int c = 0; c < 4; c++)
+    {
+      cJSON* coordinate = cJSON_GetArrayItem(coordinates, c);
+      AlprCoordinate alprcoord;
+      alprcoord.x = cJSON_GetObjectItem(coordinate, "x")->valueint;
+      alprcoord.y = cJSON_GetObjectItem(coordinate, "y")->valueint;
+      
+      plate.plate_points[c] = alprcoord;
+    }
+    
+    cJSON* candidates = cJSON_GetObjectItem(item,"candidates");
+    int numCandidates = cJSON_GetArraySize(candidates);
+    for (int c = 0; c < numCandidates; c++)
+    {
+      cJSON* candidate = cJSON_GetArrayItem(candidates, c);
+      AlprPlate plateCandidate;
+      plateCandidate.characters = cJSON_GetObjectItem(candidate, "plate")->valuestring;
+      plateCandidate.overall_confidence = cJSON_GetObjectItem(candidate, "confidence")->valuedouble;
+      plateCandidate.matches_template = (cJSON_GetObjectItem(candidate, "matches_template")->valueint) != 0;
+
+      plate.topNPlates.push_back(plateCandidate);
+    }
+    
+    allResults.plates.push_back(plate);
+  }
+  
+  
+  cJSON_Delete(root);
+  
+  
+  return allResults;
 }
 
 
