@@ -82,8 +82,7 @@ IF (NOT WIN32)
 	add_subdirectory(misc_utilities)
 ENDIF()
   
-
-  
+add_subdirectory(tests)
 
 add_subdirectory(openalpr)
 add_subdirectory(video)
