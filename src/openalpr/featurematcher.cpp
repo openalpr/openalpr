@@ -288,6 +288,7 @@ RecognitionResult FeatureMatcher::recognize( const Mat& queryImg, bool drawOnIma
   RecognitionResult result;
 
   result.haswinner = false;
+  result.confidence = 0;
 
   Mat queryDescriptors;
   vector<KeyPoint> queryKeypoints;

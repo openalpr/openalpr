@@ -11,6 +11,8 @@ PipelineData::PipelineData(Mat colorImage, Rect regionOfInterest, Config* config
   this->regionOfInterest = regionOfInterest;
   this->config = config;
   
+  this->region_confidence = 0;
+  
   plate_inverted = false;
 }
 

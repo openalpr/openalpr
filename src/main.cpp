@@ -296,11 +296,13 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
     for (int i = 0; i < results.plates.size(); i++)
     {
       std::cout << "plate" << i << ": " << results.plates[i].topNPlates.size() << " results";
-	  if (measureProcessingTime)
-		std::cout << " -- Processing Time = " << results.plates[i].processing_time_ms << "ms.";
-	  std::cout << std::endl;
+      if (measureProcessingTime)
+        std::cout << " -- Processing Time = " << results.plates[i].processing_time_ms << "ms.";
+      std::cout << std::endl;
 
-
+      if (results.plates[i].regionConfidence > 0)
+        std::cout << "State ID: " << results.plates[i].region << " (" << results.plates[i].regionConfidence << "% confidence)" << std::endl;
+      
       for (int k = 0; k < results.plates[i].topNPlates.size(); k++)
       {
         std::cout << "    - " << results.plates[i].topNPlates[k].characters << "\t confidence: " << results.plates[i].topNPlates[k].overall_confidence;

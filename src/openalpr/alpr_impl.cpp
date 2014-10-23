@@ -139,11 +139,11 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
 
       if (detectRegion)
       {
-        char statecode[4];
-        plateResult.regionConfidence = stateIdentifier->recognize(&pipeline_data);
-        if (plateResult.regionConfidence > 0)
+        stateIdentifier->recognize(&pipeline_data);
+        if (pipeline_data.region_confidence > 0)
         {
-          plateResult.region = statecode;
+          plateResult.region = pipeline_data.region_code;
+          plateResult.regionConfidence = (int) pipeline_data.region_confidence;
         }
       }
 
