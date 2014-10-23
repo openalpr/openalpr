@@ -92,7 +92,7 @@ void OCR::performOCR(PipelineData* pipeline_data)
 
         if(symbol != 0  && pointsize >= config->ocrMinFontSize)
         {
-          postProcessor->addLetter(*symbol, j, conf);
+          postProcessor->addLetter(string(symbol), j, conf);
 
           if (this->config->debugOcr)
             printf("charpos%d: threshold %d:  symbol %s, conf: %f font: %s (index %d) size %dpx", j, i, symbol, conf, fontName, fontindex, pointsize);
@@ -103,7 +103,7 @@ void OCR::performOCR(PipelineData* pipeline_data)
           {
             const char* choice = ci.GetUTF8Text();
 
-            postProcessor->addLetter(*choice, j, ci.Confidence());
+            postProcessor->addLetter(string(choice), j, ci.Confidence());
 
             //letterScores.addScore(*choice, j, ci.Confidence() - MIN_CONFIDENCE);
             if (this->config->debugOcr)

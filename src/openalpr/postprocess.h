@@ -30,11 +30,11 @@
 #include "config.h"
 
 
-#define SKIP_CHAR '~'
+#define SKIP_CHAR "~"
 
 struct Letter
 {
-  char letter;
+  std::string letter;
   int charposition;
   float totalscore;
   int occurences;
@@ -73,7 +73,7 @@ class PostProcess
     PostProcess(Config* config);
     ~PostProcess();
 
-    void addLetter(char letter, int charposition, float score);
+    void addLetter(std::string letter, int charposition, float score);
 
     void clear();
     void analyze(std::string templateregion, int topn);
@@ -88,7 +88,7 @@ class PostProcess
     //void getTopN();
     void findAllPermutations(std::vector<Letter> prevletters, int charPos, int substitutionsLeft);
 
-    void insertLetter(char letter, int charPosition, float score);
+    void insertLetter(std::string letter, int charPosition, float score);
 
     std::map<std::string, std::vector<RegexRule*> > rules;
 

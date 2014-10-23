@@ -69,7 +69,7 @@ PostProcess::~PostProcess()
   }
 }
 
-void PostProcess::addLetter(char letter, int charposition, float score)
+void PostProcess::addLetter(string letter, int charposition, float score)
 {
   if (score < config->postProcessMinConfidence)
     return;
@@ -88,7 +88,7 @@ void PostProcess::addLetter(char letter, int charposition, float score)
   //}
 }
 
-void PostProcess::insertLetter(char letter, int charposition, float score)
+void PostProcess::insertLetter(string letter, int charposition, float score)
 {
   score = score - config->postProcessMinConfidence;
 
