@@ -83,18 +83,22 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
     regionsOfInterest.push_back(cv::Rect(0, 0, img.cols, img.rows));
   
   AlprFullDetails response;
-
+  
+  response.results.epoch_time = getEpochTime();
+  response.results.img_width = img.cols;
+  response.results.img_height = img.rows;
+  
+  for (uint i = 0; i < regionsOfInterest.size(); i++)
+  {
+    response.results.regionsOfInterest.push_back(AlprRegionOfInterest(regionsOfInterest[i].x, regionsOfInterest[i].y, 
+            regionsOfInterest[i].width, regionsOfInterest[i].height));
+  }
+  
   if (!img.data)
   {
     // Invalid image
     if (this->config->debugGeneral)
       std::cerr << "Invalid image" << std::endl;
-    
-    vector<AlprResult> emptyVector;
-    response.results = emptyVector;
-    
-    vector<PlateRegion> emptyVector2;
-    response.plateRegions = emptyVector2;
     
     return response;
   }
@@ -123,7 +127,7 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
     bool plateDetected = false;
     if (pipeline_data.plate_area_confidence > 10)
     {
-      AlprResult plateResult;
+      AlprPlateResult plateResult;
       plateResult.region = defaultRegion;
       plateResult.regionConfidence = 0;
 
@@ -171,7 +175,6 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
           plateResult.topNPlates.push_back(aplate);
         }
       }
-      plateResult.result_count = plateResult.topNPlates.size();
 
       if (plateResult.topNPlates.size() > 0)
         plateResult.bestPlate = plateResult.topNPlates[bestPlateIndex];
@@ -180,10 +183,10 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
       getTime(&plateEndTime);
       plateResult.processing_time_ms = diffclock(platestarttime, plateEndTime);
 
-      if (plateResult.result_count > 0)
+      if (plateResult.topNPlates.size() > 0)
       {
         plateDetected = true;
-        response.results.push_back(plateResult);
+        response.results.plates.push_back(plateResult);
       }
     }
     
@@ -202,11 +205,12 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
       
   }
 
-
+  timespec endTime;
+  getTime(&endTime);
+  response.results.total_processing_time_ms = diffclock(startTime, endTime);
+  
   if (config->debugTiming)
   {
-    timespec endTime;
-    getTime(&endTime);
     cout << "Total Time to process image: " << diffclock(startTime, endTime) << "ms." << endl;
   }
   
@@ -217,11 +221,11 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
       rectangle(img, response.plateRegions[i].rect, Scalar(0, 0, 255), 2);
     }
     
-    for (uint i = 0; i < response.results.size(); i++)
+    for (uint i = 0; i < response.results.plates.size(); i++)
     {
       for (int z = 0; z < 4; z++)
       {
-	AlprCoordinate* coords = response.results[i].plate_points;
+	AlprCoordinate* coords = response.results.plates[i].plate_points;
 	Point p1(coords[z].x, coords[z].y);
 	Point p2(coords[(z + 1) % 4].x, coords[(z + 1) % 4].y);
 	line(img, p1, p2, Scalar(255,0,255), 2);
@@ -248,21 +252,32 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
 }
 
 
-std::vector<AlprResult> AlprImpl::recognize(std::string filepath, std::vector<AlprRegionOfInterest> regionsOfInterest)
-{
-  cv::Mat img = cv::imread(filepath, CV_LOAD_IMAGE_COLOR);
+
+AlprResults AlprImpl::recognize( std::vector<char> imageBytes, std::vector<AlprRegionOfInterest> regionsOfInterest )
+{  
+  cv::Mat img = cv::imdecode(cv::Mat(imageBytes), 1);
   
   return this->recognize(img, this->convertRects(regionsOfInterest));
 }
 
-std::vector<AlprResult> AlprImpl::recognize(std::vector<unsigned char> imageBuffer, std::vector<AlprRegionOfInterest> regionsOfInterest)
+AlprResults AlprImpl::recognize( unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest)
 {
-  cv::Mat img = cv::imdecode(cv::Mat(imageBuffer), 1);
+  
+  int arraySize = imgWidth * imgHeight * bytesPerPixel;
+  cv::Mat imgData = cv::Mat(arraySize, 1, CV_8U, pixelData);
+  cv::Mat img = imgData.reshape(bytesPerPixel, imgHeight);
+  
+  if (regionsOfInterest.size() == 0)
+  {
+    AlprRegionOfInterest fullFrame(0,0, img.cols, img.rows);
+
+    regionsOfInterest.push_back(fullFrame);
+  }
   
   return this->recognize(img, this->convertRects(regionsOfInterest));
 }
 
-std::vector<AlprResult> AlprImpl::recognize(cv::Mat img, std::vector<cv::Rect> regionsOfInterest)
+AlprResults AlprImpl::recognize(cv::Mat img, std::vector<cv::Rect> regionsOfInterest)
 {
   
   AlprFullDetails fullDetails = recognizeFullDetails(img, regionsOfInterest);
@@ -281,26 +296,38 @@ std::vector<AlprResult> AlprImpl::recognize(cv::Mat img, std::vector<cv::Rect> r
    return rectRegions;
  }
 
-string AlprImpl::toJson(const vector<AlprResult > results, double processing_time_ms, long epoch_time)
+string AlprImpl::toJson( const AlprResults results )
 {
   cJSON *root, *jsonResults;
   root = cJSON_CreateObject();
   
-  if (epoch_time <= 0)
-    epoch_time = getEpochTime();
   
-  cJSON_AddNumberToObject(root,"epoch_time",	epoch_time	  );
+  cJSON_AddNumberToObject(root,"epoch_time",	results.epoch_time	  );
   cJSON_AddNumberToObject(root,"version",	2	  );
-  
-  if (processing_time_ms >= 0)
+  cJSON_AddNumberToObject(root,"img_width",	results.img_width	  );
+  cJSON_AddNumberToObject(root,"img_height",	results.img_height	  );
+  cJSON_AddNumberToObject(root,"processing_time_ms", results.total_processing_time_ms );
+
+  // Add the regions of interest to the JSON
+  cJSON *rois;
+  cJSON_AddItemToObject(root, "regions_of_interest", 		rois=cJSON_CreateArray());
+  for (uint i=0;i<results.regionsOfInterest.size();i++)
   {
-    cJSON_AddNumberToObject(root,"processing_time_ms",		processing_time_ms );
+    cJSON *roi_object;
+    roi_object = cJSON_CreateObject();
+    cJSON_AddNumberToObject(roi_object, "x",  results.regionsOfInterest[i].x);
+    cJSON_AddNumberToObject(roi_object, "y",  results.regionsOfInterest[i].y);
+    cJSON_AddNumberToObject(roi_object, "width",  results.regionsOfInterest[i].width);
+    cJSON_AddNumberToObject(roi_object, "height",  results.regionsOfInterest[i].height);
+
+    cJSON_AddItemToArray(rois, roi_object);
   }
   
+  
   cJSON_AddItemToObject(root, "results", 		jsonResults=cJSON_CreateArray());
-  for (uint i = 0; i < results.size(); i++)
+  for (uint i = 0; i < results.plates.size(); i++)
   {
-    cJSON *resultObj = createJsonObj( &results[i] );
+    cJSON *resultObj = createJsonObj( &results.plates[i] );
     cJSON_AddItemToArray(jsonResults, resultObj);
   }
   
@@ -318,7 +345,7 @@ string AlprImpl::toJson(const vector<AlprResult > results, double processing_tim
 
 
 
-cJSON* AlprImpl::createJsonObj(const AlprResult* result)
+cJSON* AlprImpl::createJsonObj(const AlprPlateResult* result)
 {
   cJSON *root, *coords, *candidates;
   
@@ -332,6 +359,7 @@ cJSON* AlprImpl::createJsonObj(const AlprResult* result)
   cJSON_AddNumberToObject(root,"region_confidence",	result->regionConfidence);
   
   cJSON_AddNumberToObject(root,"processing_time_ms",	result->processing_time_ms);
+  cJSON_AddNumberToObject(root,"requested_topn",	result->requested_topn);
   
   cJSON_AddItemToObject(root, "coordinates", 		coords=cJSON_CreateArray());
   for (int i=0;i<4;i++)
@@ -358,6 +386,81 @@ cJSON* AlprImpl::createJsonObj(const AlprResult* result)
   }
   
   return root;
+}
+
+AlprResults AlprImpl::fromJson(std::string json) {
+  AlprResults allResults;
+  
+  cJSON* root = cJSON_Parse(json.c_str());
+  
+  int version = cJSON_GetObjectItem(root, "version")->valueint;
+  allResults.epoch_time = (long) cJSON_GetObjectItem(root, "epoch_time")->valuedouble; 
+  allResults.img_width = cJSON_GetObjectItem(root, "img_width")->valueint;
+  allResults.img_height = cJSON_GetObjectItem(root, "img_height")->valueint;
+  allResults.total_processing_time_ms = cJSON_GetObjectItem(root, "processing_time_ms")->valueint;
+
+  
+  cJSON* rois = cJSON_GetObjectItem(root,"regions_of_interest");
+  int numRois = cJSON_GetArraySize(rois);
+  for (int c = 0; c < numRois; c++)
+  {
+    cJSON* roi = cJSON_GetArrayItem(rois, c);
+    int x = cJSON_GetObjectItem(roi, "x")->valueint;
+    int y = cJSON_GetObjectItem(roi, "y")->valueint;
+    int width = cJSON_GetObjectItem(roi, "width")->valueint;
+    int height = cJSON_GetObjectItem(roi, "height")->valueint;
+
+    AlprRegionOfInterest alprRegion(x,y,width,height);
+    allResults.regionsOfInterest.push_back(alprRegion);
+  }
+  
+  cJSON* resultsArray = cJSON_GetObjectItem(root,"results");
+  int resultsSize = cJSON_GetArraySize(resultsArray);
+  
+  for (int i = 0; i < resultsSize; i++)
+  {
+    cJSON* item = cJSON_GetArrayItem(resultsArray, i);
+    AlprPlateResult plate;
+    
+    //plate.bestPlate = cJSON_GetObjectItem(item, "plate")->valuestring; 
+    plate.processing_time_ms = cJSON_GetObjectItem(item, "processing_time_ms")->valuedouble;
+    plate.region = cJSON_GetObjectItem(item, "region")->valuestring;
+    plate.regionConfidence = cJSON_GetObjectItem(item, "region_confidence")->valueint;
+    plate.requested_topn = cJSON_GetObjectItem(item, "requested_topn")->valueint;
+    
+    
+    cJSON* coordinates = cJSON_GetObjectItem(item,"coordinates");
+    for (int c = 0; c < 4; c++)
+    {
+      cJSON* coordinate = cJSON_GetArrayItem(coordinates, c);
+      AlprCoordinate alprcoord;
+      alprcoord.x = cJSON_GetObjectItem(coordinate, "x")->valueint;
+      alprcoord.y = cJSON_GetObjectItem(coordinate, "y")->valueint;
+      
+      plate.plate_points[c] = alprcoord;
+    }
+    
+    cJSON* candidates = cJSON_GetObjectItem(item,"candidates");
+    int numCandidates = cJSON_GetArraySize(candidates);
+    for (int c = 0; c < numCandidates; c++)
+    {
+      cJSON* candidate = cJSON_GetArrayItem(candidates, c);
+      AlprPlate plateCandidate;
+      plateCandidate.characters = cJSON_GetObjectItem(candidate, "plate")->valuestring;
+      plateCandidate.overall_confidence = cJSON_GetObjectItem(candidate, "confidence")->valuedouble;
+      plateCandidate.matches_template = (cJSON_GetObjectItem(candidate, "matches_template")->valueint) != 0;
+
+      plate.topNPlates.push_back(plateCandidate);
+    }
+    
+    allResults.plates.push_back(plate);
+  }
+  
+  
+  cJSON_Delete(root);
+  
+  
+  return allResults;
 }
 
 

@@ -37,7 +37,6 @@ const std::string MAIN_WINDOW_NAME = "ALPR main window";
 
 const bool SAVE_LAST_VIDEO_STILL = false;
 const std::string LAST_VIDEO_STILL_LOCATION = "/tmp/laststill.jpg";
-std::string getJson(Alpr* alpr, std::vector<AlprResult> results);
 
 /** Function Headers */
 bool detectandshow(Alpr* alpr, cv::Mat frame, std::string region, bool writeJson);
@@ -272,13 +271,14 @@ int main( int argc, const char** argv )
 
 bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJson)
 {
-  std::vector<uchar> buffer;
-  cv::imencode(".bmp", frame, buffer );
 
   timespec startTime;
   getTime(&startTime);
 
-  std::vector<AlprResult> results = alpr->recognize(buffer);
+  std::vector<AlprRegionOfInterest> regionsOfInterest;
+  regionsOfInterest.push_back(AlprRegionOfInterest(0,0, frame.cols, frame.rows));
+  
+  AlprResults results = alpr->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, regionsOfInterest );
 
   timespec endTime;
   getTime(&endTime);
@@ -289,23 +289,23 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
   
   if (writeJson)
   {
-    std::cout << alpr->toJson(results, totalProcessingTime) << std::endl;
+    std::cout << alpr->toJson( results ) << std::endl;
   }
   else
   {
-    for (int i = 0; i < results.size(); i++)
+    for (int i = 0; i < results.plates.size(); i++)
     {
-      std::cout << "plate" << i << ": " << results[i].result_count << " results";
+      std::cout << "plate" << i << ": " << results.plates[i].topNPlates.size() << " results";
 	  if (measureProcessingTime)
-		std::cout << " -- Processing Time = " << results[i].processing_time_ms << "ms.";
+		std::cout << " -- Processing Time = " << results.plates[i].processing_time_ms << "ms.";
 	  std::cout << std::endl;
 
 
-      for (int k = 0; k < results[i].topNPlates.size(); k++)
+      for (int k = 0; k < results.plates[i].topNPlates.size(); k++)
       {
-        std::cout << "    - " << results[i].topNPlates[k].characters << "\t confidence: " << results[i].topNPlates[k].overall_confidence;
+        std::cout << "    - " << results.plates[i].topNPlates[k].characters << "\t confidence: " << results.plates[i].topNPlates[k].overall_confidence;
         if (templateRegion.size() > 0)
-          std::cout << "\t template_match: " << results[i].topNPlates[k].matches_template;
+          std::cout << "\t template_match: " << results.plates[i].topNPlates[k].matches_template;
         
         std::cout << std::endl;
       }
@@ -314,6 +314,6 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
 
 
 
-  return results.size() > 0;
+  return results.plates.size() > 0;
 }
 

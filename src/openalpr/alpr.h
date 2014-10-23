@@ -22,7 +22,7 @@
 
 #include <iostream>
 #include <vector>
-
+#include <fstream> 
 
 struct AlprPlate
 {
@@ -38,22 +38,31 @@ struct AlprCoordinate
   int y;
 };
 
-struct AlprRegionOfInterest
+class AlprRegionOfInterest
 {
+public:
+  AlprRegionOfInterest();
+  AlprRegionOfInterest(int x, int y, int width, int height)
+  {
+    this->x = x;
+    this->y = y;
+    this->width = width;
+    this->height = height;
+  };
+  
   int x;
   int y;
   int width;
   int height;
 };
 
-class AlprResult
+class AlprPlateResult
 {
   public:
-    AlprResult();
-    virtual ~AlprResult();
+    AlprPlateResult() {};
+    virtual ~AlprPlateResult() {};
 
     int requested_topn;
-    int result_count;
 
     AlprPlate bestPlate;
     std::vector<AlprPlate> topNPlates;
@@ -64,6 +73,24 @@ class AlprResult
     int regionConfidence;
     std::string region;
 };
+
+class AlprResults
+{
+  public:
+    AlprResults() {};
+    virtual ~AlprResults() {};
+
+    long epoch_time;
+    int img_width;
+    int img_height;
+    int total_processing_time_ms;
+    
+    std::vector<AlprPlateResult> plates;
+    
+    std::vector<AlprRegionOfInterest> regionsOfInterest;
+
+};
+
 
 class AlprImpl;
 class Alpr
@@ -77,12 +104,18 @@ class Alpr
     void setTopN(int topN);
     void setDefaultRegion(std::string region);
 
-    std::vector<AlprResult> recognize(std::string filepath);
-    std::vector<AlprResult> recognize(std::string filepath, std::vector<AlprRegionOfInterest> regionsOfInterest);
-    std::vector<AlprResult> recognize(std::vector<unsigned char> imageBuffer);
-    std::vector<AlprResult> recognize(std::vector<unsigned char> imageBuffer, std::vector<AlprRegionOfInterest> regionsOfInterest);
+    // Recognize from an image on disk
+    AlprResults recognize(std::string filepath);
+    
+    // Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
+    AlprResults recognize(std::vector<char> imageBytes);
+    
+    // Recognize from raw pixel data.  
+    AlprResults recognize(unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest);
 
-    std::string toJson(const std::vector<AlprResult> results, double processing_time_ms = -1, long epoch_time = -1);
+    
+    std::string toJson(const AlprResults results);
+	AlprResults fromJson(std::string json);
 
     bool isLoaded();
     
