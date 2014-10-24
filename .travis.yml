@@ -12,5 +12,6 @@ before_script:
 script: 
   - make
   - make classifychars tagplates sortstate benchmark prepcharsfortraining
+  - ./tests/unittests
 
 
