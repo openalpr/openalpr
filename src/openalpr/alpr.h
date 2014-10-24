@@ -114,8 +114,8 @@ class Alpr
     AlprResults recognize(unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest);
 
     
-    std::string toJson(const AlprResults results);
-	AlprResults fromJson(std::string json);
+    static std::string toJson(const AlprResults results);
+	static AlprResults fromJson(std::string json);
 
     bool isLoaded();
     

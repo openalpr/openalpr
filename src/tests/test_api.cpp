@@ -18,7 +18,6 @@ using namespace std;
 
 TEST_CASE( "JSON Serialization/Deserialization", "[json]" ) {
   
-  Alpr alpr("us");
   AlprResults origResults;
   origResults.epoch_time = getEpochTime();
   origResults.img_width = 640;
@@ -53,8 +52,8 @@ TEST_CASE( "JSON Serialization/Deserialization", "[json]" ) {
   origResults.plates.push_back(apr);
   
   
-  std::string resultsJson = alpr.toJson(origResults);
-  AlprResults roundTrip = alpr.fromJson(resultsJson);
+  std::string resultsJson = Alpr::toJson(origResults);
+  AlprResults roundTrip = Alpr::fromJson(resultsJson);
   
   REQUIRE( roundTrip.epoch_time == origResults.epoch_time );
   REQUIRE( roundTrip.img_width == origResults.img_width );

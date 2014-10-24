@@ -59,11 +59,11 @@ AlprResults Alpr::recognize(unsigned char* pixelData, int bytesPerPixel, int img
 
 std::string Alpr::toJson( AlprResults results )
 {
-  return impl->toJson(results);
+  return AlprImpl::toJson(results);
 }
 
 AlprResults Alpr::fromJson(std::string json) {
-  return impl->fromJson(json);
+  return AlprImpl::fromJson(json);
 }
 
 

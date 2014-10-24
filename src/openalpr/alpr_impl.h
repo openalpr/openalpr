@@ -79,8 +79,8 @@ class AlprImpl
     void setTopN(int topn);
     void setDefaultRegion(std::string region);
     
-    std::string toJson( const AlprResults results );
-	AlprResults fromJson(std::string json);
+    static std::string toJson( const AlprResults results );
+	static AlprResults fromJson(std::string json);
     static std::string getVersion();
     
     Config* config;
@@ -99,7 +99,7 @@ class AlprImpl
     
     std::vector<cv::Rect> convertRects(std::vector<AlprRegionOfInterest> regionsOfInterest);
     
-    cJSON* createJsonObj(const AlprPlateResult* result);
+    static cJSON* createJsonObj(const AlprPlateResult* result);
 };
 
 
