@@ -451,6 +451,11 @@ AlprResults AlprImpl::fromJson(std::string json) {
       plateCandidate.matches_template = (cJSON_GetObjectItem(candidate, "matches_template")->valueint) != 0;
 
       plate.topNPlates.push_back(plateCandidate);
+      
+      if (c == 0)
+      {
+        plate.bestPlate = plateCandidate;
+      }
     }
     
     allResults.plates.push_back(plate);

@@ -78,6 +78,10 @@ TEST_CASE( "JSON Serialization/Deserialization", "[json]" ) {
     REQUIRE( roundTrip.plates[i].regionConfidence == origResults.plates[i].regionConfidence);
     REQUIRE( roundTrip.plates[i].requested_topn == origResults.plates[i].requested_topn);
     
+    REQUIRE( roundTrip.plates[i].bestPlate.characters == origResults.plates[i].bestPlate.characters);
+    REQUIRE( roundTrip.plates[i].bestPlate.matches_template == origResults.plates[i].bestPlate.matches_template);
+    REQUIRE( roundTrip.plates[i].bestPlate.overall_confidence == origResults.plates[i].bestPlate.overall_confidence);
+    
     REQUIRE( roundTrip.plates[i].topNPlates.size() == origResults.plates[i].topNPlates.size());
     for (int j = 0; j < roundTrip.plates[i].topNPlates.size(); j++)
     {
