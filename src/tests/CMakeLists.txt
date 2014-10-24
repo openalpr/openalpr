@@ -1,6 +1,6 @@
 enable_testing()
 
-ADD_EXECUTABLE( unittests runtests.cpp  )
+ADD_EXECUTABLE( unittests test_api.cpp test_utility.cpp  )
 
 TARGET_LINK_LIBRARIES(unittests
 
