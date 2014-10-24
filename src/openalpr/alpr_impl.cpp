@@ -150,8 +150,8 @@ AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect
 
 
       ocr->performOCR(&pipeline_data);
-      ocr->postProcessor->analyze(plateResult.region, topN);
-      const vector<PPResult> ppResults = ocr->postProcessor->getResults();
+      ocr->postProcessor.analyze(plateResult.region, topN);
+      const vector<PPResult> ppResults = ocr->postProcessor.getResults();
 
 
       int bestPlateIndex = 0;

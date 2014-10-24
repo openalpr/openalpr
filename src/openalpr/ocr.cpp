@@ -24,32 +24,28 @@ using namespace cv;
 using namespace tesseract;
 
 OCR::OCR(Config* config)
+: postProcessor(config)
 {
   const string EXPECTED_TESSERACT_VERSION = "3.03";
   
   this->config = config;
 
-  this->postProcessor = new PostProcess(config);
 
-  tesseract=new TessBaseAPI();
-
-  if (startsWith(tesseract->Version(), EXPECTED_TESSERACT_VERSION) == false)
+  if (startsWith(tesseract.Version(), EXPECTED_TESSERACT_VERSION) == false)
   {
     std::cerr << "Warning: You are running an unsupported version of Tesseract." << endl;
-    std::cerr << "Expecting version " << EXPECTED_TESSERACT_VERSION << ", your version is: " << tesseract->Version() << endl;
+    std::cerr << "Expecting version " << EXPECTED_TESSERACT_VERSION << ", your version is: " << tesseract.Version() << endl;
   }
   
   // Tesseract requires the prefix directory to be set as an env variable
-  tesseract->Init(config->getTessdataPrefix().c_str(), config->ocrLanguage.c_str() 	);
-  tesseract->SetVariable("save_blob_choices", "T");
-  tesseract->SetPageSegMode(PSM_SINGLE_CHAR);
+  tesseract.Init(config->getTessdataPrefix().c_str(), config->ocrLanguage.c_str() 	);
+  tesseract.SetVariable("save_blob_choices", "T");
+  tesseract.SetPageSegMode(PSM_SINGLE_CHAR);
 }
 
 OCR::~OCR()
 {
-  tesseract->Clear();
-  delete postProcessor;
-  delete tesseract;
+  tesseract.Clear();
 }
 
 void OCR::performOCR(PipelineData* pipeline_data)
@@ -57,7 +53,7 @@ void OCR::performOCR(PipelineData* pipeline_data)
   timespec startTime;
   getTime(&startTime);
 
-  postProcessor->clear();
+  postProcessor.clear();
   
   // Don't waste time on OCR processing if it is impossible to get sufficient characters
   if (pipeline_data->charRegions.size() < config->postProcessMinCharacters)
@@ -67,7 +63,7 @@ void OCR::performOCR(PipelineData* pipeline_data)
   {
     // Make it black text on white background
     bitwise_not(pipeline_data->thresholds[i], pipeline_data->thresholds[i]);
-    tesseract->SetImage((uchar*) pipeline_data->thresholds[i].data, 
+    tesseract.SetImage((uchar*) pipeline_data->thresholds[i].data, 
 			pipeline_data->thresholds[i].size().width, pipeline_data->thresholds[i].size().height, 
 			pipeline_data->thresholds[i].channels(), pipeline_data->thresholds[i].step1());
 
@@ -75,10 +71,10 @@ void OCR::performOCR(PipelineData* pipeline_data)
     {
       Rect expandedRegion = expandRect( pipeline_data->charRegions[j], 2, 2, pipeline_data->thresholds[i].cols, pipeline_data->thresholds[i].rows) ;
 
-      tesseract->SetRectangle(expandedRegion.x, expandedRegion.y, expandedRegion.width, expandedRegion.height);
-      tesseract->Recognize(NULL);
+      tesseract.SetRectangle(expandedRegion.x, expandedRegion.y, expandedRegion.width, expandedRegion.height);
+      tesseract.Recognize(NULL);
 
-      tesseract::ResultIterator* ri = tesseract->GetIterator();
+      tesseract::ResultIterator* ri = tesseract.GetIterator();
       tesseract::PageIteratorLevel level = tesseract::RIL_SYMBOL;
       do
       {
@@ -92,7 +88,7 @@ void OCR::performOCR(PipelineData* pipeline_data)
 
         if(symbol != 0  && pointsize >= config->ocrMinFontSize)
         {
-          postProcessor->addLetter(string(symbol), j, conf);
+          postProcessor.addLetter(string(symbol), j, conf);
 
           if (this->config->debugOcr)
             printf("charpos%d: threshold %d:  symbol %s, conf: %f font: %s (index %d) size %dpx", j, i, symbol, conf, fontName, fontindex, pointsize);
@@ -103,7 +99,7 @@ void OCR::performOCR(PipelineData* pipeline_data)
           {
             const char* choice = ci.GetUTF8Text();
 
-            postProcessor->addLetter(string(choice), j, ci.Confidence());
+            postProcessor.addLetter(string(choice), j, ci.Confidence());
 
             //letterScores.addScore(*choice, j, ci.Confidence() - MIN_CONFIDENCE);
             if (this->config->debugOcr)

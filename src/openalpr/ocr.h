@@ -43,15 +43,12 @@ class OCR
 
     void performOCR(PipelineData* pipeline_data);
 
-    PostProcess* postProcessor;
-    //string recognizedText;
-    //float confidence;
-    //float overallConfidence;
+    PostProcess postProcessor;
 
   private:
     Config* config;
 
-    tesseract::TessBaseAPI *tesseract;
+    tesseract::TessBaseAPI tesseract;
 
 };
 
