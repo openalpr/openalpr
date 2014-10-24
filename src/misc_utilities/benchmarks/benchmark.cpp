@@ -133,9 +133,9 @@ int main( int argc, const char** argv )
 
         CharacterSegmenter charSegmenter(&pipeline_data);
         ocr->performOCR(&pipeline_data);
-        ocr->postProcessor->analyze(statecode, 25);
+        ocr->postProcessor.analyze(statecode, 25);
 
-        cout << files[i] << "," << statecode << "," << ocr->postProcessor->bestChars << endl;
+        cout << files[i] << "," << statecode << "," << ocr->postProcessor.bestChars << endl;
 
         imshow("Current LP", frame);
         waitKey(5);
@@ -250,7 +250,7 @@ int main( int argc, const char** argv )
             ocrTimes.push_back(ocrTime);
 
             getTime(&startTime);
-            ocr.postProcessor->analyze("", 25);
+            ocr.postProcessor.analyze("", 25);
             getTime(&endTime);
             double postProcessTime = diffclock(startTime, endTime);
             cout << "\tRegion " << z << ": PostProcess time: " << postProcessTime << "ms." << endl;

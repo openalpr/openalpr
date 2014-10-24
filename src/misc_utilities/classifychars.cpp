@@ -153,8 +153,8 @@ int main( int argc, const char** argv )
         //ocr.cleanCharRegions(charSegmenter.thresholds, charSegmenter.characters);
 
         ocr.performOCR(&pipeline_data);
-        ocr.postProcessor->analyze(statecodestr, 25);
-        cout << "OCR results: " << ocr.postProcessor->bestChars << endl;
+        ocr.postProcessor.analyze(statecodestr, 25);
+        cout << "OCR results: " << ocr.postProcessor.bestChars << endl;
 
         vector<bool> selectedBoxes(pipeline_data.thresholds.size());
         for (int z = 0; z < pipeline_data.thresholds.size(); z++)
@@ -221,7 +221,7 @@ int main( int argc, const char** argv )
             {
               selectedBoxes[curDashboardSelection] = true;
               showDashboard(pipeline_data.thresholds, selectedBoxes, curDashboardSelection);
-              const std::string& ocr_str = ocr.postProcessor->bestChars;
+              const std::string& ocr_str = ocr.postProcessor.bestChars;
               humanInputs.assign(ocr_str.begin(), ocr_str.end());
             }
 
