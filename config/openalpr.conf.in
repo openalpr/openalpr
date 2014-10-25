@@ -57,7 +57,6 @@ timing        = 0
 state_id      = 0
 plate_lines   = 0
 plate_corners = 0
-char_regions  = 0
 char_segment  = 0
 char_analysis = 0
 color_filter  = 0

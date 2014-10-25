@@ -51,9 +51,9 @@ void LicensePlateCandidate::recognize()
   resize(pipeline_data->crop_gray, pipeline_data->crop_gray, Size(config->templateWidthPx, config->templateHeightPx));
   
   
-  CharacterRegion charRegion(pipeline_data);
+  CharacterAnalysis textAnalysis(pipeline_data);
 
-  if (charRegion.confidence > 10)
+  if (textAnalysis.confidence > 10)
   {
     PlateLines plateLines(pipeline_data);
 
@@ -119,7 +119,7 @@ void LicensePlateCandidate::recognize()
 
       pipeline_data->plate_area_confidence = 100;
     }
-    charRegion.confidence = 0;
+    
   }
 }
 

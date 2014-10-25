@@ -24,11 +24,10 @@
 #include "constants.h"
 #include "binarize_wolf.h"
 #include "utility.h"
-#include "characterregion.h"
-#include "colorfilter.h"
 #include "verticalhistogram.h"
 #include "config.h"
 #include "textdetection/textcontours.h"
+#include "pipeline_data.h"
 
 
 //const float MIN_BOX_WIDTH_PX = 4; // 4 pixels

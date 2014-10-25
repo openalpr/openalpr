@@ -16,7 +16,6 @@ set(lpr_source_files
  postprocess.cpp
  binarize_wolf.cpp
  platelines.cpp
- characterregion.cpp
  segmentation/charactersegmenter.cpp
  segmentation/verticalhistogram.cpp
  platecorners.cpp

@@ -36,12 +36,12 @@ class CharacterAnalysis
     CharacterAnalysis(PipelineData* pipeline_data);
     virtual ~CharacterAnalysis();
 
+    int confidence;
 
     cv::Mat bestThreshold;
     
     TextContours bestContours;
 
-    bool thresholdsInverted;
 
     std::vector<TextContours> allTextContours;
 

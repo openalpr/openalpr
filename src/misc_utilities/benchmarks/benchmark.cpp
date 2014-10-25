@@ -114,7 +114,7 @@ int main( int argc, const char** argv )
         statecode[2] = '\0';
         string statecodestr(statecode);
 
-        CharacterRegion charRegion(&pipeline_data);
+        CharacterAnalysis charRegion(&pipeline_data);
 
         if (pipeline_data.textLines.size() > 0 &&
             abs(pipeline_data.textLines[0].angle) > 4)

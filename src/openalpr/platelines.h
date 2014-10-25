@@ -25,7 +25,7 @@
 #include "utility.h"
 #include "binarize_wolf.h"
 #include "config.h"
-#include "characterregion.h"
+#include "pipeline_data.h"
 
 struct PlateLine
 {

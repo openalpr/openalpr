@@ -103,7 +103,6 @@ class Config
     bool debugStateId;
     bool debugPlateLines;
     bool debugPlateCorners;
-    bool debugCharRegions;
     bool debugCharSegmenter;
     bool debugCharAnalysis;
     bool debugColorFiler;

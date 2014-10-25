@@ -32,10 +32,12 @@ CharacterAnalysis::CharacterAnalysis(PipelineData* pipeline_data)
   this->pipeline_data = pipeline_data;
   this->config = pipeline_data->config;
 
+  this->confidence = 0;
 
   if (this->config->debugCharAnalysis)
     cout << "Starting CharacterAnalysis identification" << endl;
 
+  this->analyze();
 }
 
 CharacterAnalysis::~CharacterAnalysis()
@@ -168,8 +170,70 @@ void CharacterAnalysis::analyze()
     
   }
   
+  pipeline_data->plate_inverted = isPlateInverted();
   
-  this->thresholdsInverted = isPlateInverted();
+  
+  if (pipeline_data->textLines.size() > 0)
+  {
+    int confidenceDrainers = 0;
+    int charSegmentCount = this->bestContours.getGoodIndicesCount();
+    if (charSegmentCount == 1)
+      confidenceDrainers += 91;
+    else if (charSegmentCount < 5)
+      confidenceDrainers += (5 - charSegmentCount) * 10;
+    
+    // Use the angle for the first line -- assume they'll always be parallel for multi-line plates
+    int absangle = abs(pipeline_data->textLines[0].topLine.angle);
+    if (absangle > config->maxPlateAngleDegrees)
+      confidenceDrainers += 91;
+    else if (absangle > 1)
+      confidenceDrainers += (config->maxPlateAngleDegrees - absangle) ;
+
+    // If a multiline plate has only one line, disqualify
+    if (pipeline_data->isMultiline && pipeline_data->textLines.size() < 2)
+      confidenceDrainers += 95;
+    
+    if (confidenceDrainers >= 100)
+      this->confidence=1;
+    else
+      this->confidence = 100 - confidenceDrainers;
+  }
+  
+  
+  if (config->debugTiming)
+  {
+    timespec endTime;
+    getTime(&endTime);
+    cout << "Character Analysis Time: " << diffclock(startTime, endTime) << "ms." << endl;
+  }
+  
+  // Draw debug dashboard
+  if (this->pipeline_data->config->debugCharAnalysis && pipeline_data->textLines.size() > 0)
+  {
+    vector<Mat> tempDash;
+    for (uint z = 0; z < pipeline_data->thresholds.size(); z++)
+    {
+      Mat tmp(pipeline_data->thresholds[z].size(), pipeline_data->thresholds[z].type());
+      pipeline_data->thresholds[z].copyTo(tmp);
+      cvtColor(tmp, tmp, CV_GRAY2BGR);
+
+      tempDash.push_back(tmp);
+    }
+
+    Mat bestVal(this->bestThreshold.size(), this->bestThreshold.type());
+    this->bestThreshold.copyTo(bestVal);
+    cvtColor(bestVal, bestVal, CV_GRAY2BGR);
+
+    for (uint z = 0; z < this->bestContours.size(); z++)
+    {
+      Scalar dcolor(255,0,0);
+      if (this->bestContours.goodIndices[z])
+        dcolor = Scalar(0,255,0);
+      drawContours(bestVal, this->bestContours.contours, z, dcolor, 1);
+    }
+    tempDash.push_back(bestVal);
+    displayImage(config, "Character Region Step 1 Thresholds", drawImageDashboard(tempDash, bestVal.type(), 3));
+  }
 }
 
 

@@ -188,7 +188,6 @@ void Config::loadValues(string country)
   debugStateId = 	getBoolean("debug", "state_id",		false);
   debugPlateLines = 	getBoolean("debug", "plate_lines", 	false);
   debugPlateCorners = 	getBoolean("debug", "plate_corners", 	false);
-  debugCharRegions = 	getBoolean("debug", "char_regions", 	false);
   debugCharSegmenter = 	getBoolean("debug", "char_segment", 	false);
   debugCharAnalysis =	getBoolean("debug", "char_analysis",	false);
   debugColorFiler = 	getBoolean("debug", "color_filter", 	false);
@@ -206,7 +205,6 @@ void Config::debugOff()
   debugStateId = 	false;
   debugPlateLines = 	false;
   debugPlateCorners = 	false;
-  debugCharRegions = 	false;
   debugCharSegmenter = 	false;
   debugCharAnalysis =	false;
   debugColorFiler = 	false;

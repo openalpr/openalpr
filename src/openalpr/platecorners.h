@@ -21,7 +21,6 @@
 #define OPENALPR_PLATECORNERS_H
 
 #include "opencv2/imgproc/imgproc.hpp"
-#include "characterregion.h"
 #include "platelines.h"
 #include "utility.h"
 #include "config.h"
