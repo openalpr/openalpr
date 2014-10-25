@@ -20,6 +20,9 @@
 #ifndef OPENALPR_EDGEFINDER_H
 #define	OPENALPR_EDGEFINDER_H
 
+#include "opencv2/imgproc/imgproc.hpp"
+#include "pipeline_data.h"
+
 class EdgeFinder {
 public:
   EdgeFinder(PipelineData* pipeline_data);

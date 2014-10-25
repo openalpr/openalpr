@@ -17,6 +17,7 @@ set(lpr_source_files
  binarize_wolf.cpp
  segmentation/charactersegmenter.cpp
  segmentation/verticalhistogram.cpp
+ edges/edgefinder.cpp
  edges/platecorners.cpp
  edges/platelines.cpp
  edges/textlinecollection.cpp

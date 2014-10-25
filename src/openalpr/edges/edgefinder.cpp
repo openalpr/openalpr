@@ -28,7 +28,6 @@ EdgeFinder::EdgeFinder(PipelineData* pipeline_data) {
   
   // First re-crop the area from the original picture knowing the text position
   
-  pipeline_data.
 }
 
 
