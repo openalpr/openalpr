@@ -15,10 +15,10 @@ set(lpr_source_files
  ocr.cpp
  postprocess.cpp
  binarize_wolf.cpp
- platelines.cpp
  segmentation/charactersegmenter.cpp
  segmentation/verticalhistogram.cpp
- platecorners.cpp
+ edges/platecorners.cpp
+ edges/platelines.cpp
  colorfilter.cpp
  textdetection/characteranalysis.cpp
  textdetection/platemask.cpp

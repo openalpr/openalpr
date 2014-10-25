@@ -29,10 +29,10 @@
 
 #include "utility.h"
 #include "constants.h"
-#include "platelines.h"
+#include "edges/platelines.h"
 #include "textdetection/characteranalysis.h"
 #include "segmentation/charactersegmenter.h"
-#include "platecorners.h"
+#include "edges/platecorners.h"
 #include "config.h"
 #include "pipeline_data.h"
 
