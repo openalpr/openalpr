@@ -302,8 +302,10 @@ string AlprImpl::toJson( const AlprResults results )
   root = cJSON_CreateObject();
   
   
-  cJSON_AddNumberToObject(root,"epoch_time",	results.epoch_time	  );
   cJSON_AddNumberToObject(root,"version",	2	  );
+  cJSON_AddStringToObject(root,"data_type",	"alpr_results"	  );
+  
+  cJSON_AddNumberToObject(root,"epoch_time",	results.epoch_time	  );
   cJSON_AddNumberToObject(root,"img_width",	results.img_width	  );
   cJSON_AddNumberToObject(root,"img_height",	results.img_height	  );
   cJSON_AddNumberToObject(root,"processing_time_ms", results.total_processing_time_ms );
