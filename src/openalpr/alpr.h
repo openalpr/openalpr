@@ -83,7 +83,7 @@ class AlprResults
     long epoch_time;
     int img_width;
     int img_height;
-    int total_processing_time_ms;
+    float total_processing_time_ms;
     
     std::vector<AlprPlateResult> plates;
     
