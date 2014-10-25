@@ -24,7 +24,7 @@
 #include "platelines.h"
 #include "utility.h"
 #include "config.h"
-
+#include "textlinecollection.h"
 
 #define NO_LINE -1
 
@@ -42,36 +42,6 @@
 
 #define SCORING_VERTICALDISTANCE_FROMEDGE_WEIGHT	0.05
 
-class TextLineCollection
-{
-public:
-  TextLineCollection(PipelineData* pipelineData);
-  
-  int isLeftOfText(LineSegment line);
-  int isAboveText(LineSegment line);
-  
-  LineSegment centerHorizontalLine;
-  LineSegment centerVerticalLine;
-
-  float charHeight;
-  float charAngle;
-  
-  
-  
-private:
-  PipelineData* pipelineData;
-  
-  LineSegment topCharArea;
-  LineSegment bottomCharArea;
-  
-  LineSegment longerSegment;
-  LineSegment shorterSegment;
-    
-  cv::Mat textMask;
-  
-  void findCenterHorizontal();
-  void findCenterVertical();
-};
 
 class PlateCorners
 {

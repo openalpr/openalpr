@@ -19,6 +19,7 @@ set(lpr_source_files
  segmentation/verticalhistogram.cpp
  edges/platecorners.cpp
  edges/platelines.cpp
+ edges/textlinecollection.cpp
  colorfilter.cpp
  textdetection/characteranalysis.cpp
  textdetection/platemask.cpp
