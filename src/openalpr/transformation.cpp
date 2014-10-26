@@ -35,6 +35,17 @@ Transformation::~Transformation() {
 // Re-maps the coordinates from the smallImage to the coordinate space of the bigImage.
 vector<Point2f> Transformation::transformSmallPointsToBigImage(vector<Point> points)
 {
+  vector<Point2f> floatPoints;
+  for (unsigned int i = 0; i < points.size(); i++)
+    floatPoints.push_back(points[i]);
+  
+  return transformSmallPointsToBigImage(floatPoints);
+  
+}
+
+// Re-maps the coordinates from the smallImage to the coordinate space of the bigImage.
+vector<Point2f> Transformation::transformSmallPointsToBigImage(vector<Point2f> points)
+{
   vector<Point2f> bigPoints;
   for (uint i = 0; i < points.size(); i++)
   {
@@ -60,11 +71,18 @@ Mat Transformation::getTransformationMatrix(vector<Point2f> corners, Size output
   quad_pts.push_back(Point2f(outputImageSize.width, outputImageSize.height));
   quad_pts.push_back(Point2f(0, outputImageSize.height));
 
+  return getTransformationMatrix(corners, quad_pts);
+}
+
+Mat Transformation::getTransformationMatrix(vector<Point2f> corners, vector<Point2f> outputCorners)
+{
+
   // Get transformation matrix
-  Mat transmtx = getPerspectiveTransform(corners, quad_pts);
+  Mat transmtx = getPerspectiveTransform(corners, outputCorners);
 
   return transmtx;
 }
+
 
 Mat Transformation::crop(Size outputImageSize, Mat transformationMatrix)
 {
@@ -81,6 +99,15 @@ Mat Transformation::crop(Size outputImageSize, Mat transformationMatrix)
   return deskewed;
 }
 
+vector<Point2f> Transformation::remapSmallPointstoCrop(vector<Point> smallPoints, cv::Mat transformationMatrix)
+{
+  vector<Point2f> floatPoints;
+  for (unsigned int i = 0; i < smallPoints.size(); i++)
+    floatPoints.push_back(smallPoints[i]);
+  
+  return remapSmallPointstoCrop(floatPoints, transformationMatrix);
+}
+
 vector<Point2f> Transformation::remapSmallPointstoCrop(vector<Point2f> smallPoints, cv::Mat transformationMatrix)
 {
   vector<Point2f> remappedPoints;
@@ -89,3 +116,24 @@ vector<Point2f> Transformation::remapSmallPointstoCrop(vector<Point2f> smallPoin
   return remappedPoints;
 }
         
+Size Transformation::getCropSize(vector<Point2f> areaCorners, Size targetSize)
+{
+  // Figure out the approximate width/height of the license plate region, so we can maintain the aspect ratio.
+  LineSegment leftEdge(round(areaCorners[3].x), round(areaCorners[3].y), round(areaCorners[0].x), round(areaCorners[0].y));
+  LineSegment rightEdge(round(areaCorners[2].x), round(areaCorners[2].y), round(areaCorners[1].x), round(areaCorners[1].y));
+  LineSegment topEdge(round(areaCorners[0].x), round(areaCorners[0].y), round(areaCorners[1].x), round(areaCorners[1].y));
+  LineSegment bottomEdge(round(areaCorners[3].x), round(areaCorners[3].y), round(areaCorners[2].x), round(areaCorners[2].y));
+
+  float w = distanceBetweenPoints(leftEdge.midpoint(), rightEdge.midpoint());
+  float h = distanceBetweenPoints(bottomEdge.midpoint(), topEdge.midpoint());
+  float aspect = w/h;
+  int width = targetSize.width;
+  int height = round(((float) width) / aspect);
+  if (height > targetSize.height)
+  {
+    height = targetSize.height;
+    width = round(((float) height) * aspect);
+  }
+  
+  return Size(width, height);
+}

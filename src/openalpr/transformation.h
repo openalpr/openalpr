@@ -21,6 +21,7 @@
 #define	OPENALPR_TRANSFORMATION_H
 
 #include "opencv2/imgproc/imgproc.hpp"
+#include "utility.h"
 
 class Transformation {
 public:
@@ -28,12 +29,16 @@ public:
   virtual ~Transformation();
   
   std::vector<cv::Point2f> transformSmallPointsToBigImage(std::vector<cv::Point> points);
+  std::vector<cv::Point2f> transformSmallPointsToBigImage(std::vector<cv::Point2f> points);
   
   cv::Mat getTransformationMatrix(std::vector<cv::Point2f> corners, cv::Size outputImageSize);
+  cv::Mat getTransformationMatrix(std::vector<cv::Point2f> corners, std::vector<cv::Point2f> outputCorners);
   
   cv::Mat crop(cv::Size outputImageSize, cv::Mat transformationMatrix);
+  std::vector<cv::Point2f> remapSmallPointstoCrop(std::vector<cv::Point> smallPoints, cv::Mat transformationMatrix);
   std::vector<cv::Point2f> remapSmallPointstoCrop(std::vector<cv::Point2f> smallPoints, cv::Mat transformationMatrix);
   
+  cv::Size getCropSize(std::vector<cv::Point2f> areaCorners, cv::Size targetSize);
   
 private:
   cv::Mat bigImage;
