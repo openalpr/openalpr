@@ -91,23 +91,17 @@ std::vector<cv::Point2f> EdgeFinder::findEdgeCorners() {
 //    }
   }
 
-
+  // Re-crop an image (from the original image) using the new coordinates
   Transformation imgTransform(pipeline_data->grayImg, pipeline_data->crop_gray, pipeline_data->regionOfInterest);
   vector<Point2f> remappedCorners = imgTransform.transformSmallPointsToBigImage(corners);
 
-//  cout << "topLeft: " << remappedCorners[0] << endl;
-//  cout << "topRight: " << remappedCorners[1] << endl;
-//  cout << "botRight: " << remappedCorners[2] << endl;
-//  cout << "botLeft: " << remappedCorners[3] << endl;
-  
   Size cropSize = imgTransform.getCropSize(remappedCorners, 
           Size(pipeline_data->config->templateWidthPx, pipeline_data->config->templateHeightPx));
 
   Mat transmtx = imgTransform.getTransformationMatrix(remappedCorners, cropSize);
   Mat newCrop = imgTransform.crop(cropSize, transmtx);
 
-//  drawAndWait(&newCrop);
-  
+  // Re-map the textline coordinates to the new crop  
   vector<TextLine> newLines;
   for (uint i = 0; i < pipeline_data->textLines.size(); i++)
   {        
@@ -123,34 +117,17 @@ std::vector<cv::Point2f> EdgeFinder::findEdgeCorners() {
     newLines.push_back(TextLine(textAreaRemapped, linePolygonRemapped));
   }
 
+  // Find the PlateLines for this crop
   PlateLines plateLines(pipeline_data);
   plateLines.processImage(newCrop, newLines, 1.05);
 
-
+  // Get the best corners
   PlateCorners cornerFinder(newCrop, &plateLines, pipeline_data, newLines);
   vector<Point> smallPlateCorners = cornerFinder.findPlateCorners();
 
   confidence = cornerFinder.confidence;
 
-//  cout << "topLeft: " << smallPlateCorners[0] << endl;
-//  cout << "topRight: " << smallPlateCorners[1] << endl;
-//  cout << "botRight: " << smallPlateCorners[2] << endl;
-//  cout << "botLeft: " << smallPlateCorners[3] << endl;
-
-//  cvtColor(newCrop, newCrop, CV_GRAY2BGR);
-//  for (int i = 0; i < 4; i++)
-//    circle(newCrop, smallPlateCorners[i], 4, Scalar(0,255,0), -1);
-//  
-//  drawAndWait(&newCrop);
-
-//  Transformation reTrans(pipeline_data->crop_gray, newCrop, cv::Rect(0,0,pipeline_data->crop_gray.cols, pipeline_data->crop_gray.rows));
-//  vector<Point2f> cornersInOriginalCrop = reTrans.transformSmallPointsToBigImage(smallPlateCorners);
-//  
-//  for (int i = 0; i < 4; i++)
-//    circle(pipeline_data->crop_gray, cornersInOriginalCrop[i], 4, Scalar(255,255,255), -1);
-//  
-//  drawAndWait(&pipeline_data->crop_gray);
-
+  // Transform the best corner points back to the original image
   std::vector<Point2f> imgArea;
   imgArea.push_back(Point2f(0, 0));
   imgArea.push_back(Point2f(newCrop.cols, 0));
@@ -159,21 +136,6 @@ std::vector<cv::Point2f> EdgeFinder::findEdgeCorners() {
   Mat newCropTransmtx = imgTransform.getTransformationMatrix(imgArea, remappedCorners);
 
   vector<Point2f> cornersInOriginalImg = imgTransform.remapSmallPointstoCrop(smallPlateCorners, newCropTransmtx);
-
-//  cout << "topLeft: " << cornersInOriginalImg[0] << endl;
-//  cout << "topRight: " << cornersInOriginalImg[1] << endl;
-//  cout << "botRight: " << cornersInOriginalImg[2] << endl;
-//  cout << "botLeft: " << cornersInOriginalImg[3] << endl;
-
-//  Mat debugimg;
-//  cvtColor(pipeline_data->crop_gray, debugimg, CV_GRAY2BGR);
-//  for (int i = 0; i < 4; i++)
-//    circle(debugimg, cornersInOriginalImg[i], 4, Scalar(0,255,0), -1);
-//  drawAndWait(&debugimg);
-
-
-//  for (int i = 0; i < 4; i++)
-//    circle(pipeline_data->colorImg, cornersInOriginalImg[i], 4, Scalar(0,255,0), -1);
 
   return cornersInOriginalImg;
 
