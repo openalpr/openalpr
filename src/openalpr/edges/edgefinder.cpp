@@ -124,7 +124,7 @@ std::vector<cv::Point2f> EdgeFinder::findEdgeCorners() {
   }
 
   PlateLines plateLines(pipeline_data);
-  plateLines.processImage(newCrop, newLines, 1.2);
+  plateLines.processImage(newCrop, newLines, 1.05);
 
 
   PlateCorners cornerFinder(newCrop, &plateLines, pipeline_data, newLines);
