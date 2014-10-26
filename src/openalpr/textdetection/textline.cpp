@@ -73,6 +73,9 @@ void TextLine::initialize(std::vector<cv::Point> textArea, std::vector<cv::Point
     Point acrossFromMidpoint = topLine.closestPointOnSegmentTo(midpoint);
     this->lineHeight = distanceBetweenPoints(midpoint, acrossFromMidpoint);
     
+    // Subtract a pixel since the height is a little overestimated by the bounding box
+    this->lineHeight = this->lineHeight - 1;
+    
     this->angle = (topLine.angle + bottomLine.angle) / 2;
     
   }
