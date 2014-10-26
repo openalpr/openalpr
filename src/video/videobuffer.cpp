@@ -149,30 +149,36 @@ void imageCollectionThread(void* arg)
 // it returns so that the video capture can be recreated.
 void getALPRImages(cv::VideoCapture cap, VideoDispatcher* dispatcher)
 {
-  cv::Mat frame;
-  
+  cv::Mat frame1;
+  cv::Mat frame2;
+  cv::Mat* receiveframe;
+  BOOLEAN receiveframeisframe1 = TRUE;
+
   while (dispatcher->active)
   {
     while (dispatcher->active)
     {
       
-      dispatcher->mMutex.lock();
       bool hasImage = false;
       try
       {
-	hasImage = cap.read(frame);
-	// Double check the image to make sure it's valid.
-	if (!frame.data || frame.empty())
+	if (receiveframeisframe1)  receiveframe = &frame1;
+	else receiveframe = &frame2;
+	hasImage = cap.read(*receiveframe);
+		  // Double check the image to make sure it's valid.
+	if (!(*receiveframe).data || (*receiveframe).empty())
 	{
-	  dispatcher->mMutex.unlock();
 	  std::stringstream ss;
 	  ss << "Stream " << dispatcher->mjpeg_url << " received invalid frame";
 	  dispatcher->log_error(ss.str());
 	  return;
 	}
 	
-	dispatcher->setLatestFrame(&frame);
-      }
+	dispatcher->mMutex.lock();
+	dispatcher->setLatestFrame(receiveframe);
+	dispatcher->mMutex.unlock();
+	receiveframeisframe1 = !receiveframeisframe1;
+	  }
       catch (const std::runtime_error& error)
       {
 	// Error occured while trying to gather image.  Retry, don't exit.
