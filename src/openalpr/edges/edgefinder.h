@@ -22,11 +22,18 @@
 
 #include "opencv2/imgproc/imgproc.hpp"
 #include "pipeline_data.h"
+#include "transformation.h"
+#include "platelines.h"
+#include "platecorners.h"
 
 class EdgeFinder {
 public:
   EdgeFinder(PipelineData* pipeline_data);
   virtual ~EdgeFinder();
+  
+  std::vector<cv::Point2f> findEdgeCorners();
+  
+  float confidence;
   
 private:
   PipelineData* pipeline_data;

@@ -40,7 +40,7 @@ class PlateLines
     PlateLines(PipelineData* pipelineData);
     virtual ~PlateLines();
 
-    void processImage(cv::Mat img, float sensitivity=1.0);
+    void processImage(cv::Mat img, std::vector<TextLine> textLines, float sensitivity=1.0);
 
     std::vector<PlateLine> horizontalLines;
     std::vector<PlateLine> verticalLines;

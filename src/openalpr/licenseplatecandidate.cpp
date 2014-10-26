@@ -57,19 +57,12 @@ void LicensePlateCandidate::recognize()
 
   if (textAnalysis.confidence > 10)
   {
-    PlateLines plateLines(pipeline_data);
-
-    if (pipeline_data->hasPlateBorder)
-      plateLines.processImage(pipeline_data->plateBorderMask, 1.10);
-    
-    plateLines.processImage(pipeline_data->crop_gray, 0.9);
-
-    PlateCorners cornerFinder(pipeline_data->crop_gray, &plateLines, pipeline_data);
-    vector<Point> smallPlateCorners = cornerFinder.findPlateCorners();
 
     EdgeFinder edgeFinder(pipeline_data);
     
-    if (cornerFinder.confidence > 0)
+    pipeline_data->plate_corners = edgeFinder.findEdgeCorners();
+        
+    if (edgeFinder.confidence > 0)
     {
 
       timespec startTime;
@@ -79,9 +72,9 @@ void LicensePlateCandidate::recognize()
       Mat originalCrop = pipeline_data->crop_gray;
       
       Transformation imgTransform(this->pipeline_data->grayImg, pipeline_data->crop_gray, expandedRegion);
-      pipeline_data->plate_corners = imgTransform.transformSmallPointsToBigImage(smallPlateCorners);
       
-      Size cropSize = getCropSize(pipeline_data->plate_corners);
+      Size cropSize = imgTransform.getCropSize(pipeline_data->plate_corners, 
+              Size(pipeline_data->config->ocrImageWidthPx, pipeline_data->config->ocrImageHeightPx));
       Mat transmtx = imgTransform.getTransformationMatrix(pipeline_data->plate_corners, cropSize);
       pipeline_data->crop_gray = imgTransform.crop(cropSize, transmtx);
       
@@ -130,25 +123,4 @@ void LicensePlateCandidate::recognize()
   }
 }
 
-Size LicensePlateCandidate::getCropSize(vector<Point2f> areaCorners)
-{
-  // Figure out the approximate width/height of the license plate region, so we can maintain the aspect ratio.
-  LineSegment leftEdge(round(areaCorners[3].x), round(areaCorners[3].y), round(areaCorners[0].x), round(areaCorners[0].y));
-  LineSegment rightEdge(round(areaCorners[2].x), round(areaCorners[2].y), round(areaCorners[1].x), round(areaCorners[1].y));
-  LineSegment topEdge(round(areaCorners[0].x), round(areaCorners[0].y), round(areaCorners[1].x), round(areaCorners[1].y));
-  LineSegment bottomEdge(round(areaCorners[3].x), round(areaCorners[3].y), round(areaCorners[2].x), round(areaCorners[2].y));
-
-  float w = distanceBetweenPoints(leftEdge.midpoint(), rightEdge.midpoint());
-  float h = distanceBetweenPoints(bottomEdge.midpoint(), topEdge.midpoint());
-  float aspect = w/h;
-  int width = config->ocrImageWidthPx;
-  int height = round(((float) width) / aspect);
-  if (height > config->ocrImageHeightPx)
-  {
-    height = config->ocrImageHeightPx;
-    width = round(((float) height) * aspect);
-  }
-  
-  return Size(width, height);
-}
 

@@ -28,8 +28,8 @@
 
 #define NO_LINE -1
 
-#define SCORING_MISSING_SEGMENT_PENALTY_VERTICAL	10
-#define SCORING_MISSING_SEGMENT_PENALTY_HORIZONTAL	1
+#define SCORING_MISSING_SEGMENT_PENALTY_VERTICAL	20
+#define SCORING_MISSING_SEGMENT_PENALTY_HORIZONTAL	10
 
 #define SCORING_BOXINESS_WEIGHT				0.8
 #define SCORING_PLATEHEIGHT_WEIGHT			2.2
@@ -47,7 +47,7 @@ class PlateCorners
 {
 
   public:
-    PlateCorners(cv::Mat inputImage, PlateLines* plateLines, PipelineData* pipelineData) ;
+    PlateCorners(cv::Mat inputImage, PlateLines* plateLines, PipelineData* pipelineData, std::vector<TextLine> textLines) ;
     
     virtual ~PlateCorners();
 
@@ -60,6 +60,7 @@ class PlateCorners
     PipelineData* pipelineData;
     cv::Mat inputImage;
 
+    std::vector<TextLine> textLines;
     TextLineCollection tlc;
     
     float bestHorizontalScore;

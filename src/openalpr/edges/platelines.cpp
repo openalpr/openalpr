@@ -39,7 +39,7 @@ PlateLines::~PlateLines()
 {
 }
 
-void PlateLines::processImage(Mat inputImage, float sensitivity)
+void PlateLines::processImage(Mat inputImage, vector<TextLine> textLines, float sensitivity)
 {
   if (this->debug)
     cout << "PlateLines findLines" << endl;
@@ -73,10 +73,10 @@ void PlateLines::processImage(Mat inputImage, float sensitivity)
   
   Mat mask = Mat::zeros(inputImage.size(), CV_8U);
   
-  for (uint i = 0; i < pipelineData->textLines.size(); i++)
+  for (uint i = 0; i < textLines.size(); i++)
   {
     vector<vector<Point> > polygons;
-    polygons.push_back(pipelineData->textLines[i].textArea);
+    polygons.push_back(textLines[i].textArea);
     fillPoly(mask, polygons, Scalar(255,255,255));
   }
   

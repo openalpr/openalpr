@@ -22,8 +22,8 @@
 using namespace cv;
 using namespace std;
 
-PlateCorners::PlateCorners(Mat inputImage, PlateLines* plateLines, PipelineData* pipelineData) :
-    tlc(pipelineData->textLines)
+PlateCorners::PlateCorners(Mat inputImage, PlateLines* plateLines, PipelineData* pipelineData, vector<TextLine> textLines) :
+    tlc(textLines)
 {
   this->pipelineData = pipelineData;
 
@@ -32,6 +32,7 @@ PlateCorners::PlateCorners(Mat inputImage, PlateLines* plateLines, PipelineData*
 
   this->inputImage = inputImage;
   this->plateLines = plateLines;
+  this->textLines = textLines;
 
   this->bestHorizontalScore = 9999999999999;
   this->bestVerticalScore = 9999999999999;
@@ -83,10 +84,10 @@ vector<Point> PlateCorners::findPlateCorners()
     Mat imgCorners = Mat(inputImage.size(), inputImage.type());
     inputImage.copyTo(imgCorners);
     
-    for (uint linenum = 0; linenum < pipelineData->textLines.size(); linenum++)
+    for (uint linenum = 0; linenum < textLines.size(); linenum++)
     {
       for (int i = 0; i < 4; i++)
-        circle(imgCorners, pipelineData->textLines[linenum].textArea[i], 2, Scalar(0, 0, 0));
+        circle(imgCorners, textLines[linenum].textArea[i], 2, Scalar(0, 0, 0));
     }
 
     line(imgCorners, this->bestTop.p1, this->bestTop.p2, Scalar(255, 0, 0), 1, CV_AA);
