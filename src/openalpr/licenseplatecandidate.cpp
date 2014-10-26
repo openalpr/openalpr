@@ -20,6 +20,8 @@
 #include <opencv2/core/core.hpp>
 
 #include "licenseplatecandidate.h"
+#include "edges/edgefinder.h"
+#include "transformation.h"
 
 using namespace std;
 using namespace cv;
@@ -65,6 +67,8 @@ void LicensePlateCandidate::recognize()
     PlateCorners cornerFinder(pipeline_data->crop_gray, &plateLines, pipeline_data);
     vector<Point> smallPlateCorners = cornerFinder.findPlateCorners();
 
+    EdgeFinder edgeFinder(pipeline_data);
+    
     if (cornerFinder.confidence > 0)
     {
 
@@ -74,11 +78,16 @@ void LicensePlateCandidate::recognize()
 
       Mat originalCrop = pipeline_data->crop_gray;
       
-      pipeline_data->plate_corners = transformPointsToOriginalImage(this->pipeline_data->grayImg, pipeline_data->crop_gray, expandedRegion, smallPlateCorners);
+      Transformation imgTransform(this->pipeline_data->grayImg, pipeline_data->crop_gray, expandedRegion);
+      pipeline_data->plate_corners = imgTransform.transformSmallPointsToBigImage(smallPlateCorners);
+      
+      Size cropSize = getCropSize(pipeline_data->plate_corners);
+      Mat transmtx = imgTransform.getTransformationMatrix(pipeline_data->plate_corners, cropSize);
+      pipeline_data->crop_gray = imgTransform.crop(cropSize, transmtx);
+      
 
-      Size outputImageSize = getOutputImageSize(pipeline_data->plate_corners);
-      Mat transmtx = getTransformationMatrix(pipeline_data->plate_corners, outputImageSize);
-      pipeline_data->crop_gray = deSkewPlate(this->pipeline_data->grayImg, outputImageSize, transmtx);
+      if (this->config->debugGeneral)
+        displayImage(config, "quadrilateral", pipeline_data->crop_gray);
 
 
       
@@ -87,16 +96,14 @@ void LicensePlateCandidate::recognize()
       vector<TextLine> newLines;
       for (uint i = 0; i < pipeline_data->textLines.size(); i++)
       {        
-        vector<Point2f> textArea = transformPointsToOriginalImage(this->pipeline_data->grayImg, originalCrop, expandedRegion, 
-                pipeline_data->textLines[i].textArea);
-        vector<Point2f> linePolygon = transformPointsToOriginalImage(this->pipeline_data->grayImg, originalCrop, expandedRegion, 
-                pipeline_data->textLines[i].linePolygon);
+        vector<Point2f> textArea = imgTransform.transformSmallPointsToBigImage(pipeline_data->textLines[i].textArea);
+        vector<Point2f> linePolygon = imgTransform.transformSmallPointsToBigImage(pipeline_data->textLines[i].linePolygon);
         
         vector<Point2f> textAreaRemapped;
         vector<Point2f> linePolygonRemapped;
         
-        perspectiveTransform(textArea, textAreaRemapped, transmtx);
-        perspectiveTransform(linePolygon, linePolygonRemapped, transmtx);
+        textAreaRemapped = imgTransform.remapSmallPointstoCrop(textArea, transmtx);
+        linePolygonRemapped = imgTransform.remapSmallPointstoCrop(linePolygon, transmtx);
         
         newLines.push_back(TextLine(textAreaRemapped, linePolygonRemapped));
       }
@@ -123,31 +130,13 @@ void LicensePlateCandidate::recognize()
   }
 }
 
-// Re-maps the coordinates from the smallImage to the coordinate space of the bigImage.
-vector<Point2f> LicensePlateCandidate::transformPointsToOriginalImage(Mat bigImage, Mat smallImage, Rect region, vector<Point> corners)
-{
-  vector<Point2f> cornerPoints;
-  for (uint i = 0; i < corners.size(); i++)
-  {
-    float bigX = (corners[i].x * ((float) region.width / smallImage.cols));
-    float bigY = (corners[i].y * ((float) region.height / smallImage.rows));
-
-    bigX = bigX + region.x;
-    bigY = bigY + region.y;
-
-    cornerPoints.push_back(Point2f(bigX, bigY));
-  }
-
-  return cornerPoints;
-}
-
-Size LicensePlateCandidate::getOutputImageSize(vector<Point2f> corners)
+Size LicensePlateCandidate::getCropSize(vector<Point2f> areaCorners)
 {
   // Figure out the approximate width/height of the license plate region, so we can maintain the aspect ratio.
-  LineSegment leftEdge(round(corners[3].x), round(corners[3].y), round(corners[0].x), round(corners[0].y));
-  LineSegment rightEdge(round(corners[2].x), round(corners[2].y), round(corners[1].x), round(corners[1].y));
-  LineSegment topEdge(round(corners[0].x), round(corners[0].y), round(corners[1].x), round(corners[1].y));
-  LineSegment bottomEdge(round(corners[3].x), round(corners[3].y), round(corners[2].x), round(corners[2].y));
+  LineSegment leftEdge(round(areaCorners[3].x), round(areaCorners[3].y), round(areaCorners[0].x), round(areaCorners[0].y));
+  LineSegment rightEdge(round(areaCorners[2].x), round(areaCorners[2].y), round(areaCorners[1].x), round(areaCorners[1].y));
+  LineSegment topEdge(round(areaCorners[0].x), round(areaCorners[0].y), round(areaCorners[1].x), round(areaCorners[1].y));
+  LineSegment bottomEdge(round(areaCorners[3].x), round(areaCorners[3].y), round(areaCorners[2].x), round(areaCorners[2].y));
 
   float w = distanceBetweenPoints(leftEdge.midpoint(), rightEdge.midpoint());
   float h = distanceBetweenPoints(bottomEdge.midpoint(), topEdge.midpoint());
@@ -162,38 +151,4 @@ Size LicensePlateCandidate::getOutputImageSize(vector<Point2f> corners)
   
   return Size(width, height);
 }
-
-Mat LicensePlateCandidate::getTransformationMatrix(vector<Point2f> corners, Size outputImageSize)
-{
-  // Corners of the destination image
-  vector<Point2f> quad_pts;
-  quad_pts.push_back(Point2f(0, 0));
-  quad_pts.push_back(Point2f(outputImageSize.width, 0));
-  quad_pts.push_back(Point2f(outputImageSize.width, outputImageSize.height));
-  quad_pts.push_back(Point2f(0, outputImageSize.height));
-
-  // Get transformation matrix
-  Mat transmtx = getPerspectiveTransform(corners, quad_pts);
-
-  return transmtx;
-}
-
-Mat LicensePlateCandidate::deSkewPlate(Mat inputImage, Size outputImageSize, Mat transformationMatrix)
-{
-  
-  
-  Mat deskewed(outputImageSize, this->pipeline_data->grayImg.type());
-  
-  // Apply perspective transformation to the image
-  warpPerspective(inputImage, deskewed, transformationMatrix, deskewed.size(), INTER_CUBIC);
-
-  
-  
-  if (this->config->debugGeneral)
-    displayImage(config, "quadrilateral", deskewed);
-
-  return deskewed;
-}
-
-
 

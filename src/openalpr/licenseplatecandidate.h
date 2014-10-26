@@ -30,6 +30,7 @@
 #include "utility.h"
 #include "constants.h"
 #include "edges/platelines.h"
+#include "transformation.h"
 #include "textdetection/characteranalysis.h"
 #include "segmentation/charactersegmenter.h"
 #include "edges/platecorners.h"
@@ -59,10 +60,7 @@ class LicensePlateCandidate
     cv::Mat filterByCharacterHue(std::vector<std::vector<cv::Point> > charRegionContours);
     std::vector<cv::Point> findPlateCorners(cv::Mat inputImage, PlateLines plateLines, CharacterAnalysis textAnalysis);	// top-left, top-right, bottom-right, bottom-left
 
-    cv::Size getOutputImageSize(std::vector<cv::Point2f> corners);
-    std::vector<cv::Point2f> transformPointsToOriginalImage(cv::Mat bigImage, cv::Mat smallImage, cv::Rect region, std::vector<cv::Point> corners);
-    cv::Mat getTransformationMatrix(std::vector<cv::Point2f> corners, cv::Size outputImageSize);
-    cv::Mat deSkewPlate(cv::Mat inputImage, cv::Size outputImageSize, cv::Mat transformationMatrix);
+    cv::Size getCropSize(std::vector<cv::Point2f> areaCorners);
     
 };
 

@@ -22,6 +22,7 @@ set(lpr_source_files
  edges/platelines.cpp
  edges/textlinecollection.cpp
  colorfilter.cpp
+ transformation.cpp
  textdetection/characteranalysis.cpp
  textdetection/platemask.cpp
  textdetection/textcontours.cpp
