@@ -25,6 +25,9 @@ public:
   LineSegment centerHorizontalLine;
   LineSegment centerVerticalLine;
 
+  LineSegment longerSegment;
+  LineSegment shorterSegment;
+  
   float charHeight;
   float charAngle;
   
@@ -35,8 +38,6 @@ private:
   LineSegment topCharArea;
   LineSegment bottomCharArea;
   
-  LineSegment longerSegment;
-  LineSegment shorterSegment;
     
   cv::Mat textMask;
   
