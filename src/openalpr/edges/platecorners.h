@@ -25,6 +25,7 @@
 #include "utility.h"
 #include "config.h"
 #include "textlinecollection.h"
+#include "scorekeeper.h"
 
 #define NO_LINE -1
 

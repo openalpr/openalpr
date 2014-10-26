@@ -124,7 +124,7 @@ vector<Point> PlateCorners::findPlateCorners()
 
 void PlateCorners::scoreVerticals(int v1, int v2)
 {
-  float score = 0;	// Lower is better
+  ScoreKeeper scoreKeeper;
 
   LineSegment left;
   LineSegment right;
@@ -143,7 +143,7 @@ void PlateCorners::scoreVerticals(int v1, int v2)
     left = tlc.centerVerticalLine.getParallelLine(-1 * idealPixelWidth / 2);
     right = tlc.centerVerticalLine.getParallelLine(idealPixelWidth / 2 );
 
-    missingSegmentPenalty += SCORING_MISSING_SEGMENT_PENALTY_VERTICAL * 2;
+    missingSegmentPenalty = 2;
     confidenceDiff += 2;
   }
   else if (v1 != NO_LINE && v2 != NO_LINE)
@@ -157,42 +157,25 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   {
     right = this->plateLines->verticalLines[v2].line;
     left = right.getParallelLine(idealPixelWidth);
-    missingSegmentPenalty += SCORING_MISSING_SEGMENT_PENALTY_VERTICAL;
+    missingSegmentPenalty++;
     confidenceDiff += (1.0 - this->plateLines->verticalLines[v2].confidence);
   }
   else if (v1 != NO_LINE && v2 == NO_LINE)
   {
     left = this->plateLines->verticalLines[v1].line;
     right = left.getParallelLine(-1 * idealPixelWidth);
-    missingSegmentPenalty += SCORING_MISSING_SEGMENT_PENALTY_VERTICAL;
+    missingSegmentPenalty++;
     confidenceDiff += (1.0 - this->plateLines->verticalLines[v1].confidence);
   }
   
-  score += confidenceDiff * SCORING_LINE_CONFIDENCE_WEIGHT;
-  score += missingSegmentPenalty;
+  scoreKeeper.setScore("SCORING_LINE_CONFIDENCE_WEIGHT", confidenceDiff, SCORING_LINE_CONFIDENCE_WEIGHT);
+  scoreKeeper.setScore("SCORING_MISSING_SEGMENT_PENALTY_VERTICAL", missingSegmentPenalty, SCORING_MISSING_SEGMENT_PENALTY_VERTICAL);
 
   // Make sure that the left and right lines are to the left and right of our text 
   // area
   if (tlc.isLeftOfText(left) < 1 || tlc.isLeftOfText(right) > -1)
     return;
 
-  /////////////////////////////////////////////////////////////////////////
-  // Score "Distance from the edge...
-  /////////////////////////////////////////////////////////////////////////
-
-  float leftDistanceFromEdge =  abs((float) (left.p1.x + left.p2.x) / 2);
-  float rightDistanceFromEdge = abs(this->inputImage.cols - ((float) (right.p1.x + right.p2.x) / 2));
-
-  float distanceFromEdge = leftDistanceFromEdge + rightDistanceFromEdge;
-  score += distanceFromEdge * SCORING_VERTICALDISTANCE_FROMEDGE_WEIGHT;
-
-  /////////////////////////////////////////////////////////////////////////
-  // Score "Boxiness" of the 4 lines.  How close is it to a parallelogram?
-  /////////////////////////////////////////////////////////////////////////
-
-  float verticalAngleDiff = abs(left.angle - right.angle);
-
-  score += (verticalAngleDiff) * SCORING_BOXINESS_WEIGHT;
 
   /////////////////////////////////////////////////////////////////////////
   // Score angle difference from detected character box
@@ -201,7 +184,7 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   float perpendicularCharAngle = tlc.charAngle - 90;
   float charanglediff = abs(perpendicularCharAngle - left.angle) + abs(perpendicularCharAngle - right.angle);
 
-  score += charanglediff * SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT;
+  scoreKeeper.setScore("SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT", charanglediff, SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT);
   
   //////////////////////////////////////////////////////////////////////////
   // SCORE the shape wrt character position and height relative to position
@@ -211,49 +194,22 @@ void PlateCorners::scoreVerticals(int v1, int v2)
   Point rightMidLinePoint = right.closestPointOnSegmentTo(tlc.centerVerticalLine.midpoint());
 
   float plateDistance = abs(idealPixelWidth - distanceBetweenPoints(leftMidLinePoint, rightMidLinePoint));
+  // normalize for image width
+  plateDistance = plateDistance / ((float)inputImage.cols);
 
-  score += plateDistance * SCORING_DISTANCE_WEIGHT_VERTICAL;
+  scoreKeeper.setScore("SCORING_DISTANCE_WEIGHT_VERTICAL", plateDistance, SCORING_DISTANCE_WEIGHT_VERTICAL);
 
+  float score = scoreKeeper.getTotal();
+  
   if (score < this->bestVerticalScore)
   {
-    float scorecomponent;
 
     if (pipelineData->config->debugPlateCorners)
     {
-      cout << "xx xx Score: charHeight " << tlc.charHeight << endl;
-      cout << "xx xx Score: idealwidth " << idealPixelWidth << endl;
-      cout << "xx xx Score: v1,v2= " << v1 << "," << v2 << endl;
-      cout << "xx xx Score: Left= " << left.str() << endl;
-      cout << "xx xx Score: Right= " << right.str() << endl;
-
 
       cout << "Vertical breakdown Score:" << endl;
       
-      cout << " -- Missing Segment Score: " << missingSegmentPenalty << "  -- Weight (1.0)" << endl;
-      scorecomponent = missingSegmentPenalty ;
-      cout << " -- -- Score:       " << scorecomponent << " = " << scorecomponent / score * 100 << "% of score" << endl;
-      
-      cout << " -- Boxiness Score: " << verticalAngleDiff << "  -- Weight (" << SCORING_BOXINESS_WEIGHT << ")" << endl;
-      scorecomponent = verticalAngleDiff * SCORING_BOXINESS_WEIGHT;
-      cout << " -- -- Score:       " << scorecomponent << " = " << scorecomponent / score * 100 << "% of score" << endl;
-
-      cout << " -- Distance From Edge Score: " << distanceFromEdge << " -- Weight (" << SCORING_VERTICALDISTANCE_FROMEDGE_WEIGHT << ")" << endl;
-      scorecomponent = distanceFromEdge * SCORING_VERTICALDISTANCE_FROMEDGE_WEIGHT;
-      cout << " -- -- Score:       " << scorecomponent << " = " << scorecomponent / score * 100 << "% of score" << endl;
-
-      cout << " -- Distance Score: " << plateDistance << "  -- Weight (" << SCORING_DISTANCE_WEIGHT_VERTICAL << ")" << endl;
-      scorecomponent = plateDistance * SCORING_DISTANCE_WEIGHT_VERTICAL;
-      cout << " -- -- Score:       " << scorecomponent << " = " << scorecomponent / score * 100 << "% of score" << endl;
-      
-      cout << " -- Char angle Score: " << charanglediff << "  -- Weight (" << SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT << ")" << endl;
-      scorecomponent = charanglediff * SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT;
-      cout << " -- -- Score:         " << scorecomponent << " = " << scorecomponent / score * 100 << "% of score" << endl;
-      
-      cout << " -- Plate line confidence Score: " << confidenceDiff << "  -- Weight (" << SCORING_LINE_CONFIDENCE_WEIGHT << ")" << endl;
-      scorecomponent = confidenceDiff * SCORING_LINE_CONFIDENCE_WEIGHT;
-      cout << " -- -- Score:         " << scorecomponent << " = " << scorecomponent / score * 100 << "% of score" << endl;
-      
-      cout << " -- Score: " << score << endl;
+      scoreKeeper.printDebugScores();
     }
 
     this->bestVerticalScore = score;
@@ -265,10 +221,8 @@ void PlateCorners::scoreVerticals(int v1, int v2)
 // If any segments are missing, extrapolate the missing pieces
 void PlateCorners::scoreHorizontals(int h1, int h2)
 {
-  //if (this->debug)
-  //    cout << "PlateCorners::scorePlate" << endl;
-
-  float score = 0;	// Lower is better
+  
+  ScoreKeeper scoreKeeper;
 
   LineSegment top;
   LineSegment bottom;
@@ -287,7 +241,7 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
     top = tlc.centerHorizontalLine.getParallelLine(idealPixelHeight / 2);
     bottom = tlc.centerHorizontalLine.getParallelLine(-1 * idealPixelHeight / 2 );
 
-    missingSegmentPenalty += SCORING_MISSING_SEGMENT_PENALTY_HORIZONTAL * 2;
+    missingSegmentPenalty = 2;
     confidenceDiff += 2;
   }
   else if (h1 != NO_LINE && h2 != NO_LINE)
@@ -301,19 +255,20 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
   {
     bottom = this->plateLines->horizontalLines[h2].line;
     top = bottom.getParallelLine(idealPixelHeight);
-    missingSegmentPenalty += SCORING_MISSING_SEGMENT_PENALTY_HORIZONTAL;
+    missingSegmentPenalty++;
     confidenceDiff += (1.0 - this->plateLines->horizontalLines[h2].confidence);
   }
   else if (h1 != NO_LINE && h2 == NO_LINE)
   {
     top = this->plateLines->horizontalLines[h1].line;
     bottom = top.getParallelLine(-1 * idealPixelHeight);
-    missingSegmentPenalty += SCORING_MISSING_SEGMENT_PENALTY_HORIZONTAL;
+    missingSegmentPenalty++;
     confidenceDiff += (1.0 - this->plateLines->horizontalLines[h1].confidence);
   }
   
-  score += confidenceDiff * SCORING_LINE_CONFIDENCE_WEIGHT;
-  score += missingSegmentPenalty;
+  scoreKeeper.setScore("SCORING_MISSING_SEGMENT_PENALTY_HORIZONTAL", missingSegmentPenalty, SCORING_MISSING_SEGMENT_PENALTY_HORIZONTAL);
+  //scoreKeeper.setScore("SCORING_LINE_CONFIDENCE_WEIGHT", confidenceDiff, SCORING_LINE_CONFIDENCE_WEIGHT);
+
 
   // Make sure that the top and bottom lines are above and below
   // the text area
@@ -322,15 +277,6 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
   
   // We now have 4 possible lines.  Let's put them to the test and score them...
 
-  /////////////////////////////////////////////////////////////////////////
-  // Score "Boxiness" of the 4 lines.  How close is it to a parallelogram?
-  /////////////////////////////////////////////////////////////////////////
-
-  float horizontalAngleDiff = abs(top.angle - bottom.angle);
-
-  score += (horizontalAngleDiff) * SCORING_BOXINESS_WEIGHT;
-//  if (this->debug)
-//    cout << "PlateCorners boxiness score: " << (horizontalAngleDiff + verticalAngleDiff) * SCORING_BOXINESS_WEIGHT << endl;
 
   //////////////////////////////////////////////////////////////////////////
   // SCORE the shape wrt character position and height relative to position
@@ -344,20 +290,9 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
 
   float heightRatio = tlc.charHeight / plateHeightPx;
   float idealHeightRatio = (pipelineData->config->charHeightMM / pipelineData->config->plateHeightMM);
-  //if (leftRatio < MIN_CHAR_HEIGHT_RATIO || leftRatio > MAX_CHAR_HEIGHT_RATIO || rightRatio < MIN_CHAR_HEIGHT_RATIO || rightRatio > MAX_CHAR_HEIGHT_RATIO)
   float heightRatioDiff = abs(heightRatio - idealHeightRatio);
-  // Ideal ratio == ~.45
 
-  // Get the distance from the top and the distance from the bottom
-  // Take the average distances from the corners of the character region to the top/bottom lines
-//  float topDistance  = distanceBetweenPoints(topMidLinePoint, charRegion->getCharBoxTop().midpoint());
-//  float bottomDistance = distanceBetweenPoints(bottomMidLinePoint, charRegion->getCharBoxBottom().midpoint());
-
-//  float idealTopDistance = charHeight * (TOP_WHITESPACE_HEIGHT_MM / CHARACTER_HEIGHT_MM);
-//  float idealBottomDistance = charHeight * (BOTTOM_WHITESPACE_HEIGHT_MM / CHARACTER_HEIGHT_MM);
-//  float distScore = abs(topDistance - idealTopDistance) + abs(bottomDistance - idealBottomDistance);
-
-  score += heightRatioDiff * SCORING_PLATEHEIGHT_WEIGHT;
+  scoreKeeper.setScore("SCORING_PLATEHEIGHT_WEIGHT", heightRatioDiff, SCORING_PLATEHEIGHT_WEIGHT);
 
   //////////////////////////////////////////////////////////////////////////
   // SCORE the middliness of the stuff.  We want our top and bottom line to have the characters right towards the middle
@@ -372,66 +307,41 @@ void PlateCorners::scoreHorizontals(int h1, int h2)
 
   float idealDistanceFromMiddle = idealPixelHeight / 2;
 
-  float middleScore = abs(topDistanceFromMiddle - idealDistanceFromMiddle) + abs(bottomDistanceFromMiddle - idealDistanceFromMiddle);
+  float middleScore = abs(topDistanceFromMiddle - idealDistanceFromMiddle) / idealDistanceFromMiddle;
+  middleScore +=      abs(bottomDistanceFromMiddle - idealDistanceFromMiddle) / idealDistanceFromMiddle;
 
-  score += middleScore * SCORING_TOP_BOTTOM_SPACE_VS_CHARHEIGHT_WEIGHT;
+  scoreKeeper.setScore("SCORING_TOP_BOTTOM_SPACE_VS_CHARHEIGHT_WEIGHT", middleScore, SCORING_TOP_BOTTOM_SPACE_VS_CHARHEIGHT_WEIGHT);
 
-//  if (this->debug)
-//  {
-//    cout << "PlateCorners boxiness score: " << avgRatio * SCORING_TOP_BOTTOM_SPACE_VS_CHARHEIGHT_WEIGHT << endl;
-//    cout << "PlateCorners boxiness score: " << distScore * SCORING_PLATEHEIGHT_WEIGHT << endl;
-//  }
+
   //////////////////////////////////////////////////////////////
   // SCORE: the shape for angles matching the character region
   //////////////////////////////////////////////////////////////
 
   float charanglediff = abs(tlc.charAngle - top.angle) + abs(tlc.charAngle - bottom.angle);
 
-  score += charanglediff * SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT;
+  scoreKeeper.setScore("SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT", charanglediff, SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT);
 
-//  if (this->debug)
-//    cout << "PlateCorners boxiness score: " << charanglediff * SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT << endl;
+  if (pipelineData->config->debugPlateCorners)
+  {
+    scoreKeeper.printDebugScores();
+    Mat debugImg(this->inputImage.size(), this->inputImage.type());
+    this->inputImage.copyTo(debugImg);
+    cvtColor(debugImg, debugImg, CV_GRAY2BGR);
+    line(debugImg, top.p1, top.p2, Scalar(0,0,255), 2);
+    line(debugImg, bottom.p1, bottom.p2, Scalar(0,0,255), 2);
+    //drawAndWait(&debugImg);
 
+  }
+
+  float score = scoreKeeper.getTotal();
   if (score < this->bestHorizontalScore)
   {
     float scorecomponent;
 
     if (pipelineData->config->debugPlateCorners)
     {
-      cout << "xx xx Score: charHeight " << tlc.charHeight << endl;
-      cout << "xx xx Score: idealHeight " << idealPixelHeight << endl;
-      cout << "xx xx Score: h1,h2= " << h1 << "," << h2 << endl;
-      cout << "xx xx Score: Top= " << top.str() << endl;
-      cout << "xx xx Score: Bottom= " << bottom.str() << endl;
-
-      
       cout << "Horizontal breakdown Score:" << endl;
-      
-      cout << " -- Missing Segment Score: " << missingSegmentPenalty << "  -- Weight (1.0)" << endl;
-      scorecomponent = missingSegmentPenalty ;
-      cout << " -- -- Score:       " << scorecomponent << " = " << scorecomponent / score * 100 << "% of score" << endl;
-      
-      cout << " -- Boxiness Score: " << horizontalAngleDiff << "  -- Weight (" << SCORING_BOXINESS_WEIGHT << ")" << endl;
-      scorecomponent = horizontalAngleDiff * SCORING_BOXINESS_WEIGHT;
-      cout << " -- -- Score:       " << scorecomponent << " = " << scorecomponent / score * 100 << "% of score" << endl;
-
-      cout << " -- Height Ratio Diff Score: " << heightRatioDiff << "  -- Weight (" << SCORING_PLATEHEIGHT_WEIGHT << ")" << endl;
-      scorecomponent = heightRatioDiff * SCORING_PLATEHEIGHT_WEIGHT;
-      cout << " -- -- " << scorecomponent << " = " << scorecomponent / score * 100 << "% of score" << endl;
-
-      cout << " -- Distance Score: " << middleScore << "  -- Weight (" << SCORING_TOP_BOTTOM_SPACE_VS_CHARHEIGHT_WEIGHT << ")" << endl;
-      scorecomponent = middleScore * SCORING_TOP_BOTTOM_SPACE_VS_CHARHEIGHT_WEIGHT;
-      cout << " -- -- Score:       " << scorecomponent << " = " << scorecomponent / score * 100 << "% of score" << endl;
-
-      cout << " -- Char angle Score: " << charanglediff << "  -- Weight (" << SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT << ")" << endl;
-      scorecomponent = charanglediff * SCORING_ANGLE_MATCHES_LPCHARS_WEIGHT;
-      cout << " -- -- Score:         " << scorecomponent << " = " << scorecomponent / score * 100 << "% of score" << endl;
-
-      cout << " -- Plate line confidence Score: " << confidenceDiff << "  -- Weight (" << SCORING_LINE_CONFIDENCE_WEIGHT << ")" << endl;
-      scorecomponent = confidenceDiff * SCORING_LINE_CONFIDENCE_WEIGHT;
-      cout << " -- -- Score:         " << scorecomponent << " = " << scorecomponent / score * 100 << "% of score" << endl;
-      
-      cout << " -- Score: " << score << endl;
+      scoreKeeper.printDebugScores();
     }
     this->bestHorizontalScore = score;
     bestTop = LineSegment(top.p1.x, top.p1.y, top.p2.x, top.p2.y);
