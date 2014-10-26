@@ -21,6 +21,7 @@ set(lpr_source_files
  edges/platecorners.cpp
  edges/platelines.cpp
  edges/textlinecollection.cpp
+ edges/scorekeeper.cpp
  colorfilter.cpp
  transformation.cpp
  textdetection/characteranalysis.cpp
