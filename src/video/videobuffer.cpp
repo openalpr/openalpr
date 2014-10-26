@@ -152,7 +152,7 @@ void getALPRImages(cv::VideoCapture cap, VideoDispatcher* dispatcher)
   cv::Mat frame1;
   cv::Mat frame2;
   cv::Mat* receiveframe;
-  bool receiveframeisframe1 = TRUE;
+  bool receiveframeisframe1 = true;
 
   while (dispatcher->active)
   {
