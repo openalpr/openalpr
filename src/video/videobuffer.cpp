@@ -46,7 +46,7 @@ VideoDispatcher* VideoBuffer::createDispatcher(std::string mjpeg_url, int fps)
 void VideoBuffer::connect(std::string mjpeg_url, int fps)
 {
   
-    if (hasEnding(mjpeg_url, ".mjpg") == false)
+    if (startsWith(mjpeg_url, "http") && hasEnding(mjpeg_url, ".mjpg") == false)
     {
       // The filename doesn't end with ".mjpg" so the downstream processing may not treat it as such
       // OpenCV doesn't have a way to force the rendering, other than via URL path.  So, let's add it to the URL
