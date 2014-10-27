@@ -46,7 +46,7 @@ VideoDispatcher* VideoBuffer::createDispatcher(std::string mjpeg_url, int fps)
 void VideoBuffer::connect(std::string mjpeg_url, int fps)
 {
   
-    if (hasEnding(mjpeg_url, ".mjpg") == false)
+    if (startsWith(mjpeg_url, "http") && hasEnding(mjpeg_url, ".mjpg") == false)
     {
       // The filename doesn't end with ".mjpg" so the downstream processing may not treat it as such
       // OpenCV doesn't have a way to force the rendering, other than via URL path.  So, let's add it to the URL
@@ -105,11 +105,13 @@ void imageCollectionThread(void* arg)
     try
     {
       cv::VideoCapture cap=cv::VideoCapture();
+      dispatcher->log_info("Video stream connecting...");
       cap.open(dispatcher->mjpeg_url);
       
       if (cap.isOpened())
       {
-	getALPRImages(cap, dispatcher);
+        dispatcher->log_info("Video stream connected");
+        getALPRImages(cap, dispatcher);
       }
       else
       {
@@ -147,29 +149,29 @@ void imageCollectionThread(void* arg)
 // it returns so that the video capture can be recreated.
 void getALPRImages(cv::VideoCapture cap, VideoDispatcher* dispatcher)
 {
-  cv::Mat frame;
-  
+
   while (dispatcher->active)
   {
     while (dispatcher->active)
     {
       
-      dispatcher->mMutex.lock();
       bool hasImage = false;
       try
       {
+        cv::Mat frame;
 	hasImage = cap.read(frame);
-	// Double check the image to make sure it's valid.
+		  // Double check the image to make sure it's valid.
 	if (!frame.data || frame.empty())
 	{
-	  dispatcher->mMutex.unlock();
 	  std::stringstream ss;
 	  ss << "Stream " << dispatcher->mjpeg_url << " received invalid frame";
 	  dispatcher->log_error(ss.str());
 	  return;
 	}
 	
-	dispatcher->setLatestFrame(&frame);
+	dispatcher->mMutex.lock();
+	dispatcher->setLatestFrame(frame);
+	dispatcher->mMutex.unlock();
       }
       catch (const std::runtime_error& error)
       {

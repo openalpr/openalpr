@@ -31,10 +31,10 @@ class VideoDispatcher
       tthread::lock_guard<tthread::mutex> guard(mMutex);
       
       if (latestFrameNumber == lastFrameRead)
-	return -1;
+        return -1;
       
-      frame->create(latestFrame->size(), latestFrame->type());
-      latestFrame->copyTo(*frame);
+      frame->create(latestFrame.size(), latestFrame.type());
+      latestFrame.copyTo(*frame);
       
       this->lastFrameRead = this->latestFrameNumber;
       
@@ -45,11 +45,10 @@ class VideoDispatcher
       return this->lastFrameRead;
     }
     
-    void setLatestFrame(cv::Mat* frame)
+    void setLatestFrame(cv::Mat frame)
     {      
-      //tthread::lock_guard<tthread::mutex> guard(mMutex);
-      this->latestFrame = frame;
-      this->latestRegionsOfInterest = calculateRegionsOfInterest(frame);
+      frame.copyTo(this->latestFrame);
+      this->latestRegionsOfInterest = calculateRegionsOfInterest(&this->latestFrame);
       
       this->latestFrameNumber++;
     }
@@ -83,7 +82,7 @@ class VideoDispatcher
     tthread::mutex mMutex;
     
   private:
-    cv::Mat* latestFrame;
+    cv::Mat latestFrame;
     std::vector<cv::Rect> latestRegionsOfInterest;
 };
 
