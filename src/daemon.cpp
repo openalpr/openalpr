@@ -84,11 +84,9 @@ int main( int argc, const char** argv )
   int topn;
   
   std::string configFile;
-  std::string country;
 
   TCLAP::CmdLine cmd("OpenAlpr Daemon", ' ', Alpr::getVersion());
 
-  TCLAP::ValueArg<std::string> countryCodeArg("c","country","Country code to identify (either us for USA or eu for Europe).  Default=us",false, "us" ,"country_code");
   TCLAP::ValueArg<std::string> configFileArg("","config","Path to the openalpr.conf file.",false, "" ,"config_file");
   TCLAP::ValueArg<int> topNArg("n","topn","Max number of possible plate numbers to return.  Default=25",false, 25 ,"topN");
   TCLAP::ValueArg<std::string> logFileArg("l","log","Log file to write to.  Default=" + DEFAULT_LOG_FILE_PATH,false, DEFAULT_LOG_FILE_PATH ,"topN");
@@ -99,7 +97,6 @@ int main( int argc, const char** argv )
   try
   {
     
-    cmd.add( countryCodeArg );
     cmd.add( topNArg );
     cmd.add( configFileArg );
     cmd.add( logFileArg );
@@ -111,7 +108,6 @@ int main( int argc, const char** argv )
       return 1;
     }
 
-    country = countryCodeArg.getValue();
     configFile = configFileArg.getValue();
     logFile = logFileArg.getValue();
     topn = topNArg.getValue();
@@ -180,6 +176,7 @@ int main( int argc, const char** argv )
     return 1;
   }
   
+  std::string country = ini.GetValue("daemon", "country", "us");
   bool storePlates = ini.GetBoolValue("daemon", "store_plates", false);
   std::string imageFolder = ini.GetValue("daemon", "store_plates_location", "/tmp/");
   bool uploadData = ini.GetBoolValue("daemon", "upload_data", false);
