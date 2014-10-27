@@ -81,14 +81,12 @@ int main( int argc, const char** argv )
   bool noDaemon = false;
   bool clockOn = false;
   std::string logFile;
-  int topn;
   
   std::string configFile;
 
   TCLAP::CmdLine cmd("OpenAlpr Daemon", ' ', Alpr::getVersion());
 
   TCLAP::ValueArg<std::string> configFileArg("","config","Path to the openalpr.conf file.",false, "" ,"config_file");
-  TCLAP::ValueArg<int> topNArg("n","topn","Max number of possible plate numbers to return.  Default=25",false, 25 ,"topN");
   TCLAP::ValueArg<std::string> logFileArg("l","log","Log file to write to.  Default=" + DEFAULT_LOG_FILE_PATH,false, DEFAULT_LOG_FILE_PATH ,"topN");
 
   TCLAP::SwitchArg daemonOffSwitch("f","foreground","Set this flag for debugging.  Disables forking the process as a daemon and runs in the foreground.  Default=off", cmd, false);
@@ -97,7 +95,6 @@ int main( int argc, const char** argv )
   try
   {
     
-    cmd.add( topNArg );
     cmd.add( configFileArg );
     cmd.add( logFileArg );
 
@@ -110,7 +107,6 @@ int main( int argc, const char** argv )
 
     configFile = configFileArg.getValue();
     logFile = logFileArg.getValue();
-    topn = topNArg.getValue();
     noDaemon = daemonOffSwitch.getValue();
     clockOn = clockSwitch.getValue();
   }
@@ -177,6 +173,8 @@ int main( int argc, const char** argv )
   }
   
   std::string country = ini.GetValue("daemon", "country", "us");
+  int topn = ini.GetLongValue("daemon", "topn", 20);
+  
   bool storePlates = ini.GetBoolValue("daemon", "store_plates", false);
   std::string imageFolder = ini.GetValue("daemon", "store_plates_location", "/tmp/");
   bool uploadData = ini.GetBoolValue("daemon", "upload_data", false);
