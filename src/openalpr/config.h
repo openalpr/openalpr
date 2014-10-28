@@ -33,103 +33,105 @@
 #include <stdlib.h>     /* getenv */
 #include <math.h>
 
-
-class Config
+namespace alpr
 {
 
-  public:
-    Config(const std::string country, const std::string config_file = "", const std::string runtime_dir = "");
-    virtual ~Config();
+  class Config
+  {
 
-    bool loaded;
-    
-    std::string country;
-    
-    float detection_iteration_increase;
-    int detectionStrictness;
-    float maxPlateWidthPercent;
-    float maxPlateHeightPercent;
-    int maxDetectionInputWidth;
-    int maxDetectionInputHeight;
-    
-    int maxPlateAngleDegrees;
-    
-    float minPlateSizeWidthPx;
-    float minPlateSizeHeightPx;
-    
-    bool multiline;
-    
-    float plateWidthMM;
-    float plateHeightMM;
-    
-    float charHeightMM;
-    float charWidthMM;
-    float charWhitespaceTopMM;
-    float charWhitespaceBotMM;
-    
-    int templateWidthPx;
-    int templateHeightPx;
-    
-    int ocrImageWidthPx;
-    int ocrImageHeightPx;
-    
-    int stateIdImageWidthPx;
-    int stateIdimageHeightPx;
-    
-    float charAnalysisMinPercent;
-    float charAnalysisHeightRange;
-    float charAnalysisHeightStepSize;
-    int charAnalysisNumSteps;
-    
-    float plateLinesSensitivityVertical;
-    float plateLinesSensitivityHorizontal;
+    public:
+      Config(const std::string country, const std::string config_file = "", const std::string runtime_dir = "");
+      virtual ~Config();
 
-    int segmentationMinBoxWidthPx;
-    float segmentationMinCharHeightPercent;
-    float segmentationMaxCharWidthvsAverage;
-    
-    std::string ocrLanguage;
-    int ocrMinFontSize;
-    
-    float postProcessMinConfidence;
-    float postProcessConfidenceSkipLevel;
-    uint postProcessMaxSubstitutions;
-    uint postProcessMinCharacters;
-    uint postProcessMaxCharacters;
+      bool loaded;
 
-    
-    bool debugGeneral;
-    bool debugTiming;
-    bool debugStateId;
-    bool debugPlateLines;
-    bool debugPlateCorners;
-    bool debugCharSegmenter;
-    bool debugCharAnalysis;
-    bool debugColorFiler;
-    bool debugOcr;
-    bool debugPostProcess;
-    bool debugShowImages;
-    bool debugPauseOnFrame;
-    
-    void debugOff();
-   
-    std::string getKeypointsRuntimeDir();
-    std::string getCascadeRuntimeDir();
-    std::string getPostProcessRuntimeDir();
-    std::string getTessdataPrefix();
+      std::string country;
 
-private:
-    CSimpleIniA* ini;
+      float detection_iteration_increase;
+      int detectionStrictness;
+      float maxPlateWidthPercent;
+      float maxPlateHeightPercent;
+      int maxDetectionInputWidth;
+      int maxDetectionInputHeight;
 
-    std::string runtimeBaseDir;
-    
-    void loadValues(std::string country);
-    
-    int getInt(std::string section, std::string key, int defaultValue);
-    float getFloat(std::string section, std::string key, float defaultValue);
-    std::string getString(std::string section, std::string key, std::string defaultValue);
-    bool getBoolean(std::string section, std::string key, bool defaultValue);
-};
+      int maxPlateAngleDegrees;
+
+      float minPlateSizeWidthPx;
+      float minPlateSizeHeightPx;
+
+      bool multiline;
+
+      float plateWidthMM;
+      float plateHeightMM;
+
+      float charHeightMM;
+      float charWidthMM;
+      float charWhitespaceTopMM;
+      float charWhitespaceBotMM;
+
+      int templateWidthPx;
+      int templateHeightPx;
+
+      int ocrImageWidthPx;
+      int ocrImageHeightPx;
+
+      int stateIdImageWidthPx;
+      int stateIdimageHeightPx;
+
+      float charAnalysisMinPercent;
+      float charAnalysisHeightRange;
+      float charAnalysisHeightStepSize;
+      int charAnalysisNumSteps;
+
+      float plateLinesSensitivityVertical;
+      float plateLinesSensitivityHorizontal;
+
+      int segmentationMinBoxWidthPx;
+      float segmentationMinCharHeightPercent;
+      float segmentationMaxCharWidthvsAverage;
+
+      std::string ocrLanguage;
+      int ocrMinFontSize;
+
+      float postProcessMinConfidence;
+      float postProcessConfidenceSkipLevel;
+      uint postProcessMaxSubstitutions;
+      uint postProcessMinCharacters;
+      uint postProcessMaxCharacters;
 
 
+      bool debugGeneral;
+      bool debugTiming;
+      bool debugStateId;
+      bool debugPlateLines;
+      bool debugPlateCorners;
+      bool debugCharSegmenter;
+      bool debugCharAnalysis;
+      bool debugColorFiler;
+      bool debugOcr;
+      bool debugPostProcess;
+      bool debugShowImages;
+      bool debugPauseOnFrame;
+
+      void debugOff();
+
+      std::string getKeypointsRuntimeDir();
+      std::string getCascadeRuntimeDir();
+      std::string getPostProcessRuntimeDir();
+      std::string getTessdataPrefix();
+
+  private:
+      CSimpleIniA* ini;
+
+      std::string runtimeBaseDir;
+
+      void loadValues(std::string country);
+
+      int getInt(std::string section, std::string key, int defaultValue);
+      float getFloat(std::string section, std::string key, float defaultValue);
+      std::string getString(std::string section, std::string key, std::string defaultValue);
+      bool getBoolean(std::string section, std::string key, bool defaultValue);
+  };
+
+}
 #endif // OPENALPR_CONFIG_H

@@ -3,29 +3,34 @@
 using namespace cv;
 using namespace std;
 
-PipelineData::PipelineData(Mat colorImage, Rect regionOfInterest, Config* config)
+namespace alpr
 {
-  this->colorImg = colorImage;
-  cvtColor(this->colorImg, this->grayImg, CV_BGR2GRAY);
   
-  this->regionOfInterest = regionOfInterest;
-  this->config = config;
-  
-  this->region_confidence = 0;
-  
-  plate_inverted = false;
-}
-
-PipelineData::~PipelineData()
-{
-  clearThresholds();
-}
-
-void PipelineData::clearThresholds()
-{
-  for (uint i = 0; i < thresholds.size(); i++)
+  PipelineData::PipelineData(Mat colorImage, Rect regionOfInterest, Config* config)
   {
-    thresholds[i].release();
+    this->colorImg = colorImage;
+    cvtColor(this->colorImg, this->grayImg, CV_BGR2GRAY);
+
+    this->regionOfInterest = regionOfInterest;
+    this->config = config;
+
+    this->region_confidence = 0;
+
+    plate_inverted = false;
   }
-  thresholds.clear();
+
+  PipelineData::~PipelineData()
+  {
+    clearThresholds();
+  }
+
+  void PipelineData::clearThresholds()
+  {
+    for (uint i = 0; i < thresholds.size(); i++)
+    {
+      thresholds[i].release();
+    }
+    thresholds.clear();
+  }
+
 }

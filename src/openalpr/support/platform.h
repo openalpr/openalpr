@@ -10,11 +10,13 @@
 	#include <unistd.h>
 #endif
 
+namespace alpr
+{
 
+  void sleep_ms(int sleepMs);
 
+  std::string getExeDir();
 
-void sleep_ms(int sleepMs);
-
-std::string getExeDir();
+}
 
 #endif //OPENALPR_PLATFORM_H

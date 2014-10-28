@@ -27,31 +27,34 @@
 #include "utility.h"
 #include "config.h"
 
-
-class ColorFilter
+namespace alpr
 {
 
-  public:
-    ColorFilter(cv::Mat image, cv::Mat characterMask, Config* config);
-    virtual ~ColorFilter();
+  class ColorFilter
+  {
 
-    cv::Mat colorMask;
+    public:
+      ColorFilter(cv::Mat image, cv::Mat characterMask, Config* config);
+      virtual ~ColorFilter();
 
-  private:
+      cv::Mat colorMask;
 
-    Config* config;
-    bool debug;
+    private:
 
-    cv::Mat hsv;
-    cv::Mat charMask;
+      Config* config;
+      bool debug;
 
-    bool grayscale;
+      cv::Mat hsv;
+      cv::Mat charMask;
 
-    void preprocessImage();
-    void findCharColors();
+      bool grayscale;
 
-    bool imageIsGrayscale(cv::Mat image);
-    int getMajorityOpinion(std::vector<float> values, float minPercentAgreement, float maxValDifference);
-};
+      void preprocessImage();
+      void findCharColors();
 
+      bool imageIsGrayscale(cv::Mat image);
+      int getMajorityOpinion(std::vector<float> values, float minPercentAgreement, float maxValDifference);
+  };
+  
+}
 #endif // OPENALPR_COLORFILTER_H

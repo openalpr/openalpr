@@ -21,55 +21,60 @@
 
 #include "scorekeeper.h"
 
-ScoreKeeper::ScoreKeeper() {
-}
+namespace alpr
+{
+
+  ScoreKeeper::ScoreKeeper() {
+  }
 
 
-ScoreKeeper::~ScoreKeeper() {
-}
+  ScoreKeeper::~ScoreKeeper() {
+  }
 
-void ScoreKeeper::setScore(std::string weight_id, float score, float weight) {
+  void ScoreKeeper::setScore(std::string weight_id, float score, float weight) {
 
-  // Assume that we never set this value twice
-  weight_ids.push_back(weight_id);
-  scores.push_back(score);
-  weights.push_back(weight);
-}
+    // Assume that we never set this value twice
+    weight_ids.push_back(weight_id);
+    scores.push_back(score);
+    weights.push_back(weight);
+  }
 
 
-float ScoreKeeper::getTotal() {
+  float ScoreKeeper::getTotal() {
 
-  float score = 0;
-  
-  for (unsigned int i = 0; i < weights.size(); i++)
-  {
-    score += scores[i] * weights[i];
+    float score = 0;
+
+    for (unsigned int i = 0; i < weights.size(); i++)
+    {
+      score += scores[i] * weights[i];
+    }
+
+    return score;
+  }
+
+  void ScoreKeeper::printDebugScores() {
+
+    int longest_weight_id = 0;
+    for (unsigned int i = 0; i < weight_ids.size(); i++)
+    {
+      if (weight_ids[i].length() > longest_weight_id)
+        longest_weight_id = weight_ids[i].length();
+    }
+
+    float total = getTotal();
+
+    for (unsigned int i = 0; i < weight_ids.size(); i++)
+    {
+      float percent_of_total = (scores[i] * weights[i]) / total * 100;
+
+      std::cout << " - " << std::setw(longest_weight_id + 1) << std::left << weight_ids[i] << 
+              " Weighted Score: " << std::setw(10) << std::left << (scores[i] * weights[i]) << 
+              " Orig Score: " << std::setw(10) << std::left << scores[i] << 
+              " (" << percent_of_total << "% of total)" << std::endl;
+    }
+
+
+    std::cout << "Total: " << total << std::endl;
   }
   
-  return score;
-}
-
-void ScoreKeeper::printDebugScores() {
-  
-  int longest_weight_id = 0;
-  for (unsigned int i = 0; i < weight_ids.size(); i++)
-  {
-    if (weight_ids[i].length() > longest_weight_id)
-      longest_weight_id = weight_ids[i].length();
-  }
-  
-  float total = getTotal();
-  
-  for (unsigned int i = 0; i < weight_ids.size(); i++)
-  {
-    float percent_of_total = (scores[i] * weights[i]) / total * 100;
-
-    std::cout << " - " << std::setw(longest_weight_id + 1) << std::left << weight_ids[i] << 
-            " Weighted Score: " << std::setw(10) << std::left << (scores[i] * weights[i]) << 
-            " Orig Score: " << std::setw(10) << std::left << scores[i] << 
-            " (" << percent_of_total << "% of total)" << std::endl;
-  }
-  
-
-  std::cout << "Total: " << total << std::endl;
 }

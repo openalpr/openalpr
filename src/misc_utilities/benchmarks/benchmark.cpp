@@ -35,6 +35,7 @@
 
 using namespace std;
 using namespace cv;
+using namespace alpr;
 
 // Given a directory full of lp images (named [statecode]#.png) crop out the alphanumeric characters.
 // These will be used to train the OCR

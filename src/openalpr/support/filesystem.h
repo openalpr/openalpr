@@ -17,16 +17,21 @@
 #include <string.h>
 #include <vector>
 
-bool startsWith(std::string const &fullString, std::string const &prefix);
-bool hasEnding (std::string const &fullString, std::string const &ending);
-bool hasEndingInsensitive(const std::string& fullString, const std::string& ending);
+namespace alpr
+{
 
-std::string filenameWithoutExtension(std::string filename);
+  bool startsWith(std::string const &fullString, std::string const &prefix);
+  bool hasEnding (std::string const &fullString, std::string const &ending);
+  bool hasEndingInsensitive(const std::string& fullString, const std::string& ending);
 
-bool DirectoryExists( const char* pzPath );
-bool fileExists( const char* pzPath );
-std::vector<std::string> getFilesInDir(const char* dirPath);
+  std::string filenameWithoutExtension(std::string filename);
 
-bool stringCompare( const std::string &left, const std::string &right );
+  bool DirectoryExists( const char* pzPath );
+  bool fileExists( const char* pzPath );
+  std::vector<std::string> getFilesInDir(const char* dirPath);
+
+  bool stringCompare( const std::string &left, const std::string &right );
+
+}
 
 #endif // FILESYSTEM_H

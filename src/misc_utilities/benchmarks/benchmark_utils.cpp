@@ -3,6 +3,7 @@
 #include "benchmark_utils.h"
 
 using namespace std;
+using namespace alpr;
 
 vector<string> filterByExtension(vector<string> fileList, string extension)
 {

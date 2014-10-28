@@ -21,6 +21,8 @@
 #include <log4cplus/consoleappender.h>
 #include <log4cplus/fileappender.h>
 
+using namespace alpr;
+
 // prototypes
 void streamRecognitionThread(void* arg);
 bool writeToQueue(std::string jsonResult);

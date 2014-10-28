@@ -27,29 +27,34 @@
 #include "textline.h"
 #include "pipeline_data.h"
 
-class CharPointInfo
+namespace alpr
 {
-public:
-  CharPointInfo(std::vector<cv::Point> contour, int index);
-  
-  cv::Rect boundingBox;
-  cv::Point top;
-  cv::Point bottom;
-  int contourIndex;
-  
-};
 
-class LineFinder {
-public:
-  LineFinder(PipelineData* pipeline_data);
-  virtual ~LineFinder();
-  
-  std::vector<std::vector<cv::Point> > findLines(cv::Mat image, const TextContours contours);
-private:
-  PipelineData* pipeline_data;
-          
-  std::vector<cv::Point> getBestLine(const TextContours contours, std::vector<CharPointInfo> charPoints);
-};
+  class CharPointInfo
+  {
+  public:
+    CharPointInfo(std::vector<cv::Point> contour, int index);
+
+    cv::Rect boundingBox;
+    cv::Point top;
+    cv::Point bottom;
+    int contourIndex;
+
+  };
+
+  class LineFinder {
+  public:
+    LineFinder(PipelineData* pipeline_data);
+    virtual ~LineFinder();
+
+    std::vector<std::vector<cv::Point> > findLines(cv::Mat image, const TextContours contours);
+  private:
+    PipelineData* pipeline_data;
+
+    std::vector<cv::Point> getBestLine(const TextContours contours, std::vector<CharPointInfo> charPoints);
+  };
+
+}
 
 #endif	/* OPENALPR_LINEFINDER_H */
 

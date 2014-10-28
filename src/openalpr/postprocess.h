@@ -32,96 +32,81 @@
 
 #define SKIP_CHAR "~"
 
-struct Letter
+namespace alpr
 {
-  std::string letter;
-  int charposition;
-  float totalscore;
-  int occurences;
-};
 
-struct PPResult
-{
-  std::string letters;
-  float totalscore;
-  bool matchesTemplate;
-};
+  struct Letter
+  {
+    std::string letter;
+    int charposition;
+    float totalscore;
+    int occurences;
+  };
 
-bool wordCompare( const PPResult &left, const PPResult &right );
-bool letterCompare( const Letter &left, const Letter &right );
-
-class RegexRule
-{
-  public:
-    RegexRule(std::string region, std::string pattern);
-
-    bool match(std::string text);
-    std::string filterSkips(std::string text);
-
-  private:
-    int numchars;
-    TRexpp trexp;
-    std::string original;
-    std::string regex;
-    std::string region;
-    std::vector<int> skipPositions;
-};
-
-class PostProcess
-{
-  public:
-    PostProcess(Config* config);
-    ~PostProcess();
-
-    void addLetter(std::string letter, int charposition, float score);
-
-    void clear();
-    void analyze(std::string templateregion, int topn);
-
-    std::string bestChars;
+  struct PPResult
+  {
+    std::string letters;
+    float totalscore;
     bool matchesTemplate;
+  };
 
-    const std::vector<PPResult> getResults();
+  bool wordCompare( const PPResult &left, const PPResult &right );
+  bool letterCompare( const Letter &left, const Letter &right );
 
-  private:
-    Config* config;
-    //void getTopN();
-    void findAllPermutations(std::vector<Letter> prevletters, int charPos, int substitutionsLeft);
+  class RegexRule
+  {
+    public:
+      RegexRule(std::string region, std::string pattern);
 
-    void insertLetter(std::string letter, int charPosition, float score);
+      bool match(std::string text);
+      std::string filterSkips(std::string text);
 
-    std::map<std::string, std::vector<RegexRule*> > rules;
+    private:
+      int numchars;
+      TRexpp trexp;
+      std::string original;
+      std::string regex;
+      std::string region;
+      std::vector<int> skipPositions;
+  };
 
-    float calculateMaxConfidenceScore();
+  class PostProcess
+  {
+    public:
+      PostProcess(Config* config);
+      ~PostProcess();
 
-    std::vector<std::vector<Letter> > letters;
-    std::vector<int> unknownCharPositions;
+      void addLetter(std::string letter, int charposition, float score);
 
-    std::vector<PPResult> allPossibilities;
+      void clear();
+      void analyze(std::string templateregion, int topn);
 
-    // Functions used to prune the list of letters (based on topn) to improve performance
-    std::vector<int> getMaxDepth(int topn);
-    int getPermutationCount(std::vector<int> depth);
-    int getNextLeastDrop(std::vector<int> depth);
-};
+      std::string bestChars;
+      bool matchesTemplate;
 
-/*
-class LetterScores
-{
-  public:
-    LetterScores(int numCharPositions);
+      const std::vector<PPResult> getResults();
 
-    void addScore(char letter, int charposition, float score);
+    private:
+      Config* config;
+      //void getTopN();
+      void findAllPermutations(std::vector<Letter> prevletters, int charPos, int substitutionsLeft);
 
-    vector<char> getBestScore();
-    float getConfidence();
+      void insertLetter(std::string letter, int charPosition, float score);
 
-  private:
-    int numCharPositions;
+      std::map<std::string, std::vector<RegexRule*> > rules;
 
-    vector<char> letters;
-    vector<int> charpositions;
-    vector<float> scores;
-};
-*/
+      float calculateMaxConfidenceScore();
+
+      std::vector<std::vector<Letter> > letters;
+      std::vector<int> unknownCharPositions;
+
+      std::vector<PPResult> allPossibilities;
+
+      // Functions used to prune the list of letters (based on topn) to improve performance
+      std::vector<int> getMaxDepth(int topn);
+      int getPermutationCount(std::vector<int> depth);
+      int getNextLeastDrop(std::vector<int> depth);
+  };
+
+}
 #endif // OPENALPR_POSTPROCESS_H

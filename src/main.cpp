@@ -33,6 +33,8 @@
 #include "video/videobuffer.h"
 #include "alpr.h"
 
+using namespace alpr;
+
 const std::string MAIN_WINDOW_NAME = "ALPR main window";
 
 const bool SAVE_LAST_VIDEO_STILL = false;

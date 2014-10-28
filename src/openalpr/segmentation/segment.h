@@ -25,17 +25,22 @@
 
 #include "opencv2/imgproc/imgproc.hpp"
 
-class Segment
-{
+namespace alpr
+  {
 
-  public:
-    Segment(cv::Rect newSegment);
-    virtual ~Segment();
+  class Segment
+  {
 
-    cv::Rect segment;
-    
-    bool matches(cv::Rect newSegment);
-    
-};
+    public:
+      Segment(cv::Rect newSegment);
+      virtual ~Segment();
+
+      cv::Rect segment;
+
+      bool matches(cv::Rect newSegment);
+
+  };
+
+}
 
 #endif // OPENALPR_SEGMENTATIONGROUP_H

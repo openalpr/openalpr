@@ -19,6 +19,7 @@
 
 #include "videobuffer.h"
 
+using namespace alpr;
 
 void imageCollectionThread(void* arg);
 void getALPRImages(cv::VideoCapture cap, VideoDispatcher* dispatcher);

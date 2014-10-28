@@ -28,34 +28,39 @@
 #include "support/timing.h"
 #include "constants.h"
 
-struct PlateRegion
-{
-  cv::Rect rect;
-  std::vector<PlateRegion> children;
-};
-
-
-class Detector
+namespace alpr
 {
 
-  public:
-    Detector(Config* config);
-    virtual ~Detector();
-
-    bool isLoaded();
-    std::vector<PlateRegion> detect(cv::Mat frame);
-    virtual std::vector<PlateRegion> detect(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);
-
-  protected:
-    Config* config;
-
-    bool loaded;
-    float scale_factor;
-    
-    std::vector<PlateRegion> aggregateRegions(std::vector<cv::Rect> regions);
-    
+  struct PlateRegion
+  {
+    cv::Rect rect;
+    std::vector<PlateRegion> children;
+  };
 
 
-};
+  class Detector
+  {
+
+    public:
+      Detector(Config* config);
+      virtual ~Detector();
+
+      bool isLoaded();
+      std::vector<PlateRegion> detect(cv::Mat frame);
+      virtual std::vector<PlateRegion> detect(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);
+
+    protected:
+      Config* config;
+
+      bool loaded;
+      float scale_factor;
+
+      std::vector<PlateRegion> aggregateRegions(std::vector<cv::Rect> regions);
+
+
+
+  };
+
+}
 
 #endif // OPENALPR_REGIONDETECTOR_H

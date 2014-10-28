@@ -23,67 +23,72 @@
 using namespace cv;
 using namespace std;
 
-StateIdentifier::StateIdentifier(Config* config)
+namespace alpr
 {
-  this->config = config;
 
-  featureMatcher = new FeatureMatcher(config);
-
-  if (featureMatcher->isLoaded() == false)
+  StateIdentifier::StateIdentifier(Config* config)
   {
-    cout << "Can not create detector or descriptor extractor or descriptor matcher of given types" << endl;
-    return;
+    this->config = config;
+
+    featureMatcher = new FeatureMatcher(config);
+
+    if (featureMatcher->isLoaded() == false)
+    {
+      cout << "Can not create detector or descriptor extractor or descriptor matcher of given types" << endl;
+      return;
+    }
+
+    featureMatcher->loadRecognitionSet(config->country);
   }
 
-  featureMatcher->loadRecognitionSet(config->country);
-}
-
-StateIdentifier::~StateIdentifier()
-{
-  delete featureMatcher;
-}
-
-
-// Attempts to recognize the plate.  Returns a confidence level.  Updates the region code and confidence
-// If region is found, returns true.
-bool StateIdentifier::recognize(PipelineData* pipeline_data)
-{
-  timespec startTime;
-  getTime(&startTime);
-
-  Mat plateImg = Mat(pipeline_data->grayImg, pipeline_data->regionOfInterest);
-
-  resize(plateImg, plateImg, getSizeMaintainingAspect(plateImg, config->stateIdImageWidthPx, config->stateIdimageHeightPx));
-
-
-  Mat debugImg(plateImg.size(), plateImg.type());
-  plateImg.copyTo(debugImg);
-  vector<int> matchesArray(featureMatcher->numTrainingElements());
-
-  RecognitionResult result = featureMatcher->recognize(plateImg, true, &debugImg, true, matchesArray );
-
-  if (this->config->debugStateId)
+  StateIdentifier::~StateIdentifier()
   {
-    displayImage(config, "State Identifier1", plateImg);
-    displayImage(config, "State Identifier", debugImg);
-    cout << result.haswinner << " : " << result.confidence << " : " << result.winner << endl;
+    delete featureMatcher;
   }
 
-  if (config->debugTiming)
+
+  // Attempts to recognize the plate.  Returns a confidence level.  Updates the region code and confidence
+  // If region is found, returns true.
+  bool StateIdentifier::recognize(PipelineData* pipeline_data)
   {
-    timespec endTime;
-    getTime(&endTime);
-    cout << "State Identification Time: " << diffclock(startTime, endTime) << "ms." << endl;
+    timespec startTime;
+    getTime(&startTime);
+
+    Mat plateImg = Mat(pipeline_data->grayImg, pipeline_data->regionOfInterest);
+
+    resize(plateImg, plateImg, getSizeMaintainingAspect(plateImg, config->stateIdImageWidthPx, config->stateIdimageHeightPx));
+
+
+    Mat debugImg(plateImg.size(), plateImg.type());
+    plateImg.copyTo(debugImg);
+    vector<int> matchesArray(featureMatcher->numTrainingElements());
+
+    RecognitionResult result = featureMatcher->recognize(plateImg, true, &debugImg, true, matchesArray );
+
+    if (this->config->debugStateId)
+    {
+      displayImage(config, "State Identifier1", plateImg);
+      displayImage(config, "State Identifier", debugImg);
+      cout << result.haswinner << " : " << result.confidence << " : " << result.winner << endl;
+    }
+
+    if (config->debugTiming)
+    {
+      timespec endTime;
+      getTime(&endTime);
+      cout << "State Identification Time: " << diffclock(startTime, endTime) << "ms." << endl;
+    }
+
+    if (result.haswinner == false)
+      return 0;
+
+    pipeline_data->region_code = result.winner;
+    pipeline_data->region_confidence = result.confidence;
+
+    if (result.confidence >= 10)
+      return true;
+
+    return false;
   }
 
-  if (result.haswinner == false)
-    return 0;
-
-  pipeline_data->region_code = result.winner;
-  pipeline_data->region_confidence = result.confidence;
-  
-  if (result.confidence >= 10)
-    return true;
-  
-  return false;
 }

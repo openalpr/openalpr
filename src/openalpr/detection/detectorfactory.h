@@ -23,7 +23,11 @@
 #include "detectorcpu.h"
 #include "config.h"
 
-Detector* createDetector(Config* config);
+namespace alpr
+{
 
+  Detector* createDetector(Config* config);
+
+}
 #endif	/* OPENALPR_DETECTORFACTORY_H */
 

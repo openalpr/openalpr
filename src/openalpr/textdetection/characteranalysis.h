@@ -29,46 +29,51 @@
 #include "platemask.h"
 #include "linefinder.h"
 
-class CharacterAnalysis
+namespace alpr
 {
 
-  public:
-    CharacterAnalysis(PipelineData* pipeline_data);
-    virtual ~CharacterAnalysis();
+  class CharacterAnalysis
+  {
 
-    int confidence;
+    public:
+      CharacterAnalysis(PipelineData* pipeline_data);
+      virtual ~CharacterAnalysis();
 
-    cv::Mat bestThreshold;
-    
-    TextContours bestContours;
+      int confidence;
+
+      cv::Mat bestThreshold;
+
+      TextContours bestContours;
 
 
-    std::vector<TextContours> allTextContours;
+      std::vector<TextContours> allTextContours;
 
-    void analyze();
+      void analyze();
 
-    cv::Mat getCharacterMask();
+      cv::Mat getCharacterMask();
 
-  private:
-    PipelineData* pipeline_data;
-    Config* config;
+    private:
+      PipelineData* pipeline_data;
+      Config* config;
 
-    cv::Mat findOuterBoxMask( );
+      cv::Mat findOuterBoxMask( );
 
-    bool isPlateInverted();
-    void filter(cv::Mat img, TextContours& textContours);
+      bool isPlateInverted();
+      void filter(cv::Mat img, TextContours& textContours);
 
-    void filterByBoxSize(TextContours& textContours, int minHeightPx, int maxHeightPx);
-    void filterByParentContour( TextContours& textContours );
-    void filterContourHoles(TextContours& textContours);
-    void filterByOuterMask(TextContours& textContours);
+      void filterByBoxSize(TextContours& textContours, int minHeightPx, int maxHeightPx);
+      void filterByParentContour( TextContours& textContours );
+      void filterContourHoles(TextContours& textContours);
+      void filterByOuterMask(TextContours& textContours);
 
-    std::vector<cv::Point> getCharArea(LineSegment topLine, LineSegment bottomLine);
-    void filterBetweenLines(cv::Mat img, TextContours& textContours, std::vector<TextLine> textLines );
+      std::vector<cv::Point> getCharArea(LineSegment topLine, LineSegment bottomLine);
+      void filterBetweenLines(cv::Mat img, TextContours& textContours, std::vector<TextLine> textLines );
 
-    bool verifySize(cv::Mat r, float minHeightPx, float maxHeightPx);
+      bool verifySize(cv::Mat r, float minHeightPx, float maxHeightPx);
 
-    
-};
+
+  };
+
+}
 
 #endif // OPENALPR_CHARACTERANALYSIS_H

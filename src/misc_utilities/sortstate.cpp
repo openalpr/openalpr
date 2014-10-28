@@ -31,6 +31,7 @@
 
 using namespace std;
 using namespace cv;
+using namespace alpr;
 
 // Given a directory full of pre-cropped images, identify the state that each image belongs to.
 // This is used to sort our own positive image database as a first step before grabbing characters to use to train the OCR.

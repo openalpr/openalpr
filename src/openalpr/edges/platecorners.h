@@ -40,40 +40,42 @@
 
 #define SCORING_LINE_CONFIDENCE_WEIGHT                  18.0
 
-
-
-class PlateCorners
+namespace alpr
 {
 
-  public:
-    PlateCorners(cv::Mat inputImage, PlateLines* plateLines, PipelineData* pipelineData, std::vector<TextLine> textLines) ;
-    
-    virtual ~PlateCorners();
+  class PlateCorners
+  {
 
-    std::vector<cv::Point> findPlateCorners();
+    public:
+      PlateCorners(cv::Mat inputImage, PlateLines* plateLines, PipelineData* pipelineData, std::vector<TextLine> textLines) ;
 
-    float confidence;
+      virtual ~PlateCorners();
 
-  private:
+      std::vector<cv::Point> findPlateCorners();
 
-    PipelineData* pipelineData;
-    cv::Mat inputImage;
+      float confidence;
 
-    std::vector<TextLine> textLines;
-    TextLineCollection tlc;
-    
-    float bestHorizontalScore;
-    float bestVerticalScore;
-    LineSegment bestTop;
-    LineSegment bestBottom;
-    LineSegment bestLeft;
-    LineSegment bestRight;
+    private:
 
-    PlateLines* plateLines;
+      PipelineData* pipelineData;
+      cv::Mat inputImage;
 
-    void scoreHorizontals( int h1, int h2 );
-    void scoreVerticals( int v1, int v2 );
+      std::vector<TextLine> textLines;
+      TextLineCollection tlc;
 
-};
+      float bestHorizontalScore;
+      float bestVerticalScore;
+      LineSegment bestTop;
+      LineSegment bestBottom;
+      LineSegment bestLeft;
+      LineSegment bestRight;
 
+      PlateLines* plateLines;
+
+      void scoreHorizontals( int h1, int h2 );
+      void scoreVerticals( int v1, int v2 );
+
+  };
+
+}
 #endif // OPENALPR_PLATELINES_H

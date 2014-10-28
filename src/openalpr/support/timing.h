@@ -23,9 +23,14 @@
 #define timespec timeval
 #endif
 
-void getTime(timespec* time);
-double diffclock(timespec time1,timespec time2);
+namespace alpr
+{
 
-long getEpochTime();
+  void getTime(timespec* time);
+  double diffclock(timespec time1,timespec time2);
+
+  long getEpochTime();
+
+}
 
 #endif

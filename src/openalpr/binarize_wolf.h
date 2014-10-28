@@ -26,23 +26,27 @@
 #include <iostream>
 #include "opencv2/opencv.hpp"
 
-
-enum NiblackVersion
+namespace alpr
 {
-  NIBLACK=0,
-  SAUVOLA,
-  WOLFJOLION,
-};
 
-#define BINARIZEWOLF_VERSION	"2.3 (February 26th, 2013)"
-#define BINARIZEWOLF_DEFAULTDR 128
+  enum NiblackVersion
+  {
+    NIBLACK=0,
+    SAUVOLA,
+    WOLFJOLION,
+  };
 
-#define uget(x,y)    at<unsigned char>(y,x)
-#define uset(x,y,v)  at<unsigned char>(y,x)=v;
-#define fget(x,y)    at<float>(y,x)
-#define fset(x,y,v)  at<float>(y,x)=v;
+  #define BINARIZEWOLF_VERSION	"2.3 (February 26th, 2013)"
+  #define BINARIZEWOLF_DEFAULTDR 128
 
-void NiblackSauvolaWolfJolion (cv::Mat im, cv::Mat output, NiblackVersion version,
-                               int winx, int winy, float k);
+  #define uget(x,y)    at<unsigned char>(y,x)
+  #define uset(x,y,v)  at<unsigned char>(y,x)=v;
+  #define fget(x,y)    at<float>(y,x)
+  #define fset(x,y,v)  at<float>(y,x)=v;
+
+  void NiblackSauvolaWolfJolion (cv::Mat im, cv::Mat output, NiblackVersion version,
+                                 int winx, int winy, float k);
+
+}
 
 #endif // OPENALPR_BINARIZEWOLF_H

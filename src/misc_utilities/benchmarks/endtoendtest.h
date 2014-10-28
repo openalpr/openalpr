@@ -15,8 +15,8 @@ class EndToEndTest
   
   private:
     
-    bool rectMatches(cv::Rect actualPlate, PlateRegion candidate);
-    int totalRectCount(PlateRegion rootCandidate);
+    bool rectMatches(cv::Rect actualPlate, alpr::PlateRegion candidate);
+    int totalRectCount(alpr::PlateRegion rootCandidate);
 	
     std::string inputDir;
     std::string outputDir;

@@ -24,31 +24,36 @@
 #include "utility.h"
 #include "opencv2/imgproc/imgproc.hpp"
 
-class TextLine {
-public:
-  TextLine(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon);
-  TextLine(std::vector<cv::Point2f> textArea, std::vector<cv::Point2f> linePolygon);
-  virtual ~TextLine();
-  
-  
-  std::vector<cv::Point> linePolygon;
-  std::vector<cv::Point> textArea;
-  LineSegment topLine;
-  LineSegment bottomLine;
+namespace alpr
+{
 
-  LineSegment charBoxTop;
-  LineSegment charBoxBottom;
-  LineSegment charBoxLeft;
-  LineSegment charBoxRight;
-  
-  float lineHeight;
-  float angle;
+  class TextLine {
+  public:
+    TextLine(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon);
+    TextLine(std::vector<cv::Point2f> textArea, std::vector<cv::Point2f> linePolygon);
+    virtual ~TextLine();
 
-  cv::Mat drawDebugImage(cv::Mat baseImage);
-private:
 
-  void initialize(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon);
-};
+    std::vector<cv::Point> linePolygon;
+    std::vector<cv::Point> textArea;
+    LineSegment topLine;
+    LineSegment bottomLine;
+
+    LineSegment charBoxTop;
+    LineSegment charBoxBottom;
+    LineSegment charBoxLeft;
+    LineSegment charBoxRight;
+
+    float lineHeight;
+    float angle;
+
+    cv::Mat drawDebugImage(cv::Mat baseImage);
+  private:
+
+    void initialize(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon);
+  };
+
+}
 
 #endif	/* OPENALPR_TEXTLINE_H */
 

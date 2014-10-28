@@ -31,19 +31,24 @@
 
 #include "detector.h"
 
-class DetectorCPU : public Detector {
-public:
-    DetectorCPU(Config* config);
-    virtual ~DetectorCPU();
-    
-    std::vector<PlateRegion> detect(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);
-    
-private:
-    
-    cv::CascadeClassifier plate_cascade;
+namespace alpr
+{
 
-    std::vector<PlateRegion> doCascade(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);
-};
+  class DetectorCPU : public Detector {
+  public:
+      DetectorCPU(Config* config);
+      virtual ~DetectorCPU();
+
+      std::vector<PlateRegion> detect(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);
+
+  private:
+
+      cv::CascadeClassifier plate_cascade;
+
+      std::vector<PlateRegion> doCascade(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);
+  };
+
+}
 
 #endif	/* OPENALPR_DETECTORCPU_H */
 

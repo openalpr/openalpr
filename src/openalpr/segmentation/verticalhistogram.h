@@ -22,43 +22,47 @@
 
 #include "opencv2/imgproc/imgproc.hpp"
 
-
-struct Valley
-{
-  int startIndex;
-  int endIndex;
-  int width;
-  int pixelsWithin;
-};
-
-enum HistogramDirection { RISING, FALLING, FLAT };
-
-class VerticalHistogram
+namespace alpr
 {
 
-  public:
-    VerticalHistogram(cv::Mat inputImage, cv::Mat mask);
-    virtual ~VerticalHistogram();
+  struct Valley
+  {
+    int startIndex;
+    int endIndex;
+    int width;
+    int pixelsWithin;
+  };
 
-    cv::Mat histoImg;
+  enum HistogramDirection { RISING, FALLING, FLAT };
 
-    // Returns the lowest X position between two points.
-    int getLocalMinimum(int leftX, int rightX);
-    // Returns the highest X position between two points.
-    int getLocalMaximum(int leftX, int rightX);
+  class VerticalHistogram
+  {
 
-    int getHeightAt(int x);
+    public:
+      VerticalHistogram(cv::Mat inputImage, cv::Mat mask);
+      virtual ~VerticalHistogram();
 
-  private:
-    std::vector<int> colHeights;
-    int highestPeak;
-    int lowestValley;
-    std::vector<Valley> valleys;
+      cv::Mat histoImg;
 
-    void analyzeImage(cv::Mat inputImage, cv::Mat mask);
-    void findValleys();
+      // Returns the lowest X position between two points.
+      int getLocalMinimum(int leftX, int rightX);
+      // Returns the highest X position between two points.
+      int getLocalMaximum(int leftX, int rightX);
 
-    HistogramDirection getHistogramDirection(uint index);
-};
+      int getHeightAt(int x);
 
+    private:
+      std::vector<int> colHeights;
+      int highestPeak;
+      int lowestValley;
+      std::vector<Valley> valleys;
+
+      void analyzeImage(cv::Mat inputImage, cv::Mat mask);
+      void findValleys();
+
+      HistogramDirection getHistogramDirection(uint index);
+  };
+
+}
+  
 #endif // OPENALPR_VERTICALHISTOGRAM_H

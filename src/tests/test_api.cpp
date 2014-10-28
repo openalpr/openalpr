@@ -14,6 +14,7 @@
 
 
 using namespace std;
+using namespace alpr;
 
 
 TEST_CASE( "JSON Serialization/Deserialization", "[json]" ) {

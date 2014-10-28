@@ -19,31 +19,36 @@
 
 #include "segmentationgroup.h"
 
-SegmentationGroup::SegmentationGroup()
-{
-  
-}
-
-SegmentationGroup::~SegmentationGroup()
+namespace alpr
 {
 
-}
-
-void SegmentationGroup::add(int segmentID)
-{
-  this->segmentIDs.push_back(segmentID);
-}
-
-bool SegmentationGroup::equals(SegmentationGroup otherGroup)
-{
-  if (segmentIDs.size() != otherGroup.segmentIDs.size())
-    return false;
-  
-  for (int i = 0; i < segmentIDs.size(); i++)
+  SegmentationGroup::SegmentationGroup()
   {
-    if (otherGroup.segmentIDs[i] != segmentIDs[i])
+
+  }
+
+  SegmentationGroup::~SegmentationGroup()
+  {
+
+  }
+
+  void SegmentationGroup::add(int segmentID)
+  {
+    this->segmentIDs.push_back(segmentID);
+  }
+
+  bool SegmentationGroup::equals(SegmentationGroup otherGroup)
+  {
+    if (segmentIDs.size() != otherGroup.segmentIDs.size())
       return false;
+
+    for (int i = 0; i < segmentIDs.size(); i++)
+    {
+      if (otherGroup.segmentIDs[i] != segmentIDs[i])
+        return false;
+    }
+
+    return true;
   }
   
-  return true;
 }

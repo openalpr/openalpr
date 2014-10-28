@@ -23,34 +23,39 @@
 #include <vector>
 #include "opencv2/imgproc/imgproc.hpp"
 
-class TextContours {
-public:
-  TextContours();
-  TextContours(cv::Mat threshold);
-  virtual ~TextContours();
-  
-  void load(cv::Mat threshold);
-  
-  int width;
-  int height;
-  
-  std::vector<bool> goodIndices;
-  std::vector<std::vector<cv::Point> > contours;
-  std::vector<cv::Vec4i> hierarchy;
-  
-  uint size();
-  int getGoodIndicesCount();
-  
-  std::vector<bool> getIndicesCopy();
-  void setIndices(std::vector<bool> newIndices);
-  
-  cv::Mat drawDebugImage();
-  cv::Mat drawDebugImage(cv::Mat baseImage);
-  
-private:
-  
+namespace alpr
+{
 
-};
+  class TextContours {
+  public:
+    TextContours();
+    TextContours(cv::Mat threshold);
+    virtual ~TextContours();
+
+    void load(cv::Mat threshold);
+
+    int width;
+    int height;
+
+    std::vector<bool> goodIndices;
+    std::vector<std::vector<cv::Point> > contours;
+    std::vector<cv::Vec4i> hierarchy;
+
+    uint size();
+    int getGoodIndicesCount();
+
+    std::vector<bool> getIndicesCopy();
+    void setIndices(std::vector<bool> newIndices);
+
+    cv::Mat drawDebugImage();
+    cv::Mat drawDebugImage(cv::Mat baseImage);
+
+  private:
+
+
+  };
+
+}
 
 #endif	/* TEXTCONTOURS_H */
 

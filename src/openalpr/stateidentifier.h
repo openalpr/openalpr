@@ -27,24 +27,28 @@
 #include "config.h"
 #include "pipeline_data.h"
 
-class StateIdentifier
+namespace alpr
 {
 
-  public:
-    StateIdentifier(Config* config);
-    virtual ~StateIdentifier();
+  class StateIdentifier
+  {
 
-    bool recognize(PipelineData* pipeline_data);
+    public:
+      StateIdentifier(Config* config);
+      virtual ~StateIdentifier();
 
-    //int confidence;
+      bool recognize(PipelineData* pipeline_data);
 
-  protected:
-    Config* config;
+      //int confidence;
 
-  private:
+    protected:
+      Config* config;
 
-    FeatureMatcher* featureMatcher;
+    private:
 
-};
+      FeatureMatcher* featureMatcher;
 
+  };
+
+}
 #endif // OPENALPR_STATEIDENTIFIER_H

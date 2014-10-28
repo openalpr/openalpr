@@ -19,32 +19,36 @@
 
 #include "segment.h"
 
-Segment::Segment(cv::Rect newSegment)
-{
-  this->segment = newSegment;
-}
-
-Segment::~Segment()
+namespace alpr
 {
 
-}
+  Segment::Segment(cv::Rect newSegment)
+  {
+    this->segment = newSegment;
+  }
 
-bool Segment::matches(cv::Rect newSegment)
-{
-  // Compare the two segments with a given leniency
-  const float WIDTH_LENIENCY_MIN = 0.25;
-  const float WIDTH_LENIENCY_MAX = 0.20;
-  
-  float left_min = segment.x - (((float)segment.width) * WIDTH_LENIENCY_MIN);
-  float left_max = segment.x + (((float)segment.width) * WIDTH_LENIENCY_MAX);
-  float right_min = (segment.x + segment.width) - (((float)segment.width) * WIDTH_LENIENCY_MIN);
-  float right_max = (segment.x + segment.width) + (((float)segment.width) * WIDTH_LENIENCY_MAX);
-  
-  int newSegRight = newSegment.x + newSegment.width;
-  if (newSegment.x >= left_min && newSegment.x <= left_max && 
-    newSegRight >= right_min && newSegRight <= right_max)
-    return true;
-  
-  return false;
-}
+  Segment::~Segment()
+  {
 
+  }
+
+  bool Segment::matches(cv::Rect newSegment)
+  {
+    // Compare the two segments with a given leniency
+    const float WIDTH_LENIENCY_MIN = 0.25;
+    const float WIDTH_LENIENCY_MAX = 0.20;
+
+    float left_min = segment.x - (((float)segment.width) * WIDTH_LENIENCY_MIN);
+    float left_max = segment.x + (((float)segment.width) * WIDTH_LENIENCY_MAX);
+    float right_min = (segment.x + segment.width) - (((float)segment.width) * WIDTH_LENIENCY_MIN);
+    float right_max = (segment.x + segment.width) + (((float)segment.width) * WIDTH_LENIENCY_MAX);
+
+    int newSegRight = newSegment.x + newSegment.width;
+    if (newSegment.x >= left_min && newSegment.x <= left_max && 
+      newSegRight >= right_min && newSegRight <= right_max)
+      return true;
+
+    return false;
+  }
+
+}

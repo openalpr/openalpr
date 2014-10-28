@@ -27,24 +27,28 @@
 
 #include "segment.h"
 
-
-class SegmentationGroup
+namespace alpr
 {
 
-  public:
-    SegmentationGroup();
-    virtual ~SegmentationGroup();
+  class SegmentationGroup
+  {
 
-    void add(int segmentID);
-    
-    std::vector<int> segmentIDs;
-    
-    bool equals(SegmentationGroup otherGroup);
-    
+    public:
+      SegmentationGroup();
+      virtual ~SegmentationGroup();
 
-  private:
-    float strength;	// Debuggin purposes -- how many threshold segmentations match this one perfectly
-    
-};
+      void add(int segmentID);
+
+      std::vector<int> segmentIDs;
+
+      bool equals(SegmentationGroup otherGroup);
+
+
+    private:
+      float strength;	// Debuggin purposes -- how many threshold segmentations match this one perfectly
+
+  };
+
+}
 
 #endif // OPENALPR_SEGMENTATIONGROUP_H

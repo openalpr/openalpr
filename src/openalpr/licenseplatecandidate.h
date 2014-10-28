@@ -37,31 +37,32 @@
 #include "config.h"
 #include "pipeline_data.h"
 
-//vector<Rect> getCharacterRegions(Mat frame, vector<Rect> regionsOfInterest);
-//vector<RotatedRect> getCharSegmentsBetweenLines(Mat img, vector<vector<Point> > contours, LineSegment top, LineSegment bottom);
-
-class LicensePlateCandidate
+namespace alpr
 {
 
-  public:
-    LicensePlateCandidate(PipelineData* pipeline_data);
-    virtual ~LicensePlateCandidate();
+  class LicensePlateCandidate
+  {
+
+    public:
+      LicensePlateCandidate(PipelineData* pipeline_data);
+      virtual ~LicensePlateCandidate();
 
 
-    void recognize();
+      void recognize();
 
 
-  private:
-    PipelineData* pipeline_data;
-    Config* config;
+    private:
+      PipelineData* pipeline_data;
+      Config* config;
 
-    CharacterSegmenter* charSegmenter;
+      CharacterSegmenter* charSegmenter;
 
-    cv::Mat filterByCharacterHue(std::vector<std::vector<cv::Point> > charRegionContours);
-    std::vector<cv::Point> findPlateCorners(cv::Mat inputImage, PlateLines plateLines, CharacterAnalysis textAnalysis);	// top-left, top-right, bottom-right, bottom-left
+      cv::Mat filterByCharacterHue(std::vector<std::vector<cv::Point> > charRegionContours);
+      std::vector<cv::Point> findPlateCorners(cv::Mat inputImage, PlateLines plateLines, CharacterAnalysis textAnalysis);	// top-left, top-right, bottom-right, bottom-left
 
-    cv::Size getCropSize(std::vector<cv::Point2f> areaCorners);
-    
-};
+      cv::Size getCropSize(std::vector<cv::Point2f> areaCorners);
 
+  };
+  
+}
 #endif // OPENALPR_LICENSEPLATECANDIDATE_H

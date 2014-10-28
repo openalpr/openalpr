@@ -58,6 +58,7 @@ const int UP_ARROW_KEY= 82;
 
 using namespace std;
 using namespace cv;
+using namespace alpr;
 
 static bool ldragging = false;
 static int xPos1 = 0;

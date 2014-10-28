@@ -30,48 +30,51 @@
 #include "utility.h"
 #include "config.h"
 
-
-struct RecognitionResult
-{
-  bool haswinner;
-  std::string winner;
-  int confidence;
-} ;
-
-class FeatureMatcher
+namespace alpr
 {
 
-  public:
-    FeatureMatcher(Config* config);
-    virtual ~FeatureMatcher();
+  struct RecognitionResult
+  {
+    bool haswinner;
+    std::string winner;
+    int confidence;
+  } ;
 
-    RecognitionResult recognize( const cv::Mat& queryImg, bool drawOnImage, cv::Mat* outputImage,
-                                 bool debug_on, std::vector<int> debug_matches_array );
+  class FeatureMatcher
+  {
 
-    bool loadRecognitionSet(std::string country);
+    public:
+      FeatureMatcher(Config* config);
+      virtual ~FeatureMatcher();
 
-    bool isLoaded();
+      RecognitionResult recognize( const cv::Mat& queryImg, bool drawOnImage, cv::Mat* outputImage,
+                                   bool debug_on, std::vector<int> debug_matches_array );
 
-    int numTrainingElements();
+      bool loadRecognitionSet(std::string country);
 
-  private:
-    Config* config;
+      bool isLoaded();
 
-    cv::Ptr<cv::DescriptorMatcher> descriptorMatcher;
-    cv::Ptr<cv::FastFeatureDetector> detector;
-    cv::Ptr<cv::BRISK> extractor;
+      int numTrainingElements();
 
-    std::vector<std::vector<cv::KeyPoint> > trainingImgKeypoints;
+    private:
+      Config* config;
 
-    void _surfStyleMatching(const cv::Mat& queryDescriptors, std::vector<std::vector<cv::DMatch> > matchesKnn, std::vector<cv::DMatch>& matches12);
+      cv::Ptr<cv::DescriptorMatcher> descriptorMatcher;
+      cv::Ptr<cv::FastFeatureDetector> detector;
+      cv::Ptr<cv::BRISK> extractor;
 
-    void crisscrossFiltering(const std::vector<cv::KeyPoint> queryKeypoints, const std::vector<cv::DMatch> inputMatches, std::vector<cv::DMatch> &outputMatches);
+      std::vector<std::vector<cv::KeyPoint> > trainingImgKeypoints;
 
-    std::vector<std::string> billMapping;
+      void _surfStyleMatching(const cv::Mat& queryDescriptors, std::vector<std::vector<cv::DMatch> > matchesKnn, std::vector<cv::DMatch>& matches12);
 
-    void surfStyleMatching( const cv::Mat& queryDescriptors, std::vector<cv::KeyPoint> queryKeypoints,
-                            std::vector<cv::DMatch>& matches12 );
+      void crisscrossFiltering(const std::vector<cv::KeyPoint> queryKeypoints, const std::vector<cv::DMatch> inputMatches, std::vector<cv::DMatch> &outputMatches);
 
-};
+      std::vector<std::string> billMapping;
 
+      void surfStyleMatching( const cv::Mat& queryDescriptors, std::vector<cv::KeyPoint> queryKeypoints,
+                              std::vector<cv::DMatch>& matches12 );
+
+  };
+
+}
 #endif // OPENALPR_FEATUREMATCHER_H

@@ -28,6 +28,7 @@
 
 using namespace std;
 using namespace cv;
+using namespace alpr;
 
 // Takes a directory full of single char images, and plops them on a big tif files
 // Also creates a box file so Tesseract can recognize it

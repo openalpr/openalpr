@@ -22,88 +22,93 @@
 using namespace cv;
 using namespace std;
 
-Detector::Detector(Config* config)
+namespace alpr
 {
-  this->config = config;
-  this->scale_factor = 1.0f;
 
-}
-
-Detector::~Detector()
-{
-  
-}
-
-bool Detector::isLoaded()
-{
-  return this->loaded;
-}
-
-vector<PlateRegion> Detector::detect(cv::Mat frame)
-{
-  std::vector<cv::Rect> regionsOfInterest;
-  regionsOfInterest.push_back(Rect(0, 0, frame.cols, frame.rows));
-  return this->detect(frame, regionsOfInterest);
-}
-
-vector<PlateRegion> Detector::detect(Mat frame, std::vector<cv::Rect> regionsOfInterest)
-{
-  // Must be implemented by subclass
-  std::vector<PlateRegion> rois;
-  return rois;
-}
-
-
-bool rectHasLargerArea(cv::Rect a, cv::Rect b) { return a.area() < b.area(); };
-
-vector<PlateRegion> Detector::aggregateRegions(vector<Rect> regions)
-{
-  // Combines overlapping regions into a parent->child order.
-  // The largest regions will be parents, and they will have children if they are within them.
-  // This way, when processing regions later, we can process the parents first, and only delve into the children
-  // If there was no plate match.  Otherwise, we would process everything and that would be wasteful.
-  
-  vector<PlateRegion> orderedRegions;
-  vector<PlateRegion> topLevelRegions;
-  
-  // Sort the list of rect regions smallest to largest
-  std::sort(regions.begin(), regions.end(), rectHasLargerArea);
-  
-  // Create new PlateRegions and attach the rectangles to each
-  for (uint i = 0; i < regions.size(); i++)
+  Detector::Detector(Config* config)
   {
-    PlateRegion newRegion;
-    newRegion.rect = regions[i];
-    orderedRegions.push_back(newRegion);
+    this->config = config;
+    this->scale_factor = 1.0f;
+
   }
-  
-  for (uint i = 0; i < orderedRegions.size(); i++)
+
+  Detector::~Detector()
   {
-    bool foundParent = false;
-    for (uint k = i + 1; k < orderedRegions.size(); k++)
+
+  }
+
+  bool Detector::isLoaded()
+  {
+    return this->loaded;
+  }
+
+  vector<PlateRegion> Detector::detect(cv::Mat frame)
+  {
+    std::vector<cv::Rect> regionsOfInterest;
+    regionsOfInterest.push_back(Rect(0, 0, frame.cols, frame.rows));
+    return this->detect(frame, regionsOfInterest);
+  }
+
+  vector<PlateRegion> Detector::detect(Mat frame, std::vector<cv::Rect> regionsOfInterest)
+  {
+    // Must be implemented by subclass
+    std::vector<PlateRegion> rois;
+    return rois;
+  }
+
+
+  bool rectHasLargerArea(cv::Rect a, cv::Rect b) { return a.area() < b.area(); };
+
+  vector<PlateRegion> Detector::aggregateRegions(vector<Rect> regions)
+  {
+    // Combines overlapping regions into a parent->child order.
+    // The largest regions will be parents, and they will have children if they are within them.
+    // This way, when processing regions later, we can process the parents first, and only delve into the children
+    // If there was no plate match.  Otherwise, we would process everything and that would be wasteful.
+
+    vector<PlateRegion> orderedRegions;
+    vector<PlateRegion> topLevelRegions;
+
+    // Sort the list of rect regions smallest to largest
+    std::sort(regions.begin(), regions.end(), rectHasLargerArea);
+
+    // Create new PlateRegions and attach the rectangles to each
+    for (uint i = 0; i < regions.size(); i++)
     {
-      Point center( orderedRegions[i].rect.x + (orderedRegions[i].rect.width / 2),
-		    orderedRegions[i].rect.y + (orderedRegions[i].rect.height / 2));
-      
-      // Check if the center of the smaller rectangle is inside the bigger rectangle.
-      // If so, add it to the children and continue on.
-      if (orderedRegions[k].rect.contains(center))
+      PlateRegion newRegion;
+      newRegion.rect = regions[i];
+      orderedRegions.push_back(newRegion);
+    }
+
+    for (uint i = 0; i < orderedRegions.size(); i++)
+    {
+      bool foundParent = false;
+      for (uint k = i + 1; k < orderedRegions.size(); k++)
       {
-	orderedRegions[k].children.push_back(orderedRegions[i]);
-	foundParent = true;
-	break;
+        Point center( orderedRegions[i].rect.x + (orderedRegions[i].rect.width / 2),
+                      orderedRegions[i].rect.y + (orderedRegions[i].rect.height / 2));
+
+        // Check if the center of the smaller rectangle is inside the bigger rectangle.
+        // If so, add it to the children and continue on.
+        if (orderedRegions[k].rect.contains(center))
+        {
+          orderedRegions[k].children.push_back(orderedRegions[i]);
+          foundParent = true;
+          break;
+        }
+
       }
-      
+
+      if (foundParent == false)
+      {
+        // We didn't find any parents for this rectangle.  Add it to the top level regions
+        topLevelRegions.push_back(orderedRegions[i]);
+      }
+
     }
 
-    if (foundParent == false)
-    {
-      // We didn't find any parents for this rectangle.  Add it to the top level regions
-      topLevelRegions.push_back(orderedRegions[i]);
-    }
-    
+
+    return topLevelRegions;
   }
 
-  
-  return topLevelRegions;
 }

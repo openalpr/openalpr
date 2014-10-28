@@ -1,7 +1,11 @@
 #include "detectorfactory.h"
 
-Detector* createDetector(Config* config)
+namespace alpr
 {
-    return new DetectorCPU(config);
-}
 
+  Detector* createDetector(Config* config)
+  {
+      return new DetectorCPU(config);
+  }
+
+}

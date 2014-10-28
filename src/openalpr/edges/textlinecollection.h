@@ -13,37 +13,41 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "textdetection/textline.h"
 
-
-class TextLineCollection
+namespace alpr
 {
-public:
-  TextLineCollection(std::vector<TextLine> textLines);
-  
-  int isLeftOfText(LineSegment line);
-  int isAboveText(LineSegment line);
-  
-  LineSegment centerHorizontalLine;
-  LineSegment centerVerticalLine;
 
-  LineSegment longerSegment;
-  LineSegment shorterSegment;
-  
-  float charHeight;
-  float charAngle;
-  
-  cv::Mat getDebugImage(cv::Size imageSize);
-  
-private:
-  
-  LineSegment topCharArea;
-  LineSegment bottomCharArea;
-  
-    
-  cv::Mat textMask;
-  
-  void findCenterHorizontal();
-  void findCenterVertical();
-};
+  class TextLineCollection
+  {
+  public:
+    TextLineCollection(std::vector<TextLine> textLines);
+
+    int isLeftOfText(LineSegment line);
+    int isAboveText(LineSegment line);
+
+    LineSegment centerHorizontalLine;
+    LineSegment centerVerticalLine;
+
+    LineSegment longerSegment;
+    LineSegment shorterSegment;
+
+    float charHeight;
+    float charAngle;
+
+    cv::Mat getDebugImage(cv::Size imageSize);
+
+  private:
+
+    LineSegment topCharArea;
+    LineSegment bottomCharArea;
+
+
+    cv::Mat textMask;
+
+    void findCenterHorizontal();
+    void findCenterVertical();
+  };
+
+}
 
 #endif	/* OPENALPR_TEXTLINECOLLECTION_H */
 

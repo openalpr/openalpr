@@ -27,34 +27,39 @@
 #include "config.h"
 #include "pipeline_data.h"
 
-struct PlateLine
-{
-  LineSegment line;
-  float confidence;
-};
-
-class PlateLines
+namespace alpr
 {
 
-  public:
-    PlateLines(PipelineData* pipelineData);
-    virtual ~PlateLines();
+  struct PlateLine
+  {
+    LineSegment line;
+    float confidence;
+  };
 
-    void processImage(cv::Mat img, std::vector<TextLine> textLines, float sensitivity=1.0);
+  class PlateLines
+  {
 
-    std::vector<PlateLine> horizontalLines;
-    std::vector<PlateLine> verticalLines;
+    public:
+      PlateLines(PipelineData* pipelineData);
+      virtual ~PlateLines();
 
-    std::vector<cv::Point> winningCorners;
+      void processImage(cv::Mat img, std::vector<TextLine> textLines, float sensitivity=1.0);
 
-  private:
-    
-    PipelineData* pipelineData;
-    bool debug;
+      std::vector<PlateLine> horizontalLines;
+      std::vector<PlateLine> verticalLines;
 
-    cv::Mat customGrayscaleConversion(cv::Mat src);
-    void findLines(cv::Mat inputImage);
-    std::vector<PlateLine> getLines(cv::Mat edges, float sensitivityMultiplier, bool vertical);
-};
+      std::vector<cv::Point> winningCorners;
+
+    private:
+
+      PipelineData* pipelineData;
+      bool debug;
+
+      cv::Mat customGrayscaleConversion(cv::Mat src);
+      void findLines(cv::Mat inputImage);
+      std::vector<PlateLine> getLines(cv::Mat edges, float sensitivityMultiplier, bool vertical);
+  };
+
+}
 
 #endif // OPENALPR_PLATELINES_H

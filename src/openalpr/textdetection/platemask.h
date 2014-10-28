@@ -24,24 +24,28 @@
 #include "pipeline_data.h"
 #include "textcontours.h"
 
-class PlateMask {
-public:
-  PlateMask(PipelineData* pipeline_data);
-  virtual ~PlateMask();
-  
-  bool hasPlateMask;
-  
-  cv::Mat getMask();
-  
-  void findOuterBoxMask(std::vector<TextContours > contours);
-  
-private:
-  
-  PipelineData* pipeline_data;
-  cv::Mat plateMask;
+namespace alpr
+{
 
-    
-};
+  class PlateMask {
+  public:
+    PlateMask(PipelineData* pipeline_data);
+    virtual ~PlateMask();
 
+    bool hasPlateMask;
+
+    cv::Mat getMask();
+
+    void findOuterBoxMask(std::vector<TextContours > contours);
+
+  private:
+
+    PipelineData* pipeline_data;
+    cv::Mat plateMask;
+
+
+  };
+
+}
 #endif	/* OPENALPR_PLATEMASK_H */
 

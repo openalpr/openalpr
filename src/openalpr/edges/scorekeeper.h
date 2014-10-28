@@ -24,25 +24,30 @@
 #include <iostream>
 #include <iomanip>
 
-class ScoreKeeper {
-public:
-  ScoreKeeper();
-  virtual ~ScoreKeeper();
-    
-  void setScore(std::string weight_id, float score, float weight);
-  
-  float getTotal();
-  
-  void printDebugScores();
-  
-private:
+namespace alpr
+{
 
-  std::vector<std::string> weight_ids;
-  std::vector<float> weights;
-  
-  std::vector<float> scores;
-  
-};
+  class ScoreKeeper {
+  public:
+    ScoreKeeper();
+    virtual ~ScoreKeeper();
+
+    void setScore(std::string weight_id, float score, float weight);
+
+    float getTotal();
+
+    void printDebugScores();
+
+  private:
+
+    std::vector<std::string> weight_ids;
+    std::vector<float> weights;
+
+    std::vector<float> scores;
+
+  };
+
+}
 
 #endif	/* OPENALPR_SCOREKEEPER_H */
 

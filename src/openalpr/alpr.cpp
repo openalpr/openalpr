@@ -20,76 +20,80 @@
 #include "alpr.h"
 #include "alpr_impl.h"
 
-// ALPR code
-
-Alpr::Alpr(const std::string country, const std::string configFile, const std::string runtimeDir)
-{
-  impl = new AlprImpl(country, configFile, runtimeDir);
-}
-
-Alpr::~Alpr()
-{
-  delete impl;
-}
-
-AlprResults Alpr::recognize(std::string filepath)
+namespace alpr
 {
 
-  std::ifstream ifs(filepath.c_str(), std::ios::binary|std::ios::ate);
-  std::ifstream::pos_type pos = ifs.tellg();
+  // ALPR code
 
-  std::vector<char>  buffer(pos);
+  Alpr::Alpr(const std::string country, const std::string configFile, const std::string runtimeDir)
+  {
+    impl = new AlprImpl(country, configFile, runtimeDir);
+  }
 
-  ifs.seekg(0, std::ios::beg);
-  ifs.read(&buffer[0], pos);
+  Alpr::~Alpr()
+  {
+    delete impl;
+  }
 
-  return this->recognize( buffer );
+  AlprResults Alpr::recognize(std::string filepath)
+  {
+
+    std::ifstream ifs(filepath.c_str(), std::ios::binary|std::ios::ate);
+    std::ifstream::pos_type pos = ifs.tellg();
+
+    std::vector<char>  buffer(pos);
+
+    ifs.seekg(0, std::ios::beg);
+    ifs.read(&buffer[0], pos);
+
+    return this->recognize( buffer );
+  }
+
+  AlprResults Alpr::recognize(std::vector<char> imageBytes)
+  {
+    std::vector<AlprRegionOfInterest> regionsOfInterest;
+    return impl->recognize(imageBytes, regionsOfInterest);
+  }
+
+  AlprResults Alpr::recognize(unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest)
+  {
+    return impl->recognize(pixelData, bytesPerPixel, imgWidth, imgHeight, regionsOfInterest);
+  }
+
+  std::string Alpr::toJson( AlprResults results )
+  {
+    return AlprImpl::toJson(results);
+  }
+
+  AlprResults Alpr::fromJson(std::string json) {
+    return AlprImpl::fromJson(json);
+  }
+
+
+  void Alpr::setDetectRegion(bool detectRegion)
+  {
+    impl->setDetectRegion(detectRegion);
+  }
+
+  void Alpr::setTopN(int topN)
+  {
+    impl->setTopN(topN);
+  }
+
+  void Alpr::setDefaultRegion(std::string region)
+  {
+    impl->setDefaultRegion(region);
+  }
+
+  bool Alpr::isLoaded()
+  {
+    return impl->isLoaded();
+  }
+
+  std::string Alpr::getVersion()
+  {
+    return AlprImpl::getVersion();
+  }
+
+
 }
-
-AlprResults Alpr::recognize(std::vector<char> imageBytes)
-{
-  std::vector<AlprRegionOfInterest> regionsOfInterest;
-  return impl->recognize(imageBytes, regionsOfInterest);
-}
-
-AlprResults Alpr::recognize(unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest)
-{
-  return impl->recognize(pixelData, bytesPerPixel, imgWidth, imgHeight, regionsOfInterest);
-}
-
-std::string Alpr::toJson( AlprResults results )
-{
-  return AlprImpl::toJson(results);
-}
-
-AlprResults Alpr::fromJson(std::string json) {
-  return AlprImpl::fromJson(json);
-}
-
-
-void Alpr::setDetectRegion(bool detectRegion)
-{
-  impl->setDetectRegion(detectRegion);
-}
-
-void Alpr::setTopN(int topN)
-{
-  impl->setTopN(topN);
-}
-
-void Alpr::setDefaultRegion(std::string region)
-{
-  impl->setDefaultRegion(region);
-}
-
-bool Alpr::isLoaded()
-{
-  return impl->isLoaded();
-}
-
-std::string Alpr::getVersion()
-{
-  return AlprImpl::getVersion();
-}
-
-

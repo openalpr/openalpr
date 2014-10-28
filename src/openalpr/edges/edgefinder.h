@@ -26,19 +26,23 @@
 #include "platelines.h"
 #include "platecorners.h"
 
-class EdgeFinder {
-public:
-  EdgeFinder(PipelineData* pipeline_data);
-  virtual ~EdgeFinder();
+namespace alpr
+{
   
-  std::vector<cv::Point2f> findEdgeCorners();
-  
-  float confidence;
-  
-private:
-  PipelineData* pipeline_data;
-  
-};
+  class EdgeFinder {
+  public:
+    EdgeFinder(PipelineData* pipeline_data);
+    virtual ~EdgeFinder();
 
+    std::vector<cv::Point2f> findEdgeCorners();
+
+    float confidence;
+
+  private:
+    PipelineData* pipeline_data;
+
+  };
+
+}
 #endif	/* OPENALPR_EDGEFINDER_H */
 

@@ -2,6 +2,7 @@
 
 using namespace std;
 using namespace cv;
+using namespace alpr;
 
 
 EndToEndTest::EndToEndTest(string inputDir, string outputDir)

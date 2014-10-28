@@ -22,160 +22,165 @@
 using namespace cv;
 using namespace std;
 
-VerticalHistogram::VerticalHistogram(Mat inputImage, Mat mask)
+namespace alpr
 {
-  analyzeImage(inputImage, mask);
-}
 
-VerticalHistogram::~VerticalHistogram()
-{
-  histoImg.release();
-  colHeights.clear();
-}
-
-void VerticalHistogram::analyzeImage(Mat inputImage, Mat mask)
-{
-  highestPeak = 0;
-  lowestValley = inputImage.rows;
-
-  histoImg = Mat::zeros(inputImage.size(), CV_8U);
-
-  int columnCount;
-
-  for (int col = 0; col < inputImage.cols; col++)
+  VerticalHistogram::VerticalHistogram(Mat inputImage, Mat mask)
   {
-    columnCount = 0;
-
-    for (int row = 0; row < inputImage.rows; row++)
-    {
-      if (inputImage.at<uchar>(row, col) > 0 && mask.at<uchar>(row, col) > 0)
-        columnCount++;
-    }
-
-    this->colHeights.push_back(columnCount);
-
-    if (columnCount < lowestValley)
-      lowestValley = columnCount;
-    if (columnCount > highestPeak)
-      highestPeak = columnCount;
-
-    for (; columnCount > 0; columnCount--)
-      histoImg.at<uchar>(inputImage.rows - columnCount, col) = 255;
+    analyzeImage(inputImage, mask);
   }
-}
 
-int VerticalHistogram::getLocalMinimum(int leftX, int rightX)
-{
-  int minimum = histoImg.rows + 1;
-  int lowestX = leftX;
-
-  for (int i = leftX; i <= rightX; i++)
+  VerticalHistogram::~VerticalHistogram()
   {
-    if (colHeights[i] < minimum)
+    histoImg.release();
+    colHeights.clear();
+  }
+
+  void VerticalHistogram::analyzeImage(Mat inputImage, Mat mask)
+  {
+    highestPeak = 0;
+    lowestValley = inputImage.rows;
+
+    histoImg = Mat::zeros(inputImage.size(), CV_8U);
+
+    int columnCount;
+
+    for (int col = 0; col < inputImage.cols; col++)
     {
-      lowestX = i;
-      minimum = colHeights[i];
+      columnCount = 0;
+
+      for (int row = 0; row < inputImage.rows; row++)
+      {
+        if (inputImage.at<uchar>(row, col) > 0 && mask.at<uchar>(row, col) > 0)
+          columnCount++;
+      }
+
+      this->colHeights.push_back(columnCount);
+
+      if (columnCount < lowestValley)
+        lowestValley = columnCount;
+      if (columnCount > highestPeak)
+        highestPeak = columnCount;
+
+      for (; columnCount > 0; columnCount--)
+        histoImg.at<uchar>(inputImage.rows - columnCount, col) = 255;
     }
   }
 
-  return lowestX;
-}
-
-int VerticalHistogram::getLocalMaximum(int leftX, int rightX)
-{
-  int maximum = -1;
-  int highestX = leftX;
-
-  for (int i = leftX; i <= rightX; i++)
+  int VerticalHistogram::getLocalMinimum(int leftX, int rightX)
   {
-    if (colHeights[i] > maximum)
+    int minimum = histoImg.rows + 1;
+    int lowestX = leftX;
+
+    for (int i = leftX; i <= rightX; i++)
     {
-      highestX = i;
-      maximum = colHeights[i];
+      if (colHeights[i] < minimum)
+      {
+        lowestX = i;
+        minimum = colHeights[i];
+      }
+    }
+
+    return lowestX;
+  }
+
+  int VerticalHistogram::getLocalMaximum(int leftX, int rightX)
+  {
+    int maximum = -1;
+    int highestX = leftX;
+
+    for (int i = leftX; i <= rightX; i++)
+    {
+      if (colHeights[i] > maximum)
+      {
+        highestX = i;
+        maximum = colHeights[i];
+      }
+    }
+
+    return highestX;
+  }
+
+  int VerticalHistogram::getHeightAt(int x)
+  {
+    return colHeights[x];
+  }
+
+  void VerticalHistogram::findValleys()
+  {
+    //int MINIMUM_PEAK_HEIGHT = (int) (((float) highestPeak) * 0.75);
+
+    int totalWidth = colHeights.size();
+
+    int midpoint = ((highestPeak - lowestValley) / 2) + lowestValley;
+
+    HistogramDirection prevDirection = FALLING;
+
+    int relativePeakHeight = 0;
+    //int valleyStart = 0;
+
+    for (int i = 0; i < totalWidth; i++)
+    {
+      bool aboveMidpoint = (colHeights[i] >= midpoint);
+
+      if (aboveMidpoint)
+      {
+        if (colHeights[i] > relativePeakHeight)
+          relativePeakHeight = colHeights[i];
+
+        prevDirection = FLAT;
+      }
+      else
+      {
+        relativePeakHeight = 0;
+
+        HistogramDirection direction = getHistogramDirection(i);
+
+        if ((prevDirection == FALLING || prevDirection == FLAT) && direction == RISING)
+        {
+        }
+        else if ((prevDirection == FALLING || prevDirection == FLAT) && direction == RISING)
+        {
+        }
+      }
     }
   }
 
-  return highestX;
-}
-
-int VerticalHistogram::getHeightAt(int x)
-{
-  return colHeights[x];
-}
-
-void VerticalHistogram::findValleys()
-{
-  //int MINIMUM_PEAK_HEIGHT = (int) (((float) highestPeak) * 0.75);
-
-  int totalWidth = colHeights.size();
-
-  int midpoint = ((highestPeak - lowestValley) / 2) + lowestValley;
-
-  HistogramDirection prevDirection = FALLING;
-
-  int relativePeakHeight = 0;
-  //int valleyStart = 0;
-
-  for (int i = 0; i < totalWidth; i++)
+  HistogramDirection VerticalHistogram::getHistogramDirection(uint index)
   {
-    bool aboveMidpoint = (colHeights[i] >= midpoint);
+    int EXTRA_WIDTH_TO_AVERAGE = 2;
 
-    if (aboveMidpoint)
+    float trailingAverage = 0;
+    float forwardAverage = 0;
+
+    int trailStartIndex = index - EXTRA_WIDTH_TO_AVERAGE;
+    if (trailStartIndex < 0)
+      trailStartIndex = 0;
+    uint forwardEndIndex = index + EXTRA_WIDTH_TO_AVERAGE;
+    if (forwardEndIndex >= colHeights.size())
+      forwardEndIndex = colHeights.size() - 1;
+
+    for (int i = index; i >= trailStartIndex; i--)
     {
-      if (colHeights[i] > relativePeakHeight)
-        relativePeakHeight = colHeights[i];
-
-      prevDirection = FLAT;
+      trailingAverage += colHeights[i];
     }
+    trailingAverage = trailingAverage / ((float) (1 + index - trailStartIndex));
+
+    for (uint i = index; i <= forwardEndIndex; i++)
+    {
+      forwardAverage += colHeights[i];
+    }
+    forwardAverage = forwardAverage / ((float) (1 + forwardEndIndex - index));
+
+    float diff = forwardAverage - trailingAverage;
+    float minDiff = ((float) (highestPeak - lowestValley)) * 0.10;
+
+    if (diff > minDiff)
+      return RISING;
+    else if (diff < minDiff)
+      return FALLING;
     else
-    {
-      relativePeakHeight = 0;
-
-      HistogramDirection direction = getHistogramDirection(i);
-
-      if ((prevDirection == FALLING || prevDirection == FLAT) && direction == RISING)
-      {
-      }
-      else if ((prevDirection == FALLING || prevDirection == FLAT) && direction == RISING)
-      {
-      }
-    }
+      return FLAT;
   }
-}
 
-HistogramDirection VerticalHistogram::getHistogramDirection(uint index)
-{
-  int EXTRA_WIDTH_TO_AVERAGE = 2;
-
-  float trailingAverage = 0;
-  float forwardAverage = 0;
-
-  int trailStartIndex = index - EXTRA_WIDTH_TO_AVERAGE;
-  if (trailStartIndex < 0)
-    trailStartIndex = 0;
-  uint forwardEndIndex = index + EXTRA_WIDTH_TO_AVERAGE;
-  if (forwardEndIndex >= colHeights.size())
-    forwardEndIndex = colHeights.size() - 1;
-
-  for (int i = index; i >= trailStartIndex; i--)
-  {
-    trailingAverage += colHeights[i];
-  }
-  trailingAverage = trailingAverage / ((float) (1 + index - trailStartIndex));
-
-  for (uint i = index; i <= forwardEndIndex; i++)
-  {
-    forwardAverage += colHeights[i];
-  }
-  forwardAverage = forwardAverage / ((float) (1 + forwardEndIndex - index));
-
-  float diff = forwardAverage - trailingAverage;
-  float minDiff = ((float) (highestPeak - lowestValley)) * 0.10;
-
-  if (diff > minDiff)
-    return RISING;
-  else if (diff < minDiff)
-    return FALLING;
-  else
-    return FLAT;
 }

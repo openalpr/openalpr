@@ -33,85 +33,80 @@
 #include <vector>
 #include "config.h"
 
-/*
-struct LineSegment
-{
-   float x1;
-   float y1;
-   float x2;
-   float y2;
-};
-*/
-
-class LineSegment
+namespace alpr
 {
 
-  public:
-    cv::Point p1, p2;
-    float slope;
-    float length;
-    float angle;
+  class LineSegment
+  {
 
-    // LineSegment(Point point1, Point point2);
-    LineSegment();
-    LineSegment(int x1, int y1, int x2, int y2);
-    LineSegment(cv::Point p1, cv::Point p2);
+    public:
+      cv::Point p1, p2;
+      float slope;
+      float length;
+      float angle;
 
-    void init(int x1, int y1, int x2, int y2);
+      // LineSegment(Point point1, Point point2);
+      LineSegment();
+      LineSegment(int x1, int y1, int x2, int y2);
+      LineSegment(cv::Point p1, cv::Point p2);
 
-    bool isPointBelowLine(cv::Point tp);
+      void init(int x1, int y1, int x2, int y2);
 
-    float getPointAt(float x);
+      bool isPointBelowLine(cv::Point tp);
 
-    cv::Point closestPointOnSegmentTo(cv::Point p);
+      float getPointAt(float x);
 
-    cv::Point intersection(LineSegment line);
+      cv::Point closestPointOnSegmentTo(cv::Point p);
 
-    LineSegment getParallelLine(float distance);
+      cv::Point intersection(LineSegment line);
 
-    cv::Point midpoint();
+      LineSegment getParallelLine(float distance);
 
-    inline std::string str()
-    {
-      std::stringstream ss;
-      ss << "(" << p1.x << ", " << p1.y << ") : (" << p2.x << ", " << p2.y << ")";
-      return ss.str() ;
-    }
+      cv::Point midpoint();
 
-};
+      inline std::string str()
+      {
+        std::stringstream ss;
+        ss << "(" << p1.x << ", " << p1.y << ") : (" << p2.x << ", " << p2.y << ")";
+        return ss.str() ;
+      }
 
-double median(int array[], int arraySize);
+  };
 
-std::vector<cv::Mat> produceThresholds(const cv::Mat img_gray, Config* config);
+  double median(int array[], int arraySize);
 
-cv::Mat drawImageDashboard(std::vector<cv::Mat> images, int imageType, uint numColumns);
+  std::vector<cv::Mat> produceThresholds(const cv::Mat img_gray, Config* config);
 
-void displayImage(Config* config, std::string windowName, cv::Mat frame);
-void drawAndWait(cv::Mat* frame);
+  cv::Mat drawImageDashboard(std::vector<cv::Mat> images, int imageType, uint numColumns);
 
-double distanceBetweenPoints(cv::Point p1, cv::Point p2);
+  void displayImage(Config* config, std::string windowName, cv::Mat frame);
+  void drawAndWait(cv::Mat* frame);
 
-void drawRotatedRect(cv::Mat* img, cv::RotatedRect rect, cv::Scalar color, int thickness);
+  double distanceBetweenPoints(cv::Point p1, cv::Point p2);
 
-void drawX(cv::Mat img, cv::Rect rect, cv::Scalar color, int thickness);
-void fillMask(cv::Mat img, const cv::Mat mask, cv::Scalar color);
+  void drawRotatedRect(cv::Mat* img, cv::RotatedRect rect, cv::Scalar color, int thickness);
 
-float angleBetweenPoints(cv::Point p1, cv::Point p2);
+  void drawX(cv::Mat img, cv::Rect rect, cv::Scalar color, int thickness);
+  void fillMask(cv::Mat img, const cv::Mat mask, cv::Scalar color);
 
-cv::Size getSizeMaintainingAspect(cv::Mat inputImg, int maxWidth, int maxHeight);
+  float angleBetweenPoints(cv::Point p1, cv::Point p2);
 
-float getContourAreaPercentInsideMask(cv::Mat mask, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, int contourIndex);
+  cv::Size getSizeMaintainingAspect(cv::Mat inputImg, int maxWidth, int maxHeight);
 
-cv::Mat equalizeBrightness(cv::Mat img);
+  float getContourAreaPercentInsideMask(cv::Mat mask, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, int contourIndex);
 
-cv::Rect expandRect(cv::Rect original, int expandXPixels, int expandYPixels, int maxX, int maxY);
+  cv::Mat equalizeBrightness(cv::Mat img);
 
-cv::Mat addLabel(cv::Mat input, std::string label);
+  cv::Rect expandRect(cv::Rect original, int expandXPixels, int expandYPixels, int maxX, int maxY);
+
+  cv::Mat addLabel(cv::Mat input, std::string label);
 
 
-std::string toString(int value);
-std::string toString(uint value);
-std::string toString(float value);
-std::string toString(double value);
+  std::string toString(int value);
+  std::string toString(uint value);
+  std::string toString(float value);
+  std::string toString(double value);
+
+}
 
 #endif // OPENALPR_UTILITY_H
