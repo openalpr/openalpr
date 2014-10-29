@@ -85,6 +85,8 @@ namespace alpr
       static AlprResults fromJson(std::string json);
       static std::string getVersion();
 
+      static cJSON* createJsonObj(const AlprPlateResult* result);
+      
       Config* config;
 
       bool isLoaded();
@@ -101,7 +103,6 @@ namespace alpr
 
       std::vector<cv::Rect> convertRects(std::vector<AlprRegionOfInterest> regionsOfInterest);
 
-      static cJSON* createJsonObj(const AlprPlateResult* result);
   };
 }
 
