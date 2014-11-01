@@ -41,6 +41,7 @@ const std::string BEANSTALK_TUBE_NAME="alprd";
 
 struct CaptureThreadData
 {
+  std::string company_id;
   std::string stream_url;
   std::string site_id;
   int camera_id;
@@ -201,6 +202,7 @@ int main( int argc, const char** argv )
   std::string imageFolder = ini.GetValue("daemon", "store_plates_location", "/tmp/");
   bool uploadData = ini.GetBoolValue("daemon", "upload_data", false);
   std::string upload_url = ini.GetValue("daemon", "upload_address", "");
+  std::string company_id = ini.GetValue("daemon", "company_id", "");
   std::string site_id = ini.GetValue("daemon", "site_id", "");
   
   LOG4CPLUS_INFO(logger, "Using: " << daemonConfigFile << " for daemon configuration");
@@ -221,6 +223,7 @@ int main( int argc, const char** argv )
       tdata->output_images = storePlates;
       tdata->output_image_folder = imageFolder;
       tdata->country_code = country;
+      tdata->company_id = company_id;
       tdata->site_id = site_id;
       tdata->top_n = topn;
       tdata->clock_on = clockOn;
@@ -326,6 +329,10 @@ void streamRecognitionThread(void* arg)
 	cJSON_AddStringToObject(root, 	"site_id", 	tdata->site_id.c_str());
 	cJSON_AddNumberToObject(root,	"img_width",	latestFrame.cols);
 	cJSON_AddNumberToObject(root,	"img_height",	latestFrame.rows);
+
+        // Add the company ID to the output if configured
+        if (tdata->company_id.length() > 0)
+          cJSON_AddStringToObject(root, 	"company_id", 	tdata->company_id.c_str());
 
 	char *out;
 	out=cJSON_PrintUnformatted(root);
