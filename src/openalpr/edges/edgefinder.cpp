@@ -106,7 +106,7 @@ namespace alpr
 
     // Re-map the textline coordinates to the new crop  
     vector<TextLine> newLines;
-    for (uint i = 0; i < pipeline_data->textLines.size(); i++)
+    for (unsigned int i = 0; i < pipeline_data->textLines.size(); i++)
     {        
       vector<Point2f> textArea = imgTransform.transformSmallPointsToBigImage(pipeline_data->textLines[i].textArea);
       vector<Point2f> linePolygon = imgTransform.transformSmallPointsToBigImage(pipeline_data->textLines[i].linePolygon);

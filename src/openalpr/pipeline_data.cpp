@@ -26,7 +26,7 @@ namespace alpr
 
   void PipelineData::clearThresholds()
   {
-    for (uint i = 0; i < thresholds.size(); i++)
+    for (unsigned int i = 0; i < thresholds.size(); i++)
     {
       thresholds[i].release();
     }

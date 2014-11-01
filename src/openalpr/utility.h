@@ -77,7 +77,7 @@ namespace alpr
 
   std::vector<cv::Mat> produceThresholds(const cv::Mat img_gray, Config* config);
 
-  cv::Mat drawImageDashboard(std::vector<cv::Mat> images, int imageType, uint numColumns);
+  cv::Mat drawImageDashboard(std::vector<cv::Mat> images, int imageType, unsigned int numColumns);
 
   void displayImage(Config* config, std::string windowName, cv::Mat frame);
   void drawAndWait(cv::Mat* frame);
@@ -103,7 +103,7 @@ namespace alpr
 
 
   std::string toString(int value);
-  std::string toString(uint value);
+  std::string toString(unsigned int value);
   std::string toString(float value);
   std::string toString(double value);
 

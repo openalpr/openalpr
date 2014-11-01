@@ -146,7 +146,7 @@ namespace alpr
     }
   }
 
-  HistogramDirection VerticalHistogram::getHistogramDirection(uint index)
+  HistogramDirection VerticalHistogram::getHistogramDirection(unsigned int index)
   {
     int EXTRA_WIDTH_TO_AVERAGE = 2;
 
@@ -156,7 +156,7 @@ namespace alpr
     int trailStartIndex = index - EXTRA_WIDTH_TO_AVERAGE;
     if (trailStartIndex < 0)
       trailStartIndex = 0;
-    uint forwardEndIndex = index + EXTRA_WIDTH_TO_AVERAGE;
+    unsigned int forwardEndIndex = index + EXTRA_WIDTH_TO_AVERAGE;
     if (forwardEndIndex >= colHeights.size())
       forwardEndIndex = colHeights.size() - 1;
 
@@ -166,7 +166,7 @@ namespace alpr
     }
     trailingAverage = trailingAverage / ((float) (1 + index - trailStartIndex));
 
-    for (uint i = index; i <= forwardEndIndex; i++)
+    for (unsigned int i = index; i <= forwardEndIndex; i++)
     {
       forwardAverage += colHeights[i];
     }

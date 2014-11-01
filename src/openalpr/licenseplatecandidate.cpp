@@ -90,7 +90,7 @@ namespace alpr
         // Apply a perspective transformation to the TextLine objects
         // to match the newly deskewed license plate crop
         vector<TextLine> newLines;
-        for (uint i = 0; i < pipeline_data->textLines.size(); i++)
+        for (unsigned int i = 0; i < pipeline_data->textLines.size(); i++)
         {        
           vector<Point2f> textArea = imgTransform.transformSmallPointsToBigImage(pipeline_data->textLines[i].textArea);
           vector<Point2f> linePolygon = imgTransform.transformSmallPointsToBigImage(pipeline_data->textLines[i].linePolygon);
@@ -105,7 +105,7 @@ namespace alpr
         }
 
         pipeline_data->textLines.clear();
-        for (uint i = 0; i < newLines.size(); i++)
+        for (unsigned int i = 0; i < newLines.size(); i++)
           pipeline_data->textLines.push_back(newLines[i]);
 
 

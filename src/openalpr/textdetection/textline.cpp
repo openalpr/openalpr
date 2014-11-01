@@ -30,9 +30,9 @@ namespace alpr
   TextLine::TextLine(std::vector<cv::Point2f> textArea, std::vector<cv::Point2f> linePolygon) {
     std::vector<Point> textAreaInts, linePolygonInts;
 
-    for (uint i = 0; i < textArea.size(); i++)
+    for (unsigned int i = 0; i < textArea.size(); i++)
       textAreaInts.push_back(Point(round(textArea[i].x), round(textArea[i].y)));
-    for (uint i = 0; i < linePolygon.size(); i++)
+    for (unsigned int i = 0; i < linePolygon.size(); i++)
       linePolygonInts.push_back(Point(round(linePolygon[i].x), round(linePolygon[i].y)));
 
     initialize(textAreaInts, linePolygonInts);
@@ -56,10 +56,10 @@ namespace alpr
       if (this->linePolygon.size() > 0)
         this->linePolygon.clear();
 
-      for (uint i = 0; i < textArea.size(); i++)
+      for (unsigned int i = 0; i < textArea.size(); i++)
         this->textArea.push_back(textArea[i]);
 
-      for (uint i = 0; i < linePolygon.size(); i++)
+      for (unsigned int i = 0; i < linePolygon.size(); i++)
         this->linePolygon.push_back(linePolygon[i]);
 
       this->topLine = LineSegment(linePolygon[0].x, linePolygon[0].y, linePolygon[1].x, linePolygon[1].y);

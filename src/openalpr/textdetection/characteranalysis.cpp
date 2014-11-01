@@ -60,7 +60,7 @@ namespace alpr
 
     pipeline_data->textLines.clear();
 
-    for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
+    for (unsigned int i = 0; i < pipeline_data->thresholds.size(); i++)
     {
       TextContours tc(pipeline_data->thresholds[i]);
 
@@ -77,7 +77,7 @@ namespace alpr
 
     getTime(&startTime);
 
-    for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
+    for (unsigned int i = 0; i < pipeline_data->thresholds.size(); i++)
     {
       this->filter(pipeline_data->thresholds[i], allTextContours[i]);
 
@@ -101,7 +101,7 @@ namespace alpr
     if (plateMask.hasPlateMask)
     {
       // Filter out bad contours now that we have an outer box mask...
-      for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
+      for (unsigned int i = 0; i < pipeline_data->thresholds.size(); i++)
       {
         filterByOuterMask(allTextContours[i]);
       }
@@ -109,7 +109,7 @@ namespace alpr
 
     int bestFitScore = -1;
     int bestFitIndex = -1;
-    for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
+    for (unsigned int i = 0; i < pipeline_data->thresholds.size(); i++)
     {
 
       int segmentCount = allTextContours[i].getGoodIndicesCount();
@@ -142,7 +142,7 @@ namespace alpr
     vector<vector<Point> > linePolygons = lf.findLines(pipeline_data->crop_gray, bestContours);
 
     vector<TextLine> tempTextLines;
-    for (uint i = 0; i < linePolygons.size(); i++)
+    for (unsigned int i = 0; i < linePolygons.size(); i++)
     {
       vector<Point> linePolygon = linePolygons[i];
 
@@ -162,7 +162,7 @@ namespace alpr
     std::sort(tempTextLines.begin(), tempTextLines.end(), sort_text_line);
 
     // Now that we've filtered a few more contours, re-do the text area.
-    for (uint i = 0; i < tempTextLines.size(); i++)
+    for (unsigned int i = 0; i < tempTextLines.size(); i++)
     {
       vector<Point> updatedTextArea = getCharArea(tempTextLines[i].topLine, tempTextLines[i].bottomLine);
       vector<Point> linePolygon = tempTextLines[i].linePolygon;
@@ -214,7 +214,7 @@ namespace alpr
     if (this->pipeline_data->config->debugCharAnalysis && pipeline_data->textLines.size() > 0)
     {
       vector<Mat> tempDash;
-      for (uint z = 0; z < pipeline_data->thresholds.size(); z++)
+      for (unsigned int z = 0; z < pipeline_data->thresholds.size(); z++)
       {
         Mat tmp(pipeline_data->thresholds[z].size(), pipeline_data->thresholds[z].type());
         pipeline_data->thresholds[z].copyTo(tmp);
@@ -227,7 +227,7 @@ namespace alpr
       this->bestThreshold.copyTo(bestVal);
       cvtColor(bestVal, bestVal, CV_GRAY2BGR);
 
-      for (uint z = 0; z < this->bestContours.size(); z++)
+      for (unsigned int z = 0; z < this->bestContours.size(); z++)
       {
         Scalar dcolor(255,0,0);
         if (this->bestContours.goodIndices[z])
@@ -246,7 +246,7 @@ namespace alpr
   {
     Mat charMask = Mat::zeros(bestThreshold.size(), CV_8U);
 
-    for (uint i = 0; i < bestContours.size(); i++)
+    for (unsigned int i = 0; i < bestContours.size(); i++)
     {
       if (bestContours.goodIndices[i] == false)
         continue;
@@ -281,7 +281,7 @@ namespace alpr
     {
 
       //vector<bool> goodIndices(contours.size());
-      for (uint z = 0; z < textContours.size(); z++) textContours.goodIndices[z] = true;
+      for (unsigned int z = 0; z < textContours.size(); z++) textContours.goodIndices[z] = true;
 
       this->filterByBoxSize(textContours, STARTING_MIN_HEIGHT + (i * HEIGHT_STEP), STARTING_MAX_HEIGHT + (i * HEIGHT_STEP));
 
@@ -315,7 +315,7 @@ namespace alpr
     float aspecttolerance=0.25;
 
 
-    for (uint i = 0; i < textContours.size(); i++)
+    for (unsigned int i = 0; i < textContours.size(); i++)
     {
       if (textContours.goodIndices[i] == false)
         continue;
@@ -344,7 +344,7 @@ namespace alpr
   void CharacterAnalysis::filterContourHoles(TextContours& textContours)
   {
 
-    for (uint i = 0; i < textContours.size(); i++)
+    for (unsigned int i = 0; i < textContours.size(); i++)
     {
       if (textContours.goodIndices[i] == false)
         continue;
@@ -377,7 +377,7 @@ namespace alpr
     vector<int> parentIDs;
     vector<int> votes;
 
-    for (uint i = 0; i < textContours.size(); i++)
+    for (unsigned int i = 0; i < textContours.size(); i++)
     {
       if (textContours.goodIndices[i] == false)
         continue;
@@ -387,7 +387,7 @@ namespace alpr
       int voteIndex = -1;
       int parentID = textContours.hierarchy[i][3];
       // check if parentID is already in the lsit
-      for (uint j = 0; j < parentIDs.size(); j++)
+      for (unsigned int j = 0; j < parentIDs.size(); j++)
       {
         if (parentIDs[j] == parentID)
         {
@@ -410,7 +410,7 @@ namespace alpr
     int totalVotes = 0;
     int winningParentId = 0;
     int highestVotes = 0;
-    for (uint i = 0; i < parentIDs.size(); i++)
+    for (unsigned int i = 0; i < parentIDs.size(); i++)
     {
       if (votes[i] > highestVotes)
       {
@@ -421,7 +421,7 @@ namespace alpr
     }
 
     // Now filter out all the contours with a different parent ID (assuming the totalVotes > 2)
-    for (uint i = 0; i < textContours.size(); i++)
+    for (unsigned int i = 0; i < textContours.size(); i++)
     {
       if (textContours.goodIndices[i] == false)
         continue;
@@ -452,11 +452,11 @@ namespace alpr
     // Create a white mask for the area inside the polygon
     Mat outerMask = Mat::zeros(img.size(), CV_8U);
 
-    for (uint i = 0; i < textLines.size(); i++)
+    for (unsigned int i = 0; i < textLines.size(); i++)
       fillConvexPoly(outerMask, textLines[i].linePolygon.data(), textLines[i].linePolygon.size(), Scalar(255,255,255));
 
     // For each contour, determine if enough of it is between the lines to qualify
-    for (uint i = 0; i < textContours.size(); i++)
+    for (unsigned int i = 0; i < textContours.size(); i++)
     {
       if (textContours.goodIndices[i] == false)
         continue;
@@ -490,7 +490,7 @@ namespace alpr
 
       // Get the absolute distance from the top and bottom lines
 
-      for (uint i = 0; i < textLines.size(); i++)
+      for (unsigned int i = 0; i < textLines.size(); i++)
       {
         Point closestTopPoint = textLines[i].topLine.closestPointOnSegmentTo(topMiddle);
         Point closestBottomPoint = textLines[i].bottomLine.closestPointOnSegmentTo(botMiddle);
@@ -535,10 +535,10 @@ namespace alpr
     int totalChars = 0;
 
     vector<bool> originalindices;
-    for (uint i = 0; i < textContours.size(); i++)
+    for (unsigned int i = 0; i < textContours.size(); i++)
       originalindices.push_back(textContours.goodIndices[i]);
 
-    for (uint i=0; i < textContours.size(); i++)
+    for (unsigned int i=0; i < textContours.size(); i++)
     {
       if (textContours.goodIndices[i] == false)
         continue;
@@ -625,12 +625,12 @@ namespace alpr
     int leftX = MAX;
     int rightX = MIN;
 
-    for (uint i = 0; i < bestContours.size(); i++)
+    for (unsigned int i = 0; i < bestContours.size(); i++)
     {
       if (bestContours.goodIndices[i] == false)
         continue;
 
-      for (uint z = 0; z < bestContours.contours[i].size(); z++)
+      for (unsigned int z = 0; z < bestContours.contours[i].size(); z++)
       {
         if (bestContours.contours[i][z].x < leftX)
           leftX = bestContours.contours[i][z].x;

@@ -90,7 +90,7 @@ namespace alpr
     response.results.img_width = img.cols;
     response.results.img_height = img.rows;
 
-    for (uint i = 0; i < regionsOfInterest.size(); i++)
+    for (unsigned int i = 0; i < regionsOfInterest.size(); i++)
     {
       response.results.regionsOfInterest.push_back(AlprRegionOfInterest(regionsOfInterest[i].x, regionsOfInterest[i].y, 
               regionsOfInterest[i].width, regionsOfInterest[i].height));
@@ -109,7 +109,7 @@ namespace alpr
     response.plateRegions = plateDetector->detect(img, regionsOfInterest);
 
     queue<PlateRegion> plateQueue;
-    for (uint i = 0; i < response.plateRegions.size(); i++)
+    for (unsigned int i = 0; i < response.plateRegions.size(); i++)
       plateQueue.push(response.plateRegions[i]);
 
     while(!plateQueue.empty())
@@ -158,7 +158,7 @@ namespace alpr
 
         int bestPlateIndex = 0;
 
-        for (uint pp = 0; pp < ppResults.size(); pp++)
+        for (unsigned int pp = 0; pp < ppResults.size(); pp++)
         {
           if (pp >= topN)
             break;
@@ -196,7 +196,7 @@ namespace alpr
       {
         // Not a valid plate
         // Check if this plate has any children, if so, send them back up for processing
-        for (uint childidx = 0; childidx < plateRegion.children.size(); childidx++)
+        for (unsigned int childidx = 0; childidx < plateRegion.children.size(); childidx++)
         {
           plateQueue.push(plateRegion.children[childidx]);
         }
@@ -218,12 +218,12 @@ namespace alpr
 
     if (config->debugGeneral && config->debugShowImages)
     {
-      for (uint i = 0; i < response.plateRegions.size(); i++)
+      for (unsigned int i = 0; i < response.plateRegions.size(); i++)
       {
         rectangle(img, response.plateRegions[i].rect, Scalar(0, 0, 255), 2);
       }
 
-      for (uint i = 0; i < response.results.plates.size(); i++)
+      for (unsigned int i = 0; i < response.results.plates.size(); i++)
       {
         for (int z = 0; z < 4; z++)
         {
@@ -290,7 +290,7 @@ namespace alpr
    std::vector<cv::Rect> AlprImpl::convertRects(std::vector<AlprRegionOfInterest> regionsOfInterest)
    {
      std::vector<cv::Rect> rectRegions;
-     for (uint i = 0; i < regionsOfInterest.size(); i++)
+     for (unsigned int i = 0; i < regionsOfInterest.size(); i++)
      {
        rectRegions.push_back(cv::Rect(regionsOfInterest[i].x, regionsOfInterest[i].y, regionsOfInterest[i].width, regionsOfInterest[i].height));
      }
@@ -315,7 +315,7 @@ namespace alpr
     // Add the regions of interest to the JSON
     cJSON *rois;
     cJSON_AddItemToObject(root, "regions_of_interest", 		rois=cJSON_CreateArray());
-    for (uint i=0;i<results.regionsOfInterest.size();i++)
+    for (unsigned int i=0;i<results.regionsOfInterest.size();i++)
     {
       cJSON *roi_object;
       roi_object = cJSON_CreateObject();
@@ -329,7 +329,7 @@ namespace alpr
 
 
     cJSON_AddItemToObject(root, "results", 		jsonResults=cJSON_CreateArray());
-    for (uint i = 0; i < results.plates.size(); i++)
+    for (unsigned int i = 0; i < results.plates.size(); i++)
     {
       cJSON *resultObj = createJsonObj( &results.plates[i] );
       cJSON_AddItemToArray(jsonResults, resultObj);
@@ -378,7 +378,7 @@ namespace alpr
 
 
     cJSON_AddItemToObject(root, "candidates", 		candidates=cJSON_CreateArray());
-    for (uint i = 0; i < result->topNPlates.size(); i++)
+    for (unsigned int i = 0; i < result->topNPlates.size(); i++)
     {
       cJSON *candidate_object;
       candidate_object = cJSON_CreateObject();

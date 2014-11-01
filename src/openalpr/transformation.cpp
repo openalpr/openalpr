@@ -50,7 +50,7 @@ namespace alpr
   vector<Point2f> Transformation::transformSmallPointsToBigImage(vector<Point2f> points)
   {
     vector<Point2f> bigPoints;
-    for (uint i = 0; i < points.size(); i++)
+    for (unsigned int i = 0; i < points.size(); i++)
     {
       float bigX = (points[i].x * ((float) regionInBigImage.width / smallImage.cols));
       float bigY = (points[i].y * ((float) regionInBigImage.height / smallImage.rows));

@@ -50,7 +50,7 @@ namespace alpr
                  CV_RETR_TREE, // retrieve all contours
                  CV_CHAIN_APPROX_SIMPLE ); // all pixels of each contours
 
-    for (uint i = 0; i < contours.size(); i++)
+    for (unsigned int i = 0; i < contours.size(); i++)
       goodIndices.push_back(true);
 
     this->width = threshold.cols;
@@ -58,7 +58,7 @@ namespace alpr
   }
 
 
-  uint TextContours::size() {
+  unsigned int TextContours::size() {
     return contours.size();
   }
 
@@ -67,7 +67,7 @@ namespace alpr
   int TextContours::getGoodIndicesCount()
   {
     int count = 0;
-    for (uint i = 0; i < goodIndices.size(); i++)
+    for (unsigned int i = 0; i < goodIndices.size(); i++)
     {
       if (goodIndices[i])
         count++;
@@ -80,7 +80,7 @@ namespace alpr
   std::vector<bool> TextContours::getIndicesCopy()
   {
     vector<bool> copyArray;
-    for (uint i = 0; i < goodIndices.size(); i++)
+    for (unsigned int i = 0; i < goodIndices.size(); i++)
     {
       bool val = goodIndices[i];
       copyArray.push_back(goodIndices[i]);
@@ -93,7 +93,7 @@ namespace alpr
   {
     if (newIndices.size() == goodIndices.size())
     {
-      for (uint i = 0; i < newIndices.size(); i++)
+      for (unsigned int i = 0; i < newIndices.size(); i++)
         goodIndices[i] = newIndices[i];
     }
     else
@@ -116,7 +116,7 @@ namespace alpr
       cvtColor(img_contours, img_contours, CV_GRAY2RGB);
 
       vector<vector<Point> > allowedContours;
-      for (uint i = 0; i < this->contours.size(); i++)
+      for (unsigned int i = 0; i < this->contours.size(); i++)
       {
         if (this->goodIndices[i])
           allowedContours.push_back(this->contours[i]);

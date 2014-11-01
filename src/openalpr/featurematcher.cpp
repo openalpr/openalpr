@@ -44,7 +44,7 @@ namespace alpr
 
   FeatureMatcher::~FeatureMatcher()
   {
-    for (uint i = 0; i < trainingImgKeypoints.size(); i++)
+    for (unsigned int i = 0; i < trainingImgKeypoints.size(); i++)
       trainingImgKeypoints[i].clear();
     trainingImgKeypoints.clear();
 
@@ -110,7 +110,7 @@ namespace alpr
         {
           bool already_exists = false;
           // Quickly run through the matches we've already added and make sure it's not a duplicate...
-          for (uint q = 0; q < matches12.size(); q++)
+          for (unsigned int q = 0; q < matches12.size(); q++)
           {
             if (matchesKnn[descInd][0].queryIdx == matches12[q].queryIdx)
             {
@@ -155,10 +155,10 @@ namespace alpr
     Rect crissCrossAreaVertical(0, 0, config->stateIdImageWidthPx, config->stateIdimageHeightPx * 2);
     Rect crissCrossAreaHorizontal(0, 0, config->stateIdImageWidthPx * 2, config->stateIdimageHeightPx);
 
-    for (uint i = 0; i < billMapping.size(); i++)
+    for (unsigned int i = 0; i < billMapping.size(); i++)
     {
       vector<DMatch> matchesForOnePlate;
-      for (uint j = 0; j < inputMatches.size(); j++)
+      for (unsigned int j = 0; j < inputMatches.size(); j++)
       {
         if (inputMatches[j].imgIdx == (int) i)
           matchesForOnePlate.push_back(inputMatches[j]);
@@ -170,7 +170,7 @@ namespace alpr
       vector<LineSegment> hlines;
       vector<int> matchIdx;
 
-      for (uint j = 0; j < matchesForOnePlate.size(); j++)
+      for (unsigned int j = 0; j < matchesForOnePlate.size(); j++)
       {
         KeyPoint tkp = trainingImgKeypoints[i][matchesForOnePlate[j].trainIdx];
         KeyPoint qkp = queryKeypoints[matchesForOnePlate[j].queryIdx];
@@ -187,10 +187,10 @@ namespace alpr
         int mostIntersectionsIndex = -1;
         mostIntersections = 0;
 
-        for (uint j = 0; j < vlines.size(); j++)
+        for (unsigned int j = 0; j < vlines.size(); j++)
         {
           int intrCount = 0;
-          for (uint q = 0; q < vlines.size(); q++)
+          for (unsigned int q = 0; q < vlines.size(); q++)
           {
             Point vintr = vlines[j].intersection(vlines[q]);
             Point hintr = hlines[j].intersection(hlines[q]);
@@ -224,7 +224,7 @@ namespace alpr
       }
 
       // Push the non-crisscrosses back on the list
-      for (uint j = 0; j < matchIdx.size(); j++)
+      for (unsigned int j = 0; j < matchIdx.size(); j++)
       {
         outputMatches.push_back(matchesForOnePlate[matchIdx[j]]);
       }
@@ -243,7 +243,7 @@ namespace alpr
       vector<Mat> trainImages;
       vector<string> plateFiles = getFilesInDir(country_dir.c_str());
 
-      for (uint i = 0; i < plateFiles.size(); i++)
+      for (unsigned int i = 0; i < plateFiles.size(); i++)
       {
         if (hasEnding(plateFiles[i], ".jpg") == false)
           continue;
@@ -316,12 +316,12 @@ namespace alpr
     // Create and initialize the counts to 0
     std::vector<int> bill_match_counts( billMapping.size() );
 
-    for (uint i = 0; i < billMapping.size(); i++)
+    for (unsigned int i = 0; i < billMapping.size(); i++)
     {
       bill_match_counts[i] = 0;
     }
 
-    for (uint i = 0; i < filteredMatches.size(); i++)
+    for (unsigned int i = 0; i < filteredMatches.size(); i++)
     {
       bill_match_counts[filteredMatches[i].imgIdx]++;
       //if (filteredMatches[i].imgIdx
@@ -330,7 +330,7 @@ namespace alpr
     float max_count = 0;	// represented as a percent (0 to 100)
     int secondmost_count = 0;
     int maxcount_index = -1;
-    for (uint i = 0; i < billMapping.size(); i++)
+    for (unsigned int i = 0; i < billMapping.size(); i++)
     {
       if (bill_match_counts[i] > max_count && bill_match_counts[i] >= 4)
       {
@@ -358,7 +358,7 @@ namespace alpr
       if (drawOnImage)
       {
         vector<KeyPoint> positiveMatches;
-        for (uint i = 0; i < filteredMatches.size(); i++)
+        for (unsigned int i = 0; i < filteredMatches.size(); i++)
         {
           if (filteredMatches[i].imgIdx == maxcount_index)
           {
@@ -383,7 +383,7 @@ namespace alpr
 
     if (this->config->debugStateId)
     {
-      for (uint i = 0; i < billMapping.size(); i++)
+      for (unsigned int i = 0; i < billMapping.size(); i++)
       {
         cout << billMapping[i] << " : " << bill_match_counts[i] << endl;
       }

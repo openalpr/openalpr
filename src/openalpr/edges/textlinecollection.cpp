@@ -18,7 +18,7 @@ namespace alpr
 
     charHeight = 0;
     charAngle = 0;
-    for (uint i = 0; i < textLines.size(); i++)
+    for (unsigned int i = 0; i < textLines.size(); i++)
     {
       charHeight += textLines[i].lineHeight;
       charAngle += textLines[i].angle;
@@ -29,7 +29,7 @@ namespace alpr
 
     this->topCharArea = textLines[0].charBoxTop;
     this->bottomCharArea = textLines[0].charBoxBottom;
-    for (uint i = 1; i < textLines.size(); i++)
+    for (unsigned int i = 1; i < textLines.size(); i++)
     {
 
       if (this->topCharArea.isPointBelowLine(textLines[i].charBoxTop.midpoint()) == false)

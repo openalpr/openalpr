@@ -41,7 +41,7 @@ namespace alpr
     std::vector<std::vector<cv::Point> > contours;
     std::vector<cv::Vec4i> hierarchy;
 
-    uint size();
+    unsigned int size();
     int getGoodIndicesCount();
 
     std::vector<bool> getIndicesCopy();

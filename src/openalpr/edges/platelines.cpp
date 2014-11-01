@@ -75,7 +75,7 @@ namespace alpr
 
     Mat mask = Mat::zeros(inputImage.size(), CV_8U);
 
-    for (uint i = 0; i < textLines.size(); i++)
+    for (unsigned int i = 0; i < textLines.size(); i++)
     {
       vector<vector<Point> > polygons;
       polygons.push_back(textLines[i].textArea);
@@ -93,9 +93,9 @@ namespace alpr
 
     vector<PlateLine> hlines = this->getLines(edges, sensitivity, false);
     vector<PlateLine> vlines = this->getLines(edges, sensitivity, true);
-    for (uint i = 0; i < hlines.size(); i++)
+    for (unsigned int i = 0; i < hlines.size(); i++)
       this->horizontalLines.push_back(hlines[i]);
-    for (uint i = 0; i < vlines.size(); i++)
+    for (unsigned int i = 0; i < vlines.size(); i++)
       this->verticalLines.push_back(vlines[i]);
 
     // if debug is enabled, draw the image

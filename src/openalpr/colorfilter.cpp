@@ -123,7 +123,7 @@ namespace alpr
     vector<float> hMeans, sMeans, vMeans;
     vector<float> hStdDevs, sStdDevs, vStdDevs;
 
-    for (uint i = 0; i < contours.size(); i++)
+    for (unsigned int i = 0; i < contours.size(); i++)
     {
       if (hierarchy[i][3] != -1)
         continue;
@@ -376,11 +376,11 @@ namespace alpr
     float lowestOverallDiff = 1000000000;
     int bestPercentAgreementIndex = -1;
 
-    for (uint i = 0; i < values.size(); i++)
+    for (unsigned int i = 0; i < values.size(); i++)
     {
       int valuesInRange = 0;
       float overallDiff = 0;
-      for (uint j = 0; j < values.size(); j++)
+      for (unsigned int j = 0; j < values.size(); j++)
       {
         float diff = abs(values[i] - values[j]);
         if (diff < maxValDifference)

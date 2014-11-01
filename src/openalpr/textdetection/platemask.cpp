@@ -51,14 +51,14 @@ namespace alpr
     if (pipeline_data->config->debugCharAnalysis)
       cout << "CharacterAnalysis::findOuterBoxMask" << endl;
 
-    for (uint imgIndex = 0; imgIndex < contours.size(); imgIndex++)
+    for (unsigned int imgIndex = 0; imgIndex < contours.size(); imgIndex++)
     {
       //vector<bool> charContours = filter(thresholds[imgIndex], allContours[imgIndex], allHierarchy[imgIndex]);
 
       int charsRecognized = 0;
       int parentId = -1;
       bool hasParent = false;
-      for (uint i = 0; i < contours[imgIndex].goodIndices.size(); i++)
+      for (unsigned int i = 0; i < contours[imgIndex].goodIndices.size(); i++)
       {
         if (contours[imgIndex].goodIndices[i]) charsRecognized++;
         if (contours[imgIndex].goodIndices[i] && contours[imgIndex].hierarchy[i][3] != -1)
@@ -97,9 +97,9 @@ namespace alpr
       int longestChildIndex = -1;
       double longestChildLength = 0;
       // Find the child with the longest permiter/arc length ( just for kicks)
-      for (uint i = 0; i < contours[winningIndex].size(); i++)
+      for (unsigned int i = 0; i < contours[winningIndex].size(); i++)
       {
-        for (uint j = 0; j < contours[winningIndex].size(); j++)
+        for (unsigned int j = 0; j < contours[winningIndex].size(); j++)
         {
           if (contours[winningIndex].hierarchy[j][3] == winningParentId)
           {
@@ -145,7 +145,7 @@ namespace alpr
       findContours(mask, contoursSecondRound, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
       int biggestContourIndex = -1;
       double largestArea = 0;
-      for (uint c = 0; c < contoursSecondRound.size(); c++)
+      for (unsigned int c = 0; c < contoursSecondRound.size(); c++)
       {
         double area = contourArea(contoursSecondRound[c]);
         if (area > largestArea)

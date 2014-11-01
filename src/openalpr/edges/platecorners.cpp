@@ -87,7 +87,7 @@ namespace alpr
       Mat imgCorners = Mat(inputImage.size(), inputImage.type());
       inputImage.copyTo(imgCorners);
 
-      for (uint linenum = 0; linenum < textLines.size(); linenum++)
+      for (unsigned int linenum = 0; linenum < textLines.size(); linenum++)
       {
         for (int i = 0; i < 4; i++)
           circle(imgCorners, textLines[linenum].textArea[i], 2, Scalar(0, 0, 0));

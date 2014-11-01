@@ -95,9 +95,9 @@ namespace alpr
 
       float postProcessMinConfidence;
       float postProcessConfidenceSkipLevel;
-      uint postProcessMaxSubstitutions;
-      uint postProcessMinCharacters;
-      uint postProcessMaxCharacters;
+      unsigned int postProcessMaxSubstitutions;
+      unsigned int postProcessMinCharacters;
+      unsigned int postProcessMaxCharacters;
 
 
       bool debugGeneral;

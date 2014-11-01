@@ -69,7 +69,7 @@ namespace alpr
   //    cvtColor(img_contours, img_contours, CV_GRAY2RGB);
   //
   //    vector<vector<Point> > allowedContours;
-  //    for (uint i = 0; i < charAnalysis->bestContours.size(); i++)
+  //    for (unsigned int i = 0; i < charAnalysis->bestContours.size(); i++)
   //    {
   //      if (charAnalysis->bestContours.goodIndices[i])
   //        allowedContours.push_back(charAnalysis->bestContours.contours[i]);
@@ -96,7 +96,7 @@ namespace alpr
 
 
 
-    for (uint lineidx = 0; lineidx < pipeline_data->textLines.size(); lineidx++)
+    for (unsigned int lineidx = 0; lineidx < pipeline_data->textLines.size(); lineidx++)
     {
       this->top = pipeline_data->textLines[lineidx].topLine;
       this->bottom = pipeline_data->textLines[lineidx].bottomLine;
@@ -115,7 +115,7 @@ namespace alpr
       vector<Mat> allHistograms;
 
       vector<Rect> lineBoxes;
-      for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
+      for (unsigned int i = 0; i < pipeline_data->thresholds.size(); i++)
       {
         Mat histogramMask = Mat::zeros(pipeline_data->thresholds[i].size(), CV_8U);
 
@@ -139,7 +139,7 @@ namespace alpr
 
         if (this->config->debugCharSegmenter)
         {
-          for (uint cboxIdx = 0; cboxIdx < charBoxes.size(); cboxIdx++)
+          for (unsigned int cboxIdx = 0; cboxIdx < charBoxes.size(); cboxIdx++)
           {
             rectangle(allHistograms[i], charBoxes[cboxIdx], Scalar(0, 255, 0));
           }
@@ -148,7 +148,7 @@ namespace alpr
           displayImage(config, "Char seg histograms", histDashboard);
         }
 
-        for (uint z = 0; z < charBoxes.size(); z++)
+        for (unsigned int z = 0; z < charBoxes.size(); z++)
           lineBoxes.push_back(charBoxes[z]);
         //drawAndWait(&histogramMask);
       }
@@ -156,7 +156,7 @@ namespace alpr
       float medianCharWidth = avgCharWidth;
       vector<int> widthValues;
       // Compute largest char width
-      for (uint i = 0; i < lineBoxes.size(); i++)
+      for (unsigned int i = 0; i < lineBoxes.size(); i++)
       {
         widthValues.push_back(lineBoxes[i].width);
       }
@@ -175,7 +175,7 @@ namespace alpr
       if (this->config->debugCharSegmenter)
       {
         // Setup the dashboard images to show the cleaning filters
-        for (uint i = 0; i < pipeline_data->thresholds.size(); i++)
+        for (unsigned int i = 0; i < pipeline_data->thresholds.size(); i++)
         {
           Mat cleanImg = Mat::zeros(pipeline_data->thresholds[i].size(), pipeline_data->thresholds[i].type());
           Mat boxMask = getCharBoxMask(pipeline_data->thresholds[i], candidateBoxes);
@@ -183,7 +183,7 @@ namespace alpr
           bitwise_and(cleanImg, boxMask, cleanImg);
           cvtColor(cleanImg, cleanImg, CV_GRAY2BGR);
 
-          for (uint c = 0; c < candidateBoxes.size(); c++)
+          for (unsigned int c = 0; c < candidateBoxes.size(); c++)
             rectangle(cleanImg, candidateBoxes[c], Scalar(0, 255, 0), 1);
           imgDbgCleanStages.push_back(cleanImg);
         }
@@ -198,7 +198,7 @@ namespace alpr
 
       candidateBoxes = filterMostlyEmptyBoxes(pipeline_data->thresholds, candidateBoxes);
 
-      for (uint cbox = 0; cbox < candidateBoxes.size(); cbox++)
+      for (unsigned int cbox = 0; cbox < candidateBoxes.size(); cbox++)
         pipeline_data->charRegions.push_back(candidateBoxes[cbox]);
 
       if (config->debugTiming)
@@ -251,7 +251,7 @@ namespace alpr
     vector<Rect> charBoxes;
     vector<Rect> allBoxes = get1DHits(histogram.histoImg, pxLeniency);
 
-    for (uint i = 0; i < allBoxes.size(); i++)
+    for (unsigned int i = 0; i < allBoxes.size(); i++)
     {
       if (allBoxes[i].width >= config->segmentationMinBoxWidthPx && allBoxes[i].width <= MAX_SEGMENT_WIDTH &&
           allBoxes[i].height > MIN_HISTOGRAM_HEIGHT )
@@ -307,7 +307,7 @@ namespace alpr
     {
       columnCount = 0;
 
-      for (uint i = 0; i < charBoxes.size(); i++)
+      for (unsigned int i = 0; i < charBoxes.size(); i++)
       {
         if (col >= charBoxes[i].x && col < (charBoxes[i].x + charBoxes[i].width))
           columnCount++;
@@ -339,7 +339,7 @@ namespace alpr
 
       float rowScore = 0;
 
-      for (uint boxidx = 0; boxidx < allBoxes.size(); boxidx++)
+      for (unsigned int boxidx = 0; boxidx < allBoxes.size(); boxidx++)
       {
         int w = allBoxes[boxidx].width;
         if (w >= config->segmentationMinBoxWidthPx && w <= MAX_SEGMENT_WIDTH)
@@ -398,7 +398,7 @@ namespace alpr
       Mat imgBestBoxes(img.size(), img.type());
       img.copyTo(imgBestBoxes);
       cvtColor(imgBestBoxes, imgBestBoxes, CV_GRAY2BGR);
-      for (uint i = 0; i < bestBoxes.size(); i++)
+      for (unsigned int i = 0; i < bestBoxes.size(); i++)
         rectangle(imgBestBoxes, bestBoxes[i], Scalar(0, 255, 0));
 
       this->imgDbgGeneral.push_back(addLabel(histoImg, "All Histograms"));
@@ -447,7 +447,7 @@ namespace alpr
     Mat textLineMask = Mat::zeros(thresholds[0].size(), CV_8U);
     fillConvexPoly(textLineMask, textLine.linePolygon.data(), textLine.linePolygon.size(), Scalar(255,255,255));
 
-    for (uint i = 0; i < thresholds.size(); i++)
+    for (unsigned int i = 0; i < thresholds.size(); i++)
     {
       vector<vector<Point> > contours;
       vector<Vec4i> hierarchy;
@@ -456,7 +456,7 @@ namespace alpr
       thresholds[i].copyTo(thresholdsCopy, textLineMask);
       findContours(thresholdsCopy, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
 
-      for (uint c = 0; c < contours.size(); c++)
+      for (unsigned int c = 0; c < contours.size(); c++)
       {
         if (contours[c].size() == 0)
           continue;
@@ -476,7 +476,7 @@ namespace alpr
   {
     vector<Rect> newCharBoxes;
 
-    for (uint i = 0; i < charBoxes.size(); i++)
+    for (unsigned int i = 0; i < charBoxes.size(); i++)
     {
       if (i == charBoxes.size() - 1)
       {
@@ -496,7 +496,7 @@ namespace alpr
         newCharBoxes.push_back(bigRect);
         if (this->config->debugCharSegmenter)
         {
-          for (uint z = 0; z < pipeline_data->thresholds.size(); z++)
+          for (unsigned int z = 0; z < pipeline_data->thresholds.size(); z++)
           {
             Point center(bigRect.x + bigRect.width / 2, bigRect.y + bigRect.height / 2);
             RotatedRect rrect(center, Size2f(bigRect.width, bigRect.height + (bigRect.height / 2)), 0);
@@ -525,7 +525,7 @@ namespace alpr
 
     Mat mask = getCharBoxMask(thresholds[0], charRegions);
 
-    for (uint i = 0; i < thresholds.size(); i++)
+    for (unsigned int i = 0; i < thresholds.size(); i++)
     {
       bitwise_and(thresholds[i], mask, thresholds[i]);
       vector<vector<Point> > contours;
@@ -542,14 +542,14 @@ namespace alpr
 
       findContours(tempImg, contours, RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 
-      for (uint j = 0; j < charRegions.size(); j++)
+      for (unsigned int j = 0; j < charRegions.size(); j++)
       {
         const float MIN_SPECKLE_HEIGHT = ((float)charRegions[j].height) * MIN_SPECKLE_HEIGHT_PERCENT;
         const float MIN_CONTOUR_AREA = ((float)charRegions[j].area()) * MIN_CONTOUR_AREA_PERCENT;
 
         int tallestContourHeight = 0;
         float totalArea = 0;
-        for (uint c = 0; c < contours.size(); c++)
+        for (unsigned int c = 0; c < contours.size(); c++)
         {
           if (contours[c].size() == 0)
             continue;
@@ -621,7 +621,7 @@ namespace alpr
       morphologyEx(thresholds[i], thresholds[i], MORPH_CLOSE, closureElement);
 
       // Lastly, draw a clipping line between each character boxes
-      for (uint j = 0; j < charRegions.size(); j++)
+      for (unsigned int j = 0; j < charRegions.size(); j++)
       {
         line(thresholds[i], Point(charRegions[j].x - 1, charRegions[j].y), Point(charRegions[j].x - 1, charRegions[j].y + charRegions[j].height), Scalar(0, 0, 0));
         line(thresholds[i], Point(charRegions[j].x + charRegions[j].width + 1, charRegions[j].y), Point(charRegions[j].x + charRegions[j].width + 1, charRegions[j].y + charRegions[j].height), Scalar(0, 0, 0));
@@ -635,9 +635,9 @@ namespace alpr
     // Consider it a bad news bear.  REmove the whole area.
     const float MIN_PERCENT_CHUNK_REMOVED = 0.6;
 
-    for (uint i = 0; i < thresholds.size(); i++)
+    for (unsigned int i = 0; i < thresholds.size(); i++)
     {
-      for (uint j = 0; j < charRegions.size(); j++)
+      for (unsigned int j = 0; j < charRegions.size(); j++)
       {
         Mat boxChar = Mat::zeros(thresholds[i].size(), CV_8U);
         rectangle(boxChar, charRegions[j], Scalar(255,255,255), CV_FILLED);
@@ -685,12 +685,12 @@ namespace alpr
   {
     float MAX_FILLED = 0.95 * 255;
 
-    for (uint i = 0; i < charRegions.size(); i++)
+    for (unsigned int i = 0; i < charRegions.size(); i++)
     {
       Mat mask = Mat::zeros(thresholds[0].size(), CV_8U);
       rectangle(mask, charRegions[i], Scalar(255,255,255), -1);
 
-      for (uint j = 0; j < thresholds.size(); j++)
+      for (unsigned int j = 0; j < thresholds.size(); j++)
       {
         if (mean(thresholds[j], mask)[0] > MAX_FILLED)
         {
@@ -719,12 +719,12 @@ namespace alpr
 
     vector<int> boxScores(charRegions.size());
 
-    for (uint i = 0; i < charRegions.size(); i++)
+    for (unsigned int i = 0; i < charRegions.size(); i++)
       boxScores[i] = 0;
 
-    for (uint i = 0; i < thresholds.size(); i++)
+    for (unsigned int i = 0; i < thresholds.size(); i++)
     {
-      for (uint j = 0; j < charRegions.size(); j++)
+      for (unsigned int j = 0; j < charRegions.size(); j++)
       {
         //float minArea = charRegions[j].area() * MIN_AREA_PERCENT;
 
@@ -736,12 +736,12 @@ namespace alpr
         findContours(tempImg, contours, RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
 
         vector<Point> allPointsInBox;
-        for (uint c = 0; c < contours.size(); c++)
+        for (unsigned int c = 0; c < contours.size(); c++)
         {
           if (contours[c].size() == 0)
             continue;
 
-          for (uint z = 0; z < contours[c].size(); z++)
+          for (unsigned int z = 0; z < contours[c].size(); z++)
             allPointsInBox.push_back(contours[c][z]);
         }
 
@@ -765,7 +765,7 @@ namespace alpr
     vector<Rect> newCharRegions;
 
     int maxBoxScore = 0;
-    for (uint i = 0; i < charRegions.size(); i++)
+    for (unsigned int i = 0; i < charRegions.size(); i++)
     {
       if (boxScores[i] > maxBoxScore)
         maxBoxScore = boxScores[i];
@@ -775,7 +775,7 @@ namespace alpr
     int MIN_FULL_BOXES = maxBoxScore * 0.49;
 
     // Now check each score.  If it's below the minimum, remove the charRegion
-    for (uint i = 0; i < charRegions.size(); i++)
+    for (unsigned int i = 0; i < charRegions.size(); i++)
     {
       if (boxScores[i] > MIN_FULL_BOXES)
         newCharRegions.push_back(charRegions[i]);
@@ -788,7 +788,7 @@ namespace alpr
           cout << " this box had a score of : " << boxScores[i];;
           cout << " MIN_FULL_BOXES: " << MIN_FULL_BOXES << endl;;
 
-          for (uint z = 0; z < thresholds.size(); z++)
+          for (unsigned int z = 0; z < thresholds.size(); z++)
           {
             rectangle(thresholds[z], charRegions[i], Scalar(0,0,0), -1);
 
@@ -838,7 +838,7 @@ namespace alpr
     vector<int> leftEdges;
     vector<int> rightEdges;
 
-    for (uint i = 0; i < thresholds.size(); i++)
+    for (unsigned int i = 0; i < thresholds.size(); i++)
     {
       Mat rotated;
 
@@ -944,7 +944,7 @@ namespace alpr
           cout << "Edge Filter: Entire right region is erased" << endl;
       }
 
-      for (uint i = 0; i < thresholds.size(); i++)
+      for (unsigned int i = 0; i < thresholds.size(); i++)
       {
         bitwise_and(thresholds[i], mask, thresholds[i]);
       }
@@ -957,7 +957,7 @@ namespace alpr
 
         Mat invertedMask(mask.size(), mask.type());
         bitwise_not(mask, invertedMask);
-        for (uint z = 0; z < imgDbgCleanStages.size(); z++)
+        for (unsigned int z = 0; z < imgDbgCleanStages.size(); z++)
           fillMask(imgDbgCleanStages[z], invertedMask, Scalar(0,0,255));
       }
     }
@@ -1028,7 +1028,7 @@ namespace alpr
     Mat boxMask = Mat::zeros(threshold.size(), CV_8U);
     rectangle(boxMask, slightlySmallerBox, Scalar(255, 255, 255), -1);
 
-    for (uint i = 0; i < contours.size(); i++)
+    for (unsigned int i = 0; i < contours.size(); i++)
     {
       // Only bother with the big boxes
       if (boundingRect(contours[i]).height < MIN_EDGE_CONTOUR_HEIGHT)
@@ -1044,7 +1044,7 @@ namespace alpr
       int tallestContourHeight = 0;
       int tallestContourWidth = 0;
       float tallestContourArea = 0;
-      for (uint s = 0; s < subContours.size(); s++)
+      for (unsigned int s = 0; s < subContours.size(); s++)
       {
         Rect r = boundingRect(subContours[s]);
         if (r.height > tallestContourHeight)
@@ -1075,7 +1075,7 @@ namespace alpr
   Mat CharacterSegmenter::getCharBoxMask(Mat img_threshold, vector<Rect> charBoxes)
   {
     Mat mask = Mat::zeros(img_threshold.size(), CV_8U);
-    for (uint i = 0; i < charBoxes.size(); i++)
+    for (unsigned int i = 0; i < charBoxes.size(); i++)
       rectangle(mask, charBoxes[i], Scalar(255, 255, 255), -1);
 
     return mask;

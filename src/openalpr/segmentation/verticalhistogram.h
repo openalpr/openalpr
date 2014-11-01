@@ -60,7 +60,7 @@ namespace alpr
       void analyzeImage(cv::Mat inputImage, cv::Mat mask);
       void findValleys();
 
-      HistogramDirection getHistogramDirection(uint index);
+      HistogramDirection getHistogramDirection(unsigned int index);
   };
 
 }

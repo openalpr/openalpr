@@ -46,7 +46,7 @@ namespace alpr
 
     vector<CharPointInfo> charPoints;
 
-    for (uint i = 0; i < contours.contours.size(); i++)
+    for (unsigned int i = 0; i < contours.contours.size(); i++)
     {
       if (contours.goodIndices[i] == false)
         continue;
@@ -65,7 +65,7 @@ namespace alpr
       // Create a mask from the bestLine area, and remove all contours with tops that fall inside of it.
 
       vector<CharPointInfo> remainingPoints;
-      for (uint i = 0; i < charPoints.size(); i++)
+      for (unsigned int i = 0; i < charPoints.size(); i++)
       {
         Mat mask = Mat::zeros(Size(contours.width, contours.height), CV_8U);
         fillConvexPoly(mask, bestLine.data(), bestLine.size(), Scalar(255,255,255));
@@ -103,7 +103,7 @@ namespace alpr
 
 
     vector<int> charheights;
-    for (uint i = 0; i < charPoints.size(); i++)
+    for (unsigned int i = 0; i < charPoints.size(); i++)
       charheights.push_back(charPoints[i].boundingBox.height);
     float medianCharHeight = median(charheights.data(), charheights.size());
 
@@ -112,9 +112,9 @@ namespace alpr
     vector<LineSegment> topLines;
     vector<LineSegment> bottomLines;
     // Iterate through each possible char and find all possible lines for the top and bottom of each char segment
-    for (uint i = 0; i < charPoints.size() - 1; i++)
+    for (unsigned int i = 0; i < charPoints.size() - 1; i++)
     {
-      for (uint k = i+1; k < charPoints.size(); k++)
+      for (unsigned int k = i+1; k < charPoints.size(); k++)
       {
 
         int leftCPIndex, rightCPIndex;
@@ -168,13 +168,13 @@ namespace alpr
     int bestScoreDistance = -1; // Line segment distance is used as a tie breaker
 
     // Now, among all possible lines, find the one that is the best fit
-    for (uint i = 0; i < topLines.size(); i++)
+    for (unsigned int i = 0; i < topLines.size(); i++)
     {
       float SCORING_MIN_THRESHOLD = 0.97;
       float SCORING_MAX_THRESHOLD = 1.03;
 
       int curScore = 0;
-      for (uint charidx = 0; charidx < charPoints.size(); charidx++)
+      for (unsigned int charidx = 0; charidx < charPoints.size(); charidx++)
       {
         float topYPos = topLines[i].getPointAt(charPoints[charidx].top.x);
         float botYPos = bottomLines[i].getPointAt(charPoints[charidx].bottom.x);
