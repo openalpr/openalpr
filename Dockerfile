@@ -1,8 +1,8 @@
 FROM gnuhub/base-docker
 MAINTAINER Stallman Wang "gnuhub@gmail.com"
 
-ADD /etc/apt/sources.list /etc/apt/sources.list
-ADD /etc/apt/trusted.gpg /etc/apt/trusted.gpg
+ADD /docker/etc/apt/sources.list /etc/apt/sources.list
+ADD /docker/etc/apt/trusted.gpg /etc/apt/trusted.gpg
 RUN sudo apt-get update
 RUN apt-get install -y --force-yes build-essential
 RUN apt-get install -y m4
