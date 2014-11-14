@@ -842,7 +842,7 @@ namespace alpr
     {
       Mat rotated;
 
-      if (top.angle > MIN_ANGLE_FOR_ROTATION)
+      if (abs(top.angle) > MIN_ANGLE_FOR_ROTATION)
       {
         // Rotate image:
         rotated = Mat(thresholds[i].size(), thresholds[i].type());
@@ -913,7 +913,7 @@ namespace alpr
       Mat mask = Mat::zeros(thresholds[0].size(), CV_8U);
       rectangle(mask, Point(leftEdge, 0), Point(rightEdge, thresholds[0].rows), Scalar(255,255,255), -1);
 
-      if (top.angle > MIN_ANGLE_FOR_ROTATION)
+      if (abs(top.angle) > MIN_ANGLE_FOR_ROTATION)
       {
         // Rotate mask:
         Mat rot_mat( 2, 3, CV_32FC1 );
