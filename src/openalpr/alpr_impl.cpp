@@ -81,8 +81,6 @@ namespace alpr
     timespec startTime;
     getTime(&startTime);
 
-    if (regionsOfInterest.size() == 0)
-      regionsOfInterest.push_back(cv::Rect(0, 0, img.cols, img.rows));
 
     AlprFullDetails response;
 
@@ -218,6 +216,11 @@ namespace alpr
 
     if (config->debugGeneral && config->debugShowImages)
     {
+      for (unsigned int i = 0; i < regionsOfInterest.size(); i++)
+      {
+        rectangle(img, regionsOfInterest[i], Scalar(0,255,0), 2);   
+      }
+
       for (unsigned int i = 0; i < response.plateRegions.size(); i++)
       {
         rectangle(img, response.plateRegions[i].rect, Scalar(0, 0, 255), 2);
@@ -493,5 +496,6 @@ namespace alpr
     ss << OPENALPR_MAJOR_VERSION << "." << OPENALPR_MINOR_VERSION << "." << OPENALPR_PATCH_VERSION;
     return ss.str();
   }
+
 
 }
