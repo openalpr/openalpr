@@ -24,6 +24,36 @@ namespace alpr
     }
   }
 
+
+
+  long getFileSize(std::string filename)
+  {
+      struct stat stat_buf;
+      int rc = stat(filename.c_str(), &stat_buf);
+      //return rc == 0 ? stat_buf.st_size : -1;
+
+      // 512 bytes is the standard block size
+      if (rc == 0)
+        return 512 * stat_buf.st_blocks;
+
+      return -1;
+  }
+
+  long getFileCreationTime(std::string filename)
+  {
+      struct stat stat_buf;
+      int rc = stat(filename.c_str(), &stat_buf);
+
+      if (rc != 0)
+        return 0;
+
+      double milliseconds = (stat_buf.st_ctim.tv_sec * 1000) +  (((double) stat_buf.st_ctim.tv_nsec) / 1000000.0);
+
+      return (long) milliseconds;
+  }
+
+
+
   bool hasEndingInsensitive(const std::string& fullString, const std::string& ending)
   {
     if (fullString.length() < ending.length())
