@@ -25,6 +25,7 @@ using namespace std;
 namespace alpr
 {
 
+
   DetectorCPU::DetectorCPU(Config* config) : Detector(config) {
 
 
@@ -36,7 +37,7 @@ namespace alpr
     else
     {
       this->loaded = false;
-      printf("--(!)Error loading classifier\n");
+      printf("--(!)Error loading CPU classifier\n");
     }
   }
 
@@ -50,12 +51,19 @@ namespace alpr
     Mat frame_gray;
     cvtColor( frame, frame_gray, CV_BGR2GRAY );
 
-    vector<PlateRegion> detectedRegions = doCascade(frame_gray, regionsOfInterest);
+    vector<PlateRegion> detectedRegions;
+    for (int i = 0; i < regionsOfInterest.size(); i++)
+    {
+      Mat cropped = frame_gray(regionsOfInterest[i]);
+      vector<PlateRegion> subRegions = doCascade(cropped, regionsOfInterest[i].x, regionsOfInterest[i].y);
 
+      for (int j = 0; j < subRegions.size(); j++)
+        detectedRegions.push_back(subRegions[j]);
+    }
     return detectedRegions;
   }
 
-  vector<PlateRegion> DetectorCPU::doCascade(Mat frame, std::vector<cv::Rect> regionsOfInterest)
+  vector<PlateRegion> DetectorCPU::doCascade(Mat frame, int offset_x, int offset_y)
   {
 
 
@@ -108,8 +116,8 @@ namespace alpr
 
     for( unsigned int i = 0; i < plates.size(); i++ )
     {
-      plates[i].x = plates[i].x / scale_factor;
-      plates[i].y = plates[i].y / scale_factor;
+      plates[i].x = (plates[i].x / scale_factor) + offset_x;
+      plates[i].y = (plates[i].y / scale_factor) + offset_y;
       plates[i].width = plates[i].width / scale_factor;
       plates[i].height = plates[i].height / scale_factor;
     }
@@ -119,5 +127,5 @@ namespace alpr
     return orderedRegions;
 
   }
-  
+
 }
