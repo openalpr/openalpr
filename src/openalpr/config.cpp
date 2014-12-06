@@ -161,8 +161,8 @@ namespace alpr
 
 
     float stateIdImagePercent = getFloat("common", "state_id_img_size_percent", 100);
-    stateIdImageWidthPx = round(((float)templateWidthPx) * ocrImagePercent);
-    stateIdimageHeightPx = round(((float)templateHeightPx) * ocrImagePercent);
+    stateIdImageWidthPx = round(((float)templateWidthPx) * stateIdImagePercent);
+    stateIdimageHeightPx = round(((float)templateHeightPx) * stateIdImagePercent);
 
 
     charAnalysisMinPercent = getFloat(country, "char_analysis_min_pct", 0);
