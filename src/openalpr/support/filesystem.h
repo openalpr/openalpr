@@ -11,6 +11,7 @@
 #include <unistd.h>
 #endif
 
+#include <sys/stat.h>
 #include <fstream>
 #include <iostream>
 #include <stdio.h>
@@ -25,6 +26,9 @@ namespace alpr
   bool hasEndingInsensitive(const std::string& fullString, const std::string& ending);
 
   std::string filenameWithoutExtension(std::string filename);
+
+  long getFileSize(std::string filename);
+  long getFileCreationTime(std::string filename);
 
   bool DirectoryExists( const char* pzPath );
   bool fileExists( const char* pzPath );
