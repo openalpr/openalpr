@@ -101,7 +101,7 @@ namespace alpr
 
   cv::Mat addLabel(cv::Mat input, std::string label);
 
-
+  int levenshteinDistance (const std::string &s1, const std::string &s2, int max);
   std::string toString(int value);
   std::string toString(unsigned int value);
   std::string toString(float value);

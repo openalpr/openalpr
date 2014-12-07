@@ -37,3 +37,25 @@ TEST_CASE( "LineSegment Test", "[2d primitives]" ) {
   REQUIRE( median(testarray2, 6) == 1 );
   REQUIRE( median(testarray3, 0) == 0 );
 }
+
+TEST_CASE( "Test Levenshtein Distance", "[levenshtein]" ) {
+  
+  // Test the maximum works correctly
+  REQUIRE( levenshteinDistance("asdf", "bbbb", 10) == 4 );
+  REQUIRE( levenshteinDistance("asdf", "bbbb", 4) == 4 );
+  REQUIRE( levenshteinDistance("asdf", "bbbb", 3) == 3 );
+  REQUIRE( levenshteinDistance("asdf", "bbbb", 2) == 2 );
+  REQUIRE( levenshteinDistance("asdf", "bbbb", 1) == 1 );
+  REQUIRE( levenshteinDistance("asdf", "bbbb", 0) == 0 );
+  
+  // Test some substitutions
+  REQUIRE( levenshteinDistance("P32RX", "PE32RX", 10) == 1 );
+  REQUIRE( levenshteinDistance("P32RX", "PE32RX", 2) == 1 );
+  REQUIRE( levenshteinDistance("ASDF11", "ASDF1", 10) == 1 );
+  REQUIRE( levenshteinDistance("1ASDF1", "ASDF1", 10) == 1 );
+  REQUIRE( levenshteinDistance("ASD", "ASDF1", 2) == 2 );
+  REQUIRE( levenshteinDistance("11111", "11I11", 2) == 1 );
+  
+  REQUIRE( levenshteinDistance("", "AAAA", 2) == 2 );
+  REQUIRE( levenshteinDistance("BA", "AAAA", 2) == 2 );
+}
