@@ -431,7 +431,7 @@ namespace alpr
 
       //plate.bestPlate = cJSON_GetObjectItem(item, "plate")->valuestring; 
       plate.processing_time_ms = cJSON_GetObjectItem(item, "processing_time_ms")->valuedouble;
-      plate.region = cJSON_GetObjectItem(item, "region")->valuestring;
+      plate.region = std::string(cJSON_GetObjectItem(item, "region")->valuestring);
       plate.regionConfidence = cJSON_GetObjectItem(item, "region_confidence")->valueint;
       plate.requested_topn = cJSON_GetObjectItem(item, "requested_topn")->valueint;
 
@@ -453,7 +453,7 @@ namespace alpr
       {
         cJSON* candidate = cJSON_GetArrayItem(candidates, c);
         AlprPlate plateCandidate;
-        plateCandidate.characters = cJSON_GetObjectItem(candidate, "plate")->valuestring;
+        plateCandidate.characters = std::string(cJSON_GetObjectItem(candidate, "plate")->valuestring);
         plateCandidate.overall_confidence = cJSON_GetObjectItem(candidate, "confidence")->valuedouble;
         plateCandidate.matches_template = (cJSON_GetObjectItem(candidate, "matches_template")->valueint) != 0;
 
