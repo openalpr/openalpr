@@ -79,6 +79,9 @@ namespace alpr
       
       // the X/Y coordinates of the corners of the plate (clock-wise from top-left)
       AlprCoordinate plate_points[4];
+
+      // The index of the plate if there were multiple plates returned
+      int plate_index;
       
       // When region detection is enabled, this returns the region.  Region detection is experimental
       int regionConfidence;
