@@ -364,6 +364,8 @@ namespace alpr
     cJSON_AddNumberToObject(root,"confidence",		result->bestPlate.overall_confidence);
     cJSON_AddNumberToObject(root,"matches_template",	result->bestPlate.matches_template);
 
+    cJSON_AddNumberToObject(root,"plate_index",               result->plate_index);
+    
     cJSON_AddStringToObject(root,"region",		result->region.c_str());
     cJSON_AddNumberToObject(root,"region_confidence",	result->regionConfidence);
 
@@ -433,6 +435,7 @@ namespace alpr
 
       //plate.bestPlate = cJSON_GetObjectItem(item, "plate")->valuestring; 
       plate.processing_time_ms = cJSON_GetObjectItem(item, "processing_time_ms")->valuedouble;
+      plate.plate_index = cJSON_GetObjectItem(item, "plate_index")->valueint;
       plate.region = std::string(cJSON_GetObjectItem(item, "region")->valuestring);
       plate.regionConfidence = cJSON_GetObjectItem(item, "region_confidence")->valueint;
       plate.requested_topn = cJSON_GetObjectItem(item, "requested_topn")->valueint;
