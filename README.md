@@ -123,6 +123,7 @@ Please follow these detailed compilation guides for your respective operating sy
 
 * [Windows] (https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(Windows))
 * [Ubuntu Linux] (https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(Ubuntu-Linux))
+* [Android] (https://github.com/sujaybhowmick/OpenAlprDroidApp)
 
 If all went well, there should be an executable named *alpr* along with *libopenalpr-static.a* and *libopenalpr.so* that can be linked into your project.
 
