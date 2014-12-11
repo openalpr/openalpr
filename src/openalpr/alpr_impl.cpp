@@ -110,6 +110,7 @@ namespace alpr
     for (unsigned int i = 0; i < response.plateRegions.size(); i++)
       plateQueue.push(response.plateRegions[i]);
 
+    int platecount = 0;
     while(!plateQueue.empty())
     {
       PlateRegion plateRegion = plateQueue.front();
@@ -130,7 +131,8 @@ namespace alpr
         AlprPlateResult plateResult;
         plateResult.region = defaultRegion;
         plateResult.regionConfidence = 0;
-
+        plateResult.plate_index = platecount++;
+        
         for (int pointidx = 0; pointidx < 4; pointidx++)
         {
           plateResult.plate_points[pointidx].x = (int) pipeline_data.plate_corners[pointidx].x;
