@@ -65,14 +65,22 @@ namespace alpr
       AlprPlateResult() {};
       virtual ~AlprPlateResult() {};
 
+      // The number requested is always >= the topNPlates count
       int requested_topn;
 
+      // the best plate is the topNPlate with the highest confidence
       AlprPlate bestPlate;
+      
+      // A list of possible plate number permutations
       std::vector<AlprPlate> topNPlates;
 
+      // The processing time for this plate
       float processing_time_ms;
+      
+      // the X/Y coordinates of the corners of the plate (clock-wise from top-left)
       AlprCoordinate plate_points[4];
-
+      
+      // When region detection is enabled, this returns the region.  Region detection is experimental
       int regionConfidence;
       std::string region;
   };
