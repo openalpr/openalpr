@@ -9,7 +9,7 @@
 # Description:       OpenALPR daemon detects license plate in the background
 ### END INIT INFO
 
-# Author: lokidor <lokidor@lokiworld.net>
+# Author: Emmanuel Papin <manupap01@gmail.com>
 
 unset USER
 
@@ -46,11 +46,6 @@ fi
 # Set the default log file
 if [ -z $LOGFILE ]; then
 	LOGFILE=/var/log/alpr.log
-fi
-
-# Set the default daemon options
-if [ -z $DAEMON_OPTS ]; then
-	DAEMON_OPTS="-n 20"
 fi
 
 # Run as `www-data' if USER is not specified or is `root'

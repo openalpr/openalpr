@@ -18,5 +18,5 @@ START_DAEMON="yes"
 #GROUP="www-data"
 
 # Additional options that are passed to the daemon
-#DAEMON_OPTS="-n 20"
+#DAEMON_OPTS=
 
