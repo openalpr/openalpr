@@ -2,13 +2,13 @@ Source: openalpr
 Section: video
 Priority: optional
 Maintainer: Matt Hill <matt@ndu.com>
-Build-Depends: debhelper (>= 9), libopencv-dev, libtesseract-dev, git, cmake,
- build-essential, libtesseract-dev, libleptonica-dev, liblog4cplus-dev,
+Build-Depends: debhelper (>= 9), git, cmake, quilt, libopencv-dev,
+ libtesseract-dev, libtesseract-dev, libleptonica-dev, liblog4cplus-dev,
  libcurl3-dev, uuid-dev
-Standards-Version: 3.9.5
+Standards-Version: 3.9.6
 Homepage: https://github.com/openalpr/openalpr
 
-Package: libopenalpr1
+Package: libopenalpr2
 Section: libs
 Architecture: amd64
 Depends: openalpr-data (= ${source:Version}), ${shlibs:Depends}, ${misc:Depends}

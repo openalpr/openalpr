@@ -1,6 +1,6 @@
 openalpr (2.0.0-0.1) experimental; urgency=low
 
-  * Non maintainer upload.
+  * Non-maintainer upload
   * Upstream release with several fixes:
     - Compilation of utilities enabled
     - installation of static library
