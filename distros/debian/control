@@ -20,7 +20,7 @@ Description: Automated License Plate Recognition library (OpenALPR)
 Package: libopenalpr-dev
 Section: libdevel
 Architecture: amd64
-Depends: libopenalpr1 (= ${binary:Version}), ${misc:Depends}
+Depends: libopenalpr2 (= ${binary:Version}), ${misc:Depends}
 Description: Development files for OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
  in C++. The library analyzes images and identifies license plates. The output
