@@ -1,2 +1,2 @@
 usr/bin/alprd
-usr/etc/openalpr/alprd.conf etc/openalpr
+etc/openalpr/alprd.conf etc/openalpr
