@@ -31,11 +31,12 @@ TARBALL = ../$(PKG)_$(VER)$(DTYPE).orig.tar.xz
 %:
 	dh $@ --sourcedirectory=src --with quilt
 
-# debmake generated override targets
-# This is example for Cmake (See http://bugs.debian.org/641051 )
-#override_dh_auto_configure:
-#	dh_auto_configure -- \
-#	-DCMAKE_BUILD_TYPE:STRING=Debug
+override_dh_auto_configure:
+	dh_auto_configure -- \
+	  -DCMAKE_INSTALL_PREFIX=/usr \
+	  -DCMAKE_INSTALL_SYSCONFDIR=/etc \
+	  -DCMAKE_VERBOSE_MAKEFILE=OFF \
+	  -DCMAKE_COLOR_MAKEFILE=ON
 
 # Inspired by https://wiki.debian.org/onlyjob/get-orig-source
 .PHONY: get-orig-source
