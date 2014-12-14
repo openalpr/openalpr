@@ -1,0 +1,12 @@
+This package uses quilt to manage all modifications to the upstream source.
+Changes are stored in the source package as diffs in debian/patches and applied
+during the build.
+
+See /usr/share/doc/quilt/README.source for a detailed explanation.
+
+
+This package uses the version 3.0 of the debian source package; An upstream
+tarball is required to build it. This tarball can be generated automagically by
+downloading the sources from the github repository with the following command:
+
+fakeroot debian/rules get-orig-source
