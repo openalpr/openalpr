@@ -14,8 +14,8 @@ START_DAEMON="yes"
 #LOGFILE="/var/log/alpr.log"
 
 # User and group the daemon should run as
-#USER="www-data"
-#GROUP="www-data"
+#USER="daemon"
+#GROUP="daemon"
 
 # Additional options that are passed to the daemon
 #DAEMON_OPTS=

@@ -48,9 +48,9 @@ if [ -z $LOGFILE ]; then
 	LOGFILE=/var/log/alpr.log
 fi
 
-# Run as `www-data' if USER is not specified or is `root'
+# Run as `daemon' if USER is not specified or is `root'
 if [ -z $USER ]; then
-	USER=www-data
+	USER=daemon
 fi
 
 # If no group is specified, use USER
