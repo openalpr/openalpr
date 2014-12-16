@@ -1,3 +1,2 @@
-install_static_library.diff
 make_alpr_dependent_to_shared_library.diff
 enable_utilities.diff
