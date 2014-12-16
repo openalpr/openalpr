@@ -1,5 +1,5 @@
 
-ADD_EXECUTABLE( sortstate-openalpr-utils sortstate.cpp  )
+ADD_EXECUTABLE( openalpr-utils-sortstate sortstate.cpp  )
 TARGET_LINK_LIBRARIES(sortstate-openalpr-utils
     openalpr
     support
@@ -7,7 +7,7 @@ TARGET_LINK_LIBRARIES(sortstate-openalpr-utils
 	${Tesseract_LIBRARIES}
   )
   
-ADD_EXECUTABLE( classifychars-openalpr-utils classifychars.cpp )
+ADD_EXECUTABLE( openalpr-utils-classifychars classifychars.cpp )
 TARGET_LINK_LIBRARIES(classifychars-openalpr-utils
     openalpr
     support
@@ -16,12 +16,12 @@ TARGET_LINK_LIBRARIES(classifychars-openalpr-utils
   )
   
   
-ADD_EXECUTABLE(benchmark-openalpr-utils
+ADD_EXECUTABLE(openalpr-utils-benchmark
 		benchmarks/benchmark.cpp 
 		benchmarks/benchmark_utils.cpp 
 		benchmarks/endtoendtest.cpp 
 )
-TARGET_LINK_LIBRARIES(benchmark-openalpr-utils
+TARGET_LINK_LIBRARIES(openalpr-utils-benchmark
     openalpr
     support
     pthread
@@ -30,22 +30,22 @@ TARGET_LINK_LIBRARIES(benchmark-openalpr-utils
   )
   
   
-ADD_EXECUTABLE( prepcharsfortraining-openalpr-utils prepcharsfortraining.cpp )
-TARGET_LINK_LIBRARIES(prepcharsfortraining-openalpr-utils
+ADD_EXECUTABLE( openalpr-utils-prepcharsfortraining prepcharsfortraining.cpp )
+TARGET_LINK_LIBRARIES(openalpr-utils-prepcharsfortraining
     support
     ${OpenCV_LIBS} 
   )
   
   
-ADD_EXECUTABLE( tagplates-openalpr-utils tagplates.cpp )
-TARGET_LINK_LIBRARIES(tagplates-openalpr-utils
+ADD_EXECUTABLE( openalpr-utils-tagplates tagplates.cpp )
+TARGET_LINK_LIBRARIES(openalpr-utils-tagplates
     support
     ${OpenCV_LIBS} 
   )
   
-install (TARGETS sortstate-openalpr-utils DESTINATION bin)
-install (TARGETS classifychars-openalpr-utils DESTINATION bin)
-install (TARGETS benchmark-openalpr-utils DESTINATION bin)
-install (TARGETS prepcharsfortraining-openalpr-utils DESTINATION bin)
-install (TARGETS tagplates-openalpr-utils DESTINATION bin)
+install (TARGETS openalpr-utils-sortstate DESTINATION bin)
+install (TARGETS openalpr-utils-classifychars DESTINATION bin)
+install (TARGETS openalpr-utils-benchmark DESTINATION bin)
+install (TARGETS openalpr-utils-prepcharsfortraining DESTINATION bin)
+install (TARGETS openalpr-utils-tagplates DESTINATION bin)
 
