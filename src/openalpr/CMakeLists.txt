@@ -53,6 +53,7 @@ TARGET_LINK_LIBRARIES(openalpr
 
 
 install (FILES   alpr.h     DESTINATION    ${CMAKE_INSTALL_PREFIX}/include)
+install (TARGETS openalpr-static DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 install (TARGETS openalpr   DESTINATION    ${CMAKE_INSTALL_PREFIX}/lib)
 
 # Add definition for default config file
