@@ -1,0 +1,22 @@
+# Defaults for alprd initscript
+# sourced by /etc/init.d/openalpr-daemon
+# installed at /etc/default/openalpr-daemon by the maintainer scripts
+#
+# This is a POSIX shell fragment
+#
+# These options can be set to modify the behavior of the openalr-daemon init script.
+# The options commented out show the default values.
+
+# Start the daemon if set to "yes"
+START_DAEMON="yes"
+
+# Path to the log file
+#LOGFILE="/var/log/alpr.log"
+
+# User and group the daemon should run as
+#USER="daemon"
+#GROUP="daemon"
+
+# Additional options that are passed to the daemon
+#DAEMON_OPTS=
+

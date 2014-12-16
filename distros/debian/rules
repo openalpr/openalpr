@@ -1,0 +1,79 @@
+#!/usr/bin/make -f
+# See debhelper(7) (uncomment to enable)
+# output every command that modifies files on the build system.
+#DH_VERBOSE = 1
+
+# see EXAMPLES in dpkg-buildflags(1) and read /usr/share/dpkg/*
+# DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/default.mk
+#
+
+# These are used to get the most recent version of the original sources from github
+UURL = $(shell git config --get remote.origin.url)
+BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
+HEAD = $(shell git rev-parse HEAD)
+PKD  = $(shell pwd)/debian
+PKG  = $(word 2,$(shell dpkg-parsechangelog -l$(PKD)/changelog | grep ^Source))
+VER ?= $(shell dpkg-parsechangelog -l$(PKD)/changelog | perl -ne 'print $$1 if m{^Version:\s+(?:\d+:)?(\d.*)(?:\-\d+.*)};')
+DTYPE =
+TARBALL = ../$(PKG)_$(VER)$(DTYPE).orig.tar.xz
+
+# see FEATURE AREAS in dpkg-buildflags(1)
+#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# see ENVIRONMENT in dpkg-buildflags(1)
+# package maintainers to append CFLAGS
+#export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
+# package maintainers to append LDFLAGS
+#export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+# main packaging script based on dh7 syntax
+%:
+	dh $@ --sourcedirectory=src --with quilt
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+	  -DCMAKE_INSTALL_PREFIX=/usr \
+	  -DCMAKE_INSTALL_SYSCONFDIR=/etc \
+	  -DCMAKE_VERBOSE_MAKEFILE=OFF \
+	  -DCMAKE_COLOR_MAKEFILE=ON
+
+# Inspired by https://wiki.debian.org/onlyjob/get-orig-source
+.PHONY: get-orig-source
+get-orig-source: $(TARBALL) $(info I: $(PKG)_$(VER)$(DTYPE))
+	@
+
+$(TARBALL):
+	$(if $(wildcard $(PKG)-$(VER)),$(error folder '$(PKG)-$(VER)' exists, aborting...))
+	@echo "# Cloning origin repository..."; \
+	if ! git clone $(UURL) $(PKG)-$(VER); then \
+	  $(RM) -r $(PKG)-$(VER); \
+	  echo "failed to clone repository, aborting..."; \
+	  false; \
+	fi
+	@if [ $(BRANCH) != "master" ]; then \
+	  cd $(PKG)-$(VER); \
+	  echo "# Not on master branch, fetching origin branch '$(BRANCH)'..."; \
+	  git fetch origin $(BRANCH):$(BRANCH) || false; \
+	  echo "# Switching to branch '$(BRANCH)'..."; \
+	  git checkout $(BRANCH) || false; \
+	fi
+	@echo "# Checking local source..."
+	@if [ $$(cd $(PKG)-$(VER) && git rev-parse HEAD) = $(HEAD) ]; then \
+	  echo "even with origin, ok"; \
+	  true; \
+	else \
+	  echo "not even with origin, aborting..."; \
+	  false; \
+	fi
+	@echo "# Setting times..."
+	@cd $(PKG)-$(VER) \
+	&& for F in $$(git ls-tree -r --name-only HEAD | sed -e "s/\s/\*/g"); do \
+	  touch --no-dereference -d "$$(git log -1 --format="%ai" -- $$F)" "$$F"; \
+	done
+	@echo "# Cleaning-up..."
+	cd $(PKG)-$(VER) && $(RM) -r .git
+	@echo "# Packing file '$(TARBALL)'..."
+	@find -L "$(PKG)-$(VER)" -xdev -type f -print | sort \
+	| XZ_OPT="-6v" tar -caf "$(TARBALL)" -T- --owner=root --group=root --mode=a+rX \
+	&& $(RM) -r "$(PKG)-$(VER)"

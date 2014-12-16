@@ -1,0 +1,17 @@
+openalpr (2.0.0-0.2) experimental; urgency=low
+
+  * Non-maintainer upload
+  * Upstream release with several fixes:
+    - Merged Emmanuel's patches into the OpenALPR library
+
+ -- Matthew Hill <matthill@openalpr.com>  Mon, 15 Dec 2014 22:28:48 -0500
+
+openalpr (2.0.0-0.1) experimental; urgency=low
+
+  * Non-maintainer upload
+  * Upstream release with several fixes:
+    - Compilation of utilities enabled
+    - installation of static library
+    - alpr build against shared library
+
+ -- Emmanuel Papin <manupap01@gmail.com>  Sun, 14 Dec 2014 19:39:07 +0200

@@ -71,7 +71,7 @@ set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall ")
 ADD_EXECUTABLE( alpr  main.cpp )
 
 TARGET_LINK_LIBRARIES(alpr
-	openalpr-static
+	openalpr
 	support
     video
 	${OpenCV_LIBS}

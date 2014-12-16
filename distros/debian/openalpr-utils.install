@@ -1,0 +1,5 @@
+usr/bin/openalpr-utils-sortstate
+usr/bin/openalpr-utils-classifychars
+usr/bin/openalpr-utils-benchmark
+usr/bin/openalpr-utils-prepcharsfortraining
+usr/bin/openalpr-utils-tagplates
