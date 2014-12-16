@@ -1,6 +1,6 @@
 
 ADD_EXECUTABLE( openalpr-utils-sortstate sortstate.cpp  )
-TARGET_LINK_LIBRARIES(sortstate-openalpr-utils
+TARGET_LINK_LIBRARIES(openalpr-utils-sortstate
     openalpr
     support
     ${OpenCV_LIBS} 
@@ -8,7 +8,7 @@ TARGET_LINK_LIBRARIES(sortstate-openalpr-utils
   )
   
 ADD_EXECUTABLE( openalpr-utils-classifychars classifychars.cpp )
-TARGET_LINK_LIBRARIES(classifychars-openalpr-utils
+TARGET_LINK_LIBRARIES(openalpr-utils-classifychars
     openalpr
     support
     ${OpenCV_LIBS} 
