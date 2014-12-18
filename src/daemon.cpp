@@ -450,11 +450,19 @@ bool uploadPost(std::string url, std::string data)
   bool success = true;
   CURL *curl;
   CURLcode res;
- 
+  struct curl_slist *headers=NULL; // init to NULL is important
+
+  /* Add the required headers */ 
+  headers = curl_slist_append(headers,  "Accept: application/json");
+  headers = curl_slist_append( headers, "Content-Type: application/json");
+  headers = curl_slist_append( headers, "charsets: utf-8");
  
   /* get a curl handle */ 
   curl = curl_easy_init();
   if(curl) {
+	/* Add the headers */
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+   
     /* First set the URL that is about to receive our POST. This URL can
        just as well be a https:// URL if that is what should receive the
        data. */ 
