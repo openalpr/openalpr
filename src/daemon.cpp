@@ -419,14 +419,14 @@ void dataUploadThread(void* arg)
 	    client.del(job.id());
 	    LOG4CPLUS_INFO(logger, "Job: " << job.id() << " successfully uploaded" );
 	    // Wait 10ms
-	    usleep(10000);
+	    sleep_ms(10);
 	  }
 	  else
 	  {
 	    client.release(job);
 	    LOG4CPLUS_WARN(logger, "Job: " << job.id() << " failed to upload.  Will retry." );
 	    // Wait 2 seconds
-	    usleep(2000000);
+	    sleep_ms(2000);
 	  }
 	}
 	
