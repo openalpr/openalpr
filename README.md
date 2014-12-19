@@ -101,9 +101,10 @@ These are typically built with each new release.
 
 Install OpenALPR on Ubuntu 14.04 x64 with the following commands:
 
-    echo "deb [arch=amd64] http://deb.openalpr.com/master/ openalpr main" | sudo tee /etc/apt/sources.list.d/openalpr.list
+    wget -O - http://deb.openalpr.com/openalpr.gpg.key | sudo apt-key add -
+    echo "deb http://deb.openalpr.com/master/ openalpr main" | sudo tee /etc/apt/sources.list.d/openalpr.list
     sudo apt-get update
-    sudo apt-get install openalpr
+    sudo apt-get install openalpr openalpr-daemon openalpr-utils libopenalpr-dev
 
 Compiling
 -----------
