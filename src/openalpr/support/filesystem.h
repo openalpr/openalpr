@@ -11,12 +11,14 @@
 #include <unistd.h>
 #endif
 
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <fstream>
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
 #include <vector>
+#include <errno.h>
 
 namespace alpr
 {
@@ -36,6 +38,7 @@ namespace alpr
 
   bool stringCompare( const std::string &left, const std::string &right );
 
+  bool makePath(const char* path, mode_t mode);
 }
 
 #endif // FILESYSTEM_H
