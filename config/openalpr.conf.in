@@ -31,7 +31,8 @@ detection_strictness = 3
 max_detection_input_width = 1280
 max_detection_input_height = 720
 
-
+; Bypasses plate detection.  If this is set to 1, the library assumes that each region provided is a likely plate area.
+skip_detection = 0
 
 max_plate_angle_degrees = 15
 

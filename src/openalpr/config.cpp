@@ -137,6 +137,8 @@ namespace alpr
     maxDetectionInputWidth = getInt("common", "max_detection_input_width", 1280);
     maxDetectionInputHeight = getInt("common", "max_detection_input_height", 768);
 
+    skipDetection = getBoolean("common", "skip_detection", false);
+    
     maxPlateAngleDegrees = getInt("common", "max_plate_angle_degrees", 15);
 
     minPlateSizeWidthPx = getInt(country, "min_plate_size_width_px", 100);

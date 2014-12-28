@@ -104,7 +104,21 @@ namespace alpr
     }
 
     // Find all the candidate regions
-    response.plateRegions = plateDetector->detect(img, regionsOfInterest);
+    if (config->skipDetection == false)
+    {
+      response.plateRegions = plateDetector->detect(img, regionsOfInterest);
+    }
+    else
+    {
+      // They have elected to skip plate detection.  Instead, return a list of plate regions 
+      // based on their regions of interest
+      for (unsigned int i = 0; i < regionsOfInterest.size(); i++)
+      {
+        PlateRegion pr;
+        pr.rect = cv::Rect(regionsOfInterest[i]);
+        response.plateRegions.push_back(pr);
+      }
+    }
 
     queue<PlateRegion> plateQueue;
     for (unsigned int i = 0; i < response.plateRegions.size(); i++)

@@ -53,6 +53,8 @@ namespace alpr
       float maxPlateHeightPercent;
       int maxDetectionInputWidth;
       int maxDetectionInputHeight;
+      
+      bool skipDetection;
 
       int maxPlateAngleDegrees;
 
