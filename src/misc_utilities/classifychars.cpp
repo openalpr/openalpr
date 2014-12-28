@@ -105,6 +105,9 @@ int main( int argc, const char** argv )
   cout << "\tESC/Ent/Space	-- Back to plate selection" << endl;
 
   Config config(country);
+  config.debugGeneral = true;
+  config.debugCharAnalysis = true;
+  config.debugCharSegmenter = true;
   OCR ocr(&config);
 
   if (DirectoryExists(inDir.c_str()))
@@ -134,20 +137,6 @@ int main( int argc, const char** argv )
         string statecodestr(statecode);
 
         CharacterAnalysis regionizer(&pipeline_data);
-
-        if (abs(pipeline_data.textLines[0].angle) > 4)
-        {
-          // Rotate image:
-          Mat rotated(frame.size(), frame.type());
-          Mat rot_mat( 2, 3, CV_32FC1 );
-          Point center = Point( frame.cols/2, frame.rows/2 );
-
-          rot_mat = getRotationMatrix2D( center, pipeline_data.textLines[0].angle, 1.0 );
-          warpAffine( frame, rotated, rot_mat, frame.size() );
-
-          rotated.copyTo(frame);
-	  pipeline_data.crop_gray = rotated;
-        }
 
         CharacterSegmenter charSegmenter(&pipeline_data);
 
