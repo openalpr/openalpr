@@ -89,54 +89,40 @@ int main( int argc, const char** argv )
   {
     Config* config = new Config(country);
     config->debugOff();
+    config->skipDetection = true;
 
-    OCR* ocr = new OCR(config);
-
+    AlprImpl alpr(country);
+    alpr.config = config;
+    
     for (int i = 0; i< files.size(); i++)
     {
       if (hasEnding(files[i], ".png") || hasEnding(files[i], ".jpg"))
       {
         string fullpath = inDir + "/" + files[i];
 
-        frame = imread( fullpath.c_str() );
-        resize(frame, frame, Size(config->ocrImageWidthPx, config->ocrImageHeightPx));
-
-        Rect plateCoords;
-        plateCoords.x = 0;
-        plateCoords.y = 0;
-        plateCoords.width = frame.cols;
-        plateCoords.height = frame.rows;
-	
-	PipelineData pipeline_data(frame, plateCoords, config);
-
+        frame = cv::imread(fullpath.c_str());
+        
+        cv::Rect roi;
+        roi.x = 0;
+        roi.y = 0;
+        roi.width = frame.cols;
+        roi.height = frame.rows;
+        vector<Rect> rois;
+        rois.push_back(roi);
+        AlprResults results = alpr.recognize(frame, rois);
+        
         char statecode[3];
         statecode[0] = files[i][0];
         statecode[1] = files[i][1];
         statecode[2] = '\0';
         string statecodestr(statecode);
-
-        CharacterAnalysis charRegion(&pipeline_data);
-
-        if (pipeline_data.textLines.size() > 0 &&
-            abs(pipeline_data.textLines[0].angle) > 4)
-        {
-          // Rotate image:
-          Mat rotated(frame.size(), frame.type());
-          Mat rot_mat( 2, 3, CV_32FC1 );
-          Point center = Point( frame.cols/2, frame.rows/2 );
-
-          rot_mat = getRotationMatrix2D( center, pipeline_data.textLines[0].angle, 1.0 );
-          warpAffine( frame, rotated, rot_mat, frame.size() );
-
-          rotated.copyTo(frame);
-	  pipeline_data.crop_gray = frame;
-        }
-
-        CharacterSegmenter charSegmenter(&pipeline_data);
-        ocr->performOCR(&pipeline_data);
-        ocr->postProcessor.analyze(statecode, 25);
-
-        cout << files[i] << "," << statecode << "," << ocr->postProcessor.bestChars << endl;
+                
+        if (results.plates.size() == 1)
+          cout << files[i] << "," << statecode << "," << results.plates[0].bestPlate.characters << endl;
+        else if (results.plates.size() == 0)
+          cout << files[i] << "," << statecode << "," << endl;
+        else if (results.plates.size() > 1)
+          cout << files[i] << "," << statecode << ",???+" << endl;
 
         imshow("Current LP", frame);
         waitKey(5);
@@ -144,7 +130,6 @@ int main( int argc, const char** argv )
     }
 
     delete config;
-    delete ocr;
   }
   else if (benchmarkName.compare("detection") == 0)
   {
