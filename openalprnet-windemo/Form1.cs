@@ -71,8 +71,8 @@ namespace openalprnet_windemo
 
             try
             {
-                int width = 0;
-                int height = 0;
+                var width = 0;
+                var height = 0;
 
                 foreach (var bmp in images)
                 {
@@ -81,20 +81,20 @@ namespace openalprnet_windemo
                 }
 
                 //create a bitmap to hold the combined image
-                finalImage = new System.Drawing.Bitmap(width, height);
+                finalImage = new Bitmap(width, height);
 
                 //get a graphics object from the image so we can draw on it
-                using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(finalImage))
+                using (var g = Graphics.FromImage(finalImage))
                 {
                     //set background color
-                    g.Clear(System.Drawing.Color.Black);
+                    g.Clear(Color.Black);
 
                     //go through each image and draw it on the final image
-                    int offset = 0;
-                    foreach (System.Drawing.Bitmap image in images)
+                    var offset = 0;
+                    foreach (Bitmap image in images)
                     {
                         g.DrawImage(image,
-                          new System.Drawing.Rectangle(offset, 0, image.Width, image.Height));
+                                    new Rectangle(offset, 0, image.Width, image.Height));
                         offset += image.Width;
                     }
                 }
@@ -111,7 +111,7 @@ namespace openalprnet_windemo
             finally
             {
                 //clean up memory
-                foreach (System.Drawing.Bitmap image in images)
+                foreach (var image in images)
                 {
                     image.Dispose();
                 }
@@ -126,6 +126,7 @@ namespace openalprnet_windemo
             }
         }
 
+        
         private void processImageFile(string fileName)
         {
             resetControls();
@@ -137,7 +138,7 @@ namespace openalprnet_windemo
 
                 var results = alpr.recognize(fileName);
 
-                List<Image> images = new List<Image>(results.Count());
+                var images = new List<Image>(results.Count());
                 var i = 1;
                 foreach (var result in results)
                 {
@@ -145,7 +146,7 @@ namespace openalprnet_windemo
                     var img = Image.FromFile(fileName);
                     var cropped = cropImage(img, rect);
                     images.Add(cropped);
-                    
+
                     lbxPlates.Items.Add("\t\t-- Plate #" + i++ + " --");
                     foreach (var plate in result.topNPlates)
                     {
@@ -155,7 +156,7 @@ namespace openalprnet_windemo
                                                           plate.matches_template.ToString().PadLeft(8)));
                     }
                 }
-                
+
                 if (images.Any())
                 {
                     picLicensePlate.Image = combineImages(images);
