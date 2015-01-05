@@ -276,7 +276,15 @@ int levenshteinDistance (const std::string &s1, const std::string &s2, int max)
     int len2 = s2.length();
     max--;
   
-    int matrix[2][len2 + 1];
+    //int matrix[2][len2 + 1];
+    std::vector<std::vector<int> > matrix;
+    for (unsigned int i = 0; i < 2; i++)
+    {
+      std::vector<int> top_elem;
+      matrix.push_back(top_elem);
+      for (unsigned int j = 0; j < len2 + 1; j++)
+        matrix[i].push_back(0);
+    }
     int i;
     int j;
     
