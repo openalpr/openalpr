@@ -138,9 +138,9 @@ namespace openalprnet_windemo
 
                 var results = alpr.recognize(fileName);
 
-                var images = new List<Image>(results.Count());
+                var images = new List<Image>(results.plates.Count());
                 var i = 1;
-                foreach (var result in results)
+                foreach (var result in results.plates)
                 {
                     var rect = boundingRectangle(result.plate_points);
                     var img = Image.FromFile(fileName);
