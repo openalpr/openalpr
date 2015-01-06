@@ -336,18 +336,19 @@ namespace openalprnet {
 		/// Recognize from an image on disk
 		/// </summary>
 		AlprResultsNet^ recognize(System::String^ filepath) {
-			/*
 			AlprResults results = m_Impl->recognize(marshal_as<std::string>(filepath));
 			return gcnew AlprResultsNet(results);
-			*/
+		}
+
+		/// <summary>
+		/// Recognize from an image on disk
+		/// </summary>
+		AlprResultsNet^ recognize(System::String^ filepath, List<System::Drawing::Rectangle>^ regionsOfInterest) {
 			cv::Mat frame = cv::imread( marshal_as<std::string>(filepath) );
-
-			std::vector<AlprRegionOfInterest> regionsOfInterest;
-			regionsOfInterest.push_back(AlprRegionOfInterest(0,0, frame.cols, frame.rows));
-
-			AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, regionsOfInterest );
+			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
+			AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, rois );
 			return gcnew AlprResultsNet(results);
-		}	
+		}
 
 		/// <summary>
 		/// Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
@@ -377,11 +378,6 @@ namespace openalprnet {
 		static System::String^ getVersion() {
 			return AlprHelper::ToManagedString(Alpr::getVersion());
 		}
-
-		//		System::String^ toJson(AlprResultsNet^ results) {
-		//			std::string json = Alpr::toJson(marshal_as<AlprResults>(results));
-		//			return AlprHelper::ToManagedString(json);
-		//		}
 
 	protected:
 		// Deallocate the native object on the finalizer just in case no destructor is called
