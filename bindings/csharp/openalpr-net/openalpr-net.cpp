@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2015 Dr. Masroor Ehsan
+* Copyright (c) 2014 New Designs Unlimited, LLC
 *
 * This file is part of OpenAlpr.Net.
 *
