@@ -109,7 +109,8 @@ namespace openalprnet_cli
         private static void PerformAlpr(AlprNet alpr, byte[] buffer, bool benchmark, bool writeJson)
         {
             var sw = Stopwatch.StartNew();
-            var results = alpr.recognize(buffer);
+            sbyte[] signedBuffer = (sbyte[])(Array)buffer;
+            var results = alpr.recognize(signedBuffer);
             sw.Stop();
             if (benchmark)
             {
@@ -118,14 +119,14 @@ namespace openalprnet_cli
 
             if (writeJson)
             {
-                Console.WriteLine(alpr.toJson());
+                //Console.WriteLine(alpr.toJson());
             }
             else
             {
                 var i = 0;
-                foreach (var result in results)
+                foreach (var result in results.plates)
                 {
-                    Console.WriteLine("Plate {0}: {1} result(s)", i++, result.result_count);
+                    Console.WriteLine("Plate {0}: {1} result(s)", i++, result.topNPlates.Count);
                     Console.WriteLine("  Processing Time: {0} msec(s)", result.processing_time_ms);
                     foreach (var plate in result.topNPlates)
                     {
