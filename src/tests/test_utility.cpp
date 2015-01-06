@@ -32,7 +32,7 @@ TEST_CASE( "LineSegment Test", "[2d primitives]" ) {
   
   int testarray1[] = {1, 2, 3, 3, 4, 5 };
   int testarray2[] = {0, 2, -3, 3, -4, 5 };
-  int testarray3[] = { };
+  int *testarray3;
   REQUIRE( median(testarray1, 6) == 3 );
   REQUIRE( median(testarray2, 6) == 1 );
   REQUIRE( median(testarray3, 0) == 0 );
