@@ -52,7 +52,9 @@ void EndToEndTest::runTest(string country, vector<std::string> files)
 
     Rect actualPlateRect(x, y, w, h);
     
-    AlprFullDetails recognitionDetails = alpr.recognizeFullDetails(frame);
+    vector<Rect> rois;
+    rois.push_back(Rect(0,0,frame.cols,frame.rows));
+    AlprFullDetails recognitionDetails = alpr.recognizeFullDetails(frame, rois);
     
 
     
