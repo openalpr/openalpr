@@ -49,7 +49,15 @@ namespace alpr
   {
 
     Mat frame_gray;
-    cvtColor( frame, frame_gray, CV_BGR2GRAY );
+    if (frame.channels() > 2)
+    {
+      cvtColor( frame, frame_gray, CV_BGR2GRAY );
+    }
+    else
+    {
+      frame_gray = frame;
+    }
+
 
     vector<PlateRegion> detectedRegions;
     for (int i = 0; i < regionsOfInterest.size(); i++)

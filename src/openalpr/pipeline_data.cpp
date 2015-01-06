@@ -5,11 +5,18 @@ using namespace std;
 
 namespace alpr
 {
-  
+
   PipelineData::PipelineData(Mat colorImage, Rect regionOfInterest, Config* config)
   {
     this->colorImg = colorImage;
-    cvtColor(this->colorImg, this->grayImg, CV_BGR2GRAY);
+    if (colorImage.channels() > 2)
+    {
+      cvtColor(this->colorImg, this->grayImg, CV_BGR2GRAY);
+    }
+    else
+    {
+      this->grayImg = colorImage;
+    }
 
     this->regionOfInterest = regionOfInterest;
     this->config = config;
