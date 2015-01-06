@@ -26,6 +26,9 @@
 //#include <msclr\marshal.h>
 #include <msclr\marshal_cppstd.h>
 
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+
 using namespace System;
 using namespace msclr::interop;
 using namespace System::Collections::Generic;
@@ -47,23 +50,26 @@ namespace openalprnet {
 			return result;
 		}
 
+		static std::vector<AlprRegionOfInterest> ToVector(List<System::Drawing::Rectangle>^ src)
+		{
+			std::vector<AlprRegionOfInterest> result;
 
-//		static std::vector<AlprRegionOfInterest> ToVector(List<System::Drawing::Rectangle>^ src)
-//		{
-//			std::vector<AlprRegionOfInterest> result;
-//
-//			for each(System::Drawing::Rectangle^ rect in src)
-//			{
-//				AlprRegionOfInterest roi;
-//				roi.x = rect->X;
-//				roi.y = rect->Y;
-//				roi.height = rect->Height;
-//				roi.width = rect->Width;
-//				result.push_back(roi);
-//			}
-//
-//			return result;
-//		}
+			for each(System::Drawing::Rectangle^ rect in src)
+			{
+				AlprRegionOfInterest roi(rect->X, rect->Y, rect->Width, rect->Height);
+				result.push_back(roi);
+			}
+
+			return result;
+		}
+
+		static unsigned char* ToCharPtr(array<unsigned char>^ src)
+		{
+			//unsigned char* result = (unsigned char*) new unsigned char[src->Length];
+			pin_ptr<unsigned char> pin(&src[0]);
+			unsigned char* pc = pin;
+			return pc;
+		}
 
 		static System::String^ ToManagedString(std::string s)
 		{
@@ -120,120 +126,168 @@ namespace openalprnet {
 	public ref class AlprPlateResultNet sealed
 	{
 	public:
-		AlprPlateResultNet() : m_Impl( new AlprPlateResult ) {}
+		AlprPlateResultNet(AlprPlateResult result) {
+			m_plate_index = result.plate_index;
+			m_processing_time_ms = result.processing_time_ms;
+			m_regionConfidence = result.regionConfidence;
+			m_region = AlprHelper::ToManagedString(result.region);
+			m_bestPlate = gcnew AlprPlateNet(result.bestPlate);
 
-		AlprPlateResultNet(AlprPlateResult* result) : m_Impl( result ) {}
+			m_plate_points = gcnew List<System::Drawing::Point>(4);
+			for (int i = 0; i < 4; i++)
+			{
+				m_plate_points->Add(System::Drawing::Point(result.plate_points[i].x, result.plate_points[i].y));
+			}
+
+			int num = result.topNPlates.size();
+			m_topNPlates = gcnew List<AlprPlateNet^>(num);
+			for (int i = 0; i < num; i++)
+			{
+				m_topNPlates->Add(gcnew AlprPlateNet(result.topNPlates[i]));
+			}
+		}
 
 		property int requested_topn {
 			int get() {
-				return m_Impl->requested_topn;
+				return m_requested_topn;
 			}
 		}
 
 		property int regionConfidence {
 			int get() {
-				return m_Impl->regionConfidence;
+				return m_regionConfidence;
+			}
+		}
+
+		property int plate_index {
+			int get() {
+				return m_plate_index;
 			}
 		}
 
 		property System::String^ region {
 			System::String^ get() {
-				return AlprHelper::ToManagedString(m_Impl->region);
+				return m_region;
 			}
 		}
 
-
 		property AlprPlateNet^ bestPlate {
 			AlprPlateNet^ get() {
-				AlprPlateNet^ result = gcnew AlprPlateNet(m_Impl->bestPlate);
-				return result;
+				return m_bestPlate;
 			}
 		}
 
 		property List<System::Drawing::Point>^ plate_points {
 			List<System::Drawing::Point>^ get() {
-				List<System::Drawing::Point>^ list = gcnew List<System::Drawing::Point>(4);
-				for (int i = 0; i < 4; i++)
-				{
-					list->Add(System::Drawing::Point(m_Impl->plate_points[i].x, m_Impl->plate_points[i].y));
-				}
-				return list;
+				return m_plate_points;
 			}
 		} 
 
 		property List<AlprPlateNet^>^ topNPlates {
 			List<AlprPlateNet^>^ get() {
-				List<AlprPlateNet^>^ list = gcnew List<AlprPlateNet^>(m_Impl->topNPlates.size());
-				for (std::vector<AlprPlate>::iterator itr = m_Impl->topNPlates.begin(); itr != m_Impl->topNPlates.end(); itr++)
-				{
-					list->Add(gcnew AlprPlateNet(*itr));
-				}
-				return list;
+				return m_topNPlates;
 			}
 		}
 
 		property float processing_time_ms {
 			float get() {
-				return m_Impl->processing_time_ms;
+				return m_processing_time_ms;
 			}
 		}
 
 	private:
-		AlprPlateResult * m_Impl;
+		int m_requested_topn;
+		int m_regionConfidence;
+		int m_plate_index;
+		System::String^ m_region;
+		float m_processing_time_ms;
+		List<AlprPlateNet^>^ m_topNPlates;
+		List<System::Drawing::Point>^ m_plate_points;
+		AlprPlateNet^ m_bestPlate;
 	};
 
 
 	public ref class AlprResultsNet sealed
 	{
 	public:
-		AlprResultsNet() : m_Impl( new AlprResults ) {}
+		AlprResultsNet(AlprResults results) {
+			m_epoch_time = results.epoch_time;
+			m_img_width = results.img_width;
+			m_img_height = results.img_height;
+			m_total_processing_time_ms = results.total_processing_time_ms;
 
-		AlprResultsNet(AlprResults* results) : m_Impl( results ) {}
+			int num_rois = results.regionsOfInterest.size();
+			m_regionsOfInterest = gcnew List<System::Drawing::Rectangle>(num_rois);
+			for (int i = 0; i < num_rois; i++)
+			{
+				m_regionsOfInterest->Add(System::Drawing::Rectangle(
+					results.regionsOfInterest[i].x, 
+					results.regionsOfInterest[i].y, 
+					results.regionsOfInterest[i].width, 
+					results.regionsOfInterest[i].height));
+			}
+
+			int num_plates = results.plates.size();
+			m_plates = gcnew List<AlprPlateResultNet^>(num_plates);
+			for (int i = 0; i < num_plates; i++)
+			{
+				m_plates->Add(gcnew AlprPlateResultNet(results.plates[i]));					
+			}
+
+			std::string json = Alpr::toJson(results);
+			m_json = AlprHelper::ToManagedString(json);
+		}
+
+		property long epoch_time {
+			long get() {
+				return m_epoch_time;
+			}
+		}
 
 		property int img_width {
 			int get() {
-				return m_Impl->img_width;
+				return m_img_width;
 			}
 		}
 
 		property int img_height {
 			int get() {
-				return m_Impl->img_height;
+				return m_img_height;
 			}
 		}
-		
+
 		property float total_processing_time_ms {
 			float get() {
-				return m_Impl->total_processing_time_ms;
+				return m_total_processing_time_ms;
 			}
 		}
 
 		property List<System::Drawing::Rectangle>^ regionsOfInterest {
 			List<System::Drawing::Rectangle>^ get() {
-				List<System::Drawing::Rectangle>^ list = gcnew List<System::Drawing::Rectangle>(m_Impl->regionsOfInterest.size());
-				for (unsigned int i = 0; i < m_Impl->regionsOfInterest.size(); i++)
-				{
-					list->Add(System::Drawing::Rectangle(m_Impl->regionsOfInterest[i].x, m_Impl->regionsOfInterest[i].y, m_Impl->regionsOfInterest[i].width, m_Impl->regionsOfInterest[i].height));
-				}
-				return list;
-			}
-		} 
-
-		property List<AlprPlateResultNet^>^ plates {
-			List<AlprPlateResultNet^>^ get() {
-				List<AlprPlateResultNet^>^ list = gcnew List<AlprPlateResultNet^>(m_Impl->plates.size());
-				for (std::vector<AlprPlateResult>::iterator itr = m_Impl->plates.begin(); itr != m_Impl->plates.end(); itr++)
-				{
-					list->Add(gcnew AlprPlateResultNet(&*itr));
-				}
-				return list;
+				return m_regionsOfInterest;
 			}
 		}
 
+		property List<AlprPlateResultNet^>^ plates {
+			List<AlprPlateResultNet^>^ get() {
+				return m_plates;
+			}
+		}
 
+		property System::String^ json {
+			System::String^ get() {
+				return m_json;
+			}
+		}
 
 	private:
-		AlprResults * m_Impl;
+		long m_epoch_time;
+		int m_img_width;
+		int m_img_height;
+		float m_total_processing_time_ms;
+		List<System::Drawing::Rectangle>^ m_regionsOfInterest;
+		List<AlprPlateResultNet^>^ m_plates;
+		System::String^ m_json;
 	};
 
 
@@ -278,17 +332,43 @@ namespace openalprnet {
 			}
 		}
 
+		/// <summary>
+		/// Recognize from an image on disk
+		/// </summary>
 		AlprResultsNet^ recognize(System::String^ filepath) {
+			/*
 			AlprResults results = m_Impl->recognize(marshal_as<std::string>(filepath));
-			return gcnew AlprResultsNet(&results);
-		}
+			return gcnew AlprResultsNet(results);
+			*/
+			cv::Mat frame = cv::imread( marshal_as<std::string>(filepath) );
 
+			std::vector<AlprRegionOfInterest> regionsOfInterest;
+			regionsOfInterest.push_back(AlprRegionOfInterest(0,0, frame.cols, frame.rows));
+
+			AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, regionsOfInterest );
+			return gcnew AlprResultsNet(results);
+		}	
+
+		/// <summary>
+		/// Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
+		/// </summary>
+		/// <param name="imageBuffer">Bytes representing image data</param>
 		AlprResultsNet^ recognize(cli::array<char>^ imageBuffer) {
 			std::vector<char> p = AlprHelper::ToVector(imageBuffer);
 			AlprResults results = m_Impl->recognize(p);
-			return gcnew AlprResultsNet(&results);
+			return gcnew AlprResultsNet(results);
 		}
 
+		/// <summary>
+		/// Recognize from raw pixel data
+		/// </summary>
+		AlprResultsNet^ recognize(cli::array<unsigned char>^ pixelData, int bytesPerPixel, int imgWidth, int imgHeight, List<System::Drawing::Rectangle>^ regionsOfInterest) {
+			unsigned char* p = AlprHelper::ToCharPtr(pixelData);
+			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
+			AlprResults results = m_Impl->recognize(p, bytesPerPixel, imgWidth, imgHeight, rois);
+			free(p); // ?? memory leak?
+			return gcnew AlprResultsNet(results);
+		}
 
 		bool isLoaded() {
 			return m_Impl->isLoaded();
@@ -298,10 +378,10 @@ namespace openalprnet {
 			return AlprHelper::ToManagedString(Alpr::getVersion());
 		}
 
-//		System::String^ toJson(AlprResultsNet^ results) {
-//			std::string json = Alpr::toJson(marshal_as<AlprResults>(results));
-//			return AlprHelper::ToManagedString(json);
-//		}
+		//		System::String^ toJson(AlprResultsNet^ results) {
+		//			std::string json = Alpr::toJson(marshal_as<AlprResults>(results));
+		//			return AlprHelper::ToManagedString(json);
+		//		}
 
 	protected:
 		// Deallocate the native object on the finalizer just in case no destructor is called
@@ -314,6 +394,5 @@ namespace openalprnet {
 		int m_topN;
 		bool m_detectRegion;
 		System::String^ m_defaultRegion;
-
 	};
 }
