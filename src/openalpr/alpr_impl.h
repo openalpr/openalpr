@@ -68,11 +68,11 @@ namespace alpr
       AlprImpl(const std::string country, const std::string configFile = "", const std::string runtimeDir = "");
       virtual ~AlprImpl();
 
-      AlprFullDetails recognizeFullDetails(cv::Mat img);
       AlprFullDetails recognizeFullDetails(cv::Mat img, std::vector<cv::Rect> regionsOfInterest);
 
-      AlprResults recognize( std::vector<char> imageBytes, std::vector<AlprRegionOfInterest> regionsOfInterest );
+      AlprResults recognize( std::vector<char> imageBytes );
       AlprResults recognize( unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest );
+      AlprResults recognize( cv::Mat img );
       AlprResults recognize( cv::Mat img, std::vector<cv::Rect> regionsOfInterest );
 
       void applyRegionTemplate(AlprPlateResult* result, std::string region);

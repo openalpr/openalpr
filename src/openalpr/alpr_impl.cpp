@@ -68,13 +68,6 @@ namespace alpr
     return config->loaded;
   }
 
-  AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img)
-  {
-    std::vector<cv::Rect> regionsOfInterest;
-    regionsOfInterest.push_back(cv::Rect(0, 0, img.cols, img.rows));
-
-    return this->recognizeFullDetails(img, regionsOfInterest);
-  }
 
   AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect> regionsOfInterest)
   {
@@ -274,11 +267,11 @@ namespace alpr
 
 
 
-  AlprResults AlprImpl::recognize( std::vector<char> imageBytes, std::vector<AlprRegionOfInterest> regionsOfInterest )
+  AlprResults AlprImpl::recognize( std::vector<char> imageBytes)
   {  
     cv::Mat img = cv::imdecode(cv::Mat(imageBytes), 1);
 
-    return this->recognize(img, this->convertRects(regionsOfInterest));
+    return this->recognize(img);
   }
 
   AlprResults AlprImpl::recognize( unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest)
@@ -298,9 +291,16 @@ namespace alpr
     return this->recognize(img, this->convertRects(regionsOfInterest));
   }
 
+  AlprResults AlprImpl::recognize(cv::Mat img)
+  {
+    std::vector<cv::Rect> regionsOfInterest;
+    regionsOfInterest.push_back(cv::Rect(0, 0, img.cols, img.rows));
+
+    return this->recognize(img, regionsOfInterest);
+  }
+    
   AlprResults AlprImpl::recognize(cv::Mat img, std::vector<cv::Rect> regionsOfInterest)
   {
-
     AlprFullDetails fullDetails = recognizeFullDetails(img, regionsOfInterest);
     return fullDetails.results;
   }
