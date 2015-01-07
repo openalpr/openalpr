@@ -7,7 +7,7 @@ namespace alpr
   {
     if(fullString.substr(0, prefix.size()).compare(prefix) == 0) {
         return true;
-    }  
+    }
 
     return false;
   }
@@ -111,11 +111,11 @@ namespace alpr
 
   std::string filenameWithoutExtension(std::string filename)
   {
-    int lastindex = filename.find_last_of("."); 
-    return filename.substr(0, lastindex); 
+    int lastindex = filename.find_last_of(".");
+    return filename.substr(0, lastindex);
   }
-  
-  
+
+
   #ifdef WINDOWS
   // Stub out these functions on Windows.  They're used for the daemon anyway, which isn't supported on Windows.
 
@@ -147,11 +147,15 @@ namespace alpr
       if (rc != 0)
         return 0;
 
+#if defined(__APPLE__)
+      double milliseconds = (stat_buf.st_ctimespec.tv_sec * 1000) +  (((double) stat_buf.st_ctimespec.tv_nsec) / 1000000.0);
+#else
       double milliseconds = (stat_buf.st_ctim.tv_sec * 1000) +  (((double) stat_buf.st_ctim.tv_nsec) / 1000000.0);
+#endif
 
       return (long) milliseconds;
   }
-  
+
   static int makeDir(const char *path, mode_t mode)
   {
     struct stat            st;
@@ -171,7 +175,7 @@ namespace alpr
 
     return(status);
   }
-  
+
   /**
   ** makePath - ensure all directories in path exist
   ** Algorithm takes the pessimistic view and works top-down to ensure
