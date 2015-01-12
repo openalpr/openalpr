@@ -29,13 +29,14 @@ namespace alpr
   AlprImpl::AlprImpl(const std::string country, const std::string configFile, const std::string runtimeDir)
   {
     config = new Config(country, configFile, runtimeDir);
-
+    
+    plateDetector = ALPR_NULL_PTR;
+    stateIdentifier = ALPR_NULL_PTR;
+    ocr = ALPR_NULL_PTR;
+    
     // Config file or runtime dir not found.  Don't process any further.
     if (config->loaded == false)
     {
-      plateDetector = ALPR_NULL_PTR;
-      stateIdentifier = ALPR_NULL_PTR;
-      ocr = ALPR_NULL_PTR;
       return;
     }
 
