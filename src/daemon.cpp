@@ -387,6 +387,8 @@ bool writeToQueue(std::string jsonResult)
 
 void dataUploadThread(void* arg)
 {
+  CURL *curl;
+
   
   /* In windows, this will init the winsock stuff */ 
   curl_global_init(CURL_GLOBAL_ALL);
@@ -401,6 +403,8 @@ void dataUploadThread(void* arg)
   {
     try
     {
+      /* get a curl handle */ 
+      curl = curl_easy_init();
       Beanstalk::Client client(BEANSTALK_QUEUE_HOST, BEANSTALK_PORT);
       
       client.watch(BEANSTALK_TUBE_NAME);
@@ -414,7 +418,7 @@ void dataUploadThread(void* arg)
 	if (job.id() > 0)
 	{
 	  //LOG4CPLUS_DEBUG(logger, job.body() );
-	  if (uploadPost(udata->upload_url, job.body()))
+	  if (uploadPost(curl, udata->upload_url, job.body()))
 	  {
 	    client.del(job.id());
 	    LOG4CPLUS_INFO(logger, "Job: " << job.id() << " successfully uploaded" );
@@ -432,6 +436,8 @@ void dataUploadThread(void* arg)
 	
       }
       
+      /* always cleanup */ 
+      curl_easy_cleanup(curl);
     }
     catch (const std::runtime_error& error)
     {
@@ -445,10 +451,9 @@ void dataUploadThread(void* arg)
 }
 
 
-bool uploadPost(std::string url, std::string data)
+bool uploadPost(CURL* curl, std::string url, std::string data)
 {
   bool success = true;
-  CURL *curl;
   CURLcode res;
   struct curl_slist *headers=NULL; // init to NULL is important
 
@@ -457,8 +462,6 @@ bool uploadPost(std::string url, std::string data)
   headers = curl_slist_append( headers, "Content-Type: application/json");
   headers = curl_slist_append( headers, "charsets: utf-8");
  
-  /* get a curl handle */ 
-  curl = curl_easy_init();
   if(curl) {
 	/* Add the headers */
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -480,8 +483,6 @@ bool uploadPost(std::string url, std::string data)
       success = false;
     }
  
-    /* always cleanup */ 
-    curl_easy_cleanup(curl);
   }
   
   return success;
