@@ -5,7 +5,8 @@ set -e
 . /usr/share/debconf/confmodule
 
 
-chown openalpr:root /var/lib/openalpr/plateimages
+chown openalpr:openalpr /var/lib/openalpr/plateimages
 
+#DEBHELPER#
 
 db_stop

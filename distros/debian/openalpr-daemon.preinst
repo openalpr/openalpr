@@ -1,4 +1,10 @@
 #!/bin/bash
 set -e
 
-adduser --system --no-create-home openalpr
+# Create openalpr:openalpr if it doesn't already exist
+USER=openalpr
+GROUP=openalpr
+getent group $GROUP >/dev/null || addgroup $GROUP >/dev/null
+getent passwd $USER >/dev/null || adduser --system --no-create-home $USER >/dev/null
+
+#DEBHELPER#
