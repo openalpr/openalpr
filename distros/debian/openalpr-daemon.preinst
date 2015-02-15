@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+
+adduser --system --no-create-home openalpr

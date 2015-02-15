@@ -21,6 +21,7 @@ DAEMON=/usr/bin/alprd
 PIDFILE=/var/run/alprd.pid
 SCRIPTNAME=/etc/init.d/$NAME
 DEFAULT=/etc/default/$NAME
+USER=openalpr
 
 # Exit if the package is not installed
 [ -x "$DAEMON" ] || exit 0
