@@ -1,6 +1,8 @@
 *~
 build/
 scratch/
+out/
+debian_repo
 _CPack_Packages/
 /libraries/
 CMakeFiles/
