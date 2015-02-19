@@ -26,7 +26,7 @@ using namespace alpr;
 // prototypes
 void streamRecognitionThread(void* arg);
 bool writeToQueue(std::string jsonResult);
-bool uploadPost(std::string url, std::string data);
+bool uploadPost(CURL* curl, std::string url, std::string data);
 void dataUploadThread(void* arg);
 
 // Constants
