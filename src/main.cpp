@@ -44,7 +44,7 @@ const std::string LAST_VIDEO_STILL_LOCATION = "/tmp/laststill.jpg";
 bool detectandshow(Alpr* alpr, cv::Mat frame, std::string region, bool writeJson);
 
 bool measureProcessingTime = false;
-std::string templateRegion;
+std::string templatePattern;
 
 // This boolean is set to false when the user hits terminates (e.g., CTRL+C )
 // so we can end infinite loops for things like video processing.
@@ -68,7 +68,7 @@ int main( int argc, const char** argv )
   TCLAP::ValueArg<std::string> countryCodeArg("c","country","Country code to identify (either us for USA or eu for Europe).  Default=us",false, "us" ,"country_code");
   TCLAP::ValueArg<int> seekToMsArg("","seek","Seek to the specied millisecond in a video file. Default=0",false, 0 ,"integer_ms");
   TCLAP::ValueArg<std::string> configFileArg("","config","Path to the openalpr.conf file",false, "" ,"config_file");
-  TCLAP::ValueArg<std::string> templateRegionArg("t","template_region","Attempt to match the plate number against a region template (e.g., md for Maryland, ca for California)",false, "" ,"region code");
+  TCLAP::ValueArg<std::string> templatePatternArg("p","pattern","Attempt to match the plate number against a plate pattern (e.g., md for Maryland, ca for California)",false, "" ,"pattern code");
   TCLAP::ValueArg<int> topNArg("n","topn","Max number of possible plate numbers to return.  Default=10",false, 10 ,"topN");
 
   TCLAP::SwitchArg jsonSwitch("j","json","Output recognition results in JSON format.  Default=off", cmd, false);
@@ -77,7 +77,7 @@ int main( int argc, const char** argv )
 
   try
   {
-    cmd.add( templateRegionArg );
+    cmd.add( templatePatternArg );
     cmd.add( seekToMsArg );
     cmd.add( topNArg );
     cmd.add( configFileArg );
@@ -98,7 +98,7 @@ int main( int argc, const char** argv )
     outputJson = jsonSwitch.getValue();
     configFile = configFileArg.getValue();
     detectRegion = detectRegionSwitch.getValue();
-    templateRegion = templateRegionArg.getValue();
+    templatePattern = templatePatternArg.getValue();
     topn = topNArg.getValue();
     measureProcessingTime = clockSwitch.getValue();
   }
@@ -117,8 +117,8 @@ int main( int argc, const char** argv )
   if (detectRegion)
     alpr.setDetectRegion(detectRegion);
 
-  if (templateRegion.empty() == false)
-    alpr.setDefaultRegion(templateRegion);
+  if (templatePattern.empty() == false)
+    alpr.setDefaultRegion(templatePattern);
 
   if (alpr.isLoaded() == false)
   {
@@ -308,8 +308,8 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
       for (int k = 0; k < results.plates[i].topNPlates.size(); k++)
       {
         std::cout << "    - " << results.plates[i].topNPlates[k].characters << "\t confidence: " << results.plates[i].topNPlates[k].overall_confidence;
-        if (templateRegion.size() > 0)
-          std::cout << "\t template_match: " << results.plates[i].topNPlates[k].matches_template;
+        if (templatePattern.size() > 0)
+          std::cout << "\t pattern_match: " << results.plates[i].topNPlates[k].matches_template;
         
         std::cout << std::endl;
       }

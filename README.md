@@ -41,7 +41,7 @@ user@linux:~/openalpr$ alpr --help
 USAGE: 
 
    alpr  [-c <country_code>] [--config <config_file>] [-n <topN>] [--seek
-         <integer_ms>] [-t <region code>] [--clock] [-d] [-j] [--]
+         <integer_ms>] [-p <pattern code>] [--clock] [-d] [-j] [--]
          [--version] [-h] <image_file_path>
 
 
@@ -60,8 +60,8 @@ Where:
    --seek <integer_ms>
      Seek to the specied millisecond in a video file. Default=0
 
-   -t <region code>,  --template_region <region code>
-     Attempt to match the plate number against a region template (e.g., md
+   -p <pattern code>,  --pattern <pattern code>
+     Attempt to match the plate number against a plate pattern (e.g., md
      for Maryland, ca for California)
 
    --clock
