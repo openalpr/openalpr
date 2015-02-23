@@ -44,7 +44,7 @@ namespace alpr
 		vector<PlateRegion> detectedRegions;
 		for (int i = 0; i < regionsOfInterest.size(); i++)
 		{
-			Mat img_sobel, edges, img_open, img_result;
+			Mat img_open, img_result;
 			Mat element = getStructuringElement(MORPH_RECT, Size(30, 4));
 			morphologyEx(frame_gray, img_open, CV_MOP_OPEN, element, cv::Point(-1, -1));
 
