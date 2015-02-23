@@ -64,12 +64,10 @@ namespace alpr
 				imshow("Threshold Detector", img_threshold);
 			}
 
-
 			Mat circularElement = getStructuringElement(cv::MORPH_ELLIPSE, Size(5, 5));
 			morphologyEx(img_threshold, img_open2, CV_MOP_OPEN, circularElement, cv::Point(-1, -1));
 			Mat rectElement = getStructuringElement(cv::MORPH_RECT, Size(20, 4));
 			morphologyEx(img_open2, img_threshold, CV_MOP_CLOSE, rectElement, cv::Point(-1, -1));
-
 
 			if (config->debugShowImages)
 			{
@@ -77,7 +75,6 @@ namespace alpr
 				waitKey(0);
 			}
 			
-
 			//Find contours of possibles plates
 			vector< vector< Point> > contours;
 			findContours(img_threshold,
