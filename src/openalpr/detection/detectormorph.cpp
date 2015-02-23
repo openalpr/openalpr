@@ -122,7 +122,7 @@ namespace alpr
 				int numBlobs = plateBlobs.size();
 
 				//If too much or too little might not be a true plate
-				if (numBlobs < 4 || numBlobs > 20) continue;
+				if (numBlobs < 3 || numBlobs > 20) continue;
 
 				PlateRegion PlateReg;
 
@@ -148,7 +148,7 @@ namespace alpr
 		int max = 100 * aspect * 100; // maximum area
 		//Get only patchs that match to a respect ratio.
 		float rmin = 3.0;
-		float rmax = 6.0;
+		float rmax = 7.0;
 
 		int area = mr.size.height * mr.size.width;
 		float r = (float)mr.size.width / (float)mr.size.height;
