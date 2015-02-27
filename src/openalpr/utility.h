@@ -103,6 +103,7 @@ namespace alpr
 
   int levenshteinDistance (const std::string &s1, const std::string &s2, int max);
   std::string toString(int value);
+  std::string toString(long value);
   std::string toString(unsigned int value);
   std::string toString(float value);
   std::string toString(double value);

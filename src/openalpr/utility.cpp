@@ -548,6 +548,12 @@ int levenshteinDistance (const std::string &s1, const std::string &s2, int max)
     ss << value;
     return ss.str();
   }
+  std::string toString(long value)
+  {
+    stringstream ss;
+    ss << value;
+    return ss.str();
+  }
   std::string toString(unsigned int value)
   {
     return toString((int) value);
