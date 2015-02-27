@@ -170,13 +170,13 @@ namespace alpr
           if (pp >= topN)
             break;
 
-          // Set our "best plate" match to either the first entry, or the first entry with a postprocessor template match
-          if (bestPlateIndex == 0 && ppResults[pp].matchesTemplate)
-            bestPlateIndex = pp;
-
           if (ppResults[pp].letters.size() >= config->postProcessMinCharacters &&
             ppResults[pp].letters.size() <= config->postProcessMaxCharacters)
           {
+            // Set our "best plate" match to either the first entry, or the first entry with a postprocessor template match
+            if (bestPlateIndex == 0 && ppResults[pp].matchesTemplate)
+              bestPlateIndex = plateResult.topNPlates.size();
+            
             AlprPlate aplate;
             aplate.characters = ppResults[pp].letters;
             aplate.overall_confidence = ppResults[pp].totalscore;
@@ -185,8 +185,15 @@ namespace alpr
           }
         }
 
-        if (plateResult.topNPlates.size() > 0)
-          plateResult.bestPlate = plateResult.topNPlates[bestPlateIndex];
+        if (plateResult.topNPlates.size() > bestPlateIndex)
+        {
+          AlprPlate bestPlate;
+          bestPlate.characters = plateResult.topNPlates[bestPlateIndex].characters;
+          bestPlate.matches_template = plateResult.topNPlates[bestPlateIndex].matches_template;
+          bestPlate.overall_confidence = plateResult.topNPlates[bestPlateIndex].overall_confidence;
+          
+          plateResult.bestPlate = bestPlate;
+        }
 
         timespec plateEndTime;
         getTime(&plateEndTime);
