@@ -511,10 +511,6 @@ namespace alpr
   void AlprImpl::setDefaultRegion(string region)
   {
     this->defaultRegion = region;
-    if (!region.empty() && this->stateIdentifier == NULL)
-    {
-        this->stateIdentifier = new StateIdentifier(this->config);
-    }
   }
 
   std::string AlprImpl::getVersion()
