@@ -71,7 +71,7 @@ namespace openalprnet_cli
             var alpr = new AlprNet(region, config);
             if (!alpr.isLoaded())
             {
-                Console.WriteLine("OpenAlpr failed to loaded!");
+                Console.WriteLine("OpenAlpr failed to load!");
                 return;
             }
 
