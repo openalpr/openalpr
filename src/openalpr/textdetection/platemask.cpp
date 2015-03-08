@@ -96,24 +96,6 @@ namespace alpr
 
     if (winningIndex != -1 && bestCharCount >= 3)
     {
-      int longestChildIndex = -1;
-      double longestChildLength = 0;
-      // Find the child with the longest permiter/arc length ( just for kicks)
-      for (unsigned int i = 0; i < contours[winningIndex].size(); i++)
-      {
-        for (unsigned int j = 0; j < contours[winningIndex].size(); j++)
-        {
-          if (contours[winningIndex].hierarchy[j][3] == winningParentId)
-          {
-            double arclength = arcLength(contours[winningIndex].contours[j], false);
-            if (arclength > longestChildLength)
-            {
-              longestChildIndex = j;
-              longestChildLength = arclength;
-            }
-          }
-        }
-      }
 
       Mat mask = Mat::zeros(pipeline_data->thresholds[winningIndex].size(), CV_8U);
 
