@@ -39,6 +39,8 @@ namespace alpr
     return this->plateMask;
   }
 
+  // Tries to find a rectangular area surrounding most of the characters.  Not required
+  // but helpful when determining the plate edges
   void PlateMask::findOuterBoxMask( vector<TextContours > contours )
   {
     double min_parent_area = pipeline_data->config->templateHeightPx * pipeline_data->config->templateWidthPx * 0.10;	// Needs to be at least 10% of the plate area to be considered.
