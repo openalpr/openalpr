@@ -56,8 +56,6 @@ namespace alpr
       PipelineData* pipeline_data;
       Config* config;
 
-      cv::Mat findOuterBoxMask( );
-
       bool isPlateInverted();
       void filter(cv::Mat img, TextContours& textContours);
 
