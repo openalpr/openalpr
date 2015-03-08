@@ -133,6 +133,11 @@ namespace openalprnet_windemo
             var region = rbUSA.Checked ? "us" : "eu";
             using (var alpr = new AlprNet(region, Path.Combine(AssemblyDirectory, "openalpr.conf")))
             {
+                if (!alpr.isLoaded())
+                {
+                    lbxPlates.Items.Add("Error initializing OpenALPR");
+                    return;
+                }
                 picOriginal.ImageLocation = fileName;
                 picOriginal.Load();
 
