@@ -47,6 +47,8 @@ namespace alpr
 
       std::string country;
 
+      int gpu_mode;
+
       float detection_iteration_increase;
       int detectionStrictness;
       float maxPlateWidthPercent;
@@ -133,6 +135,14 @@ namespace alpr
       float getFloat(std::string section, std::string key, float defaultValue);
       std::string getString(std::string section, std::string key, std::string defaultValue);
       bool getBoolean(std::string section, std::string key, bool defaultValue);
+  };
+
+
+  enum GPU_MODE
+  {
+    GPU_OFF=0,
+    GPU_CUDA=1,
+    GPU_OPENCL=2
   };
 
 }

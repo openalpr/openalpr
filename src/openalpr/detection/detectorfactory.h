@@ -21,6 +21,7 @@
 #define	OPENALPR_DETECTORFACTORY_H
 
 #include "detectorcpu.h"
+#include "detectorcuda.h"
 #include "config.h"
 
 namespace alpr
