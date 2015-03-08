@@ -37,16 +37,30 @@ namespace alpr
 
   AlprResults Alpr::recognize(std::string filepath)
   {
-
+    
     std::ifstream ifs(filepath.c_str(), std::ios::binary|std::ios::ate);
-    std::ifstream::pos_type pos = ifs.tellg();
+    
+    if (ifs)
+      {
+      std::ifstream::pos_type pos = ifs.tellg();
 
-    std::vector<char>  buffer(pos);
+      std::vector<char>  buffer(pos);
 
-    ifs.seekg(0, std::ios::beg);
-    ifs.read(&buffer[0], pos);
+      ifs.seekg(0, std::ios::beg);
+      ifs.read(&buffer[0], pos);
 
-    return this->recognize( buffer );
+      return this->recognize( buffer );
+    }
+    else
+    {
+      std::cerr << "file does not exist: " << filepath << std::endl;
+      AlprResults emptyResults;
+      emptyResults.epoch_time = getEpochTime();
+      emptyResults.img_width = 0;
+      emptyResults.img_height = 0;
+      emptyResults.total_processing_time_ms = 0;
+      return emptyResults;
+    }
   }
 
   AlprResults Alpr::recognize(std::vector<char> imageBytes)
