@@ -295,7 +295,7 @@ namespace openalprnet {
 	{
 	public:
 		// Allocate the native object on the C++ Heap via a constructor
-		AlprNet(System::String^ country, System::String^ configFile) : m_Impl( new Alpr(marshal_as<std::string>(country), marshal_as<std::string>(configFile)) ) { }
+		AlprNet(System::String^ country, System::String^ configFile, System::String^ runtimeDir) : m_Impl( new Alpr(marshal_as<std::string>(country), marshal_as<std::string>(configFile), marshal_as<std::string>(runtimeDir)) ) { }
 
 		// Deallocate the native object on a destructor
 		~AlprNet(){
