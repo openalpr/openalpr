@@ -68,7 +68,8 @@ namespace openalprnet_cli
 
             Console.WriteLine("OpenAlpr Version: {0}", AlprNet.getVersion());
             var config = Path.Combine(AssemblyDirectory, "openalpr.conf");
-            var alpr = new AlprNet(region, config);
+            var runtime_data = Path.Combine(AssemblyDirectory, "runtime_data");
+            var alpr = new AlprNet(region, config, runtime_data);
             if (!alpr.isLoaded())
             {
                 Console.WriteLine("OpenAlpr failed to load!");
