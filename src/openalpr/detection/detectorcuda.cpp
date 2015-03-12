@@ -20,6 +20,7 @@
 
 #include "detectorcuda.h"
 
+#if COMPILE_GPU
 
 using namespace cv;
 using namespace std;
@@ -138,3 +139,5 @@ namespace alpr
   }
 
 }
+
+#endif

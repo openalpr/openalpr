@@ -31,6 +31,10 @@
   #define DEFAULT_CONFIG_FILE 	"/etc/openalpr/openalpr.conf"
 #endif
 
+#ifndef COMPILE_GPU
+  #define COMPILE_GPU 0 
+#endif
+
 #define ENV_VARIABLE_CONFIG_FILE "OPENALPR_CONFIG_FILE"
 
 #endif // OPENALPR_CONSTANTS_H
