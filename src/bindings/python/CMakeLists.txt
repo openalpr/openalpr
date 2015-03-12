@@ -12,6 +12,7 @@ set(python_source_files
     
 add_library(openalprpy SHARED ${python_source_files})
 
+set_target_properties(openalprpy PROPERTIES SOVERSION ${OPENALPR_MAJOR_VERSION})
 
 TARGET_LINK_LIBRARIES(openalprpy openalpr)
 

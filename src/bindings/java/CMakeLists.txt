@@ -18,6 +18,7 @@ if (${JNI_FOUND} MATCHES "TRUE")
 
   add_library(openalprjni SHARED ${jni_source_files})
 
+  set_target_properties(openalprjni PROPERTIES SOVERSION ${OPENALPR_MAJOR_VERSION})
 
   TARGET_LINK_LIBRARIES(openalprjni openalpr)
 
