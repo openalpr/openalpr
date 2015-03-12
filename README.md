@@ -130,6 +130,17 @@ Please follow these detailed compilation guides for your respective operating sy
 
 If all went well, there should be an executable named *alpr* along with *libopenalpr-static.a* and *libopenalpr.so* that can be linked into your project.
 
+Docker
+------
+
+``` shell
+# Build docker image
+docker build -t openalpr https://github.com/openalpr/openalpr.git
+# Download test image
+wget http://plates.openalpr.com/h786poj.jpg
+# Run alpr on image
+docker run -it --rm -v $(pwd):/data:ro openalpr -c eu h786poj.jpg
+```
 
 Questions
 ---------

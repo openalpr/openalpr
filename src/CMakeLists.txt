@@ -115,16 +115,6 @@ install (FILES      ${CMAKE_CURRENT_BINARY_DIR}/config/openalpr.conf DESTINATION
 IF (WITH_DAEMON)
   install (TARGETS    alprd DESTINATION  ${CMAKE_INSTALL_PREFIX}/bin)
   install (FILES      ${CMAKE_SOURCE_DIR}/../config/alprd.conf DESTINATION    ${CMAKE_INSTALL_SYSCONFDIR}/openalpr      COMPONENT config)
-
-  install (FILES      ${CMAKE_SOURCE_DIR}/../upstart/alprd.conf DESTINATION    ${CMAKE_INSTALL_SYSCONFDIR}/init      COMPONENT config)
-
-  # Ideally, these two files should be owned by the "daemon" user, but cmake does not seem to allow that
-  # Making them world writable as a hack
-  install (FILES      ${CMAKE_SOURCE_DIR}/../upstart/alprd.log   DESTINATION    ${CMAKE_INSTALL_VARDIR}/log  
-           PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_READ GROUP_WRITE WORLD_READ WORLD_WRITE    )
-  install (FILES      ${CMAKE_SOURCE_DIR}/../upstart/alprd.pid  DESTINATION    ${CMAKE_INSTALL_VARDIR}/run  
-           PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_READ GROUP_WRITE WORLD_READ WORLD_WRITE    )
-
 ENDIF()
 
 
