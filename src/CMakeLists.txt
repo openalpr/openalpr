@@ -103,6 +103,8 @@ add_subdirectory(tests)
 add_subdirectory(openalpr)
 add_subdirectory(video)
 
+add_subdirectory(bindings/python)
+add_subdirectory(bindings/java)
 
 install (TARGETS    alpr DESTINATION   ${CMAKE_INSTALL_PREFIX}/bin)
 install (FILES      ${CMAKE_SOURCE_DIR}/../doc/man/alpr.1 DESTINATION       ${CMAKE_INSTALL_PREFIX}/share/man/man1 COMPONENT doc)
