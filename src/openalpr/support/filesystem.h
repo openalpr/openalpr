@@ -3,6 +3,7 @@
 #define FILESYSTEM_H
 
 #ifdef WINDOWS
+#include <windows.h>
 #include "windows/dirent.h"
 #include "windows/utils.h"
 #include "windows/unistd_partial.h"
