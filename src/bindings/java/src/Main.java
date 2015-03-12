@@ -11,13 +11,26 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        Alpr alpr = new Alpr("us", "/etc/openalpr/openalpr.conf", "/usr/share/openalpr/runtime_data/");
+        String country = "", configfile = "", runtimeDataDir = "", licensePlate = "";
+        if (args.length == 4) {
+                country = args[0];
+                configfile = args[1];
+                runtimeDataDir = args[2];
+                licensePlate = args[3];
+        }
+        else
+        {
+            System.err.println("Program requires 4 arguments: Country, Config File, runtime_data dir, and license plate image");
+            System.exit(1);
+        }
+
+        Alpr alpr = new Alpr(country, configfile, runtimeDataDir);
 
         alpr.setTopN(10);
         alpr.setDefaultRegion("wa");
 
         // Read an image into a byte array and send it to OpenALPR
-        Path path = Paths.get("/storage/projects/alpr/samples/testing/car1.jpg");
+        Path path = Paths.get(licensePlate);
         byte[] imagedata = Files.readAllBytes(path);
 
         AlprResults results = alpr.recognize(imagedata);
