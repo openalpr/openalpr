@@ -6,12 +6,20 @@
 
 extern "C" {
   
+#if defined(_MSC_VER)
+    //  Microsoft 
+    #define OPENALPR_EXPORT __declspec(dllexport)
+#else
+    //  do nothing
+    #define OPENALPR_EXPORT
+#endif
+
   using namespace alpr;
 
   bool initialized = false;
   static Alpr* nativeAlpr;
 
-  void initialize(char* ccountry, char* cconfigFile, char* cruntimeDir)
+  OPENALPR_EXPORT void initialize(char* ccountry, char* cconfigFile, char* cruntimeDir)
   {
     //printf("Initialize");
 
@@ -30,7 +38,7 @@ extern "C" {
 
 
 
-  void dispose()
+  OPENALPR_EXPORT void dispose()
     {
       //printf("Dispose");
       initialized = false;
@@ -38,7 +46,7 @@ extern "C" {
     }
 
 
-  bool isLoaded()
+  OPENALPR_EXPORT bool isLoaded()
     {
       //printf("IS LOADED");
 
@@ -49,7 +57,7 @@ extern "C" {
 
     }
 
-  char* recognizeFile(char* cimageFile)
+  OPENALPR_EXPORT char* recognizeFile(char* cimageFile)
     {
       //printf("Recognize file");
 
@@ -68,14 +76,14 @@ extern "C" {
       return membuffer;
     }
   
-  void freeJsonMem(char* ptr)
+  OPENALPR_EXPORT void freeJsonMem(char* ptr)
   {
     //printf("freeing address: %p\n", ptr);
     free( ptr );
   }
 
 
-  char* recognizeArray(unsigned char* buf, int len)
+  OPENALPR_EXPORT char* recognizeArray(unsigned char* buf, int len)
     {
       //printf("Recognize byte array");
       //printf("buffer pointer: %p\n", buf);
@@ -95,7 +103,7 @@ extern "C" {
       return membuffer;
     }
 
-  void setDefaultRegion(char* cdefault_region)
+  OPENALPR_EXPORT void setDefaultRegion(char* cdefault_region)
     {
       // Convert strings from java to C++ and release resources
       std::string default_region(cdefault_region);
@@ -103,17 +111,17 @@ extern "C" {
       nativeAlpr->setDefaultRegion(default_region);
     }
 
-  void setDetectRegion(bool detect_region)
+  OPENALPR_EXPORT void setDetectRegion(bool detect_region)
     {
       nativeAlpr->setDetectRegion(detect_region);
     }
 
-  void setTopN(int top_n)
+  OPENALPR_EXPORT void setTopN(int top_n)
     {
       nativeAlpr->setTopN(top_n);
     }
 
-  char* getVersion()
+  OPENALPR_EXPORT char* getVersion()
     {
       std::string version = nativeAlpr->getVersion();
 
