@@ -21,3 +21,5 @@ add_library(openalprjni SHARED ${jni_source_files})
 
 TARGET_LINK_LIBRARIES(openalprjni openalpr)
 
+
+install (TARGETS openalprjni   DESTINATION    ${CMAKE_INSTALL_PREFIX}/lib)

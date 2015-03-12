@@ -15,3 +15,5 @@ add_library(openalprpy SHARED ${python_source_files})
 
 TARGET_LINK_LIBRARIES(openalprpy openalpr)
 
+
+install (TARGETS openalprpy   DESTINATION    ${CMAKE_INSTALL_PREFIX}/lib)
