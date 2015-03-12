@@ -8,6 +8,7 @@ if (${JNI_FOUND} MATCHES "TRUE")
   include_directories(
     ../../openalpr/
     ${JAVA_INCLUDE_PATH}
+    ${JAVA_INCLUDE_PATH2}
   )
 
 
