@@ -32,7 +32,6 @@ openalpr-*.tar.gz
 *.vcxproj
 *.vcxproj.*
 *.suo
-*.sln
 *.sdf
 *.opensdf
 *.dir/
