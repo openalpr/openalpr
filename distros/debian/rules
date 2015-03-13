@@ -35,7 +35,6 @@ override_dh_auto_configure:
 	dh_auto_configure -- \
 	  -DCMAKE_INSTALL_PREFIX=/usr \
 	  -DCMAKE_INSTALL_SYSCONFDIR=/etc \
-	  -DCOMPILE_GPU=1 \
 	  -DCMAKE_VERBOSE_MAKEFILE=OFF \
 	  -DCMAKE_COLOR_MAKEFILE=ON
 
