@@ -124,7 +124,7 @@ namespace alpr
       cout << "LBP Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
 
-    for( uint i = 0; i < plates.size(); i++ )
+    for( unsigned int i = 0; i < plates.size(); i++ )
     {
       plates[i].x = (plates[i].x / scale_factor) + offset_x;
       plates[i].y = (plates[i].y / scale_factor) + offset_y;
