@@ -20,7 +20,6 @@
 #ifndef OPENALPR_DETECTORCUDA_H
 #define	OPENALPR_DETECTORCUDA_H
 
-#if COMPILE_GPU
 
 #include <stdio.h>
 #include <iostream>
@@ -33,6 +32,10 @@
 #include "opencv2/gpu/gpu.hpp"
 
 #include "detector.h"
+#include "detectorcpu.h"
+
+
+#ifdef COMPILE_GPU
 
 namespace alpr
 {

@@ -17,13 +17,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include "detectorcuda.h"
 
-#if COMPILE_GPU
 
 using namespace cv;
 using namespace std;
+
+#ifdef COMPILE_GPU
 
 namespace alpr
 {
