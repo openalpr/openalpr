@@ -25,6 +25,8 @@
 #include <iostream>
 #include <vector>
 
+#ifdef COMPILE_GPU
+
 #include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/core/core.hpp"
@@ -35,7 +37,6 @@
 #include "detectorcpu.h"
 
 
-#ifdef COMPILE_GPU
 
 namespace alpr
 {
