@@ -20,10 +20,11 @@
 #include "detectorcuda.h"
 
 
+#ifdef COMPILE_GPU
+
 using namespace cv;
 using namespace std;
 
-#ifdef COMPILE_GPU
 
 namespace alpr
 {
