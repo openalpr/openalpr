@@ -119,14 +119,14 @@ namespace alpr
   #ifdef WINDOWS
   // Stub out these functions on Windows.  They're used for the daemon anyway, which isn't supported on Windows.
 
-  long getFileSize(std::string filename) { return 0; }
+  int64_t getFileSize(std::string filename) { return 0; }
   static int makeDir(char *path, mode_t mode) { return 0; }
   bool makePath(char* path, mode_t mode) { return true; }
-  long getFileCreationTime(std::string filename) { return 0; }
+  int64_t getFileCreationTime(std::string filename) { return 0; }
 
   #else
 
-  long getFileSize(std::string filename)
+  int64_t getFileSize(std::string filename)
   {
       struct stat stat_buf;
       int rc = stat(filename.c_str(), &stat_buf);
@@ -139,7 +139,7 @@ namespace alpr
       return -1;
   }
 
-  long getFileCreationTime(std::string filename)
+  int64_t getFileCreationTime(std::string filename)
   {
       struct stat stat_buf;
       int rc = stat(filename.c_str(), &stat_buf);
@@ -153,7 +153,7 @@ namespace alpr
       double milliseconds = (stat_buf.st_ctim.tv_sec * 1000) +  (((double) stat_buf.st_ctim.tv_nsec) / 1000000.0);
 #endif
 
-      return (long) milliseconds;
+      return (int64_t) milliseconds;
   }
 
   static int makeDir(const char *path, mode_t mode)

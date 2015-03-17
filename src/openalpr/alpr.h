@@ -23,6 +23,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream> 
+#include <inttypes.h>
 
 namespace alpr
 {
@@ -94,7 +95,7 @@ namespace alpr
       AlprResults() {};
       virtual ~AlprResults() {};
 
-      long epoch_time;
+      int64_t epoch_time;
       int img_width;
       int img_height;
       float total_processing_time_ms;

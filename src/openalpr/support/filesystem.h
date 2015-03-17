@@ -31,8 +31,8 @@ namespace alpr
 
   std::string filenameWithoutExtension(std::string filename);
 
-  long getFileSize(std::string filename);
-  long getFileCreationTime(std::string filename);
+  int64_t getFileSize(std::string filename);
+  int64_t getFileCreationTime(std::string filename);
 
   bool DirectoryExists( const char* pzPath );
   bool fileExists( const char* pzPath );

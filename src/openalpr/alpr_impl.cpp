@@ -426,7 +426,7 @@ namespace alpr
     cJSON* root = cJSON_Parse(json.c_str());
 
     int version = cJSON_GetObjectItem(root, "version")->valueint;
-    allResults.epoch_time = (long) cJSON_GetObjectItem(root, "epoch_time")->valuedouble;
+    allResults.epoch_time = (int64_t) cJSON_GetObjectItem(root, "epoch_time")->valuedouble;
     allResults.img_width = cJSON_GetObjectItem(root, "img_width")->valueint;
     allResults.img_height = cJSON_GetObjectItem(root, "img_height")->valueint;
     allResults.total_processing_time_ms = cJSON_GetObjectItem(root, "processing_time_ms")->valueint;
