@@ -20,7 +20,7 @@ using namespace alpr;
 TEST_CASE( "JSON Serialization/Deserialization", "[json]" ) {
   
   AlprResults origResults;
-  origResults.epoch_time = getEpochTime();
+  origResults.epoch_time = getEpochTimeMs();
   origResults.img_width = 640;
   origResults.img_height = 480;
   origResults.total_processing_time_ms = 100;

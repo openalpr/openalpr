@@ -121,7 +121,7 @@ namespace alpr
     //Mat img_equalized = equalizeBrightness(img_gray);
 
     timespec startTime;
-    getTime(&startTime);
+    getTimeMonotonic(&startTime);
 
     vector<Mat> thresholds;
 
@@ -160,7 +160,7 @@ namespace alpr
     if (config->debugTiming)
     {
       timespec endTime;
-      getTime(&endTime);
+      getTimeMonotonic(&endTime);
       cout << "  -- Produce Threshold Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
 

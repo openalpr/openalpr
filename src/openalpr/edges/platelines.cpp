@@ -47,7 +47,7 @@ namespace alpr
       cout << "PlateLines findLines" << endl;
 
     timespec startTime;
-    getTime(&startTime);
+    getTimeMonotonic(&startTime);
 
 
     // Ignore input images that are pure white or pure black
@@ -129,7 +129,7 @@ namespace alpr
     if (pipelineData->config->debugTiming)
     {
       timespec endTime;
-      getTime(&endTime);
+      getTimeMonotonic(&endTime);
       cout << "Plate Lines Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
 

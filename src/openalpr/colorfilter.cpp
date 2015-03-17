@@ -29,7 +29,7 @@ namespace alpr
   ColorFilter::ColorFilter(Mat image, Mat characterMask, Config* config)
   {
     timespec startTime;
-    getTime(&startTime);
+    getTimeMonotonic(&startTime);
 
     this->config = config;
 
@@ -53,7 +53,7 @@ namespace alpr
     if (config->debugTiming)
     {
       timespec endTime;
-      getTime(&endTime);
+      getTimeMonotonic(&endTime);
       cout << "  -- ColorFilter Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
   }

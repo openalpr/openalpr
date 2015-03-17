@@ -55,7 +55,7 @@ namespace alpr
     {
       std::cerr << "file does not exist: " << filepath << std::endl;
       AlprResults emptyResults;
-      emptyResults.epoch_time = getEpochTime();
+      emptyResults.epoch_time = getEpochTimeMs();
       emptyResults.img_width = 0;
       emptyResults.img_height = 0;
       emptyResults.total_processing_time_ms = 0;

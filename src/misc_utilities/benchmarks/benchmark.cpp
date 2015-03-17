@@ -187,18 +187,18 @@ int main( int argc, const char** argv )
         string fullpath = inDir + "/" + files[i];
         frame = imread( fullpath.c_str() );
 
-        getTime(&startTime);
+        getTimeMonotonic(&startTime);
         vector<Rect> regionsOfInterest;
         regionsOfInterest.push_back(Rect(0, 0, frame.cols, frame.rows));
         alpr.recognize(frame, regionsOfInterest);
-        getTime(&endTime);
+        getTimeMonotonic(&endTime);
         double endToEndTime = diffclock(startTime, endTime);
         cout << " -- End to End recognition time: " << endToEndTime << "ms." << endl;
         endToEndTimes.push_back(endToEndTime);
 
-        getTime(&startTime);
+        getTimeMonotonic(&startTime);
         vector<PlateRegion> regions = plateDetector->detect(frame);
-        getTime(&endTime);
+        getTimeMonotonic(&endTime);
 
         double regionDetectionTime = diffclock(startTime, endTime);
         cout << " -- Region detection time: " << regionDetectionTime << "ms." << endl;
@@ -209,18 +209,18 @@ int main( int argc, const char** argv )
 	  
 	  PipelineData pipeline_data(frame, regions[z].rect, &config);
 	  
-          getTime(&startTime);
+          getTimeMonotonic(&startTime);
 	  
           stateIdentifier.recognize(&pipeline_data);
-          getTime(&endTime);
+          getTimeMonotonic(&endTime);
           double stateidTime = diffclock(startTime, endTime);
           cout << "\tRegion " << z << ": State ID time: " << stateidTime << "ms." << endl;
           stateIdTimes.push_back(stateidTime);
 
-          getTime(&startTime);
+          getTimeMonotonic(&startTime);
           LicensePlateCandidate lp(&pipeline_data);
           lp.recognize();
-          getTime(&endTime);
+          getTimeMonotonic(&endTime);
           double analysisTime = diffclock(startTime, endTime);
           cout << "\tRegion " << z << ": Analysis time: " << analysisTime << "ms." << endl;
 
@@ -228,16 +228,16 @@ int main( int argc, const char** argv )
           {
             lpAnalysisPositiveTimes.push_back(analysisTime);
 
-            getTime(&startTime);
+            getTimeMonotonic(&startTime);
             ocr.performOCR(&pipeline_data);
-            getTime(&endTime);
+            getTimeMonotonic(&endTime);
             double ocrTime = diffclock(startTime, endTime);
             cout << "\tRegion " << z << ": OCR time: " << ocrTime << "ms." << endl;
             ocrTimes.push_back(ocrTime);
 
-            getTime(&startTime);
+            getTimeMonotonic(&startTime);
             ocr.postProcessor.analyze("", 25);
-            getTime(&endTime);
+            getTimeMonotonic(&endTime);
             double postProcessTime = diffclock(startTime, endTime);
             cout << "\tRegion " << z << ": PostProcess time: " << postProcessTime << "ms." << endl;
             postProcessTimes.push_back(postProcessTime);

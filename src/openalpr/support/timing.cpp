@@ -71,11 +71,24 @@ namespace alpr
     return (0);
   }
 
-  void getTime(timespec* time)
+  void getTimeMonotonic(timespec* time)
   {
     clock_gettime(0, time);
   }
+  
+  long getTimeMonotonicMs()
+  {
+    timespec time;
+    getTimeMonotonic(&time);
 
+    timespec time_start;
+    time_start.tv_sec = 0;
+    time_start.tv_nsec = 0;
+
+    return diffclock(time_start, time);
+  }
+  
+  
   double diffclock(timespec time1,timespec time2)
   {
     timespec delta = diff(time1,time2);
@@ -101,26 +114,48 @@ namespace alpr
   }
 
 
-  long getEpochTime()
+  long getEpochTimeMs()
   {
     return std::time(0) * 1000;
   } 
 
   #else
 
-  void getTime(timespec* time)
+  void _getTime(bool realtime, timespec* time)
   {
-  #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
-    clock_serv_t cclock;
-    mach_timespec_t mts;
-    host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
-    clock_get_time(cclock, &mts);
-    mach_port_deallocate(mach_task_self(), cclock);
-    time->tv_sec = mts.tv_sec;
-    time->tv_nsec = mts.tv_nsec;
-  #else
-    clock_gettime(CLOCK_MONOTONIC, time);
-  #endif
+    #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
+      clock_serv_t cclock;
+      mach_timespec_t mts;
+      host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+      clock_get_time(cclock, &mts);
+      mach_port_deallocate(mach_task_self(), cclock);
+      time->tv_sec = mts.tv_sec;
+      time->tv_nsec = mts.tv_nsec;
+    #else
+      if (realtime)
+        clock_gettime(CLOCK_REALTIME, time);
+      else
+        clock_gettime(CLOCK_MONOTONIC, time);
+    #endif
+  }
+  
+  // Returns a monotonic clock time unaffected by time changes (e.g., NTP)
+  // Useful for interval comparisons
+  void getTimeMonotonic(timespec* time)
+  {
+    _getTime(false, time);
+  }
+  
+  long getTimeMonotonicMs()
+  {
+    timespec time;
+    getTimeMonotonic(&time);
+
+    timespec time_start;
+    time_start.tv_sec = 0;
+    time_start.tv_nsec = 0;
+
+    return diffclock(time_start, time);
   }
 
   double diffclock(timespec time1,timespec time2)
@@ -148,13 +183,18 @@ namespace alpr
   }
 
 
-  long getEpochTime()
+  // Returns wall clock time since Unix epoch (Jan 1, 1970)
+  long getEpochTimeMs()
   {
-      struct timeval tp;
-      gettimeofday(&tp, NULL);
-      long ms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
+    timespec time;
+    _getTime(true, &time);
 
-      return ms;
+    timespec epoch_start;
+    epoch_start.tv_sec = 0;
+    epoch_start.tv_nsec = 0;
+
+    return diffclock(epoch_start, time);
+
   } 
 
   #endif

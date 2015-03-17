@@ -40,7 +40,7 @@ namespace alpr
     //CharacterRegion charRegion(img, debug);
 
     timespec startTime;
-    getTime(&startTime);
+    getTimeMonotonic(&startTime);
 
     if (pipeline_data->plate_inverted)
       bitwise_not(pipeline_data->crop_gray, pipeline_data->crop_gray);
@@ -110,7 +110,7 @@ namespace alpr
       // Do the histogram analysis to figure out char regions
 
       timespec startTime;
-      getTime(&startTime);
+      getTimeMonotonic(&startTime);
 
       vector<Mat> allHistograms;
 
@@ -166,7 +166,7 @@ namespace alpr
       if (config->debugTiming)
       {
         timespec endTime;
-        getTime(&endTime);
+        getTimeMonotonic(&endTime);
         cout << "  -- Character Segmentation Create and Score Histograms Time: " << diffclock(startTime, endTime) << "ms." << endl;
       }
 
@@ -189,7 +189,7 @@ namespace alpr
         }
       }
 
-      getTime(&startTime);
+      getTimeMonotonic(&startTime);
 
       filterEdgeBoxes(pipeline_data->thresholds, candidateBoxes, medianCharWidth, avgCharHeight);
       candidateBoxes = filterMostlyEmptyBoxes(pipeline_data->thresholds, candidateBoxes);
@@ -204,7 +204,7 @@ namespace alpr
       if (config->debugTiming)
       {
         timespec endTime;
-        getTime(&endTime);
+        getTimeMonotonic(&endTime);
         cout << "  -- Character Segmentation Box cleaning/filtering Time: " << diffclock(startTime, endTime) << "ms." << endl;
       }
 
@@ -226,7 +226,7 @@ namespace alpr
     if (config->debugTiming)
     {
       timespec endTime;
-      getTime(&endTime);
+      getTimeMonotonic(&endTime);
       cout << "Character Segmenter Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
   }

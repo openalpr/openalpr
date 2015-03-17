@@ -26,10 +26,12 @@
 namespace alpr
 {
 
-  void getTime(timespec* time);
+  void getTimeMonotonic(timespec* time);
+  long getTimeMonotonicMs();
+  
   double diffclock(timespec time1,timespec time2);
 
-  long getEpochTime();
+  long getEpochTimeMs();
 
 }
 

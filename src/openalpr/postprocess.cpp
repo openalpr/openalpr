@@ -152,7 +152,7 @@ namespace alpr
   void PostProcess::analyze(string templateregion, int topn)
   {
     timespec startTime;
-    getTime(&startTime);
+    getTimeMonotonic(&startTime);
 
     // Get a list of missing positions
     for (int i = letters.size() -1; i >= 0; i--)
@@ -201,7 +201,7 @@ namespace alpr
     findAllPermutations(tmp, 0, config->postProcessMaxSubstitutions);
 
     timespec sortStartTime;
-    getTime(&sortStartTime);
+    getTimeMonotonic(&sortStartTime);
 
     int numelements = topn;
     if (allPossibilities.size() < topn)
@@ -212,7 +212,7 @@ namespace alpr
     if (config->debugTiming)
     {
       timespec sortEndTime;
-      getTime(&sortEndTime);
+      getTimeMonotonic(&sortEndTime);
       cout << " -- PostProcess Sort Time: " << diffclock(sortStartTime, sortEndTime) << "ms." << endl;
     }
 
@@ -290,7 +290,7 @@ namespace alpr
     if (config->debugTiming)
     {
       timespec endTime;
-      getTime(&endTime);
+      getTimeMonotonic(&endTime);
       cout << "PostProcess Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
 

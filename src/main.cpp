@@ -275,7 +275,7 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
 {
 
   timespec startTime;
-  getTime(&startTime);
+  getTimeMonotonic(&startTime);
 
   std::vector<AlprRegionOfInterest> regionsOfInterest;
   regionsOfInterest.push_back(AlprRegionOfInterest(0,0, frame.cols, frame.rows));
@@ -283,7 +283,7 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
   AlprResults results = alpr->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, regionsOfInterest );
 
   timespec endTime;
-  getTime(&endTime);
+  getTimeMonotonic(&endTime);
   double totalProcessingTime = diffclock(startTime, endTime);
   if (measureProcessingTime)
     std::cout << "Total Time to process image: " << totalProcessingTime << "ms." << std::endl;

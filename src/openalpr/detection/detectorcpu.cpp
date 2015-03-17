@@ -102,7 +102,7 @@ namespace alpr
 
     //-- Detect plates
     timespec startTime;
-    getTime(&startTime);
+    getTimeMonotonic(&startTime);
 
     float maxWidth = ((float) w) * (config->maxPlateWidthPercent / 100.0f) * this->scale_factor;
     float maxHeight = ((float) h) * (config->maxPlateHeightPercent / 100.0f) * this->scale_factor;
@@ -118,7 +118,7 @@ namespace alpr
     if (config->debugTiming)
     {
       timespec endTime;
-      getTime(&endTime);
+      getTimeMonotonic(&endTime);
       cout << "LBP Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
 

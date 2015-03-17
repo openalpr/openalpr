@@ -69,7 +69,7 @@ namespace alpr
       {
 
         timespec startTime;
-        getTime(&startTime);
+        getTimeMonotonic(&startTime);
 
 
         Mat originalCrop = pipeline_data->crop_gray;
@@ -113,7 +113,7 @@ namespace alpr
         if (config->debugTiming)
         {
           timespec endTime;
-          getTime(&endTime);
+          getTimeMonotonic(&endTime);
           cout << "deskew Time: " << diffclock(startTime, endTime) << "ms." << endl;
         }
 

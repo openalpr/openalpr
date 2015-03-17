@@ -52,7 +52,7 @@ namespace alpr
   bool StateIdentifier::recognize(PipelineData* pipeline_data)
   {
     timespec startTime;
-    getTime(&startTime);
+    getTimeMonotonic(&startTime);
 
     Mat plateImg = Mat(pipeline_data->grayImg, pipeline_data->regionOfInterest);
 
@@ -75,7 +75,7 @@ namespace alpr
     if (config->debugTiming)
     {
       timespec endTime;
-      getTime(&endTime);
+      getTimeMonotonic(&endTime);
       cout << "State Identification Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
 

@@ -53,7 +53,7 @@ namespace alpr
       cout << "PlateCorners::findPlateCorners" << endl;
 
     timespec startTime;
-    getTime(&startTime);
+    getTimeMonotonic(&startTime);
 
     int horizontalLines = this->plateLines->horizontalLines.size();
     int verticalLines = this->plateLines->verticalLines.size();
@@ -118,7 +118,7 @@ namespace alpr
     if (pipelineData->config->debugTiming)
     {
       timespec endTime;
-      getTime(&endTime);
+      getTimeMonotonic(&endTime);
       cout << "Plate Corners Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
 

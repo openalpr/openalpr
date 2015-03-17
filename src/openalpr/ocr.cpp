@@ -54,7 +54,7 @@ namespace alpr
   void OCR::performOCR(PipelineData* pipeline_data)
   {
     timespec startTime;
-    getTime(&startTime);
+    getTimeMonotonic(&startTime);
 
     postProcessor.clear();
 
@@ -131,7 +131,7 @@ namespace alpr
     if (config->debugTiming)
     {
       timespec endTime;
-      getTime(&endTime);
+      getTimeMonotonic(&endTime);
       cout << "OCR Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
   }

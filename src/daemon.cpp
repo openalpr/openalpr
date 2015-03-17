@@ -286,7 +286,7 @@ void streamRecognitionThread(void* arg)
     {
       
       timespec startTime;
-      getTime(&startTime);
+      getTimeMonotonic(&startTime);
       
       std::vector<AlprRegionOfInterest> regionsOfInterest;
       regionsOfInterest.push_back(AlprRegionOfInterest(0,0, latestFrame.cols, latestFrame.rows));
@@ -294,7 +294,7 @@ void streamRecognitionThread(void* arg)
       AlprResults results = alpr.recognize(latestFrame.data, latestFrame.elemSize(), latestFrame.cols, latestFrame.rows, regionsOfInterest);
       
       timespec endTime;
-      getTime(&endTime);
+      getTimeMonotonic(&endTime);
       double totalProcessingTime = diffclock(startTime, endTime);
       
       if (tdata->clock_on)
@@ -304,10 +304,9 @@ void streamRecognitionThread(void* arg)
       
       if (results.plates.size() > 0)
       {
-        long epoch_time = getEpochTime();
         
         std::stringstream uuid_ss;
-        uuid_ss << tdata->site_id << "-cam" << tdata->camera_id << "-" << epoch_time;
+        uuid_ss << tdata->site_id << "-cam" << tdata->camera_id << "-" << getEpochTimeMs();
 	std::string uuid = uuid_ss.str();
         
 	// Save the image to disk (using the UUID)

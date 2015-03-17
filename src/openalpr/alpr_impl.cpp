@@ -72,12 +72,12 @@ namespace alpr
   AlprFullDetails AlprImpl::recognizeFullDetails(cv::Mat img, std::vector<cv::Rect> regionsOfInterest)
   {
     timespec startTime;
-    getTime(&startTime);
+    getTimeMonotonic(&startTime);
 
 
     AlprFullDetails response;
 
-    response.results.epoch_time = getEpochTime();
+    response.results.epoch_time = getEpochTimeMs();
     response.results.img_width = img.cols;
     response.results.img_height = img.rows;
 
@@ -126,7 +126,7 @@ namespace alpr
       PipelineData pipeline_data(img, plateRegion.rect, config);
 
       timespec platestarttime;
-      getTime(&platestarttime);
+      getTimeMonotonic(&platestarttime);
 
       LicensePlateCandidate lp(&pipeline_data);
 
@@ -196,7 +196,7 @@ namespace alpr
         }
 
         timespec plateEndTime;
-        getTime(&plateEndTime);
+        getTimeMonotonic(&plateEndTime);
         plateResult.processing_time_ms = diffclock(platestarttime, plateEndTime);
 
         if (plateResult.topNPlates.size() > 0)
@@ -222,7 +222,7 @@ namespace alpr
     }
 
     timespec endTime;
-    getTime(&endTime);
+    getTimeMonotonic(&endTime);
     response.results.total_processing_time_ms = diffclock(startTime, endTime);
 
     if (config->debugTiming)

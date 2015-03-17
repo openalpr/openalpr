@@ -56,7 +56,7 @@ namespace alpr
 
 
     timespec startTime;
-    getTime(&startTime);
+    getTimeMonotonic(&startTime);
 
     pipeline_data->textLines.clear();
 
@@ -70,12 +70,12 @@ namespace alpr
     if (config->debugTiming)
     {
       timespec endTime;
-      getTime(&endTime);
+      getTimeMonotonic(&endTime);
       cout << "  -- Character Analysis Find Contours Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
     //Mat img_equalized = equalizeBrightness(img_gray);
 
-    getTime(&startTime);
+    getTimeMonotonic(&startTime);
 
     for (unsigned int i = 0; i < pipeline_data->thresholds.size(); i++)
     {
@@ -88,7 +88,7 @@ namespace alpr
     if (config->debugTiming)
     {
       timespec endTime;
-      getTime(&endTime);
+      getTimeMonotonic(&endTime);
       cout << "  -- Character Analysis Filter Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
 
@@ -206,7 +206,7 @@ namespace alpr
     if (config->debugTiming)
     {
       timespec endTime;
-      getTime(&endTime);
+      getTimeMonotonic(&endTime);
       cout << "Character Analysis Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
 
