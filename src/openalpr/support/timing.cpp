@@ -76,7 +76,7 @@ namespace alpr
     clock_gettime(0, time);
   }
   
-  long getTimeMonotonicMs()
+  int64_t getTimeMonotonicMs()
   {
     timespec time;
     getTimeMonotonic(&time);
@@ -114,7 +114,7 @@ namespace alpr
   }
 
 
-  long getEpochTimeMs()
+  int64_t getEpochTimeMs()
   {
     return std::time(0) * 1000;
   } 
@@ -146,7 +146,7 @@ namespace alpr
     _getTime(false, time);
   }
   
-  long getTimeMonotonicMs()
+  int64_t getTimeMonotonicMs()
   {
     timespec time;
     getTimeMonotonic(&time);
@@ -161,7 +161,7 @@ namespace alpr
   double diffclock(timespec time1,timespec time2)
   {
     timespec delta = diff(time1,time2);
-    double milliseconds = (delta.tv_sec * 1000) +  (((double) delta.tv_nsec) / 1000000.0);
+    double milliseconds = (((double) delta.tv_sec) * 1000.0) +  (((double) delta.tv_nsec) / 1000000.0);
 
     return milliseconds;
   }
@@ -184,7 +184,7 @@ namespace alpr
 
 
   // Returns wall clock time since Unix epoch (Jan 1, 1970)
-  long getEpochTimeMs()
+  int64_t getEpochTimeMs()
   {
     timespec time;
     _getTime(true, &time);

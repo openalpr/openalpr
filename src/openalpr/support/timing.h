@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <ctime>
+#include <inttypes.h>
 
 #ifdef WINDOWS
     // Import windows only stuff
@@ -27,11 +28,11 @@ namespace alpr
 {
 
   void getTimeMonotonic(timespec* time);
-  long getTimeMonotonicMs();
+  int64_t getTimeMonotonicMs();
   
   double diffclock(timespec time1,timespec time2);
 
-  long getEpochTimeMs();
+  int64_t getEpochTimeMs();
 
 }
 
