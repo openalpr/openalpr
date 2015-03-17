@@ -43,207 +43,174 @@ namespace alpr
   // glide a window across the image and
   // create two maps: mean and standard deviation.
   // *************************************************************
-  float calcLocalStats (Mat &im, Mat &map_m, Mat &map_s, int winx, int winy)
-  {
-    float m,s,max_s;
-    long sum, sum_sq;
-    uchar foo;
-    int wxh	= winx/2;
-    int wyh	= winy/2;
-    int x_firstth= wxh;
-    int y_lastth = im.rows-wyh-1;
-    int y_firstth= wyh;
-    float winarea = winx*winy;
 
-    max_s = 0;
-    for	(int j = y_firstth ; j<=y_lastth; j++)
-    {
-      float* mapm_rowdata = map_m.ptr<float>(j);
-      float* maps_rowdata = map_s.ptr<float>(j);
+  double calcLocalStats (Mat &im, Mat &map_m, Mat &map_s, int winx, int winy) {    
+      Mat im_sum, im_sum_sq;
+      cv::integral(im,im_sum,im_sum_sq,CV_64F);
 
-      // Calculate the initial window at the beginning of the line
-      sum = sum_sq = 0;
-      for	(int wy=0 ; wy<winy; wy++)
-      {
-        uchar* imdatarow = im.ptr<uchar>(j-wyh+wy);
-        for	(int wx=0 ; wx<winx; wx++)
-        {
-          foo = imdatarow[wx];
-          sum    += foo;
-          sum_sq += foo*foo;
-        }
-      }
+          double m,s,max_s,sum,sum_sq;	
+          int wxh	= winx/2;
+          int wyh	= winy/2;
+          int x_firstth= wxh;
+          int y_lastth = im.rows-wyh-1;
+          int y_firstth= wyh;
+          double winarea = winx*winy;
 
-      m  = ((float)sum) / winarea;
-      s  = sqrt ((((float)sum_sq) - ((float)(sum*sum))/winarea)/winarea);
-      if (s > max_s)
-        max_s = s;
-      mapm_rowdata[x_firstth] = m;
-      maps_rowdata[x_firstth] = s;
+          max_s = 0;
+          for	(int j = y_firstth ; j<=y_lastth; j++){   
+                  sum = sum_sq = 0;
 
-      // Shift the window, add and remove	new/old values to the histogram
-      for	(int i=1 ; i <= im.cols-winx; i++)
-      {
-        // Remove the left old column and add the right new column
-        for (int wy=0; wy<winy; ++wy)
-        {
-          foo = im.uget(i-1,j-wyh+wy);
-          sum    -= foo;
-          sum_sq -= foo*foo;
-          foo = im.uget(i+winx-1,j-wyh+wy);
-          sum    += foo;
-          sum_sq += foo*foo;
-        }
-        m  = ((float)sum) / winarea;
-        s  = sqrt ((((float)sum_sq) - ((float) (sum*sum))/winarea)/winarea);
-        if (s > max_s)
-          max_s = s;
-        mapm_rowdata[i+wxh] = m;
-        maps_rowdata[i+wxh] = s;
-      }
-    }
+          sum = im_sum.at<double>(j-wyh+winy,winx) - im_sum.at<double>(j-wyh,winx) - im_sum.at<double>(j-wyh+winy,0) + im_sum.at<double>(j-wyh,0);
+          sum_sq = im_sum_sq.at<double>(j-wyh+winy,winx) - im_sum_sq.at<double>(j-wyh,winx) - im_sum_sq.at<double>(j-wyh+winy,0) + im_sum_sq.at<double>(j-wyh,0);
 
-    return max_s;
+                  m  = sum / winarea;
+                  s  = sqrt ((sum_sq - m*sum)/winarea);
+                  if (s > max_s) max_s = s;
+
+                  map_m.fset(x_firstth, j, m);
+                  map_s.fset(x_firstth, j, s);
+
+                  // Shift the window, add and remove	new/old values to the histogram
+                  for	(int i=1 ; i <= im.cols-winx; i++) {
+
+                          // Remove the left old column and add the right new column
+                          sum -= im_sum.at<double>(j-wyh+winy,i) - im_sum.at<double>(j-wyh,i) - im_sum.at<double>(j-wyh+winy,i-1) + im_sum.at<double>(j-wyh,i-1);
+                          sum += im_sum.at<double>(j-wyh+winy,i+winx) - im_sum.at<double>(j-wyh,i+winx) - im_sum.at<double>(j-wyh+winy,i+winx-1) + im_sum.at<double>(j-wyh,i+winx-1);
+
+                          sum_sq -= im_sum_sq.at<double>(j-wyh+winy,i) - im_sum_sq.at<double>(j-wyh,i) - im_sum_sq.at<double>(j-wyh+winy,i-1) + im_sum_sq.at<double>(j-wyh,i-1);
+                          sum_sq += im_sum_sq.at<double>(j-wyh+winy,i+winx) - im_sum_sq.at<double>(j-wyh,i+winx) - im_sum_sq.at<double>(j-wyh+winy,i+winx-1) + im_sum_sq.at<double>(j-wyh,i+winx-1);
+
+                          m  = sum / winarea;
+                          s  = sqrt ((sum_sq - m*sum)/winarea);
+                          if (s > max_s) max_s = s;
+
+                          map_m.fset(i+wxh, j, m);
+                          map_s.fset(i+wxh, j, s);
+                  }
+          }
+
+          return max_s;
   }
 
   /**********************************************************
    * The binarization routine
    **********************************************************/
 
-  void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
-                                 int winx, int winy, float k)
-  {
-    float dR = BINARIZEWOLF_DEFAULTDR;
+void NiblackSauvolaWolfJolion (Mat im, Mat output, NiblackVersion version,
+	int winx, int winy, double k, double dR) {
 
-    float m, s, max_s;
-    float th=0;
-    double min_I, max_I;
-    int wxh	= winx/2;
-    int wyh	= winy/2;
-    int x_firstth= wxh;
-    int x_lastth = im.cols-wxh-1;
-    int y_lastth = im.rows-wyh-1;
-    int y_firstth= wyh;
+	
+	double m, s, max_s;
+	double th=0;
+	double min_I, max_I;
+	int wxh	= winx/2;
+	int wyh	= winy/2;
+	int x_firstth= wxh;
+	int x_lastth = im.cols-wxh-1;
+	int y_lastth = im.rows-wyh-1;
+	int y_firstth= wyh;
+	int mx, my;
 
-    // Create local statistics and store them in a float matrices
-    Mat map_m = Mat::zeros (im.rows, im.cols, CV_32F);
-    Mat map_s = Mat::zeros (im.rows, im.cols, CV_32F);
-    max_s = calcLocalStats (im, map_m, map_s, winx, winy);
+	// Create local statistics and store them in a double matrices
+	Mat map_m = Mat::zeros (im.rows, im.cols, CV_32F);
+	Mat map_s = Mat::zeros (im.rows, im.cols, CV_32F);
+	max_s = calcLocalStats (im, map_m, map_s, winx, winy);
+	
+	minMaxLoc(im, &min_I, &max_I);
+			
+	Mat thsurf (im.rows, im.cols, CV_32F);
+			
+	// Create the threshold surface, including border processing
+	// ----------------------------------------------------
 
-    minMaxLoc(im, &min_I, &max_I);
+	for	(int j = y_firstth ; j<=y_lastth; j++) {
 
-    Mat thsurf (im.rows, im.cols, CV_32F);
+		// NORMAL, NON-BORDER AREA IN THE MIDDLE OF THE WINDOW:
+		for	(int i=0 ; i <= im.cols-winx; i++) {
 
-    // Create the threshold surface, including border processing
-    // ----------------------------------------------------
+			m  = map_m.fget(i+wxh, j);
+    		s  = map_s.fget(i+wxh, j);
 
-    for	(int j = y_firstth ; j<=y_lastth; j++)
-    {
-      float* mapm_rowdata = map_m.ptr<float>(j);
-      float* maps_rowdata = map_s.ptr<float>(j);
-      float* thsurf_rowdata = thsurf.ptr<float>(j);
+    		// Calculate the threshold
+    		switch (version) {
 
-      // NORMAL, NON-BORDER AREA IN THE MIDDLE OF THE WINDOW:
-      for	(int i=0 ; i <= im.cols-winx; i++)
-      {
-        m  = mapm_rowdata[i+wxh];
-        s  = maps_rowdata[i+wxh];
+    			case NIBLACK:
+    				th = m + k*s;
+    				break;
 
-        // Calculate the threshold
-        switch (version)
-        {
-        case NIBLACK:
-          th = m + k*s;
-          break;
+    			case SAUVOLA:
+	    			th = m * (1 + k*(s/dR-1));
+	    			break;
 
-        case SAUVOLA:
-          th = m * (1 + k*(s/dR-1));
-          break;
+    			case WOLFJOLION:
+    				th = m + k * (s/max_s-1) * (m-min_I);
+    				break;
+    				
+    			default:
+    				cerr << "Unknown threshold type in ImageThresholder::surfaceNiblackImproved()\n";
+    				exit (1);
+    		}
+    		
+    		thsurf.fset(i+wxh,j,th);
 
-        case WOLFJOLION:
-          th = m + k * (s/max_s-1) * (m-min_I);
-          break;
+    		if (i==0) {
+        		// LEFT BORDER
+        		for (int i=0; i<=x_firstth; ++i)
+                	thsurf.fset(i,j,th);
 
-        default:
-          cerr << "Unknown threshold type in ImageThresholder::surfaceNiblackImproved()\n";
-          exit (1);
-        }
+        		// LEFT-UPPER CORNER
+        		if (j==y_firstth)
+        			for (int u=0; u<y_firstth; ++u)
+        			for (int i=0; i<=x_firstth; ++i)
+        				thsurf.fset(i,u,th);
 
-        thsurf_rowdata[i+wxh] = th;
+        		// LEFT-LOWER CORNER
+        		if (j==y_lastth)
+        			for (int u=y_lastth+1; u<im.rows; ++u)
+        			for (int i=0; i<=x_firstth; ++i)
+        				thsurf.fset(i,u,th);
+    		}
 
-        if (i==0)
-        {
-          // LEFT BORDER
-          for (int i=0; i<=x_firstth; ++i)
-            thsurf_rowdata[i] = th;
+			// UPPER BORDER
+			if (j==y_firstth)
+				for (int u=0; u<y_firstth; ++u)
+					thsurf.fset(i+wxh,u,th);
 
-          // LEFT-UPPER CORNER
-          if (j==y_firstth)
-            for (int u=0; u<y_firstth; ++u)
-            {
-              float* thsurf_subrowdata = thsurf.ptr<float>(u);
-              for (int i=0; i<=x_firstth; ++i)
-                thsurf_subrowdata[i] = th;
-            }
+			// LOWER BORDER
+			if (j==y_lastth)
+				for (int u=y_lastth+1; u<im.rows; ++u)
+					thsurf.fset(i+wxh,u,th);
+		}
 
-          // LEFT-LOWER CORNER
-          if (j==y_lastth)
-            for (int u=y_lastth+1; u<im.rows; ++u)
-            {
-              float* thsurf_subrowdata = thsurf.ptr<float>(u);
-              for (int i=0; i<=x_firstth; ++i)
-                thsurf_subrowdata[i] = th;
-            }
-        }
+		// RIGHT BORDER
+		for (int i=x_lastth; i<im.cols; ++i)
+        	thsurf.fset(i,j,th);
 
-        // UPPER BORDER
-        if (j==y_firstth)
-          for (int u=0; u<y_firstth; ++u)
-            thsurf.fset(i+wxh,u,th);
+  		// RIGHT-UPPER CORNER
+		if (j==y_firstth)
+			for (int u=0; u<y_firstth; ++u)
+			for (int i=x_lastth; i<im.cols; ++i)
+				thsurf.fset(i,u,th);
 
-        // LOWER BORDER
-        if (j==y_lastth)
-          for (int u=y_lastth+1; u<im.rows; ++u)
-            thsurf.fset(i+wxh,u,th);
-      }
-
-      // RIGHT BORDER
-      for (int i=x_lastth; i<im.cols; ++i)
-        thsurf_rowdata[i] = th;
-
-      // RIGHT-UPPER CORNER
-      if (j==y_firstth)
-        for (int u=0; u<y_firstth; ++u)
-        {
-          float* thsurf_subrowdata = thsurf.ptr<float>(u);
-          for (int i=x_lastth; i<im.cols; ++i)
-            thsurf_subrowdata[i] = th;
-        }
-
-      // RIGHT-LOWER CORNER
-      if (j==y_lastth)
-        for (int u=y_lastth+1; u<im.rows; ++u)
-        {
-          float* thsurf_subrowdata = thsurf.ptr<float>(u);
-          for (int i=x_lastth; i<im.cols; ++i)
-            thsurf_subrowdata[i] = th;
-        }
-    }
-
-    for	(int y=0; y<im.rows; ++y)
-    {
-      uchar* outputdatarow = output.ptr<uchar>(y);
-      uchar* imdatarow = im.ptr<uchar>(y);
-      float* thsurfdatarow = thsurf.ptr<float>(y);
-
-      for	(int x=0; x<im.cols; ++x)
-      {
-        if (imdatarow[x] >= thsurfdatarow[x])
-          outputdatarow[x]=255;
-        else
-          outputdatarow[x]=0;
-      }
+		// RIGHT-LOWER CORNER
+		if (j==y_lastth)
+			for (int u=y_lastth+1; u<im.rows; ++u)
+			for (int i=x_lastth; i<im.cols; ++i)
+				thsurf.fset(i,u,th);
+	}
+	
+	
+	for	(int y=0; y<im.rows; ++y) 
+	for	(int x=0; x<im.cols; ++x) 
+	{
+    	if (im.uget(x,y) >= thsurf.fget(x,y))
+    	{
+    		output.uset(x,y,255);
+    	}
+    	else
+    	{
+    	    output.uset(x,y,0);
+    	}
     }
   }
-
 }

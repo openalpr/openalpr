@@ -45,7 +45,7 @@ namespace alpr
   #define fset(x,y,v)  at<float>(y,x)=v;
 
   void NiblackSauvolaWolfJolion (cv::Mat im, cv::Mat output, NiblackVersion version,
-                                 int winx, int winy, float k);
+                                 int winx, int winy, double k, double dR=BINARIZEWOLF_DEFAULTDR);
 
 }
 
