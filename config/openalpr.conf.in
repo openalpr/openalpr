@@ -61,6 +61,7 @@ postprocess_max_characters = 8
 [debug]
 general       = 0
 timing        = 0
+detector      = 0
 state_id      = 0
 plate_lines   = 0
 plate_corners = 0

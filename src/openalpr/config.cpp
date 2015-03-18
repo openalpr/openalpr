@@ -205,6 +205,7 @@ namespace alpr
 
     debugGeneral = 	getBoolean("debug", "general",		false);
     debugTiming = 	getBoolean("debug", "timing",		false);
+    debugDetector = 	getBoolean("debug", "detector",		false);
     debugStateId = 	getBoolean("debug", "state_id",		false);
     debugPlateLines = 	getBoolean("debug", "plate_lines", 	false);
     debugPlateCorners = 	getBoolean("debug", "plate_corners", 	false);

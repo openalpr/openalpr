@@ -106,6 +106,7 @@ namespace alpr
 
       bool debugGeneral;
       bool debugTiming;
+      bool debugDetector;
       bool debugStateId;
       bool debugPlateLines;
       bool debugPlateCorners;
