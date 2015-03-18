@@ -156,7 +156,11 @@ namespace alpr
           }
         }
 
-
+        if (ocr->postProcessor.regionIsValid(plateResult.region) == false)
+        {
+          std::cerr << "Invalid pattern provided: " << plateResult.region << std::endl;
+          std::cerr << "Valid patterns are located in the " << config->country << ".patterns file" << std::endl;
+        }
 
         ocr->performOCR(&pipeline_data);
         ocr->postProcessor.analyze(plateResult.region, topN);
