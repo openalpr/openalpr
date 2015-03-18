@@ -1,15 +1,16 @@
 #include "detectorfactory.h"
+#include "detectormorph.h"
 
 namespace alpr
 {
   Detector* createDetector(Config* config)
   {
-    if (config->gpu_mode == 0)
+    if (config->detector == DETECTOR_LBP_CPU)
     {
       // CPU mode
       return new DetectorCPU(config);
     }
-    else if (config->gpu_mode == 1)
+    else if (config->detector == DETECTOR_LBP_GPU)
     {
       #ifdef COMPILE_GPU
       return new DetectorCUDA(config);
@@ -19,6 +20,15 @@ namespace alpr
               std::endl;
 	  return new DetectorCPU(config);
       #endif
+    }
+    else if (config->detector == DETECTOR_MORPH_CPU)
+    {
+      return new DetectorMorph(config);
+    }
+    else
+    {
+      std::cerr << "Unknown detector requested.  Using LBP CPU" << std::endl;
+      return new DetectorCPU(config);
     }
   }
 
