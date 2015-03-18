@@ -116,13 +116,23 @@ namespace alpr {
         PlateRegion PlateReg;
 
         PlateReg.rect = PlateRect.boundingRect();
-
+        
+        if (PlateReg.rect.x < 0)
+          PlateReg.rect.x = 0;
+        if (PlateReg.rect.y < 0)
+          PlateReg.rect.y = 0;
+        if (PlateReg.rect.x + PlateReg.rect.width > frame.cols)
+          PlateReg.rect.width = frame.cols - PlateReg.rect.x;
+        if (PlateReg.rect.y + PlateReg.rect.height > frame.rows)
+          PlateReg.rect.height = frame.rows - PlateReg.rect.y;
+        
+        
         detectedRegions.push_back(PlateReg);
 
       }
 
     }
-
+    
     return detectedRegions;
   }
 
