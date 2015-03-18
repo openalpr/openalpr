@@ -80,7 +80,7 @@ namespace alpr
       // The frame is too wide
       this->scale_factor = ((float) config->maxDetectionInputWidth) / ((float) frame.cols);
 
-      if (config->debugGeneral)
+      if (config->debugDetector)
         std::cout << "Input detection image is too wide.  Resizing with scale: " << this->scale_factor << endl;
     }
     else if (frame.rows > config->maxDetectionInputHeight)
@@ -88,7 +88,7 @@ namespace alpr
       // The frame is too tall
       this->scale_factor = ((float) config->maxDetectionInputHeight) / ((float) frame.rows);
 
-      if (config->debugGeneral)
+      if (config->debugDetector)
         std::cout << "Input detection image is too tall.  Resizing with scale: " << this->scale_factor << endl;
     }
 

@@ -50,7 +50,7 @@ namespace alpr
 
 			img_result = frame_gray - img_open;
 
-			if (config->debugShowImages)
+			if (config->debugDetector && config->debugShowImages)
 			{
 				imshow("Opening", img_result);
 			}
@@ -59,7 +59,7 @@ namespace alpr
 			Mat img_threshold, img_open2;
 			threshold(img_result, img_threshold, 0, 255, CV_THRESH_OTSU + CV_THRESH_BINARY);
 
-			if (config->debugShowImages)
+			if (config->debugDetector && config->debugShowImages)
 			{
 				imshow("Threshold Detector", img_threshold);
 			}
@@ -69,7 +69,7 @@ namespace alpr
 			Mat rectElement = getStructuringElement(cv::MORPH_RECT, Size(20, 4));
 			morphologyEx(img_open2, img_threshold, CV_MOP_CLOSE, rectElement, cv::Point(-1, -1));
 
-			if (config->debugShowImages)
+			if (config->debugDetector && config->debugShowImages)
 			{
 				imshow("Close", img_threshold);
 				waitKey(0);
