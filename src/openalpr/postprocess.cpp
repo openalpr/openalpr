@@ -298,6 +298,11 @@ namespace alpr
       cout << "PostProcess Analysis Complete: " << bestChars << " -- MATCH: " << matchesTemplate << endl;
   }
 
+  bool PostProcess::regionIsValid(std::string templateregion)
+  {
+    return rules.find(templateregion) != rules.end();
+  }
+  
   float PostProcess::calculateMaxConfidenceScore()
   {
     // Take the best score for each char position and average it.

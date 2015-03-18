@@ -86,6 +86,8 @@ namespace alpr
 
       const std::vector<PPResult> getResults();
 
+      bool regionIsValid(std::string templateregion);
+      
     private:
       Config* config;
       //void getTopN();
