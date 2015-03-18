@@ -47,7 +47,7 @@ namespace alpr
 
       std::string country;
 
-      int gpu_mode;
+      int detector;
 
       float detection_iteration_increase;
       int detectionStrictness;
@@ -138,11 +138,11 @@ namespace alpr
   };
 
 
-  enum GPU_MODE
+  enum DETECTOR_TYPE
   {
-    GPU_OFF=0,
-    GPU_CUDA=1,
-    GPU_OPENCL=2
+    DETECTOR_LBP_CPU=0,
+    DETECTOR_LBP_GPU=1,
+    DETECTOR_MORPH_CPU=2
   };
 
 }

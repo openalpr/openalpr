@@ -130,7 +130,21 @@ namespace alpr
 
     runtimeBaseDir = getString("common", "runtime_dir", "/usr/share/openalpr/runtime_data");
 
-	  gpu_mode = getInt("common", "gpu_mode", GPU_OFF);
+    std::string detectorString = getString("common", "detector", "lbpcpu");
+    std::transform(detectorString.begin(), detectorString.end(), detectorString.begin(), ::tolower);
+
+    if (detectorString.compare("lbpcpu") == 0)
+      detector = DETECTOR_LBP_CPU;
+    else if (detectorString.compare("lbpgpu") == 0)
+      detector = DETECTOR_LBP_GPU;
+    else if (detectorString.compare("morphcpu") == 0)
+      detector = DETECTOR_MORPH_CPU;
+    else
+    {
+      std::cerr << "Invalid detector specified: " << detectorString << ".  Using default" << std::endl;
+      detector = DETECTOR_LBP_CPU;
+    }
+    
     detection_iteration_increase = getFloat("common", "detection_iteration_increase", 1.1);
     detectionStrictness = getInt("common", "detection_strictness", 3);
     maxPlateWidthPercent = getFloat("common", "max_plate_width_percent", 100);
