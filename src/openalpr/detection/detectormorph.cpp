@@ -52,7 +52,7 @@ namespace alpr {
     Mat frame_gray,frame_gray_cp;
     cvtColor(frame, frame_gray, CV_BGR2GRAY);
     
-    frame_gray.copyTo(frame_g2);
+    frame_gray.copyTo(frame_gray_cp);
     blur(frame_gray, frame_gray, Size(5, 5));
 
     vector<PlateRegion> detectedRegions;
