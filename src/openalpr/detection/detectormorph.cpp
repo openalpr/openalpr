@@ -77,18 +77,18 @@ namespace alpr {
 
       Mat diamond(5, 5, CV_8U, cv::Scalar(1));
 
-			diamond.at<uchar>(0, 0) = 0;
-			diamond.at<uchar>(0, 1) = 0;
-			diamond.at<uchar>(1, 0) = 0;
-			diamond.at<uchar>(4, 4) = 0;
-			diamond.at<uchar>(3, 4) = 0;
-			diamond.at<uchar>(4, 3) = 0;
-			diamond.at<uchar>(4, 0) = 0;
-			diamond.at<uchar>(4, 1) = 0;
-			diamond.at<uchar>(3, 0) = 0;
-			diamond.at<uchar>(0, 4) = 0;
-			diamond.at<uchar>(0, 3) = 0;
-			diamond.at<uchar>(1, 4) = 0;
+	diamond.at<uchar>(0, 0) = 0;
+	diamond.at<uchar>(0, 1) = 0;
+	diamond.at<uchar>(1, 0) = 0;
+	diamond.at<uchar>(4, 4) = 0;
+	diamond.at<uchar>(3, 4) = 0;
+	diamond.at<uchar>(4, 3) = 0;
+	diamond.at<uchar>(4, 0) = 0;
+	diamond.at<uchar>(4, 1) = 0;
+	diamond.at<uchar>(3, 0) = 0;
+	diamond.at<uchar>(0, 4) = 0;
+	diamond.at<uchar>(0, 3) = 0;
+	diamond.at<uchar>(1, 4) = 0;
 			
       morphologyEx(img_threshold, img_open2, CV_MOP_OPEN, diamond, cv::Point(-1, -1));
       Mat rectElement = getStructuringElement(cv::MORPH_RECT, Size(13, 4));
@@ -129,67 +129,65 @@ namespace alpr {
       }
 
      //Now prunning based on checking all candidate plates for a min/max number of blobsc
-			Mat img_crop, img_crop_b, img_crop_th, img_crop_th_inv;
-			vector< vector< Point> > plateBlobs;
-			vector< vector< Point> > plateBlobsInv;
-			double thresholds[] = { 10, 40, 80, 120, 160, 200, 240 };
-			const int num_thresholds = 7;
-			int numValidChars = 0;
-			Mat rotated;
-			for (int i = 0; i < rects.size(); i++) {
-				RotatedRect PlateRect = rects[i];
-				Size rect_size = PlateRect.size;
+Mat img_crop, img_crop_b, img_crop_th, img_crop_th_inv;
+vector< vector< Point> > plateBlobs;
+vector< vector< Point> > plateBlobsInv;
+double thresholds[] = { 10, 40, 80, 120, 160, 200, 240 };
+const int num_thresholds = 7;
+int numValidChars = 0;
+Mat rotated;
+for (int i = 0; i < rects.size(); i++) {
+	RotatedRect PlateRect = rects[i];
+	Size rect_size = PlateRect.size;
 
-				// get the rotation matrix
-				Mat M = getRotationMatrix2D(PlateRect.center, PlateRect.angle, 1.0);
-				// perform the affine transformation
-				warpAffine(frame_gray_cp, rotated, M, frame_gray_cp.size(), INTER_CUBIC);
-				//Crop area around candidate plate
-				getRectSubPix(rotated, rect_size, PlateRect.center, img_crop);
+	// get the rotation matrix
+	Mat M = getRotationMatrix2D(PlateRect.center, PlateRect.angle, 1.0);
+	// perform the affine transformation
+	warpAffine(frame_gray_cp, rotated, M, frame_gray_cp.size(), INTER_CUBIC);
+	//Crop area around candidate plate
+	getRectSubPix(rotated, rect_size, PlateRect.center, img_crop);
 
-				 if (config->debugDetector && config->debugShowImages) {
-					imshow("Tilt Correction", img_crop);
-					waitKey(0);
-				}
+	 if (config->debugDetector && config->debugShowImages) {
+		imshow("Tilt Correction", img_crop);
+		waitKey(0);
+	}
 
-				for (int z = 0; z < num_thresholds; z++)
-				{
+	for (int z = 0; z < num_thresholds; z++) {
 
-					cv::threshold(img_crop, img_crop_th, thresholds[z], 255, cv::THRESH_BINARY);
-					cv::threshold(img_crop, img_crop_th_inv, thresholds[z], 255, cv::THRESH_BINARY_INV);
+		cv::threshold(img_crop, img_crop_th, thresholds[z], 255, cv::THRESH_BINARY);
+		cv::threshold(img_crop, img_crop_th_inv, thresholds[z], 255, cv::THRESH_BINARY_INV);
 
-					findContours(img_crop_th,
-						plateBlobs, // a vector of contours
-						CV_RETR_LIST, // retrieve the contour list
-						CV_CHAIN_APPROX_NONE); // all pixels of each contours
+		findContours(img_crop_th,
+			plateBlobs, // a vector of contours
+			CV_RETR_LIST, // retrieve the contour list
+			CV_CHAIN_APPROX_NONE); // all pixels of each contours
 
-					findContours(img_crop_th_inv,
-						plateBlobsInv, // a vector of contours
-						CV_RETR_LIST, // retrieve the contour list
-						CV_CHAIN_APPROX_NONE); // all pixels of each contours
+		findContours(img_crop_th_inv,
+			plateBlobsInv, // a vector of contours
+			CV_RETR_LIST, // retrieve the contour list
+			CV_CHAIN_APPROX_NONE); // all pixels of each contours
 
-					int numBlobs = plateBlobs.size();
-					int numBlobsInv = plateBlobsInv.size();
-				
-					float idealAspect = config->charWidthMM / config->charHeightMM;
-					for (int j = 0; j < numBlobs; j++) {
-						cv::Rect r0 = cv::boundingRect(cv::Mat(plateBlobs[j]));
-						
-						if (ValidateCharAspect(r0, idealAspect))
-							numValidChars++;
-					}
+		int numBlobs = plateBlobs.size();
+		int numBlobsInv = plateBlobsInv.size();
+	
+		float idealAspect = config->charWidthMM / config->charHeightMM;
+		for (int j = 0; j < numBlobs; j++) {
+			cv::Rect r0 = cv::boundingRect(cv::Mat(plateBlobs[j]));
+			
+			if (ValidateCharAspect(r0, idealAspect))
+				numValidChars++;
+		}
 
-					for (int j = 0; j < numBlobsInv; j++)
-					{
-						cv::Rect r0 = cv::boundingRect(cv::Mat(plateBlobsInv[j]));
-						if (ValidateCharAspect(r0, idealAspect))
-							numValidChars++;
-					}
+		for (int j = 0; j < numBlobsInv; j++) {
+			cv::Rect r0 = cv::boundingRect(cv::Mat(plateBlobsInv[j]));
+			if (ValidateCharAspect(r0, idealAspect))
+				numValidChars++;
+		}
 
-				}
-				//If too much or too lcittle might not be a true plate
-				//if (numBlobs < 3 || numBlobs > 50) continue;
-				if (numValidChars < 4  || numValidChars > 50) continue;
+	}
+	//If too much or too lcittle might not be a true plate
+	//if (numBlobs < 3 || numBlobs > 50) continue;
+	if (numValidChars < 4  || numValidChars > 50) continue;
 
         PlateRegion PlateReg;
 
