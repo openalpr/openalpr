@@ -23,7 +23,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream> 
-#include <inttypes.h>
+#include <stdint.h>
 
 namespace alpr
 {

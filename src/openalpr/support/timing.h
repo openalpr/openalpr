@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <ctime>
-#include <inttypes.h>
+#include <stdint.h>
 
 #ifdef WINDOWS
     // Import windows only stuff
