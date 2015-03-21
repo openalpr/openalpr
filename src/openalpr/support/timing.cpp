@@ -83,7 +83,7 @@ namespace alpr
 
     timespec time_start;
     time_start.tv_sec = 0;
-    time_start.tv_nsec = 0;
+    time_start.tv_usec = 0;
 
     return diffclock(time_start, time);
   }
