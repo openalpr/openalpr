@@ -291,6 +291,49 @@ namespace openalprnet {
 	};
 
 
+	public ref class AlprFrameEventArgs : public EventArgs
+	{
+	public:
+		AlprFrameEventArgs(int frameNumber, System::Drawing::Image^ frame, AlprResultsNet^ results) {
+			m_frameNumber = frameNumber;
+			m_frame = frame;
+			m_results = results;
+			m_cancel = false;
+		}
+
+		property int FrameNumber {
+			int get() {
+				return m_frameNumber;
+			}
+		}
+
+		property System::Drawing::Image^ Frame {
+			System::Drawing::Image^ get() {
+				return m_frame;
+			}
+		}
+
+		property AlprResultsNet^ Results {
+			AlprResultsNet^ get() {
+				return m_results;
+			}
+		}
+
+		property bool Cancel {
+			bool get() {
+				return m_cancel;
+			}
+			void set( bool cancel ) {
+				m_cancel = cancel;
+			}
+		}
+	private:
+		int m_frameNumber;
+		System::Drawing::Image^ m_frame;
+		AlprResultsNet^ m_results;
+		bool m_cancel;
+	};
+
 	public ref class AlprNet sealed
 	{
 	public:
@@ -329,6 +372,37 @@ namespace openalprnet {
 			void set( System::String^ region ){
 				m_defaultRegion = region;
 				m_Impl->setDefaultRegion(marshal_as<std::string>(region));
+			}
+		}
+
+		event EventHandler<AlprFrameEventArgs^>^ FrameProcessed;
+
+		void recognizeFromVideo(System::String^ videoPath) {
+			if (System::IO::File::Exists(videoPath)) {
+				int framenum = 0;
+				cv::VideoCapture cap = cv::VideoCapture();
+				cap.open(marshal_as<std::string>(videoPath));
+
+				cv::Mat frame;
+
+				while (cap.read(frame))
+				{
+					std::vector<AlprRegionOfInterest> regionsOfInterest;
+					regionsOfInterest.push_back(AlprRegionOfInterest(0, 0, frame.cols, frame.rows));
+
+					AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, regionsOfInterest);
+					Image^ frameImage = gcnew Bitmap(frame.cols, frame.rows, frame.step, Imaging::PixelFormat::Format24bppRgb, IntPtr(frame.data));
+					AlprFrameEventArgs^ alprFrameEventArgs = gcnew AlprFrameEventArgs(framenum, frameImage, gcnew AlprResultsNet(results));
+					FrameProcessed(this, alprFrameEventArgs);
+					delete frameImage;
+					if (alprFrameEventArgs->Cancel) {
+						break;
+					}
+					framenum++;
+				}
+			}
+			else {
+				throw gcnew System::IO::FileNotFoundException("No video was not found at " + videoPath, videoPath);
 			}
 		}
 
