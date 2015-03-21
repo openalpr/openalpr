@@ -43,6 +43,7 @@ namespace alpr
 
 	private:
 		bool CheckSizes(cv::RotatedRect& mr);
+		bool  DetectorMorph::ValidateCharAspect(Rect& r0, float idealAspect);
 
 	};
 
