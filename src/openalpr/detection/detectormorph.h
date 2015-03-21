@@ -42,7 +42,8 @@ namespace alpr {
 
   private:
     bool CheckSizes(cv::RotatedRect& mr);
-
+    bool ValidateCharAspect(cv::Rect& r0, float idealAspect);
+    
   };
 
 }
