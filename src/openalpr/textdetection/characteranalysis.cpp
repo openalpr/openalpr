@@ -194,7 +194,11 @@ namespace alpr
 
       // If a multiline plate has only one line, disqualify
       if (pipeline_data->isMultiline && pipeline_data->textLines.size() < 2)
+      {
+        if (config->debugCharAnalysis)
+          std::cout << "Did not detect multiple lines on multi-line plate" << std::endl;
         confidenceDrainers += 95;
+      }
 
       if (confidenceDrainers >= 100)
         this->confidence=1;
