@@ -123,6 +123,7 @@ Please follow these detailed compilation guides for your respective operating sy
 
 * [Windows] (https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(Windows))
 * [Ubuntu Linux] (https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(Ubuntu-Linux))
+* [OS X] (https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(OS-X))
 * [Android] (https://github.com/sujaybhowmick/OpenAlprDroidApp)
 * [iOS] (https://github.com/twelve17/openalpr-ios)
 
