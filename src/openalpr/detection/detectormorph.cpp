@@ -137,6 +137,7 @@ const int num_thresholds = 7;
 int numValidChars = 0;
 Mat rotated;
 for (int i = 0; i < rects.size(); i++) {
+	numValidChars = 0;
 	RotatedRect PlateRect = rects[i];
 	Size rect_size = PlateRect.size;
 
