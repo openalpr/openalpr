@@ -44,7 +44,7 @@ namespace alpr
 
       this->valid = false;
     }
-    else if (commacount != 8)
+    else if (commacount != 9)
     {
       if (this->config->debugPrewarp)
         cout << "Invalid prewarp configuration" << endl;
@@ -77,6 +77,8 @@ namespace alpr
         ss >> rotationy;
         ss.ignore();  // Ignore comma
         ss >> rotationz;
+        ss.ignore();  // Ignore comma
+        ss >> stretchX;
         ss.ignore();  // Ignore comma
         ss >> dist;
         ss.ignore();  // Ignore comma
@@ -113,7 +115,7 @@ namespace alpr
     float py = panY / height_ratio;
 
 
-    transform = findTransform(image.cols, image.rows, rx, ry, rotationz, px, py, dist);
+    transform = findTransform(image.cols, image.rows, rx, ry, rotationz, px, py, stretchX, dist);
     
     
     Mat warped_image;
@@ -194,7 +196,7 @@ namespace alpr
   
   cv::Mat PreWarp::findTransform(float w, float h, 
           float rotationx, float rotationy, float rotationz, 
-          float panX, float panY, float dist) {
+          float panX, float panY, float stretchX, float dist) {
 
     float alpha = rotationx;
     float beta = rotationy;
@@ -239,7 +241,7 @@ namespace alpr
 
     // Translation matrix on the Z axis 
     Mat T = (Mat_<double>(4, 4) <<
-        1, 0, 0, panX,
+        stretchX, 0, 0, panX,
         0, 1, 0, panY,
         0, 0, 1, dist,
         0, 0, 0, 1);

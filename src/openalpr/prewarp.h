@@ -45,9 +45,9 @@ namespace alpr
     Config* config;
     cv::Mat transform;
     
-    float w, h, rotationx, rotationy, rotationz, dist, panX, panY;
+    float w, h, rotationx, rotationy, rotationz, stretchX, dist, panX, panY;
     
-    cv::Mat findTransform(float w, float h, float rotationx, float rotationy, float rotationz, float panX, float panY, float dist);
+    cv::Mat findTransform(float w, float h, float rotationx, float rotationy, float rotationz, float panX, float panY, float stretchX, float dist);
   };
 
 }
