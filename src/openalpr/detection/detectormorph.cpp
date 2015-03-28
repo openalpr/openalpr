@@ -191,16 +191,9 @@ for (int i = 0; i < rects.size(); i++) {
 
         PlateRegion PlateReg;
 
-        PlateReg.rect = PlateRect.boundingRect();
-        
-        if (PlateReg.rect.x < 0)
-          PlateReg.rect.x = 0;
-        if (PlateReg.rect.y < 0)
-          PlateReg.rect.y = 0;
-        if (PlateReg.rect.x + PlateReg.rect.width > frame.cols)
-          PlateReg.rect.width = frame.cols - PlateReg.rect.x;
-        if (PlateReg.rect.y + PlateReg.rect.height > frame.rows)
-          PlateReg.rect.height = frame.rows - PlateReg.rect.y;
+        // Ensure that the rectangle isn't < 0 or > maxWidth/Height
+        Rect bounding_rect = PlateRect.boundingRect();
+        PlateReg.rect = expandRect(bounding_rect, 0, 0, frame.cols, frame.rows);
         
         
         detectedRegions.push_back(PlateReg);
