@@ -32,6 +32,8 @@
 #include "detection/detector.h"
 #include "detection/detectorfactory.h"
 
+#include "prewarp.h"
+
 #include "licenseplatecandidate.h"
 #include "stateidentifier.h"
 #include "segmentation/charactersegmenter.h"
@@ -96,6 +98,7 @@ namespace alpr
       Detector* plateDetector;
       StateIdentifier* stateIdentifier;
       OCR* ocr;
+      PreWarp* prewarp;
 
       int topN;
       bool detectRegion;

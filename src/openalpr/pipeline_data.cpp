@@ -8,15 +8,23 @@ namespace alpr
 
   PipelineData::PipelineData(Mat colorImage, Rect regionOfInterest, Config* config)
   {
-    this->colorImg = colorImage;
+    Mat grayImg;
     if (colorImage.channels() > 2)
     {
-      cvtColor(this->colorImg, this->grayImg, CV_BGR2GRAY);
+      cvtColor(this->colorImg, grayImg, CV_BGR2GRAY);
     }
     else
     {
-      this->grayImg = colorImage;
+      grayImg = colorImage;
     }
+    
+    PipelineData(colorImage, grayImg, regionOfInterest, config);
+  }
+  
+  PipelineData::PipelineData(Mat colorImage, Mat grayImg, Rect regionOfInterest, Config* config)
+  {
+    this->colorImg = colorImage;
+    this->grayImg = grayImg;
 
     this->regionOfInterest = regionOfInterest;
     this->config = config;

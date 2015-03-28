@@ -18,6 +18,7 @@
 */
 
 #include "alpr_impl.h"
+#include "prewarp.h"
 
 void plateAnalysisThread(void* arg);
 
@@ -33,6 +34,7 @@ namespace alpr
     plateDetector = ALPR_NULL_PTR;
     stateIdentifier = ALPR_NULL_PTR;
     ocr = ALPR_NULL_PTR;
+    prewarp = ALPR_NULL_PTR;
     
     // Config file or runtime dir not found.  Don't process any further.
     if (config->loaded == false)
@@ -47,6 +49,8 @@ namespace alpr
     setDetectRegion(DEFAULT_DETECT_REGION);
     this->topN = DEFAULT_TOPN;
     setDefaultRegion("");
+    
+    prewarp = new PreWarp(config);
 
   }
   AlprImpl::~AlprImpl()
@@ -61,6 +65,9 @@ namespace alpr
 
     if (ocr != ALPR_NULL_PTR)
       delete ocr;
+    
+    if (prewarp != ALPR_NULL_PTR)
+      delete prewarp;
   }
 
   bool AlprImpl::isLoaded()
@@ -96,26 +103,38 @@ namespace alpr
       return response;
     }
 
+    // Convert image to grayscale if required
+    Mat grayImg = img;
+    if (img.channels() > 2)
+      cvtColor( img, grayImg, CV_BGR2GRAY );
+    
+    // Prewarp the image and ROIs if configured]
+    std::vector<cv::Rect> warpedRegionsOfInterest = regionsOfInterest;
+    // Warp the image if prewarp is provided
+    grayImg = prewarp->warpImage(grayImg);
+    warpedRegionsOfInterest = prewarp->projectRects(regionsOfInterest, grayImg.cols, grayImg.rows, false);
+    
+    vector<PlateRegion> warpedPlateRegions;
     // Find all the candidate regions
     if (config->skipDetection == false)
     {
-      response.plateRegions = plateDetector->detect(img, regionsOfInterest);
+      warpedPlateRegions = plateDetector->detect(grayImg, warpedRegionsOfInterest);
     }
     else
     {
       // They have elected to skip plate detection.  Instead, return a list of plate regions
       // based on their regions of interest
-      for (unsigned int i = 0; i < regionsOfInterest.size(); i++)
+      for (unsigned int i = 0; i < warpedRegionsOfInterest.size(); i++)
       {
         PlateRegion pr;
-        pr.rect = cv::Rect(regionsOfInterest[i]);
-        response.plateRegions.push_back(pr);
+        pr.rect = cv::Rect(warpedRegionsOfInterest[i]);
+        warpedPlateRegions.push_back(pr);
       }
     }
 
     queue<PlateRegion> plateQueue;
-    for (unsigned int i = 0; i < response.plateRegions.size(); i++)
-      plateQueue.push(response.plateRegions[i]);
+    for (unsigned int i = 0; i < warpedPlateRegions.size(); i++)
+      plateQueue.push(warpedPlateRegions[i]);
 
     int platecount = 0;
     while(!plateQueue.empty())
@@ -123,7 +142,7 @@ namespace alpr
       PlateRegion plateRegion = plateQueue.front();
       plateQueue.pop();
 
-      PipelineData pipeline_data(img, plateRegion.rect, config);
+      PipelineData pipeline_data(img, grayImg, plateRegion.rect, config);
 
       timespec platestarttime;
       getTimeMonotonic(&platestarttime);
@@ -140,12 +159,16 @@ namespace alpr
         plateResult.regionConfidence = 0;
         plateResult.plate_index = platecount++;
 
+        // If using prewarp, remap the plate corners to the original image
+        vector<Point2f> cornerPoints = pipeline_data.plate_corners;
+        cornerPoints = prewarp->projectPoints(cornerPoints, true);
+        
         for (int pointidx = 0; pointidx < 4; pointidx++)
         {
-          plateResult.plate_points[pointidx].x = (int) pipeline_data.plate_corners[pointidx].x;
-          plateResult.plate_points[pointidx].y = (int) pipeline_data.plate_corners[pointidx].y;
+          plateResult.plate_points[pointidx].x = (int) cornerPoints[pointidx].x;
+          plateResult.plate_points[pointidx].y = (int) cornerPoints[pointidx].y;
         }
-
+        
         if (detectRegion)
         {
           stateIdentifier->recognize(&pipeline_data);
@@ -225,6 +248,10 @@ namespace alpr
 
     }
 
+    // Unwarp plate regions if necessary
+    prewarp->projectPlateRegions(warpedPlateRegions, grayImg.cols, grayImg.rows, true);
+    response.plateRegions = warpedPlateRegions;
+    
     timespec endTime;
     getTimeMonotonic(&endTime);
     response.results.total_processing_time_ms = diffclock(startTime, endTime);

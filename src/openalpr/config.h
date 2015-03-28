@@ -58,6 +58,8 @@ namespace alpr
       
       bool skipDetection;
 
+      std::string prewarp;
+      
       int maxPlateAngleDegrees;
 
       float minPlateSizeWidthPx;
@@ -106,6 +108,7 @@ namespace alpr
 
       bool debugGeneral;
       bool debugTiming;
+      bool debugPrewarp;
       bool debugDetector;
       bool debugStateId;
       bool debugPlateLines;

@@ -154,6 +154,8 @@ namespace alpr
 
     skipDetection = getBoolean("common", "skip_detection", false);
     
+    prewarp = getString("common", "prewarp", "");
+            
     maxPlateAngleDegrees = getInt("common", "max_plate_angle_degrees", 15);
 
     minPlateSizeWidthPx = getInt(country, "min_plate_size_width_px", 100);
@@ -205,6 +207,7 @@ namespace alpr
 
     debugGeneral = 	getBoolean("debug", "general",		false);
     debugTiming = 	getBoolean("debug", "timing",		false);
+    debugPrewarp = 	getBoolean("debug", "prewarp",		false);
     debugDetector = 	getBoolean("debug", "detector",		false);
     debugStateId = 	getBoolean("debug", "state_id",		false);
     debugPlateLines = 	getBoolean("debug", "plate_lines", 	false);

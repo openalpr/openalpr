@@ -25,6 +25,7 @@ set(lpr_source_files
  edges/textlinecollection.cpp
  edges/scorekeeper.cpp
  colorfilter.cpp
+ prewarp.cpp
  transformation.cpp
  textdetection/characteranalysis.cpp
  textdetection/platemask.cpp
