@@ -263,7 +263,8 @@ namespace alpr
     const char * pszValue = ini->GetValue(section.c_str(), key.c_str(), NULL /*default*/);
     if (pszValue == NULL)
     {
-      std::cout << "Error: missing configuration entry for: " << section << "->" << key << endl;
+      if (this->debugGeneral)
+        std::cout << "Warning: missing configuration entry for: " << section << "->" << key << endl;
       return defaultValue;
     }
 
@@ -275,7 +276,8 @@ namespace alpr
     const char * pszValue = ini->GetValue(section.c_str(), key.c_str(), NULL /*default*/);
     if (pszValue == NULL)
     {
-      std::cout << "Error: missing configuration entry for: " << section << "->" << key << endl;
+      if (this->debugGeneral)
+        std::cout << "Warning: missing configuration entry for: " << section << "->" << key << endl;
       return defaultValue;
     }
 
@@ -287,7 +289,8 @@ namespace alpr
     const char * pszValue = ini->GetValue(section.c_str(), key.c_str(), NULL /*default*/);
     if (pszValue == NULL)
     {
-      std::cout << "Error: missing configuration entry for: " << section << "->" << key << endl;
+      if (this->debugGeneral)
+        std::cout << "Warning: missing configuration entry for: " << section << "->" << key << endl;
       return defaultValue;
     }
 
@@ -299,7 +302,8 @@ namespace alpr
     const char * pszValue = ini->GetValue(section.c_str(), key.c_str(), NULL /*default*/);
     if (pszValue == NULL)
     {
-      std::cout << "Error: missing configuration entry for: " << section << "->" << key << endl;
+      if (this->debugGeneral)
+        std::cout << "Warning: missing configuration entry for: " << section << "->" << key << endl;
       return defaultValue;
     }
 
