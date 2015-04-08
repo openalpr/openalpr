@@ -49,13 +49,14 @@ namespace alpr
   {
 
     Mat frame_gray;
+    
     if (frame.channels() > 2)
     {
       cvtColor( frame, frame_gray, CV_BGR2GRAY );
     }
     else
     {
-      frame_gray = frame;
+      frame.copyTo(frame_gray);
     }
 
 
