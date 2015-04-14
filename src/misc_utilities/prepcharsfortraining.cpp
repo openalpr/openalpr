@@ -69,7 +69,7 @@ int main( int argc, const char** argv )
     const int HORIZONTAL_RESOLUTION = 3500;
     const int MAX_VERTICAL_RESOLUTION = 6000; // Maximum vertical size before chopping into additional pages.
 
-    const int TILE_WIDTH = 25;
+    const int TILE_WIDTH = 50;
     const int TILE_HEIGHT = 60;
     const int CHAR_HORIZ_OFFSET = 40;
     const int CHAR_VERT_OFFSET = 48;
