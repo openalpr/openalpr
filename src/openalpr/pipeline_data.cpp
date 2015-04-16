@@ -11,7 +11,7 @@ namespace alpr
     Mat grayImg;
     if (colorImage.channels() > 2)
     {
-      cvtColor(this->colorImg, grayImg, CV_BGR2GRAY);
+      cvtColor(colorImage, grayImg, CV_BGR2GRAY);
     }
     else
     {
