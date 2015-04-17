@@ -128,17 +128,20 @@ namespace alpr
       std::string getPostProcessRuntimeDir();
       std::string getTessdataPrefix();
 
-  private:
-      CSimpleIniA* ini;
-
+    private:
+    
+      float ocrImagePercent;
+      float stateIdImagePercent;
+    
       std::string runtimeBaseDir;
 
-      void loadValues(std::string country);
+      void loadCommonValues(std::string configFile);
+      void loadCountryValues(std::string configFile, std::string country);
 
-      int getInt(std::string section, std::string key, int defaultValue);
-      float getFloat(std::string section, std::string key, float defaultValue);
-      std::string getString(std::string section, std::string key, std::string defaultValue);
-      bool getBoolean(std::string section, std::string key, bool defaultValue);
+      int getInt(CSimpleIniA* ini, std::string section, std::string key, int defaultValue);
+      float getFloat(CSimpleIniA* ini, std::string section, std::string key, float defaultValue);
+      std::string getString(CSimpleIniA* ini, std::string section, std::string key, std::string defaultValue);
+      bool getBoolean(CSimpleIniA* ini, std::string section, std::string key, bool defaultValue);
   };
 
 
