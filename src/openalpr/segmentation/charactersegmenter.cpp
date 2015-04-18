@@ -62,38 +62,6 @@ namespace alpr
       displayImage(config, "CharacterSegmenter  Thresholds", drawImageDashboard(pipeline_data->thresholds, CV_8U, 3));
     }
 
-  //  if (this->config->debugCharSegmenter && pipeline_data->textLines.size() > 0)
-  //  {
-  //    Mat img_contours(charAnalysis->bestThreshold.size(), CV_8U);
-  //    charAnalysis->bestThreshold.copyTo(img_contours);
-  //    cvtColor(img_contours, img_contours, CV_GRAY2RGB);
-  //
-  //    vector<vector<Point> > allowedContours;
-  //    for (unsigned int i = 0; i < charAnalysis->bestContours.size(); i++)
-  //    {
-  //      if (charAnalysis->bestContours.goodIndices[i])
-  //        allowedContours.push_back(charAnalysis->bestContours.contours[i]);
-  //    }
-  //
-  //    drawContours(img_contours, charAnalysis->bestContours.contours,
-  //                 -1, // draw all contours
-  //                 cv::Scalar(255,0,0), // in blue
-  //                 1); // with a thickness of 1
-  //
-  //    drawContours(img_contours, allowedContours,
-  //                 -1, // draw all contours
-  //                 cv::Scalar(0,255,0), // in green
-  //                 1); // with a thickness of 1
-  //
-  //
-  //    line(img_contours, pipeline_data->textLines[0].linePolygon[0], pipeline_data->textLines[0].linePolygon[1], Scalar(255, 0, 255), 1);
-  //    line(img_contours, pipeline_data->textLines[0].linePolygon[3], pipeline_data->textLines[0].linePolygon[2], Scalar(255, 0, 255), 1);
-  //
-  //
-  //    Mat bordered = addLabel(img_contours, "Best Contours");
-  //    imgDbgGeneral.push_back(bordered);
-  //  }
-
 
 
     for (unsigned int lineidx = 0; lineidx < pipeline_data->textLines.size(); lineidx++)
@@ -133,7 +101,6 @@ namespace alpr
           allHistograms.push_back(addLabel(histoCopy, label));
         }
 
-  //
         float score = 0;
         vector<Rect> charBoxes = getHistogramBoxes(vertHistogram, avgCharWidth, avgCharHeight, &score);
 
