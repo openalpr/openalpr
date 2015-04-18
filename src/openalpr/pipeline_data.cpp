@@ -8,30 +8,23 @@ namespace alpr
 
   PipelineData::PipelineData(Mat colorImage, Rect regionOfInterest, Config* config)
   {
-    Mat grayImg;
+    Mat grayImage;
+
     if (colorImage.channels() > 2)
     {
-      cvtColor(this->colorImg, grayImg, CV_BGR2GRAY);
+      cvtColor(colorImage, grayImage, CV_BGR2GRAY);
     }
     else
     {
-      grayImg = colorImage;
+      grayImage = colorImage;
     }
-    
-    PipelineData(colorImage, grayImg, regionOfInterest, config);
+
+    this->init(colorImage, grayImage, regionOfInterest, config);
   }
   
   PipelineData::PipelineData(Mat colorImage, Mat grayImg, Rect regionOfInterest, Config* config)
   {
-    this->colorImg = colorImage;
-    this->grayImg = grayImg;
-
-    this->regionOfInterest = regionOfInterest;
-    this->config = config;
-
-    this->region_confidence = 0;
-
-    plate_inverted = false;
+    this->init(colorImage, grayImg, regionOfInterest, config);
   }
 
   PipelineData::~PipelineData()
@@ -48,4 +41,12 @@ namespace alpr
     thresholds.clear();
   }
 
+  void PipelineData::init(cv::Mat colorImage, cv::Mat grayImage, cv::Rect regionOfInterest, Config *config) {
+    this->colorImg = colorImage;
+    this->grayImg = grayImage;
+    this->regionOfInterest = regionOfInterest;
+    this->config = config;
+    this->region_confidence = 0;
+    this->plate_inverted = false;
+  }
 }

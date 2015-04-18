@@ -123,6 +123,11 @@ int main( int argc, const char** argv )
         string fullpath = inDir + "/" + files[i];
         cout << fullpath << endl;
         frame = imread( fullpath.c_str() );
+        if(frame.data == NULL)
+        {
+          cout << "Unable to read license plate: " << fullpath << endl;
+          continue;
+        }
         resize(frame, frame, Size(config.ocrImageWidthPx, config.ocrImageHeightPx));
 
         imshow ("Original", frame);
