@@ -38,6 +38,9 @@ namespace alpr
 
   void VerticalHistogram::analyzeImage(Mat inputImage, Mat mask)
   {
+    
+    vector<double> data;
+    
     highestPeak = 0;
     lowestValley = inputImage.rows;
 
@@ -62,9 +65,40 @@ namespace alpr
       if (columnCount > highestPeak)
         highestPeak = columnCount;
 
+      data.push_back(columnCount);
       for (; columnCount > 0; columnCount--)
         histoImg.at<uchar>(inputImage.rows - columnCount, col) = 255;
     }
+    
+//    int         MAX_PEAK=200;
+//    int         emi_peaks[MAX_PEAK];
+//    int         absorp_peaks[MAX_PEAK];
+//    int         emi_count = 0;
+//    int         absorp_count = 0;
+//    double      delta = highestPeak * (1.0 / 3.0);
+//    int         emission_first = 0;
+//    
+//    detect_peak(data.data(), data.size(), emi_peaks, &emi_count, MAX_PEAK,
+//            absorp_peaks, &absorp_count, MAX_PEAK,
+//            delta, emission_first);
+//    
+//    Mat colorDebugImg;
+//    cvtColor(histoImg, colorDebugImg, CV_GRAY2BGR );
+//    
+//    for (int i = 0; i < emi_count; i++)
+//    {
+//      cout << "EMI PEAK: " << emi_peaks[i] << " : " << data[emi_peaks[i]] << endl;
+//      circle(colorDebugImg, Point(emi_peaks[i], histoImg.rows -  data[emi_peaks[i]]), 2, Scalar(0,255,0), -1);
+//    }
+//    
+//    for (int i = 0; i < absorp_count; i++)
+//    {
+//      cout << "ABSORB PEAK: " << absorp_peaks[i] << " : " << data[absorp_peaks[i]] << endl;
+//      circle(colorDebugImg, Point(absorp_peaks[i], histoImg.rows - data[absorp_peaks[i]]), 2, Scalar(0,0,255), -1);
+//    }
+//    
+//    
+//    drawAndWait(&colorDebugImg);
   }
 
   int VerticalHistogram::getLocalMinimum(int leftX, int rightX)
@@ -106,81 +140,83 @@ namespace alpr
     return colHeights[x];
   }
 
-  void VerticalHistogram::findValleys()
-  {
-    //int MINIMUM_PEAK_HEIGHT = (int) (((float) highestPeak) * 0.75);
+  int VerticalHistogram::detect_peak(
+        const double*   data, /* the data */ 
+        int             data_count, /* row count of data */ 
+        int*            emi_peaks, /* emission peaks will be put here */ 
+        int*            num_emi_peaks, /* number of emission peaks found */
+        int             max_emi_peaks, /* maximum number of emission peaks */ 
+        int*            absop_peaks, /* absorption peaks will be put here */ 
+        int*            num_absop_peaks, /* number of absorption peaks found */
+        int             max_absop_peaks, /* maximum number of absorption peaks
+                                            */ 
+        double          delta, /* delta used for distinguishing peaks */
+        int             emi_first /* should we search emission peak first of
+                                     absorption peak first? */
+        )
+{
+    int     i;
+    double  mx;
+    double  mn;
+    int     mx_pos = 0;
+    int     mn_pos = 0;
+    int     is_detecting_emi = emi_first;
 
-    int totalWidth = colHeights.size();
 
-    int midpoint = ((highestPeak - lowestValley) / 2) + lowestValley;
+    mx = data[0];
+    mn = data[0];
 
-    HistogramDirection prevDirection = FALLING;
+    *num_emi_peaks = 0;
+    *num_absop_peaks = 0;
 
-    int relativePeakHeight = 0;
-    //int valleyStart = 0;
-
-    for (int i = 0; i < totalWidth; i++)
+    for(i = 1; i < data_count; ++i)
     {
-      bool aboveMidpoint = (colHeights[i] >= midpoint);
-
-      if (aboveMidpoint)
-      {
-        if (colHeights[i] > relativePeakHeight)
-          relativePeakHeight = colHeights[i];
-
-        prevDirection = FLAT;
-      }
-      else
-      {
-        relativePeakHeight = 0;
-
-        HistogramDirection direction = getHistogramDirection(i);
-
-        if ((prevDirection == FALLING || prevDirection == FLAT) && direction == RISING)
+        if(data[i] > mx)
         {
+            mx_pos = i;
+            mx = data[i];
         }
-        else if ((prevDirection == FALLING || prevDirection == FLAT) && direction == RISING)
+        if(data[i] < mn)
         {
+            mn_pos = i;
+            mn = data[i];
         }
-      }
+
+        if(is_detecting_emi &&
+                data[i] < mx - delta)
+        {
+            if(*num_emi_peaks >= max_emi_peaks) /* not enough spaces */
+                return 1;
+
+            emi_peaks[*num_emi_peaks] = mx_pos;
+            ++ (*num_emi_peaks);
+
+            is_detecting_emi = 0;
+
+            i = mx_pos - 1;
+
+            mn = data[mx_pos];
+            mn_pos = mx_pos;
+        }
+        else if((!is_detecting_emi) &&
+                data[i] > mn + delta)
+        {
+            if(*num_absop_peaks >= max_absop_peaks)
+                return 2;
+
+            absop_peaks[*num_absop_peaks] = mn_pos;
+            ++ (*num_absop_peaks);
+
+            is_detecting_emi = 1;
+            
+            i = mn_pos - 1;
+
+            mx = data[mn_pos];
+            mx_pos = mn_pos;
+        }
     }
-  }
 
-  HistogramDirection VerticalHistogram::getHistogramDirection(unsigned int index)
-  {
-    int EXTRA_WIDTH_TO_AVERAGE = 2;
-
-    float trailingAverage = 0;
-    float forwardAverage = 0;
-
-    int trailStartIndex = index - EXTRA_WIDTH_TO_AVERAGE;
-    if (trailStartIndex < 0)
-      trailStartIndex = 0;
-    unsigned int forwardEndIndex = index + EXTRA_WIDTH_TO_AVERAGE;
-    if (forwardEndIndex >= colHeights.size())
-      forwardEndIndex = colHeights.size() - 1;
-
-    for (int i = index; i >= trailStartIndex; i--)
-    {
-      trailingAverage += colHeights[i];
-    }
-    trailingAverage = trailingAverage / ((float) (1 + index - trailStartIndex));
-
-    for (unsigned int i = index; i <= forwardEndIndex; i++)
-    {
-      forwardAverage += colHeights[i];
-    }
-    forwardAverage = forwardAverage / ((float) (1 + forwardEndIndex - index));
-
-    float diff = forwardAverage - trailingAverage;
-    float minDiff = ((float) (highestPeak - lowestValley)) * 0.10;
-
-    if (diff > minDiff)
-      return RISING;
-    else if (diff < minDiff)
-      return FALLING;
-    else
-      return FLAT;
-  }
+    return 0;
+}
 
 }

@@ -21,6 +21,7 @@
 #define OPENALPR_VERTICALHISTOGRAM_H
 
 #include "opencv2/imgproc/imgproc.hpp"
+#include "utility.h"
 
 namespace alpr
 {
@@ -58,9 +59,11 @@ namespace alpr
       std::vector<Valley> valleys;
 
       void analyzeImage(cv::Mat inputImage, cv::Mat mask);
-      void findValleys();
-
-      HistogramDirection getHistogramDirection(unsigned int index);
+      
+      int detect_peak(const double* data,  int data_count, int* emi_peaks, 
+                      int* num_emi_peaks, int max_emi_peaks, int* absop_peaks,
+                      int* num_absop_peaks, int max_absop_peaks, double delta, 
+                      int emi_first );
   };
 
 }
