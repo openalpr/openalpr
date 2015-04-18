@@ -25,6 +25,7 @@
 #include <fstream>
 #include <sys/stat.h>
 #include "support/filesystem.h"
+#include "../tclap/CmdLine.h"
 
 using namespace std;
 using namespace cv;
@@ -35,17 +36,42 @@ using namespace alpr;
 int main( int argc, const char** argv )
 {
   string inDir;
+  int tile_width;
+  int tile_height;
 
-  //Check if user specify image to process
-  if(argc == 2)
+  TCLAP::CmdLine cmd("OpenAlpr OCR Training Prep Utility", ' ', "1.0.0");
+
+  TCLAP::UnlabeledValueArg<std::string>  inputDirArg( "input_dir", "Folder containing individual character images", true, "", "input_dir_path"  );
+
+  
+  TCLAP::ValueArg<int> tileWidthArg("","tile_width","Width (in pixels) for each character tile.  Default=50",false, 50 ,"tile_width_px");
+  TCLAP::ValueArg<int> tileHeightArg("","tile_height","Height (in pixels) for each character tile.  Default=60",false, 60 ,"tile_height_px");
+  
+  try
   {
-    inDir = argv[1];
+    cmd.add( inputDirArg );
+    cmd.add( tileWidthArg );
+    cmd.add( tileHeightArg );
+
+    
+    if (cmd.parse( argc, argv ) == false)
+    {
+      // Error occured while parsing.  Exit now.
+      return 1;
+    }
+
+    inDir = inputDirArg.getValue();
+    tile_width = tileWidthArg.getValue();
+    tile_height = tileHeightArg.getValue();
+    
   }
-  else
+  catch (TCLAP::ArgException &e)    // catch any exceptions
   {
-    printf("Use:\n\t%s input dir \n",argv[0]);
-    return 0;
+    std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl;
+    return 1;
   }
+  
+  
 
   if (DirectoryExists(inDir.c_str()) == false)
   {
@@ -53,8 +79,6 @@ int main( int argc, const char** argv )
     return 0;
   }
 
-  cout << "Usage: " << endl;
-  cout << "\tinputdir	-- input dir for benchmark data" << endl;
 
   if (DirectoryExists(inDir.c_str()))
   {
@@ -69,8 +93,8 @@ int main( int argc, const char** argv )
     const int HORIZONTAL_RESOLUTION = 3500;
     const int MAX_VERTICAL_RESOLUTION = 6000; // Maximum vertical size before chopping into additional pages.
 
-    const int TILE_WIDTH = 50;
-    const int TILE_HEIGHT = 60;
+    const int TILE_WIDTH = tile_width;
+    const int TILE_HEIGHT = tile_height;
     const int CHAR_HORIZ_OFFSET = 40;
     const int CHAR_VERT_OFFSET = 48;
 
