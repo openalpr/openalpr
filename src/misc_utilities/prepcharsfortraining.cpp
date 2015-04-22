@@ -95,8 +95,6 @@ int main( int argc, const char** argv )
 
   const int TILE_WIDTH = tile_width;
   const int TILE_HEIGHT = tile_height;
-  const int CHAR_HORIZ_OFFSET = 40;
-  const int CHAR_VERT_OFFSET = 48;
 
   const int FIXED_CHAR_HEIGHT = 40; // RESIZE all characters to this height
 
@@ -118,9 +116,9 @@ int main( int argc, const char** argv )
   }
 
 
-  int tiles_per_row = ((float) (HORIZONTAL_RESOLUTION - (PAGE_MARGIN_X * 2))) / ((float) TILE_WIDTH);
+  int tiles_per_row = ((float) (HORIZONTAL_RESOLUTION - (PAGE_MARGIN_X * 2))) / ((float) TILE_WIDTH) + 1;
   int lines = files.size() / (tiles_per_row);
-  int vertical_resolution = (lines * TILE_HEIGHT) + (PAGE_MARGIN_Y * 3) ;
+  int vertical_resolution = ((lines + 1) * TILE_HEIGHT) + (PAGE_MARGIN_Y * 2) ;
   cout << tiles_per_row <<   " : " << vertical_resolution << endl;
 
   Mat bigTif = Mat::zeros(Size(HORIZONTAL_RESOLUTION, vertical_resolution), CV_8U);
@@ -197,8 +195,7 @@ int main( int argc, const char** argv )
       Mat cropped(characterImg, cropRect);
       cvtColor(cropped, cropped, CV_BGR2GRAY);
 
-      Rect destinationRect(xPos + (CHAR_HORIZ_OFFSET - TILE_WIDTH), yPos + (CHAR_VERT_OFFSET - TILE_HEIGHT + (TILE_HEIGHT - tallestRect.height)), tallestRect.width, tallestRect.height);
-
+      Rect destinationRect(xPos, yPos, tallestRect.width, tallestRect.height);
       //cout << "1" << endl;
 
       cropped.copyTo(bigTif(destinationRect));
