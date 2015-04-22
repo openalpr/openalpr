@@ -26,6 +26,7 @@
 #include <sys/stat.h>
 #include "support/filesystem.h"
 #include "../tclap/CmdLine.h"
+#include "support/utf8.h"
 
 using namespace std;
 using namespace cv;
@@ -134,14 +135,16 @@ int main( int argc, const char** argv )
 
     int xPos = (col * TILE_WIDTH) + PAGE_MARGIN_X;
     int yPos = (line * TILE_HEIGHT) + PAGE_MARGIN_Y;
-
+    
     if (hasEnding(files[i], ".png") || hasEnding(files[i], ".jpg"))
     {
       string fullpath = inDir + "/" + files[i];
 
       cout << "Processing file: " << (i + 1) << " of " << files.size() << " (" << files[i] << ")" << endl;
 
-      char charcode = files[i][0];
+      string::iterator utf_iterator = files[i].begin();
+      int cp = utf8::next(utf_iterator, files[i].end());
+      string charcode = utf8chr(cp);
 
       Mat characterImg = imread(fullpath);
 
