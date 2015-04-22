@@ -35,7 +35,13 @@ TARGET_LINK_LIBRARIES(openalpr-utils-prepcharsfortraining
     support
     ${OpenCV_LIBS} 
   )
-  
+ 
+ADD_EXECUTABLE( openalpr-utils-binarizefontsheet binarizefontsheet.cpp )
+TARGET_LINK_LIBRARIES(openalpr-utils-binarizefontsheet
+    openalpr
+    support
+    ${OpenCV_LIBS} 
+  ) 
   
 ADD_EXECUTABLE( openalpr-utils-tagplates tagplates.cpp )
 TARGET_LINK_LIBRARIES(openalpr-utils-tagplates
