@@ -75,8 +75,8 @@ int main( int argc, const char** argv )
 
   if (DirectoryExists(inDir.c_str()) == false)
   {
-    printf("Output dir does not exist\n");
-    return 0;
+    printf("Input dir does not exist\n");
+    return 1;
   }
 
 
@@ -139,7 +139,7 @@ int main( int argc, const char** argv )
     {
       string fullpath = inDir + "/" + files[i];
 
-      cout << "Processing file: " << (i + 1) << " of " << files.size() << endl;
+      cout << "Processing file: " << (i + 1) << " of " << files.size() << " (" << files[i] << ")" << endl;
 
       char charcode = files[i][0];
 
