@@ -18,7 +18,8 @@
 */
 
 #include "alpr_impl.h"
-#include "prewarp.h"
+#include "support/utf8.h"
+
 
 void plateAnalysisThread(void* arg);
 
@@ -197,8 +198,9 @@ namespace alpr
           if (pp >= topN)
             break;
 
-          if (ppResults[pp].letters.size() >= config->postProcessMinCharacters &&
-            ppResults[pp].letters.size() <= config->postProcessMaxCharacters)
+          int plate_char_length = utf8::distance(ppResults[pp].letters.begin(), ppResults[pp].letters.end());
+          if (plate_char_length >= config->postProcessMinCharacters &&
+            plate_char_length <= config->postProcessMaxCharacters)
           {
             // Set our "best plate" match to either the first entry, or the first entry with a postprocessor template match
             if (bestPlateIndex == 0 && ppResults[pp].matchesTemplate)
@@ -209,6 +211,11 @@ namespace alpr
             aplate.overall_confidence = ppResults[pp].totalscore;
             aplate.matches_template = ppResults[pp].matchesTemplate;
             plateResult.topNPlates.push_back(aplate);
+          }
+          else if (plate_char_length > config->postProcessMaxCharacters)
+          {
+            cout << "Not within character count... " << ppResults[pp].letters << endl;
+            cout << plate_char_length << endl;
           }
         }
 

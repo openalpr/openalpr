@@ -45,6 +45,8 @@
 
 #include "pipeline_data.h"
 
+#include "prewarp.h"
+
 #include <opencv2/core/core.hpp>
    
 #include "support/platform.h"
