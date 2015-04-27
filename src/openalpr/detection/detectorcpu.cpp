@@ -92,6 +92,7 @@ namespace alpr
       if (config->debugDetector)
         std::cout << "Input detection image is too tall.  Resizing with scale: " << this->scale_factor << endl;
     }
+	else scale_factor = 1;
 
     int w = frame.size().width;
     int h = frame.size().height;

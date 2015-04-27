@@ -28,7 +28,6 @@ namespace alpr
   Detector::Detector(Config* config)
   {
     this->config = config;
-    this->scale_factor = 1.0f;
 
   }
 

@@ -135,7 +135,8 @@ namespace alpr
 
     queue<PlateRegion> plateQueue;
     for (unsigned int i = 0; i < warpedPlateRegions.size(); i++)
-      plateQueue.push(warpedPlateRegions[i]);
+		if (((warpedPlateRegions[i].rect.height + warpedPlateRegions[i].rect.y) < grayImg.rows) && ((warpedPlateRegions[i].rect.width + warpedPlateRegions[i].rect.x) < grayImg.cols))
+			plateQueue.push(warpedPlateRegions[i]);
 
     int platecount = 0;
     while(!plateQueue.empty())
