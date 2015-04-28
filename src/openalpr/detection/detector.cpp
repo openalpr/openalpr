@@ -28,7 +28,6 @@ namespace alpr
   Detector::Detector(Config* config)
   {
     this->config = config;
-    this->scale_factor = 1.0f;
 
   }
 
@@ -56,6 +55,30 @@ namespace alpr
     return rois;
   }
 
+  float Detector::computeScaleFactor(int width, int height) {
+    
+    float scale_factor = 1.0;
+    
+    if (width > config->maxDetectionInputWidth)
+    {
+      // The frame is too wide
+      scale_factor = ((float) config->maxDetectionInputWidth) / ((float) width);
+
+      if (config->debugDetector)
+        std::cout << "Input detection image is too wide.  Resizing with scale: " << scale_factor << endl;
+    }
+    else if (height > config->maxDetectionInputHeight)
+    {
+      // The frame is too tall
+      scale_factor = ((float) config->maxDetectionInputHeight) / ((float) height);
+
+      if (config->debugDetector)
+        std::cout << "Input detection image is too tall.  Resizing with scale: " << scale_factor << endl;
+    }
+    
+    return scale_factor;
+    
+  }
 
   bool rectHasLargerArea(cv::Rect a, cv::Rect b) { return a.area() < b.area(); };
 

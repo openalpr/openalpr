@@ -53,8 +53,8 @@ namespace alpr
       Config* config;
 
       bool loaded;
-      float scale_factor;
 
+      float computeScaleFactor(int width, int height);
       std::vector<PlateRegion> aggregateRegions(std::vector<cv::Rect> regions);
 
 

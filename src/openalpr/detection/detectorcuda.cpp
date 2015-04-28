@@ -70,39 +70,25 @@ namespace alpr
   vector<PlateRegion> DetectorCUDA::doCascade(Mat frame, int offset_x, int offset_y)
   {
 
-
-    if (frame.cols > config->maxDetectionInputWidth)
-    {
-      // The frame is too wide
-      this->scale_factor = ((float) config->maxDetectionInputWidth) / ((float) frame.cols);
-
-      if (config->debugDetector)
-        std::cout << "Input detection image is too wide.  Resizing with scale: " << this->scale_factor << endl;
-    }
-    else if (frame.rows > config->maxDetectionInputHeight)
-    {
-      // The frame is too tall
-      this->scale_factor = ((float) config->maxDetectionInputHeight) / ((float) frame.rows);
-
-      if (config->debugDetector)
-        std::cout << "Input detection image is too tall.  Resizing with scale: " << this->scale_factor << endl;
-    }
-
     int w = frame.size().width;
     int h = frame.size().height;
 
+    float scale_factor = computeScaleFactor(w, h);
+    
     vector<Rect> plates;
 
     equalizeHist( frame, frame );
-    resize(frame, frame, Size(w * this->scale_factor, h * this->scale_factor));
+    
+    if (scale_factor != 1.0)
+      resize(frame, frame, Size(w * scale_factor, h * scale_factor));
 
     //-- Detect plates
     timespec startTime;
     getTimeMonotonic(&startTime);
 
-    float maxWidth = ((float) w) * (config->maxPlateWidthPercent / 100.0f) * this->scale_factor;
-    float maxHeight = ((float) h) * (config->maxPlateHeightPercent / 100.0f) * this->scale_factor;
-    Size minSize(config->minPlateSizeWidthPx * this->scale_factor, config->minPlateSizeHeightPx * this->scale_factor);
+    float maxWidth = ((float) w) * (config->maxPlateWidthPercent / 100.0f) * scale_factor;
+    float maxHeight = ((float) h) * (config->maxPlateHeightPercent / 100.0f) * scale_factor;
+    Size minSize(config->minPlateSizeWidthPx * scale_factor, config->minPlateSizeHeightPx * scale_factor);
 
     gpu::GpuMat cudaFrame, plateregions_buffer;
     Mat plateregions_downloaded;
