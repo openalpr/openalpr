@@ -15,7 +15,8 @@ set(lpr_source_files
  stateidentifier.cpp
  featurematcher.cpp
  ocr.cpp
- postprocess.cpp
+ postprocess/postprocess.cpp
+ postprocess/regexrule.cpp
  binarize_wolf.cpp
  segmentation/charactersegmenter.cpp
  segmentation/verticalhistogram.cpp
