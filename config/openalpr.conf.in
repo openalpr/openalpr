@@ -32,7 +32,7 @@ max_detection_input_height = 720
 
 ; detector is the technique used to find license plate regions in an image.  Value can be set to
 ; lbpcpu   - default LBP-based detector uses the system CPU  
-; lbpcuda  - LBP-based detector that uses Nvidia GPU to increase recognition speed.
+; lbpgpu  - LBP-based detector that uses Nvidia GPU to increase recognition speed.
 ; morphcpu - Experimental detector that detects white rectangles in an image.  Does not require training.
 detector = lbpcpu
 
