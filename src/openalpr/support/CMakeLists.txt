@@ -7,6 +7,8 @@ set(support_source_files
  platform.cpp
 )
 
+add_subdirectory(regex)
+
 add_library(support STATIC ${support_source_files})
 
 SET_TARGET_PROPERTIES( support PROPERTIES COMPILE_FLAGS -fPIC)
