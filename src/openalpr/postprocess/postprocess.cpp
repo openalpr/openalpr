@@ -457,6 +457,11 @@ namespace alpr
     return true;
   }
 
+  RegexRule::~RegexRule()
+  {
+    
+  }
+  
   RegexRule::RegexRule(string region, string pattern)
   {
     this->original = pattern;

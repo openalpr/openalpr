@@ -20,7 +20,7 @@
 #ifndef OPENALPR_POSTPROCESS_H
 #define OPENALPR_POSTPROCESS_H
 
-#include "TRexpp.h"
+#include "support/regex/oniguruma.h"
 #include "constants.h"
 #include "utility.h"
 #include <fstream>
