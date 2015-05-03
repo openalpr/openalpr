@@ -18,7 +18,6 @@
 */
 
 #include "alpr_impl.h"
-#include "support/utf8.h"
 
 
 void plateAnalysisThread(void* arg);

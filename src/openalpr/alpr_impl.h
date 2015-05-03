@@ -50,6 +50,7 @@
 #include <opencv2/core/core.hpp>
    
 #include "support/platform.h"
+#include "support/utf8.h"
 
 #define DEFAULT_TOPN 25
 #define DEFAULT_DETECT_REGION false
