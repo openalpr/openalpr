@@ -20,7 +20,7 @@
 #ifndef OPENALPR_POSTPROCESS_H
 #define OPENALPR_POSTPROCESS_H
 
-#include "support/regex/oniguruma.h"
+#include "regexrule.h"
 #include "constants.h"
 #include "utility.h"
 #include <fstream>
@@ -53,23 +53,7 @@ namespace alpr
   bool wordCompare( const PPResult &left, const PPResult &right );
   bool letterCompare( const Letter &left, const Letter &right );
 
-  class RegexRule
-  {
-    public:
-      RegexRule(std::string region, std::string pattern);
-
-      bool match(std::string text);
-      std::string filterSkips(std::string text);
-
-    private:
-      int numchars;
-      TRexpp trexp;
-      std::string original;
-      std::string regex;
-      std::string region;
-      std::vector<int> skipPositions;
-  };
-
+  
   class PostProcess
   {
     public:
