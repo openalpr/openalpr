@@ -83,7 +83,7 @@
 
 /* */
 /* escape other system UChar definition */
-#include "config.h"
+#include "onig_config.h"
 #ifdef ONIG_ESCAPE_UCHAR_COLLISION
 #undef ONIG_ESCAPE_UCHAR_COLLISION
 #endif
