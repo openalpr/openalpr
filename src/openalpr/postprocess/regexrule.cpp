@@ -20,14 +20,17 @@
 #include "regexrule.h"
 
 using namespace std;
-  
+
+tthread::mutex regexrule_mutex_m;
+
 namespace alpr
 {
    
   RegexRule::RegexRule(string region, string pattern)
-  {
+  {   
     this->original = pattern;
     this->region = region;
+    this->regex = "";
 
     this->valid = false;
     string::iterator end_it = utf8::find_invalid(pattern.begin(), pattern.end());
@@ -90,12 +93,16 @@ namespace alpr
       numchars++;
     }
 
+    // Onigurama is not thread safe when compiling regex.  Using a mutex to ensure that
+    // we don't crash
+    regexrule_mutex_m.lock();
     UChar* cstr_pattern = (UChar* )this->regex.c_str();
     OnigErrorInfo einfo;
-    
-    //cout << "Pattern: " << cstr_pattern << endl;
+
     int r = onig_new(&onig_regex, cstr_pattern, cstr_pattern + strlen((char* )cstr_pattern),
       ONIG_OPTION_DEFAULT, ONIG_ENCODING_UTF8, ONIG_SYNTAX_DEFAULT, &einfo);
+
+    regexrule_mutex_m.unlock(); 
     
     if (r != ONIG_NORMAL) {
       //char s[ONIG_MAX_ERROR_MESSAGE_LEN];

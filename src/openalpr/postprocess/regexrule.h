@@ -26,6 +26,7 @@
 #include <vector>
 #include "support/regex/oniguruma.h"
 #include "support/utf8.h"
+#include "support/tinythread.h"
 
 namespace alpr
 {
