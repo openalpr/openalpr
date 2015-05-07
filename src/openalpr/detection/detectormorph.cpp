@@ -50,8 +50,16 @@ namespace alpr {
   vector<PlateRegion> DetectorMorph::detect(Mat frame, std::vector<cv::Rect> regionsOfInterest) {
 
     Mat frame_gray,frame_gray_cp;
-    cvtColor(frame, frame_gray, CV_BGR2GRAY);
-    
+
+    if (frame.channels() > 2)
+    {
+      cvtColor( frame, frame_gray, CV_BGR2GRAY );
+    }
+    else
+    {
+      frame.copyTo(frame_gray);
+    }
+
     frame_gray.copyTo(frame_gray_cp);
     blur(frame_gray, frame_gray, Size(5, 5));
 
