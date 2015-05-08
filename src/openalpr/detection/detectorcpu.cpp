@@ -115,6 +115,9 @@ namespace alpr
       plates[i].y = (plates[i].y / scale_factor) + offset_y;
       plates[i].width = plates[i].width / scale_factor;
       plates[i].height = plates[i].height / scale_factor;
+      
+      // Ensure that the rectangle isn't < 0 or > maxWidth/Height
+      plates[i] = expandRect(plates[i], 0, 0, frame.cols, frame.rows);
     }
 
     vector<PlateRegion> orderedRegions = aggregateRegions(plates);
