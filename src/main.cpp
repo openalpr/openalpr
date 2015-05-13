@@ -219,6 +219,7 @@ int main( int argc, const char** argv )
     }
   }
   else if (hasEndingInsensitive(filename, ".png") || hasEndingInsensitive(filename, ".jpg") || 
+	   hasEndingInsensitive(filename, ".tif") || hasEndingInsensitive(filename, ".bmp") ||  
 	   hasEndingInsensitive(filename, ".jpeg") || hasEndingInsensitive(filename, ".gif"))
   {
     if (fileExists(filename.c_str()))
