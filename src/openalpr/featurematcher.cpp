@@ -34,12 +34,12 @@ namespace alpr
     this->config = config;
 
     //this->descriptorMatcher = DescriptorMatcher::create( "BruteForce-HammingLUT" );
-//    this->descriptorMatcher = new BFMatcher(NORM_HAMMING, false);
+    this->descriptorMatcher = new BFMatcher(NORM_HAMMING, false);
 
     //this->descriptorMatcher = DescriptorMatcher::create( "FlannBased" );
 
-//    this->detector = new FastFeatureDetector(10, true);
-//    this->extractor = new BRISK(10, 1, 0.9);
+    this->detector = new FastFeatureDetector(10, true);
+    this->extractor = new BRISK(10, 1, 0.9);
   }
 
   FeatureMatcher::~FeatureMatcher()
