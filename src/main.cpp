@@ -42,6 +42,7 @@ const std::string LAST_VIDEO_STILL_LOCATION = "/tmp/laststill.jpg";
 
 /** Function Headers */
 bool detectandshow(Alpr* alpr, cv::Mat frame, std::string region, bool writeJson);
+bool is_supported_image(std::string image_file);
 
 bool measureProcessingTime = false;
 std::string templatePattern;
@@ -218,9 +219,7 @@ int main( int argc, const char** argv )
       std::cerr << "Video file not found: " << filename << std::endl;
     }
   }
-  else if (hasEndingInsensitive(filename, ".png") || hasEndingInsensitive(filename, ".jpg") || 
-	   hasEndingInsensitive(filename, ".tif") || hasEndingInsensitive(filename, ".bmp") ||  
-	   hasEndingInsensitive(filename, ".jpeg") || hasEndingInsensitive(filename, ".gif"))
+  else if (is_supported_image(filename))
   {
     if (fileExists(filename.c_str()))
     {
@@ -244,7 +243,7 @@ int main( int argc, const char** argv )
 
     for (int i = 0; i< files.size(); i++)
     {
-      if (hasEndingInsensitive(files[i], ".jpg") || hasEndingInsensitive(files[i], ".png"))
+      if (is_supported_image(files[i]))
       {
         std::string fullpath = filename + "/" + files[i];
         std::cout << fullpath << std::endl;
@@ -269,7 +268,12 @@ int main( int argc, const char** argv )
   return 0;
 }
 
-
+bool is_supported_image(std::string image_file)
+{
+  return (hasEndingInsensitive(image_file, ".png") || hasEndingInsensitive(image_file, ".jpg") || 
+	  hasEndingInsensitive(image_file, ".tif") || hasEndingInsensitive(image_file, ".bmp") ||  
+	  hasEndingInsensitive(image_file, ".jpeg") || hasEndingInsensitive(image_file, ".gif"));
+}
 
 
 bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJson)
