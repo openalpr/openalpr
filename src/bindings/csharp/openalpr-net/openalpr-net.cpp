@@ -391,7 +391,9 @@ namespace openalprnet {
 					regionsOfInterest.push_back(AlprRegionOfInterest(0, 0, frame.cols, frame.rows));
 
 					AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, regionsOfInterest);
-					Image^ frameImage = gcnew Bitmap(frame.cols, frame.rows, frame.step, Imaging::PixelFormat::Format24bppRgb, IntPtr(frame.data));
+					int framecolsorig = frame.cols;
+					if (framecolsorig % 4 != 0) copyMakeBorder(frame, frame, 0, 0, 0, 4 - (framecolsorig % 4), IPL_BORDER_REPLICATE);			//Stride has to be multiple of 4
+					Image^ frameImage = gcnew Bitmap(framecolsorig, frame.rows, frame.step, Imaging::PixelFormat::Format24bppRgb, IntPtr(frame.data));
 					AlprFrameEventArgs^ alprFrameEventArgs = gcnew AlprFrameEventArgs(framenum, frameImage, gcnew AlprResultsNet(results));
 					FrameProcessed(this, alprFrameEventArgs);
 					delete frameImage;
