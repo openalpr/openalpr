@@ -1,5 +1,5 @@
 #include "utf8.h"
-
+#include <string>
 
 std::string utf8chr(int cp)
 {
