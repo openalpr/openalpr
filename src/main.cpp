@@ -160,7 +160,8 @@ int main( int argc, const char** argv )
 
     while (cap.read(frame))
     {
-      detectandshow(&alpr, frame, "", outputJson);
+	  if (framenum == 0) motiondetector.ResetMotionDetection(&frame);
+	  detectandshow(&alpr, frame, "", outputJson);
       sleep_ms(10);
       framenum++;
     }
