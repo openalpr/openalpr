@@ -42,6 +42,7 @@ using namespace alpr;
 const int LEFT_ARROW_KEY = 2;
 const int RIGHT_ARROW_KEY = 3;
 const int SPACE_KEY = 32;
+const string SPACE = " ";
 const int ENTER_KEY = 13;
 const int ESCAPE_KEY = 27;
 
