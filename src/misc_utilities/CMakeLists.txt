@@ -49,9 +49,22 @@ TARGET_LINK_LIBRARIES(openalpr-utils-tagplates
     ${OpenCV_LIBS} 
   )
   
+ADD_EXECUTABLE( openalpr-utils-calibrate calibrate.cpp  )
+TARGET_LINK_LIBRARIES(openalpr-utils-calibrate
+    openalpr
+    support
+    ${OpenCV_LIBS} 
+	${Tesseract_LIBRARIES}
+  )
+
+  
+install (TARGETS openalpr-utils-calibrate DESTINATION bin)
+
+
 install (TARGETS openalpr-utils-sortstate DESTINATION bin)
 install (TARGETS openalpr-utils-classifychars DESTINATION bin)
 install (TARGETS openalpr-utils-benchmark DESTINATION bin)
 install (TARGETS openalpr-utils-prepcharsfortraining DESTINATION bin)
 install (TARGETS openalpr-utils-tagplates DESTINATION bin)
+install (TARGETS openalpr-utils-calibrate DESTINATION bin)
 
