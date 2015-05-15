@@ -53,7 +53,13 @@ cv::Rect MotionDetector::MotionDetect(cv::Mat* frame)
 		rectangle(*frame, rect_temp, cv::Scalar(0, 255, 0), 1, 8, 0);
 	}
 	else
-		largest_rect = { 0, 0, 0, 0 };
+        {
+          largest_rect.x = 0;
+          largest_rect.y = 0;
+          largest_rect.width = 0;
+          largest_rect.height = 0;
+        }
+		
 //	imshow("Motion detect", fgMaskMOG2);
 	return largest_rect;
 }
