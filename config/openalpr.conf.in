@@ -6,6 +6,11 @@ runtime_dir = ${CMAKE_INSTALL_PREFIX}/share/openalpr/runtime_data
 ocr_img_size_percent = 1.33333333
 state_id_img_size_percent = 2.0
 
+; Calibrating your camera improves detection accuracy in cases where vehicle plates are captured at a steep angle
+; Use the openalpr-utils-calibrate utility to calibrate your fixed camera to adjust for an angle
+; Once done, update the prewarp config with the values obtained from the tool
+prewarp =
+
 ; detection will ignore plates that are too large.  This is a good efficiency technique to use if the 
 ; plates are going to be a fixed distance away from the camera (e.g., you will never see plates that fill 
 ; up the entire image
