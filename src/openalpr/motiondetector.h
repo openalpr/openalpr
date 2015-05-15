@@ -3,6 +3,7 @@
 #define OPENALPR_MOTIONDETECTOR_H
 
 #include "opencv2/opencv.hpp"
+#include "utility.h"
 
 namespace alpr
 {
