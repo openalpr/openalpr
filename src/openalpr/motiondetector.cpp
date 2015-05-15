@@ -2,6 +2,9 @@
 
 using namespace cv;
 
+namespace alpr
+{
+  
 MotionDetector::MotionDetector()
 {
 	pMOG2 = new BackgroundSubtractorMOG2();
@@ -62,4 +65,6 @@ cv::Rect MotionDetector::MotionDetect(cv::Mat* frame)
 		
 //	imshow("Motion detect", fgMaskMOG2);
 	return expandRect(largest_rect, 0, 0, frame->cols, frame->rows);
+}
+
 }
