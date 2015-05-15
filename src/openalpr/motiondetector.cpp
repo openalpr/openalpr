@@ -61,5 +61,5 @@ cv::Rect MotionDetector::MotionDetect(cv::Mat* frame)
         }
 		
 //	imshow("Motion detect", fgMaskMOG2);
-	return largest_rect;
+	return expandRect(largest_rect, 0, 0, frame->cols, frame->rows);
 }
