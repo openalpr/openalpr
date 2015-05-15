@@ -31,7 +31,7 @@
 #include "support/timing.h"
 #include "support/platform.h"
 #include "video/videobuffer.h"
-#include "video/motiondetector.h"
+#include "motiondetector.h"
 #include "alpr.h"
 
 using namespace alpr;
