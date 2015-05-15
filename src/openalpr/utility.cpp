@@ -46,7 +46,11 @@ namespace alpr
       expandedRegion.width = maxX - expandedRegion.x;
     if (expandedRegion.y + expandedRegion.height > maxY)
       expandedRegion.height = maxY - expandedRegion.y;
-
+    if (expandedRegion.width < 0)
+      expandedRegion.width = 0;
+    if (expandedRegion.height < 0)
+      expandedRegion.height = 0;
+    
     return expandedRegion;
   }
 
