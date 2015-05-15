@@ -60,9 +60,15 @@ namespace alpr
     }
 
 
-    vector<PlateRegion> detectedRegions;
+    vector<PlateRegion> detectedRegions;   
     for (int i = 0; i < regionsOfInterest.size(); i++)
     {
+      // Sanity check.  If roi width or height is less than minimum possible plate size,
+      // then skip it
+      if ((regionsOfInterest[i].width < config->minPlateSizeWidthPx) || 
+          (regionsOfInterest[i].height < config->minPlateSizeHeightPx))
+        continue;
+      
       Mat cropped = frame_gray(regionsOfInterest[i]);
       vector<PlateRegion> subRegions = doCascade(cropped, regionsOfInterest[i].x, regionsOfInterest[i].y);
 
