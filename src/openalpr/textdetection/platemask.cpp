@@ -176,13 +176,12 @@ namespace alpr
 
       hasPlateMask = true;
       this->plateMask = mask;
-    }
-
-    hasPlateMask = false;
-    Mat fullMask = Mat::zeros(pipeline_data->thresholds[0].size(), CV_8U);
-    bitwise_not(fullMask, fullMask);
-
-    this->plateMask = fullMask;
+	} else {
+	  hasPlateMask = false;
+	  Mat fullMask = Mat::zeros(pipeline_data->thresholds[0].size(), CV_8U);
+	  bitwise_not(fullMask, fullMask);
+	  this->plateMask = fullMask;
+	}
   }
 
 }
