@@ -17,7 +17,7 @@ run apt-get update && apt-get install -y \
 copy . /srv/openalpr
 
 # Setup the build directory
-run mkdir /srv/openalpr/src/build
+run mkdir -p /srv/openalpr/src/build
 workdir /srv/openalpr/src/build
 
 # Setup the compile environment
