@@ -27,7 +27,7 @@ using namespace cv;
 namespace alpr
 {
 
-  TextLine::TextLine(std::vector<cv::Point2f> textArea, std::vector<cv::Point2f> linePolygon) {
+  TextLine::TextLine(std::vector<cv::Point2f> textArea, std::vector<cv::Point2f> linePolygon, cv::Size imgSize) {
     std::vector<Point> textAreaInts, linePolygonInts;
 
     for (unsigned int i = 0; i < textArea.size(); i++)
@@ -35,11 +35,11 @@ namespace alpr
     for (unsigned int i = 0; i < linePolygon.size(); i++)
       linePolygonInts.push_back(Point(round(linePolygon[i].x), round(linePolygon[i].y)));
 
-    initialize(textAreaInts, linePolygonInts);
+    initialize(textAreaInts, linePolygonInts, imgSize);
   }
 
-  TextLine::TextLine(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon) {
-    initialize(textArea, linePolygon);
+  TextLine::TextLine(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon, cv::Size imgSize) {
+    initialize(textArea, linePolygon, imgSize);
   }
 
 
@@ -48,7 +48,7 @@ namespace alpr
 
 
 
-  void TextLine::initialize(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon) {
+  void TextLine::initialize(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon, cv::Size imgSize) {
     if (textArea.size() > 0)
     {
       if (this->textArea.size() > 0)
@@ -59,11 +59,36 @@ namespace alpr
       for (unsigned int i = 0; i < textArea.size(); i++)
         this->textArea.push_back(textArea[i]);
 
+      this->topLine = LineSegment(linePolygon[0].x, linePolygon[0].y, linePolygon[1].x, linePolygon[1].y);
+      this->bottomLine = LineSegment(linePolygon[3].x, linePolygon[3].y, linePolygon[2].x, linePolygon[2].y);
+      
+      // Adjust the line polygon so that it always touches the edges
+      // This is needed after applying perspective transforms, so just fix it here
+      if (linePolygon[0].x != 0)
+      {
+        linePolygon[0].x = 0;
+        linePolygon[0].y = topLine.getPointAt(linePolygon[0].x);
+      }
+      if (linePolygon[1].x != imgSize.width)
+      {
+        linePolygon[1].x = imgSize.width;
+        linePolygon[1].y = topLine.getPointAt(linePolygon[1].x);
+      }
+      if (linePolygon[2].x != imgSize.width)
+      {
+        linePolygon[2].x = imgSize.width;
+        linePolygon[2].y = bottomLine.getPointAt(linePolygon[2].x);
+      }
+      if (linePolygon[3].x != 0)
+      {
+        linePolygon[3].x = 0;
+        linePolygon[3].y = bottomLine.getPointAt(linePolygon[3].x);
+      }
+      
+      
       for (unsigned int i = 0; i < linePolygon.size(); i++)
         this->linePolygon.push_back(linePolygon[i]);
 
-      this->topLine = LineSegment(linePolygon[0].x, linePolygon[0].y, linePolygon[1].x, linePolygon[1].y);
-      this->bottomLine = LineSegment(linePolygon[3].x, linePolygon[3].y, linePolygon[2].x, linePolygon[2].y);
 
       this->charBoxTop = LineSegment(textArea[0].x, textArea[0].y, textArea[1].x, textArea[1].y);
       this->charBoxBottom = LineSegment(textArea[3].x, textArea[3].y, textArea[2].x, textArea[2].y);

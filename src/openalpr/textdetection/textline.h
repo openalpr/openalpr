@@ -29,8 +29,8 @@ namespace alpr
 
   class TextLine {
   public:
-    TextLine(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon);
-    TextLine(std::vector<cv::Point2f> textArea, std::vector<cv::Point2f> linePolygon);
+    TextLine(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon, cv::Size imgSize);
+    TextLine(std::vector<cv::Point2f> textArea, std::vector<cv::Point2f> linePolygon, cv::Size imgSize);
     virtual ~TextLine();
 
 
@@ -50,7 +50,7 @@ namespace alpr
     cv::Mat drawDebugImage(cv::Mat baseImage);
   private:
 
-    void initialize(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon);
+    void initialize(std::vector<cv::Point> textArea, std::vector<cv::Point> linePolygon, cv::Size imgSize);
   };
 
 }
