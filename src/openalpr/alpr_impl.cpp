@@ -211,11 +211,7 @@ namespace alpr
             aplate.matches_template = ppResults[pp].matchesTemplate;
             plateResult.topNPlates.push_back(aplate);
           }
-          else if (plate_char_length > config->postProcessMaxCharacters)
-          {
-            cout << "Not within character count... " << ppResults[pp].letters << endl;
-            cout << plate_char_length << endl;
-          }
+
         }
 
         if (plateResult.topNPlates.size() > bestPlateIndex)
