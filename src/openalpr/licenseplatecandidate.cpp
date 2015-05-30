@@ -101,7 +101,7 @@ namespace alpr
           textAreaRemapped = imgTransform.remapSmallPointstoCrop(textArea, transmtx);
           linePolygonRemapped = imgTransform.remapSmallPointstoCrop(linePolygon, transmtx);
 
-          newLines.push_back(TextLine(textAreaRemapped, linePolygonRemapped));
+          newLines.push_back(TextLine(textAreaRemapped, linePolygonRemapped, pipeline_data->crop_gray.size()));
         }
 
         pipeline_data->textLines.clear();

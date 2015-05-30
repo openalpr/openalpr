@@ -151,7 +151,7 @@ namespace alpr
 
       vector<Point> textArea = getCharArea(topLine, bottomLine);
 
-      TextLine textLine(textArea, linePolygon);
+      TextLine textLine(textArea, linePolygon, pipeline_data->crop_gray.size());
 
       tempTextLines.push_back(textLine);
     }
@@ -168,7 +168,7 @@ namespace alpr
       vector<Point> linePolygon = tempTextLines[i].linePolygon;
       if (updatedTextArea.size() > 0 && linePolygon.size() > 0)
       {
-        pipeline_data->textLines.push_back(TextLine(updatedTextArea, linePolygon));
+        pipeline_data->textLines.push_back(TextLine(updatedTextArea, linePolygon, pipeline_data->crop_gray.size()));
       }
 
     }

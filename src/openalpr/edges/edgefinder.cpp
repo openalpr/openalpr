@@ -117,7 +117,7 @@ namespace alpr
       textAreaRemapped = imgTransform.remapSmallPointstoCrop(textArea, transmtx);
       linePolygonRemapped = imgTransform.remapSmallPointstoCrop(linePolygon, transmtx);
 
-      newLines.push_back(TextLine(textAreaRemapped, linePolygonRemapped));
+      newLines.push_back(TextLine(textAreaRemapped, linePolygonRemapped, newCrop.size()));
     }
 
     // Find the PlateLines for this crop
