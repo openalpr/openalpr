@@ -331,10 +331,15 @@ vector<string> showCharSelection(Mat image, vector<Rect> charRegions, string sta
 
     imshow("Character selector", imgCopy);
 
-    if (waitkey == LEFT_ARROW_KEY)
+    if ((char) waitkey == LEFT_ARROW_KEY)
       curCharIdx--;
-    else if (waitkey == RIGHT_ARROW_KEY )
+    else if ((char) waitkey == RIGHT_ARROW_KEY)
       curCharIdx++;
+    else if (waitkey == SPACE_KEY)
+    {
+      humanInputs[curCharIdx] = " ";
+      curCharIdx++;
+    }
     else if (waitkey > 0 && regex_rule.match(utf8chr(waitkey))) // Verify that it's an actual character
     {
       // Save the character to disk
