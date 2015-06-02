@@ -48,6 +48,7 @@ namespace alpr
     std::string letters;
     float totalscore;
     bool matchesTemplate;
+    std::vector<Letter> letter_details;
   };
 
   bool wordCompare( const PPResult &left, const PPResult &right );

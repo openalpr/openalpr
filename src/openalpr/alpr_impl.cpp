@@ -209,6 +209,19 @@ namespace alpr
             aplate.characters = ppResults[pp].letters;
             aplate.overall_confidence = ppResults[pp].totalscore;
             aplate.matches_template = ppResults[pp].matchesTemplate;
+            
+            // Grab detailed results for each character
+            for (unsigned int c_idx = 0; c_idx < ppResults[pp].letter_details.size(); c_idx++)
+            {
+              AlprChar character_details;
+              character_details.character = ppResults[pp].letter_details[c_idx].letter;
+              character_details.confidence = ppResults[pp].letter_details[c_idx].totalscore;
+              cv::Rect char_rect = pipeline_data.charRegions[ppResults[pp].letter_details[c_idx].charposition];
+              std::vector<AlprCoordinate> charpoints = getCharacterPoints(char_rect, &pipeline_data );
+              for (int cpt = 0; cpt < 4; cpt++)
+                character_details.corners[cpt] = charpoints[cpt];
+              aplate.character_details.push_back(character_details);
+            }
             plateResult.topNPlates.push_back(aplate);
           }
 
@@ -220,6 +233,7 @@ namespace alpr
           bestPlate.characters = plateResult.topNPlates[bestPlateIndex].characters;
           bestPlate.matches_template = plateResult.topNPlates[bestPlateIndex].matches_template;
           bestPlate.overall_confidence = plateResult.topNPlates[bestPlateIndex].overall_confidence;
+          bestPlate.character_details = plateResult.topNPlates[bestPlateIndex].character_details;
           
           plateResult.bestPlate = bestPlate;
         }
@@ -277,12 +291,23 @@ namespace alpr
 
       for (unsigned int i = 0; i < response.results.plates.size(); i++)
       {
+        // Draw a box around the license plate 
         for (int z = 0; z < 4; z++)
         {
           AlprCoordinate* coords = response.results.plates[i].plate_points;
           Point p1(coords[z].x, coords[z].y);
           Point p2(coords[(z + 1) % 4].x, coords[(z + 1) % 4].y);
           line(img, p1, p2, Scalar(255,0,255), 2);
+        }
+        
+        // Draw the individual character boxes
+        for (int q = 0; q < response.results.plates[0].bestPlate.character_details.size(); q++)
+        {
+          AlprChar details = response.results.plates[0].bestPlate.character_details[q];
+          line(img, Point(details.corners[0].x, details.corners[0].y), Point(details.corners[1].x, details.corners[1].y), Scalar(0,255,0), 1);
+          line(img, Point(details.corners[1].x, details.corners[1].y), Point(details.corners[2].x, details.corners[2].y), Scalar(0,255,0), 1);
+          line(img, Point(details.corners[2].x, details.corners[2].y), Point(details.corners[3].x, details.corners[3].y), Scalar(0,255,0), 1);
+          line(img, Point(details.corners[3].x, details.corners[3].y), Point(details.corners[0].x, details.corners[0].y), Scalar(0,255,0), 1);
         }
       }
 
@@ -559,6 +584,48 @@ namespace alpr
 
     ss << OPENALPR_MAJOR_VERSION << "." << OPENALPR_MINOR_VERSION << "." << OPENALPR_PATCH_VERSION;
     return ss.str();
+  }
+  
+  std::vector<AlprCoordinate> AlprImpl::getCharacterPoints(cv::Rect char_rect, PipelineData* pipeline_data ) {
+    
+
+
+    std::vector<Point2f> points;
+    points.push_back(Point2f(char_rect.x, char_rect.y));
+    points.push_back(Point2f(char_rect.x + char_rect.width, char_rect.y));
+    points.push_back(Point2f(char_rect.x + char_rect.width, char_rect.y + char_rect.height));
+    points.push_back(Point2f(char_rect.x, char_rect.y + char_rect.height));
+    
+    Mat img = pipeline_data->colorImg;
+    Mat debugImg(img.size(), img.type());
+    img.copyTo(debugImg);
+    
+    
+   
+    std::vector<Point2f> crop_corners;
+    crop_corners.push_back(Point2f(0,0));
+    crop_corners.push_back(Point2f(pipeline_data->crop_gray.cols,0));
+    crop_corners.push_back(Point2f(pipeline_data->crop_gray.cols,pipeline_data->crop_gray.rows));
+    crop_corners.push_back(Point2f(0,pipeline_data->crop_gray.rows));
+
+    // Transform the points from the cropped region (skew corrected license plate region) back to the original image
+    cv::Mat transmtx = cv::getPerspectiveTransform(crop_corners, pipeline_data->plate_corners);
+    cv::perspectiveTransform(points, points, transmtx);
+    
+    // If using prewarp, remap the points to the original image
+    points = prewarp->projectPoints(points, true);
+        
+    
+    std::vector<AlprCoordinate> cornersvector;
+    for (int i = 0; i < 4; i++)
+    {
+      AlprCoordinate coord;
+      coord.x = round(points[i].x);
+      coord.y = round(points[i].y);
+      cornersvector.push_back(coord);
+    }
+    
+    return cornersvector;
   }
 
 

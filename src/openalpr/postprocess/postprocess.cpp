@@ -411,12 +411,18 @@ namespace alpr
         for (int z = 0; z < prevletters.size(); z++)
         {
           if (prevletters[z].letter != SKIP_CHAR)
+          {
             possibility.letters = possibility.letters + prevletters[z].letter;
+            possibility.letter_details.push_back(prevletters[z]);
+          }
           possibility.totalscore = possibility.totalscore + prevletters[z].totalscore;
         }
 
         if (letters[charPos][i].letter != SKIP_CHAR)
+        {
           possibility.letters = possibility.letters + letters[charPos][i].letter;
+          possibility.letter_details.push_back(letters[charPos][i]);
+        }
         possibility.totalscore = possibility.totalscore +letters[charPos][i].totalscore;
 
         allPossibilities.push_back(possibility);

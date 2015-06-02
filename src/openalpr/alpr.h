@@ -28,19 +28,28 @@
 namespace alpr
 {
   
-  struct AlprPlate
-  {
-    std::string characters;
-    float overall_confidence;
-
-    bool matches_template;
-  };
-
   struct AlprCoordinate
   {
     int x;
     int y;
   };
+  
+  struct AlprChar
+  {
+    AlprCoordinate corners[4];
+    float confidence;
+    std::string character;
+  };
+  
+  struct AlprPlate
+  {
+    std::string characters;
+    float overall_confidence;
+
+    std::vector<AlprChar> character_details;
+    bool matches_template;
+  };
+  
 
   class AlprRegionOfInterest
   {
