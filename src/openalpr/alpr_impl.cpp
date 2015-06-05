@@ -301,9 +301,9 @@ namespace alpr
         }
         
         // Draw the individual character boxes
-        for (int q = 0; q < response.results.plates[0].bestPlate.character_details.size(); q++)
+        for (int q = 0; q < response.results.plates[i].bestPlate.character_details.size(); q++)
         {
-          AlprChar details = response.results.plates[0].bestPlate.character_details[q];
+          AlprChar details = response.results.plates[i].bestPlate.character_details[q];
           line(img, Point(details.corners[0].x, details.corners[0].y), Point(details.corners[1].x, details.corners[1].y), Scalar(0,255,0), 1);
           line(img, Point(details.corners[1].x, details.corners[1].y), Point(details.corners[2].x, details.corners[2].y), Scalar(0,255,0), 1);
           line(img, Point(details.corners[2].x, details.corners[2].y), Point(details.corners[3].x, details.corners[3].y), Scalar(0,255,0), 1);
