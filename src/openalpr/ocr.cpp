@@ -53,6 +53,8 @@ namespace alpr
 
   void OCR::performOCR(PipelineData* pipeline_data)
   {
+    const int SPACE_CHAR_CODE = 32;
+    
     timespec startTime;
     getTimeMonotonic(&startTime);
 
@@ -83,13 +85,14 @@ namespace alpr
         {
           const char* symbol = ri->GetUTF8Text(level);
           float conf = ri->Confidence(level);
-
+          
           bool dontcare;
           int fontindex = 0;
           int pointsize = 0;
           const char* fontName = ri->WordFontAttributes(&dontcare, &dontcare, &dontcare, &dontcare, &dontcare, &dontcare, &pointsize, &fontindex);
 
-          if(symbol != 0  && pointsize >= config->ocrMinFontSize)
+          // Ignore NULL pointers, spaces, and characters that are way too small to be valid
+          if(symbol != 0 && symbol[0] != SPACE_CHAR_CODE && pointsize >= config->ocrMinFontSize)
           {
             postProcessor.addLetter(string(symbol), j, conf);
 
