@@ -161,7 +161,6 @@ namespace alpr
       filterEdgeBoxes(pipeline_data->thresholds, candidateBoxes, medianCharWidth, avgCharHeight);
       candidateBoxes = filterMostlyEmptyBoxes(pipeline_data->thresholds, candidateBoxes);
       candidateBoxes = combineCloseBoxes(candidateBoxes, medianCharWidth);
-      cleanMostlyFullBoxes(pipeline_data->thresholds, candidateBoxes);
 
       candidateBoxes = filterMostlyEmptyBoxes(pipeline_data->thresholds, candidateBoxes);
 
@@ -648,31 +647,6 @@ namespace alpr
     }
   }
 
-  void CharacterSegmenter::cleanMostlyFullBoxes(vector<Mat> thresholds, const vector<Rect> charRegions)
-  {
-    float MAX_FILLED = 0.95 * 255;
-
-    for (unsigned int i = 0; i < charRegions.size(); i++)
-    {
-      Mat mask = Mat::zeros(thresholds[0].size(), CV_8U);
-      rectangle(mask, charRegions[i], Scalar(255,255,255), -1);
-
-      for (unsigned int j = 0; j < thresholds.size(); j++)
-      {
-        if (mean(thresholds[j], mask)[0] > MAX_FILLED)
-        {
-          // Empty the rect
-          rectangle(thresholds[j], charRegions[i], Scalar(0,0,0), -1);
-
-          if (this->config->debugCharSegmenter)
-          {
-            Rect inset(charRegions[i].x + 2, charRegions[i].y - 2, charRegions[i].width - 4, charRegions[i].height - 4);
-            rectangle(imgDbgCleanStages[j], inset, COLOR_DEBUG_FULLBOX, 1);
-          }
-        }
-      }
-    }
-  }
 
   vector<Rect> CharacterSegmenter::filterMostlyEmptyBoxes(vector<Mat> thresholds, const vector<Rect> charRegions)
   {
