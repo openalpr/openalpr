@@ -57,7 +57,7 @@ class Alpr():
         ptr = self._recognize_file_func(file_path)
         json_data = ctypes.cast(ptr, ctypes.c_char_p).value
         response_obj = json.loads(json_data)
-        self._free_json_mem_func(ptr)
+        self._free_json_mem_func(ctypes.c_void_p(ptr))
 
         return response_obj
 
@@ -67,7 +67,7 @@ class Alpr():
         ptr = self._recognize_array_func(pb, len(byte_array))
         json_data = ctypes.cast(ptr, ctypes.c_char_p).value
         response_obj = json.loads(json_data)
-        self._free_json_mem_func(ptr)
+        self._free_json_mem_func(ctypes.c_void_p(ptr))
 
         return response_obj
 
@@ -75,7 +75,7 @@ class Alpr():
 
         ptr = self._get_version_func()
         version_number = ctypes.cast(ptr, ctypes.c_char_p).value
-        self._free_json_mem_func(ptr)
+        self._free_json_mem_func(ctypes.c_void_p(ptr))
 
         return version_number
 
