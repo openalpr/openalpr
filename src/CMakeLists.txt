@@ -46,6 +46,9 @@ FIND_PACKAGE( OpenCV REQUIRED )
 IF (${OpenCV_VERSION} VERSION_LESS 2.4.7)
 	MESSAGE(FATAL_ERROR "OpenCV version is not compatible : ${OpenCV_VERSION}")
 ENDIF()
+IF (${OpenCV_VERSION} VERSION_GREATER 2.4.12)
+	MESSAGE(FATAL_ERROR "OpenCV version is not compatible : ${OpenCV_VERSION}")
+ENDIF()
 
 include_directories(./openalpr )
 
