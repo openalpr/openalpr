@@ -1,3 +1,17 @@
+openalpr (2.1.0-0.1) experimental; urgency=low
+
+  * Non-maintainer upload
+  * Added per-character details to API output
+  * Bug fixes
+  * Added camera calibration utility
+  * Motion detector for video frames
+  * Full UTF-8 character support
+  * Support for South Korean and Australian plates
+  * Experimental morphological plate detector
+  * Pattern matching for European countries
+
+ -- Matthew Hill <matthill@openalpr.com>  Thu, 18 Jun 2015 20:31:00 -0500
+
 openalpr (2.0.1-0.1) experimental; urgency=low
 
   * Non-maintainer upload
