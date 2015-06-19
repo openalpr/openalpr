@@ -81,7 +81,7 @@ extern "C" {
 #if defined(EXPORT) || defined(RUBY_EXPORT)
 #define ONIG_EXTERN   extern __declspec(dllexport)
 #else
-#define ONIG_EXTERN   extern __declspec(dllimport)
+#define ONIG_EXTERN   extern
 #endif
 #endif
 #endif

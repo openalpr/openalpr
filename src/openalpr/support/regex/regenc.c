@@ -29,7 +29,7 @@
 
 #include "regint.h"
 
-OnigEncoding OnigEncDefaultCharEncoding = ONIG_ENCODING_INIT_DEFAULT;
+OnigEncoding OnigEncDefaultCharEncoding = NULL;
 
 extern int
 onigenc_init(void)
@@ -40,6 +40,9 @@ onigenc_init(void)
 extern OnigEncoding
 onigenc_get_default_encoding(void)
 {
+  if (OnigEncDefaultCharEncoding == NULL)
+	OnigEncDefaultCharEncoding = ONIG_ENCODING_INIT_DEFAULT;
+
   return OnigEncDefaultCharEncoding;
 }
 
