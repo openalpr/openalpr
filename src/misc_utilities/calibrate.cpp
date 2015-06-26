@@ -162,10 +162,10 @@ void mouse_callback(int event, int x, int y, int flags, void* userdata)
   {
     left_click_cur.x = x;
     
-    float IDEAL_PLATE_RATIO = config.charWidthMM / config.charHeightMM;
+    float IDEAL_PLATE_RATIO = config.plateWidthMM / config.plateHeightMM;
     float curWidth = left_click_cur.x - left_click_start.x;
     
-    left_click_cur.y = left_click_start.y + (IDEAL_PLATE_RATIO * curWidth);
+    left_click_cur.y = left_click_start.y + (curWidth / IDEAL_PLATE_RATIO );
     
     // Reduce the computation by only doing it every 3rd pixel
     if (x % 2 == 0 || y % 2 == 0)
