@@ -183,19 +183,6 @@ namespace alpr
       }
     }
 
-    // Prune the letters based on the topN value.
-    // If our topN value is 3, for example, we can get rid of a lot of low scoring letters
-    // because it would be impossible for them to be a part of our topN results.
-    vector<int> maxDepth = getMaxDepth(topn);
-
-    for (int i = 0; i < letters.size(); i++)
-    {
-      for (int k = letters[i].size() - 1; k > maxDepth[i]; k--)
-      {
-        letters[i].erase(letters[i].begin() + k);
-      }
-    }
-
     //getTopN();
     vector<Letter> tmp;
     findAllPermutations(tmp, 0, config->postProcessMaxSubstitutions);
@@ -325,69 +312,6 @@ namespace alpr
     return totalScore / ((float) numScores);
   }
 
-  // Finds the minimum number of letters to include in the recursive sorting algorithm.
-  // For example, if I have letters
-  //	A-200 B-100 C-100
-  //	X-99 Y-95   Z-90
-  //	Q-55        R-80
-  // And my topN value was 3, this would return:
-  // 0, 1, 1
-  // Which represents:
-  // 	A-200 B-100 C-100
-  //	      Y-95  Z-90
-  vector<int> PostProcess::getMaxDepth(int topn)
-  {
-    vector<int> depth;
-    for (int i = 0; i < letters.size(); i++)
-      depth.push_back(0);
-
-    int nextLeastDropCharPos = getNextLeastDrop(depth);
-    while (nextLeastDropCharPos != -1)
-    {
-      if (getPermutationCount(depth) >= topn)
-        break;
-
-      depth[nextLeastDropCharPos] = depth[nextLeastDropCharPos] + 1;
-
-      nextLeastDropCharPos = getNextLeastDrop(depth);
-    }
-
-    return depth;
-  }
-
-  int PostProcess::getPermutationCount(vector<int> depth)
-  {
-    int permutationCount = 1;
-    for (int i = 0; i < depth.size(); i++)
-    {
-      permutationCount *= (depth[i] + 1);
-    }
-
-    return permutationCount;
-  }
-
-  int PostProcess::getNextLeastDrop(vector<int> depth)
-  {
-    int nextLeastDropCharPos = -1;
-    float leastNextDrop = 99999999999;
-
-    for (int i = 0; i < letters.size(); i++)
-    {
-      if (depth[i] + 1 >= letters[i].size())
-        continue;
-
-      float drop = letters[i][depth[i]].totalscore - letters[i][depth[i]+1].totalscore;
-
-      if (drop < leastNextDrop)
-      {
-        nextLeastDropCharPos = i;
-        leastNextDrop = drop;
-      }
-    }
-
-    return nextLeastDropCharPos;
-  }
-
   const vector<PPResult> PostProcess::getResults()
   {
     return this->allPossibilities;
@@ -425,7 +349,12 @@ namespace alpr
         }
         possibility.totalscore = possibility.totalscore +letters[charPos][i].totalscore;
 
-        allPossibilities.push_back(possibility);
+        int plate_char_length = utf8::distance(possibility.letters.begin(), possibility.letters.end());
+        if (plate_char_length >= config->postProcessMinCharacters &&
+          plate_char_length <= config->postProcessMaxCharacters)
+        {
+          allPossibilities.push_back(possibility);
+        }
       }
       else
       {
