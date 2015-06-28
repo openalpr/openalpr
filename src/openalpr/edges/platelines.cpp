@@ -52,9 +52,9 @@ namespace alpr
 
     // Ignore input images that are pure white or pure black
     Scalar avgPixelIntensity = mean(inputImage);
-    if (avgPixelIntensity[0] == 255)
+    if (avgPixelIntensity[0] >= 252)
       return;
-    else if (avgPixelIntensity[0] == 0)
+    else if (avgPixelIntensity[0] <= 3)
       return;
 
     // Do a bilateral filter to clean the noise but keep edges sharp
