@@ -196,10 +196,17 @@ namespace alpr
     Point leftMidLinePoint = left.closestPointOnSegmentTo(tlc.centerVerticalLine.midpoint());
     Point rightMidLinePoint = right.closestPointOnSegmentTo(tlc.centerVerticalLine.midpoint());
 
-    float plateDistance = abs(idealPixelWidth - distanceBetweenPoints(leftMidLinePoint, rightMidLinePoint));
+    float actual_width = distanceBetweenPoints(leftMidLinePoint, rightMidLinePoint);
+    
+    // Disqualify the pairing if it's less than one quarter of the ideal width
+    if (actual_width < (idealPixelWidth / 4))
+      return;
+      
+    float plateDistance = abs(idealPixelWidth - actual_width);
+
     // normalize for image width
     plateDistance = plateDistance / ((float)inputImage.cols);
-
+    
     scoreKeeper.setScore("SCORING_DISTANCE_WEIGHT_VERTICAL", plateDistance, SCORING_DISTANCE_WEIGHT_VERTICAL);
 
     float score = scoreKeeper.getTotal();
