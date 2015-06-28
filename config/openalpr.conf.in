@@ -55,9 +55,6 @@ postprocess_min_confidence = 65
 ; chance that the character is incorrect and will be skipped.  Value is a confidence percent
 postprocess_confidence_skip_level = 80
 
-; Reduces the total permutations to consider for scoring.
-postprocess_max_substitutions = 2
-
 ; Results with fewer characters will be discarded
 postprocess_min_characters = 4
 postprocess_max_characters = 8
