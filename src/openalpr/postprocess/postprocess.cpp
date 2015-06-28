@@ -297,16 +297,19 @@ namespace alpr
     vector<int> v(letters.size());
     permutations.push(make_pair(totalscore, v));
 
+    int consecutiveNonMatches = 0;
     while (permutations.size() > 0)
     {
       // get the top permutation and analyze
       pair<float, vector<int> > topPermutation = permutations.top();
-      analyzePermutation(topPermutation.second, templateregion, topn);
+      if (analyzePermutation(topPermutation.second, templateregion, topn) == true)
+        consecutiveNonMatches = 0;
+      else
+        consecutiveNonMatches += 1;
       permutations.pop();
 
-      if (allPossibilities.size() >= topn) {
+      if (allPossibilities.size() >= topn || consecutiveNonMatches >= 10)
         break;
-      }
 
       // add child permutations to queue
       for (int i=0; i<letters.size(); i++)
@@ -329,7 +332,7 @@ namespace alpr
     }
   }
 
-  void PostProcess::analyzePermutation(vector<int> letterIndices, string templateregion, int topn)
+  bool PostProcess::analyzePermutation(vector<int> letterIndices, string templateregion, int topn)
   {
     PPResult possibility;
     possibility.letters = "";
@@ -356,7 +359,7 @@ namespace alpr
     // ignore plates that don't fit the length requirements
     if (plate_char_length < config->postProcessMinCharacters ||
       plate_char_length > config->postProcessMaxCharacters)
-      return;
+      return false;
 
     // Apply templates
     if (templateregion != "")
@@ -376,10 +379,11 @@ namespace alpr
 
     // ignore duplicate words
     if (allPossibilitiesLetters.end() != allPossibilitiesLetters.find(possibility.letters))
-      return;
+      return false;
 
     allPossibilities.push_back(possibility);
     allPossibilitiesLetters.insert(possibility.letters);
+    return true;
   }
 
   bool wordCompare( const PPResult &left, const PPResult &right )

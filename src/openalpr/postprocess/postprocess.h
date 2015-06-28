@@ -79,7 +79,7 @@ namespace alpr
       Config* config;
       //void getTopN();
       void findAllPermutations(std::string templateregion, int topn);
-      void analyzePermutation(std::vector<int> letterIndices, std::string templateregion, int topn);
+      bool analyzePermutation(std::vector<int> letterIndices, std::string templateregion, int topn);
 
       void insertLetter(std::string letter, int charPosition, float score);
 
