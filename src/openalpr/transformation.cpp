@@ -129,6 +129,10 @@ namespace alpr
 
     float w = distanceBetweenPoints(leftEdge.midpoint(), rightEdge.midpoint());
     float h = distanceBetweenPoints(bottomEdge.midpoint(), topEdge.midpoint());
+    
+    if (w <= 0 || h <= 0)
+      return Size(0,0);
+    
     float aspect = w/h;
     int width = targetSize.width;
     int height = round(((float) width) / aspect);
