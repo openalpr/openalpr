@@ -98,6 +98,10 @@ namespace alpr
     return newImage;
   }
 
+  void drawAndWait(cv::Mat frame)
+  {
+    drawAndWait(&frame);
+  }
   void drawAndWait(cv::Mat* frame)
   {
     cv::imshow("Temp Window", *frame);

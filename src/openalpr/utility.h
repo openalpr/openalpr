@@ -80,6 +80,7 @@ namespace alpr
   cv::Mat drawImageDashboard(std::vector<cv::Mat> images, int imageType, unsigned int numColumns);
 
   void displayImage(Config* config, std::string windowName, cv::Mat frame);
+  void drawAndWait(cv::Mat frame);
   void drawAndWait(cv::Mat* frame);
 
   double distanceBetweenPoints(cv::Point p1, cv::Point p2);
