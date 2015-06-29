@@ -23,7 +23,6 @@ using namespace std;
 
 namespace alpr
 {
-  
 
   PostProcess::PostProcess(Config* config)
   {
@@ -143,6 +142,7 @@ namespace alpr
     unknownCharPositions.clear();
     unknownCharPositions.resize(0);
     allPossibilities.clear();
+    allPossibilitiesLetters.clear();
     //allPossibilities.resize(0);
 
     bestChars = "";
@@ -183,68 +183,22 @@ namespace alpr
       }
     }
 
-    // Prune the letters based on the topN value.
-    // If our topN value is 3, for example, we can get rid of a lot of low scoring letters
-    // because it would be impossible for them to be a part of our topN results.
-    vector<int> maxDepth = getMaxDepth(topn);
+    timespec permutationStartTime;
+    getTimeMonotonic(&permutationStartTime);
 
-    for (int i = 0; i < letters.size(); i++)
-    {
-      for (int k = letters[i].size() - 1; k > maxDepth[i]; k--)
-      {
-        letters[i].erase(letters[i].begin() + k);
-      }
-    }
-
-    //getTopN();
-    vector<Letter> tmp;
-    findAllPermutations(tmp, 0, config->postProcessMaxSubstitutions);
-
-    timespec sortStartTime;
-    getTimeMonotonic(&sortStartTime);
-
-    int numelements = topn;
-    if (allPossibilities.size() < topn)
-      numelements = allPossibilities.size() - 1;
-
-    partial_sort( allPossibilities.begin(), allPossibilities.begin() + numelements, allPossibilities.end(), wordCompare );
+    findAllPermutations(templateregion, topn);
 
     if (config->debugTiming)
     {
-      timespec sortEndTime;
-      getTimeMonotonic(&sortEndTime);
-      cout << " -- PostProcess Sort Time: " << diffclock(sortStartTime, sortEndTime) << "ms." << endl;
+      timespec permutationEndTime;
+      getTimeMonotonic(&permutationEndTime);
+      cout << " -- PostProcess Permutation Time: " << diffclock(permutationStartTime, permutationEndTime) << "ms." << endl;
     }
 
-    matchesTemplate = false;
-
-    if (templateregion != "")
+    if (allPossibilities.size() > 0)
     {
-      vector<RegexRule*> regionRules = rules[templateregion];
 
-      for (int i = 0; i < allPossibilities.size(); i++)
-      {
-        for (int j = 0; j < regionRules.size(); j++)
-        {
-          allPossibilities[i].matchesTemplate = regionRules[j]->match(allPossibilities[i].letters);
-          if (allPossibilities[i].matchesTemplate)
-          {
-            allPossibilities[i].letters = regionRules[j]->filterSkips(allPossibilities[i].letters);
-            //bestChars = regionRules[j]->filterSkips(allPossibilities[i].letters);
-            matchesTemplate = true;
-            break;
-          }
-        }
-
-        if (i >= topn - 1)
-          break;
-        //if (matchesTemplate || i >= TOP_N - 1)
-        //break;
-      }
-    }
-
-    if (matchesTemplate)
-    {
+      bestChars = allPossibilities[0].letters;
       for (int z = 0; z < allPossibilities.size(); z++)
       {
         if (allPossibilities[z].matchesTemplate)
@@ -253,15 +207,8 @@ namespace alpr
           break;
         }
       }
-    }
-    else
-    {
-      bestChars = allPossibilities[0].letters;
-    }
 
-    // Now adjust the confidence scores to a percentage value
-    if (allPossibilities.size() > 0)
-    {
+      // Now adjust the confidence scores to a percentage value
       float maxPercentScore = calculateMaxConfidenceScore();
       float highestRelativeScore = (float) allPossibilities[0].totalscore;
 
@@ -280,9 +227,6 @@ namespace alpr
         if (allPossibilities[i].letters == bestChars)
           cout << " <--- ";
         cout << endl;
-
-        if (i >= topn - 1)
-          break;
       }
       cout << allPossibilities.size() << " total permutations" << endl;
     }
@@ -325,128 +269,121 @@ namespace alpr
     return totalScore / ((float) numScores);
   }
 
-  // Finds the minimum number of letters to include in the recursive sorting algorithm.
-  // For example, if I have letters
-  //	A-200 B-100 C-100
-  //	X-99 Y-95   Z-90
-  //	Q-55        R-80
-  // And my topN value was 3, this would return:
-  // 0, 1, 1
-  // Which represents:
-  // 	A-200 B-100 C-100
-  //	      Y-95  Z-90
-  vector<int> PostProcess::getMaxDepth(int topn)
-  {
-    vector<int> depth;
-    for (int i = 0; i < letters.size(); i++)
-      depth.push_back(0);
-
-    int nextLeastDropCharPos = getNextLeastDrop(depth);
-    while (nextLeastDropCharPos != -1)
-    {
-      if (getPermutationCount(depth) >= topn)
-        break;
-
-      depth[nextLeastDropCharPos] = depth[nextLeastDropCharPos] + 1;
-
-      nextLeastDropCharPos = getNextLeastDrop(depth);
-    }
-
-    return depth;
-  }
-
-  int PostProcess::getPermutationCount(vector<int> depth)
-  {
-    int permutationCount = 1;
-    for (int i = 0; i < depth.size(); i++)
-    {
-      permutationCount *= (depth[i] + 1);
-    }
-
-    return permutationCount;
-  }
-
-  int PostProcess::getNextLeastDrop(vector<int> depth)
-  {
-    int nextLeastDropCharPos = -1;
-    float leastNextDrop = 99999999999;
-
-    for (int i = 0; i < letters.size(); i++)
-    {
-      if (depth[i] + 1 >= letters[i].size())
-        continue;
-
-      float drop = letters[i][depth[i]].totalscore - letters[i][depth[i]+1].totalscore;
-
-      if (drop < leastNextDrop)
-      {
-        nextLeastDropCharPos = i;
-        leastNextDrop = drop;
-      }
-    }
-
-    return nextLeastDropCharPos;
-  }
-
   const vector<PPResult> PostProcess::getResults()
   {
     return this->allPossibilities;
   }
 
-  void PostProcess::findAllPermutations(vector<Letter> prevletters, int charPos, int substitutionsLeft)
-  {
-    if (substitutionsLeft < 0)
-      return;
-
-    // Add my letter to the chain and recurse
-    for (int i = 0; i < letters[charPos].size(); i++)
+  struct PermutationCompare {
+    bool operator() (pair<float,vector<int> > &a, pair<float,vector<int> > &b)
     {
-      if (charPos == letters.size() - 1)
-      {
-        // Last letter, add the word
-        PPResult possibility;
-        possibility.letters = "";
-        possibility.totalscore = 0;
-        possibility.matchesTemplate = false;
-        for (int z = 0; z < prevletters.size(); z++)
-        {
-          if (prevletters[z].letter != SKIP_CHAR)
-          {
-            possibility.letters = possibility.letters + prevletters[z].letter;
-            possibility.letter_details.push_back(prevletters[z]);
-          }
-          possibility.totalscore = possibility.totalscore + prevletters[z].totalscore;
-        }
+      return (a.first < b.first);
+    }
+  };
 
-        if (letters[charPos][i].letter != SKIP_CHAR)
-        {
-          possibility.letters = possibility.letters + letters[charPos][i].letter;
-          possibility.letter_details.push_back(letters[charPos][i]);
-        }
-        possibility.totalscore = possibility.totalscore +letters[charPos][i].totalscore;
+  void PostProcess::findAllPermutations(string templateregion, int topn) {
 
-        allPossibilities.push_back(possibility);
-      }
+    // use a priority queue to process permutations in highest scoring order
+    priority_queue<pair<float,vector<int> >, vector<pair<float,vector<int> > >, PermutationCompare> permutations;
+    set<float> permutationHashes;
+
+    // push the first word onto the queue
+    float totalscore = 0;
+    for (int i=0; i<letters.size(); i++)
+    {
+      if (letters[i].size() > 0)
+        totalscore += letters[i][0].totalscore;
+    }
+    vector<int> v(letters.size());
+    permutations.push(make_pair(totalscore, v));
+
+    int consecutiveNonMatches = 0;
+    while (permutations.size() > 0)
+    {
+      // get the top permutation and analyze
+      pair<float, vector<int> > topPermutation = permutations.top();
+      if (analyzePermutation(topPermutation.second, templateregion, topn) == true)
+        consecutiveNonMatches = 0;
       else
+        consecutiveNonMatches += 1;
+      permutations.pop();
+
+      if (allPossibilities.size() >= topn || consecutiveNonMatches >= 10)
+        break;
+
+      // add child permutations to queue
+      for (int i=0; i<letters.size(); i++)
       {
-        prevletters.push_back(letters[charPos][i]);
+        // no more permutations with this letter
+        if (topPermutation.second[i]+1 >= letters[i].size())
+          continue;
 
-        float scorePercentDiff = abs( letters[charPos][0].totalscore - letters[charPos][i].totalscore ) / letters[charPos][0].totalscore;
-        if (i != 0 && letters[charPos][i].letter != SKIP_CHAR && scorePercentDiff > 0.10f )
-          findAllPermutations(prevletters, charPos + 1, substitutionsLeft - 1);
-        else
-          findAllPermutations(prevletters, charPos + 1, substitutionsLeft);
+        pair<float, vector<int> > childPermutation = topPermutation;
+        childPermutation.first -= letters[i][topPermutation.second[i]].totalscore - letters[i][topPermutation.second[i] + 1].totalscore;
+        childPermutation.second[i] += 1;
 
-        prevletters.pop_back();
+        // ignore permutations that have already been visited (assume that score is a good hash for permutation)
+        if (permutationHashes.end() != permutationHashes.find(childPermutation.first))
+          continue;
+
+        permutations.push(childPermutation);
+        permutationHashes.insert(childPermutation.first);
+      }
+    }
+  }
+
+  bool PostProcess::analyzePermutation(vector<int> letterIndices, string templateregion, int topn)
+  {
+    PPResult possibility;
+    possibility.letters = "";
+    possibility.totalscore = 0;
+    possibility.matchesTemplate = false;
+    int plate_char_length = 0;
+
+    for (int i = 0; i < letters.size(); i++)
+    {
+      if (letters[i].size() == 0)
+        continue;
+
+      Letter letter = letters[i][letterIndices[i]];
+
+      if (letter.letter != SKIP_CHAR)
+      {
+        possibility.letters = possibility.letters + letter.letter;
+        possibility.letter_details.push_back(letter);
+        plate_char_length += 1;
+      }
+      possibility.totalscore = possibility.totalscore + letter.totalscore;
+    }
+
+    // ignore plates that don't fit the length requirements
+    if (plate_char_length < config->postProcessMinCharacters ||
+      plate_char_length > config->postProcessMaxCharacters)
+      return false;
+
+    // Apply templates
+    if (templateregion != "")
+    {
+      vector<RegexRule*> regionRules = rules[templateregion];
+
+      for (int i = 0; i < regionRules.size(); i++)
+      {
+        possibility.matchesTemplate = regionRules[i]->match(possibility.letters);
+        if (possibility.matchesTemplate)
+        {
+          possibility.letters = regionRules[i]->filterSkips(possibility.letters);
+          break;
+        }
       }
     }
 
-    if (letters[charPos].size() == 0)
-    {
-      // No letters for this char position...
-      // Just pass it along
-      findAllPermutations(prevletters, charPos + 1, substitutionsLeft);
-    }
+    // ignore duplicate words
+    if (allPossibilitiesLetters.end() != allPossibilitiesLetters.find(possibility.letters))
+      return false;
+
+    allPossibilities.push_back(possibility);
+    allPossibilitiesLetters.insert(possibility.letters);
+    return true;
   }
 
   bool wordCompare( const PPResult &left, const PPResult &right )

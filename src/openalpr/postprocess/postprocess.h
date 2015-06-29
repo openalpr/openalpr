@@ -26,7 +26,9 @@
 #include <fstream>
 #include <iostream>
 #include <stdio.h>
+#include <queue>
 #include <vector>
+#include <set>
 #include "config.h"
 
 
@@ -76,7 +78,8 @@ namespace alpr
     private:
       Config* config;
       //void getTopN();
-      void findAllPermutations(std::vector<Letter> prevletters, int charPos, int substitutionsLeft);
+      void findAllPermutations(std::string templateregion, int topn);
+      bool analyzePermutation(std::vector<int> letterIndices, std::string templateregion, int topn);
 
       void insertLetter(std::string letter, int charPosition, float score);
 
@@ -88,11 +91,7 @@ namespace alpr
       std::vector<int> unknownCharPositions;
 
       std::vector<PPResult> allPossibilities;
-
-      // Functions used to prune the list of letters (based on topn) to improve performance
-      std::vector<int> getMaxDepth(int topn);
-      int getPermutationCount(std::vector<int> depth);
-      int getNextLeastDrop(std::vector<int> depth);
+      std::set<std::string> allPossibilitiesLetters;
   };
 
 }

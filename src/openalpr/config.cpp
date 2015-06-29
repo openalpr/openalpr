@@ -177,7 +177,6 @@ namespace alpr
 
     postProcessMinConfidence = getFloat(ini, "", "postprocess_min_confidence", 100);
     postProcessConfidenceSkipLevel = getFloat(ini, "", "postprocess_confidence_skip_level", 100);
-    postProcessMaxSubstitutions = getInt(ini, "", "postprocess_max_substitutions", 100);
     postProcessMinCharacters = getInt(ini, "", "postprocess_min_characters", 100);
     postProcessMaxCharacters = getInt(ini, "", "postprocess_max_characters", 100);
 
