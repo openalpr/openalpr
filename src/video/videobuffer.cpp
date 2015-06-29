@@ -107,7 +107,15 @@ void imageCollectionThread(void* arg)
     {
       cv::VideoCapture cap=cv::VideoCapture();
       dispatcher->log_info("Video stream connecting...");
-      cap.open(dispatcher->mjpeg_url);
+
+      if (dispatcher->mjpeg_url == "webcam")
+      {
+        cap.open(0);
+      }
+      else
+      {
+        cap.open(dispatcher->mjpeg_url);
+      }
       
       if (cap.isOpened())
       {
