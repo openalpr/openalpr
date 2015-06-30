@@ -96,7 +96,7 @@ Where:
 Binaries
 ----------
 
-Pre-compiled [64-bit Windows binaries] (https://github.com/openalpr/openalpr/releases/download/v2.0.1/openalpr-2.0.1-win-64bit.zip) can be downloaded on the [releases page] (https://github.com/openalpr/openalpr/releases)
+Pre-compiled Windows binaries can be downloaded on the [releases page] (https://github.com/openalpr/openalpr/releases)
 
 Install OpenALPR on Ubuntu 14.04 x64 with the following commands:
 
