@@ -101,10 +101,10 @@ namespace alpr
 
       float postProcessMinConfidence;
       float postProcessConfidenceSkipLevel;
-      unsigned int postProcessMaxSubstitutions;
       unsigned int postProcessMinCharacters;
       unsigned int postProcessMaxCharacters;
 
+      unsigned int resultsCharacterDetails;
 
       bool debugGeneral;
       bool debugTiming;
