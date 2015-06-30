@@ -50,13 +50,14 @@ namespace alpr
 
   void CharacterAnalysis::analyze()
   {
+    timespec startTime;
+    getTimeMonotonic(&startTime);
+
     pipeline_data->clearThresholds();
     pipeline_data->thresholds = produceThresholds(pipeline_data->crop_gray, config);
 
-
-
-    timespec startTime;
-    getTimeMonotonic(&startTime);
+    timespec contoursStartTime;
+    getTimeMonotonic(&contoursStartTime);
 
     pipeline_data->textLines.clear();
 
@@ -69,13 +70,14 @@ namespace alpr
 
     if (config->debugTiming)
     {
-      timespec endTime;
-      getTimeMonotonic(&endTime);
-      cout << "  -- Character Analysis Find Contours Time: " << diffclock(startTime, endTime) << "ms." << endl;
+      timespec contoursEndTime;
+      getTimeMonotonic(&contoursEndTime);
+      cout << "  -- Character Analysis Find Contours Time: " << diffclock(contoursStartTime, contoursEndTime) << "ms." << endl;
     }
     //Mat img_equalized = equalizeBrightness(img_gray);
 
-    getTimeMonotonic(&startTime);
+    timespec filterStartTime;
+    getTimeMonotonic(&filterStartTime);
 
     for (unsigned int i = 0; i < pipeline_data->thresholds.size(); i++)
     {
@@ -87,9 +89,9 @@ namespace alpr
 
     if (config->debugTiming)
     {
-      timespec endTime;
-      getTimeMonotonic(&endTime);
-      cout << "  -- Character Analysis Filter Time: " << diffclock(startTime, endTime) << "ms." << endl;
+      timespec filterEndTime;
+      getTimeMonotonic(&filterEndTime);
+      cout << "  -- Character Analysis Filter Time: " << diffclock(filterStartTime, filterEndTime) << "ms." << endl;
     }
 
     PlateMask plateMask(pipeline_data);
@@ -205,7 +207,6 @@ namespace alpr
       else
         this->confidence = 100 - confidenceDrainers;
     }
-
 
     if (config->debugTiming)
     {
