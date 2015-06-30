@@ -248,7 +248,13 @@ int main( int argc, const char** argv )
                     continue;
 
                   stringstream filename;
-                  Mat cropped = pipeline_data.thresholds[t](pipeline_data.charRegions[c]);
+                  
+                  // Ensure that crop rect does not extend beyond extent of image.
+                  cv::Rect char_region = expandRect(pipeline_data.charRegions[c], 0, 0, 
+                          pipeline_data.thresholds[t].cols,
+                          pipeline_data.thresholds[t].rows);
+                  
+                  Mat cropped = pipeline_data.thresholds[t](char_region);
                   filename << outDir << "/" << humanInputs[c] << "-" << t << "-" << files[i];
                   imwrite(filename.str(), cropped);
                   cout << "Writing char image: " << filename.str() << endl;
