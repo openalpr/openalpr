@@ -98,20 +98,17 @@ int main( int argc, const char** argv )
 
   const int FIXED_CHAR_HEIGHT = 40; // RESIZE all characters to this height
 
-  vector<string> files = getFilesInDir(inDir.c_str());
+  vector<string> all_files = getFilesInDir(inDir.c_str());
 
-  sort( files.begin(), files.end(), stringCompare );
-
-  for (int i = 0; i< files.size(); i++)
+  sort( all_files.begin(), all_files.end(), stringCompare );
+  
+  vector<string> files;
+  
+  for (int i = 0; i< all_files.size(); i++)
   {
-    if (hasEnding(files[i], ".png") || hasEnding(files[i], ".jpg"))
+    if (hasEnding(all_files[i], ".png") || hasEnding(all_files[i], ".jpg"))
     {
-
-    }
-    else
-    {
-      std::cerr << "Non-image file detected in this directory.  This must be removed first" << std::endl;
-      return 1;
+      files.push_back(all_files[i]);
     }
   }
 
