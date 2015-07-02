@@ -116,15 +116,25 @@ void EndToEndTest::runTest(string country, vector<std::string> files)
 
   // Print results data
   
+  int image_name_padding = 0;
+  for (int i = 0; i < benchmarkResults.size(); i++)
+  {
+    EndToEndBenchmarkResult br = benchmarkResults[i];
+    if (br.imageName.length() > image_name_padding)
+      image_name_padding = br.imageName.length();
+  }
+  image_name_padding += 4;
+  
   ofstream data;
   string outputResultsFile = outputDir + "/results.txt";
   data.open(outputResultsFile.c_str());
   
-  data << "Image name		Detected Plate		# False Detections		Top Result Correct	Top 10 Correct		# False Results" << endl;
+  
+  data << setfill(' ') << setw(image_name_padding) << "Image name" << setw(20) << "Detected Plate" << setw(20) << "# False Detections" << setw(20) << "Top Result Correct" << setw(20) << "Top 10 Correct" << setw(20) << "# False Results" << endl;
   for (int i = 0; i < benchmarkResults.size(); i++)
   {
     EndToEndBenchmarkResult br = benchmarkResults[i];
-    data << br.imageName << "\t" << br.detectedPlate << "\t" << br.detectionFalsePositives << "\t" << br.topResultCorrect << "\t" << br.top10ResultCorrect << "\t" << br.resultsFalsePositives << endl;
+    data << setfill(' ') << setw(image_name_padding) << br.imageName << setw(20) << br.detectedPlate << setw(20) << br.detectionFalsePositives << setw(20) << br.topResultCorrect << setw(20) << br.top10ResultCorrect << setw(20) << br.resultsFalsePositives << endl;
   }
   data.close();
   
