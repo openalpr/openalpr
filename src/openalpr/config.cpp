@@ -180,8 +180,6 @@ namespace alpr
     postProcessMinCharacters = getInt(ini, "", "postprocess_min_characters", 100);
     postProcessMaxCharacters = getInt(ini, "", "postprocess_max_characters", 100);
 
-    resultsCharacterDetails = getBoolean(ini,"", "results_character_details", false);
-
     debugGeneral = 	getBoolean(ini, "", "debug_general",		false);
     debugTiming = 	getBoolean(ini, "", "debug_timing",		false);
     debugPrewarp = 	getBoolean(ini, "", "debug_prewarp",		false);

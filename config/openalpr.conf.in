@@ -59,8 +59,6 @@ postprocess_confidence_skip_level = 80
 postprocess_min_characters = 4
 postprocess_max_characters = 8
 
-; Return detailed results for each character
-results_character_details = 0
 
 debug_general         = 0
 debug_timing          = 0

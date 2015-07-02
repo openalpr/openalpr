@@ -104,8 +104,6 @@ namespace alpr
       unsigned int postProcessMinCharacters;
       unsigned int postProcessMaxCharacters;
 
-      unsigned int resultsCharacterDetails;
-
       bool debugGeneral;
       bool debugTiming;
       bool debugPrewarp;

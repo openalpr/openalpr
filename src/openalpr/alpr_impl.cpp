@@ -208,22 +208,19 @@ namespace alpr
           aplate.overall_confidence = ppResults[pp].totalscore;
           aplate.matches_template = ppResults[pp].matchesTemplate;
             
-          if (config->resultsCharacterDetails)
+          // Grab detailed results for each character
+          for (unsigned int c_idx = 0; c_idx < ppResults[pp].letter_details.size(); c_idx++)
           {
-            // Grab detailed results for each character
-            for (unsigned int c_idx = 0; c_idx < ppResults[pp].letter_details.size(); c_idx++)
-            {
-              AlprChar character_details;
-              character_details.character = ppResults[pp].letter_details[c_idx].letter;
-              character_details.confidence = ppResults[pp].letter_details[c_idx].totalscore;
-              cv::Rect char_rect = pipeline_data.charRegions[ppResults[pp].letter_details[c_idx].charposition];
-              std::vector<AlprCoordinate> charpoints = getCharacterPoints(char_rect, charTransformMatrix );
-              for (int cpt = 0; cpt < 4; cpt++)
-                character_details.corners[cpt] = charpoints[cpt];
-              aplate.character_details.push_back(character_details);
-            }
-            plateResult.topNPlates.push_back(aplate);
+            AlprChar character_details;
+            character_details.character = ppResults[pp].letter_details[c_idx].letter;
+            character_details.confidence = ppResults[pp].letter_details[c_idx].totalscore;
+            cv::Rect char_rect = pipeline_data.charRegions[ppResults[pp].letter_details[c_idx].charposition];
+            std::vector<AlprCoordinate> charpoints = getCharacterPoints(char_rect, charTransformMatrix );
+            for (int cpt = 0; cpt < 4; cpt++)
+              character_details.corners[cpt] = charpoints[cpt];
+            aplate.character_details.push_back(character_details);
           }
+          plateResult.topNPlates.push_back(aplate);
         }
 
         if (plateResult.topNPlates.size() > bestPlateIndex)
