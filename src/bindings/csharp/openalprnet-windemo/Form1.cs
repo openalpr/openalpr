@@ -1,9 +1,9 @@
 ﻿/*
- * Copyright (c) 2015 Dr. Masroor Ehsan
+ * Copyright (c) 2015 OpenALPR Technology, Inc.
  *
- * This file is part of OpenAlpr.Net.
+ * This file is part of OpenALPR.
  *
- * OpenAlpr.Net is free software: you can redistribute it and/or modify
+ * OpenALPR is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License
  * version 3 as published by the Free Software Foundation
  *
