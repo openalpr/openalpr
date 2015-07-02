@@ -45,6 +45,7 @@ TARGET_LINK_LIBRARIES(openalpr-utils-binarizefontsheet
   
 ADD_EXECUTABLE( openalpr-utils-tagplates tagplates.cpp )
 TARGET_LINK_LIBRARIES(openalpr-utils-tagplates
+    openalpr
     support
     ${OpenCV_LIBS} 
   )

@@ -28,6 +28,7 @@
 #include <ctype.h>
 
 #include "support/filesystem.h"
+#include "config.h"
 
 
 
@@ -65,7 +66,7 @@ static int xPos1 = 0;
 static int yPos1 = 0;
 static int xPos2 = 0;
 static int yPos2 = 0;
-const float ASPECT_RATIO = 1.404;
+float ASPECT_RATIO = 1.404;
 
 static bool rdragging = false;
 static int rDragStartX = 0;
@@ -157,6 +158,9 @@ int main( int argc, const char** argv )
     return 0;
   }
 
+  Config config(country);
+  ASPECT_RATIO = config.plateWidthMM / config.plateHeightMM;
+  
   vector<string> files = getFilesInDir(inDir.c_str());
   
   vector<string> imgFiles;
