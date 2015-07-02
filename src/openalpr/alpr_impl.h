@@ -107,7 +107,8 @@ namespace alpr
       bool detectRegion;
       std::string defaultRegion;
 
-      std::vector<AlprCoordinate> getCharacterPoints(cv::Rect char_rect, PipelineData* pipeline_data);
+      cv::Mat getCharacterTransformMatrix(PipelineData* pipeline_data );
+      std::vector<AlprCoordinate> getCharacterPoints(cv::Rect char_rect, cv::Mat transmtx);
       std::vector<cv::Rect> convertRects(std::vector<AlprRegionOfInterest> regionsOfInterest);
 
   };

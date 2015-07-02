@@ -195,6 +195,7 @@ namespace alpr
 
         int bestPlateIndex = 0;
 
+        cv::Mat charTransformMatrix = getCharacterTransformMatrix(&pipeline_data);
         for (unsigned int pp = 0; pp < ppResults.size(); pp++)
         {
 
@@ -216,7 +217,7 @@ namespace alpr
               character_details.character = ppResults[pp].letter_details[c_idx].letter;
               character_details.confidence = ppResults[pp].letter_details[c_idx].totalscore;
               cv::Rect char_rect = pipeline_data.charRegions[ppResults[pp].letter_details[c_idx].charposition];
-              std::vector<AlprCoordinate> charpoints = getCharacterPoints(char_rect, &pipeline_data );
+              std::vector<AlprCoordinate> charpoints = getCharacterPoints(char_rect, charTransformMatrix );
               for (int cpt = 0; cpt < 4; cpt++)
                 character_details.corners[cpt] = charpoints[cpt];
               aplate.character_details.push_back(character_details);
@@ -585,22 +586,7 @@ namespace alpr
     return ss.str();
   }
   
-  std::vector<AlprCoordinate> AlprImpl::getCharacterPoints(cv::Rect char_rect, PipelineData* pipeline_data ) {
-    
-
-
-    std::vector<Point2f> points;
-    points.push_back(Point2f(char_rect.x, char_rect.y));
-    points.push_back(Point2f(char_rect.x + char_rect.width, char_rect.y));
-    points.push_back(Point2f(char_rect.x + char_rect.width, char_rect.y + char_rect.height));
-    points.push_back(Point2f(char_rect.x, char_rect.y + char_rect.height));
-    
-    Mat img = pipeline_data->colorImg;
-    Mat debugImg(img.size(), img.type());
-    img.copyTo(debugImg);
-    
-    
-   
+  cv::Mat AlprImpl::getCharacterTransformMatrix(PipelineData* pipeline_data ) {
     std::vector<Point2f> crop_corners;
     crop_corners.push_back(Point2f(0,0));
     crop_corners.push_back(Point2f(pipeline_data->crop_gray.cols,0));
@@ -609,6 +595,19 @@ namespace alpr
 
     // Transform the points from the cropped region (skew corrected license plate region) back to the original image
     cv::Mat transmtx = cv::getPerspectiveTransform(crop_corners, pipeline_data->plate_corners);
+    
+    return transmtx;
+  }
+  
+  std::vector<AlprCoordinate> AlprImpl::getCharacterPoints(cv::Rect char_rect, cv::Mat transmtx ) {
+    
+
+    std::vector<Point2f> points;
+    points.push_back(Point2f(char_rect.x, char_rect.y));
+    points.push_back(Point2f(char_rect.x + char_rect.width, char_rect.y));
+    points.push_back(Point2f(char_rect.x + char_rect.width, char_rect.y + char_rect.height));
+    points.push_back(Point2f(char_rect.x, char_rect.y + char_rect.height));
+    
     cv::perspectiveTransform(points, points, transmtx);
     
     // If using prewarp, remap the points to the original image
