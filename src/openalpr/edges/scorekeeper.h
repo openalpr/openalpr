@@ -35,6 +35,7 @@ namespace alpr
     void setScore(std::string weight_id, float score, float weight);
 
     float getTotal();
+    int size();
 
     void printDebugScores();
 

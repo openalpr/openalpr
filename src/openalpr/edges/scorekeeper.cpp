@@ -51,6 +51,12 @@ namespace alpr
 
     return score;
   }
+  
+  
+  int ScoreKeeper::size() {
+    return weight_ids.size();
+  }
+
 
   void ScoreKeeper::printDebugScores() {
 
