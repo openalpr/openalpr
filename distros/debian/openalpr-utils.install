@@ -3,3 +3,4 @@ usr/bin/openalpr-utils-classifychars
 usr/bin/openalpr-utils-benchmark
 usr/bin/openalpr-utils-prepcharsfortraining
 usr/bin/openalpr-utils-tagplates
+usr/bin/openalpr-utils-calibrate
