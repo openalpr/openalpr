@@ -36,7 +36,6 @@ namespace alpr
 
     std::vector<cv::Point2f> findEdgeCorners();
 
-    float confidence;
 
   private:
     PipelineData* pipeline_data;

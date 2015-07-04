@@ -53,8 +53,6 @@ namespace alpr
 
       std::vector<cv::Point> findPlateCorners();
 
-      float confidence;
-
     private:
 
       PipelineData* pipelineData;

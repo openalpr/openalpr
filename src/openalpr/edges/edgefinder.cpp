@@ -31,7 +31,6 @@ namespace alpr
     this->pipeline_data = pipeline_data;
 
     // First re-crop the area from the original picture knowing the text position
-    this->confidence = 0;
 
   }
 
@@ -128,7 +127,6 @@ namespace alpr
     PlateCorners cornerFinder(newCrop, &plateLines, pipeline_data, newLines);
     vector<Point> smallPlateCorners = cornerFinder.findPlateCorners();
 
-    confidence = cornerFinder.confidence;
 
     // Transform the best corner points back to the original image
     std::vector<Point2f> imgArea;

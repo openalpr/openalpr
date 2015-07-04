@@ -39,8 +39,6 @@ namespace alpr
       CharacterAnalysis(PipelineData* pipeline_data);
       virtual ~CharacterAnalysis();
 
-      int confidence;
-
       cv::Mat bestThreshold;
 
       TextContours bestContours;

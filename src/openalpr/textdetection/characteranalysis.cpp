@@ -35,8 +35,6 @@ namespace alpr
     this->pipeline_data = pipeline_data;
     this->config = pipeline_data->config;
 
-    this->confidence = 0;
-
     if (this->config->debugCharAnalysis)
       cout << "Starting CharacterAnalysis identification" << endl;
 
@@ -129,7 +127,11 @@ namespace alpr
       cout << "Best fit score: " << bestFitScore << " Index: " << bestFitIndex << endl;
 
     if (bestFitScore <= 1)
+    {
+      pipeline_data->disqualified = true;
+      pipeline_data->disqualify_reason = "Low best fit score in characteranalysis";
       return;
+    }
 
     //getColorMask(img, allContours, allHierarchy, charSegments);
 
@@ -202,10 +204,21 @@ namespace alpr
         confidenceDrainers += 95;
       }
 
-      if (confidenceDrainers >= 100)
-        this->confidence=1;
+      if (confidenceDrainers >= 90)
+      {
+        pipeline_data->disqualified = true;
+        pipeline_data->disqualify_reason = "Low confidence in characteranalysis";
+      }
       else
-        this->confidence = 100 - confidenceDrainers;
+      {
+        float confidence = 100 - confidenceDrainers;
+        pipeline_data->confidence_weights.setScore("CHARACTER_ANALYSIS_SCORE", confidence, 1.0);
+      }
+    }
+    else
+    {
+        pipeline_data->disqualified = true;
+        pipeline_data->disqualify_reason = "No text lines found in characteranalysis";
     }
 
     if (config->debugTiming)

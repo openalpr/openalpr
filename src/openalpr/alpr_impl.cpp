@@ -152,7 +152,7 @@ namespace alpr
       lp.recognize();
 
       bool plateDetected = false;
-      if (pipeline_data.plate_area_confidence > 10)
+      if (!pipeline_data.disqualified)
       {
         AlprPlateResult plateResult;
         plateResult.region = defaultRegion;

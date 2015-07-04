@@ -6,6 +6,7 @@
 #include "utility.h"
 #include "config.h"
 #include "textdetection/textline.h"
+#include "edges/scorekeeper.h"
 
 namespace alpr
 {
@@ -47,8 +48,10 @@ namespace alpr
       std::string region_code;
       float region_confidence;
 
-
-      float plate_area_confidence;
+      bool disqualified;
+      std::string disqualify_reason;
+      
+      ScoreKeeper confidence_weights;
 
       std::vector<cv::Rect> charRegions;
 

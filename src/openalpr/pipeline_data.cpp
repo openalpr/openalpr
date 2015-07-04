@@ -48,5 +48,7 @@ namespace alpr
     this->config = config;
     this->region_confidence = 0;
     this->plate_inverted = false;
+    this->disqualified = false;
+    this->disqualify_reason = "";
   }
 }

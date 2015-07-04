@@ -46,7 +46,6 @@ namespace alpr
   {
     charSegmenter = NULL;
 
-    pipeline_data->plate_area_confidence = 0;
     pipeline_data->isMultiline = config->multiline;
 
 
@@ -58,14 +57,14 @@ namespace alpr
 
     CharacterAnalysis textAnalysis(pipeline_data);
 
-    if (textAnalysis.confidence > 10)
+    if (!pipeline_data->disqualified)
     {
 
       EdgeFinder edgeFinder(pipeline_data);
 
       pipeline_data->plate_corners = edgeFinder.findEdgeCorners();
 
-      if (edgeFinder.confidence > 0)
+      if (!pipeline_data->disqualified)
       {
 
         timespec startTime;
@@ -120,7 +119,6 @@ namespace alpr
         charSegmenter = new CharacterSegmenter(pipeline_data);
 
 
-        pipeline_data->plate_area_confidence = 100;
       }
 
     }
