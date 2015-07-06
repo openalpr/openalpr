@@ -31,6 +31,10 @@ if ( NOT DEFINED WITH_GPU_DETECTOR )
   SET(WITH_GPU_DETECTOR OFF)
 ENDIF()
 
+if ( NOT DEFINED WITH_TESTS )
+  SET(WITH_TESTS ON)
+ENDIF()
+
 IF (WIN32 AND WITH_DAEMON) 
   MESSAGE(WARNING "Skipping alprd daemon installation, as it is not supported in Windows.")
   SET(WITH_DAEMON OFF)
@@ -104,8 +108,10 @@ IF (WITH_DAEMON)
 	# Don't include misc utilities for Windows
 	add_subdirectory(misc_utilities)
 ENDIF()
-  
+
+if (WITH_TESTS)  
 add_subdirectory(tests)
+ENDIF()
 
 add_subdirectory(openalpr)
 add_subdirectory(video)
