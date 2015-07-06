@@ -15,7 +15,7 @@ TARGET_LINK_LIBRARIES(openalpr-utils-classifychars
 	${Tesseract_LIBRARIES}
   )
   
-  
+if (NOT DEFINED WIN32)
 ADD_EXECUTABLE(openalpr-utils-benchmark
 		benchmarks/benchmark.cpp 
 		benchmarks/benchmark_utils.cpp 
@@ -28,7 +28,7 @@ TARGET_LINK_LIBRARIES(openalpr-utils-benchmark
     ${OpenCV_LIBS} 
 	${Tesseract_LIBRARIES}
   )
-  
+ENDIF()
   
 ADD_EXECUTABLE( openalpr-utils-prepcharsfortraining prepcharsfortraining.cpp )
 TARGET_LINK_LIBRARIES(openalpr-utils-prepcharsfortraining
@@ -64,7 +64,11 @@ install (TARGETS openalpr-utils-calibrate DESTINATION bin)
 
 install (TARGETS openalpr-utils-sortstate DESTINATION bin)
 install (TARGETS openalpr-utils-classifychars DESTINATION bin)
+
+if (NOT DEFINED WIN32)
 install (TARGETS openalpr-utils-benchmark DESTINATION bin)
+ENDIF()
+
 install (TARGETS openalpr-utils-prepcharsfortraining DESTINATION bin)
 install (TARGETS openalpr-utils-tagplates DESTINATION bin)
 install (TARGETS openalpr-utils-calibrate DESTINATION bin)
