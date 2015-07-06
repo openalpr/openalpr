@@ -35,6 +35,14 @@ if ( NOT DEFINED WITH_TESTS )
   SET(WITH_TESTS ON)
 ENDIF()
 
+if ( NOT DEFINED WITH_BINDING_JAVA )
+  SET(WITH_BINDING_JAVA ON)
+ENDIF()
+
+if ( NOT DEFINED WITH_BINDING_PYTHON )
+  SET(WITH_BINDING_PYTHON ON)
+ENDIF()
+
 IF (WIN32 AND WITH_DAEMON) 
   MESSAGE(WARNING "Skipping alprd daemon installation, as it is not supported in Windows.")
   SET(WITH_DAEMON OFF)
@@ -116,8 +124,13 @@ ENDIF()
 add_subdirectory(openalpr)
 add_subdirectory(video)
 
-add_subdirectory(bindings/python)
+if (WITH_BINDING_JAVA) 
 add_subdirectory(bindings/java)
+ENDIF()
+
+if (WITH_BINDING_PYTHON)
+add_subdirectory(bindings/python)
+ENDIF()
 
 install (TARGETS    alpr DESTINATION   ${CMAKE_INSTALL_PREFIX}/bin)
 install (FILES      ${CMAKE_SOURCE_DIR}/../doc/man/alpr.1 DESTINATION       ${CMAKE_INSTALL_PREFIX}/share/man/man1 COMPONENT doc)
