@@ -27,6 +27,10 @@ IF ( NOT DEFINED WITH_DAEMON )
   SET(WITH_DAEMON ON)
 ENDIF()
 
+if ( NOT DEFINED WITH_GPU_DETECTOR )
+  SET(WITH_GPU_DETECTOR OFF)
+ENDIF()
+
 IF (WIN32 AND WITH_DAEMON) 
   MESSAGE(WARNING "Skipping alprd daemon installation, as it is not supported in Windows.")
   SET(WITH_DAEMON OFF)
