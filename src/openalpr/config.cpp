@@ -241,19 +241,19 @@ namespace alpr
     
   }
 
-  void Config::debugOff()
+  void Config::debugOff(bool value)
   {
-    debugGeneral = 	false;
-    debugTiming = 	false;
-    debugStateId = 	false;
-    debugPlateLines = 	false;
-    debugPlateCorners = 	false;
-    debugCharSegmenter = 	false;
-    debugCharAnalysis =	false;
-    debugColorFiler = 	false;
-    debugOcr = 		false;
-    debugPostProcess = 	false;
-    debugPauseOnFrame = 	false;
+    debugGeneral = !value;
+    debugTiming = !value;
+    debugStateId = !value;
+    debugPlateLines = !value;
+    debugPlateCorners = !value;
+    debugCharSegmenter = !value;
+    debugCharAnalysis = !value;
+    debugColorFiler = !value;
+    debugOcr = !value;
+    debugPostProcess = !value;
+    debugPauseOnFrame = !value;
   }
 
 
