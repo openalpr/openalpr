@@ -27,6 +27,30 @@ IF ( NOT DEFINED WITH_DAEMON )
   SET(WITH_DAEMON ON)
 ENDIF()
 
+if ( NOT DEFINED WITH_GPU_DETECTOR )
+  SET(WITH_GPU_DETECTOR OFF)
+ENDIF()
+
+if ( NOT DEFINED WITH_TESTS )
+  SET(WITH_TESTS ON)
+ENDIF()
+
+if ( NOT DEFINED WITH_BINDING_JAVA )
+  SET(WITH_BINDING_JAVA ON)
+ENDIF()
+
+if ( NOT DEFINED WITH_BINDING_PYTHON )
+  SET(WITH_BINDING_PYTHON ON)
+ENDIF()
+
+if ( NOT DEFINED WITH_ALPR_STATICALLY_LINKED)
+  SET(WITH_ALPR_STATICALLY_LINKED OFF)
+ENDIF()
+
+if ( NOT DEFINED WITH_UTILITIES )
+  SET(WITH_UTILITIES ON)
+ENDIF()
+
 IF (WIN32 AND WITH_DAEMON) 
   MESSAGE(WARNING "Skipping alprd daemon installation, as it is not supported in Windows.")
   SET(WITH_DAEMON OFF)
@@ -73,8 +97,14 @@ ENDIF()
 set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall ")
 ADD_EXECUTABLE( alpr  main.cpp )
 
+if (WIN32) 
+   SET(OPENALPR_LIB openalpr-static)
+ELSE()
+   SET(OPENALPR_LIB openalpr)
+ENDIF()
+
 TARGET_LINK_LIBRARIES(alpr
-	openalpr
+	${OPENALPR_LIB}
 	support
     video
 	${OpenCV_LIBS}
@@ -97,17 +127,26 @@ IF (WITH_DAEMON)
       ${Extra_LIBS}
     )
 	
-	# Don't include misc utilities for Windows
-	add_subdirectory(misc_utilities)
 ENDIF()
-  
+
+if(WITH_UTILITIES)
+add_subdirectory(misc_utilities)
+ENDIF()
+
+if (WITH_TESTS)  
 add_subdirectory(tests)
+ENDIF()
 
 add_subdirectory(openalpr)
 add_subdirectory(video)
 
-add_subdirectory(bindings/python)
+if (WITH_BINDING_JAVA) 
 add_subdirectory(bindings/java)
+ENDIF()
+
+if (WITH_BINDING_PYTHON)
+add_subdirectory(bindings/python)
+ENDIF()
 
 install (TARGETS    alpr DESTINATION   ${CMAKE_INSTALL_PREFIX}/bin)
 install (FILES      ${CMAKE_SOURCE_DIR}/../doc/man/alpr.1 DESTINATION       ${CMAKE_INSTALL_PREFIX}/share/man/man1 COMPONENT doc)
