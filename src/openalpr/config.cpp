@@ -18,6 +18,9 @@
 */
 
 #include "config.h"
+#include "support/filesystem.h"
+#include "support/platform.h"
+#include "simpleini/simpleini.h"
 
 using namespace std;
 
