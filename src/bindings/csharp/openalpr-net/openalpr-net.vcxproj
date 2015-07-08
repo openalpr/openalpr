@@ -24,6 +24,7 @@
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>openalprnet</RootNamespace>
 	<OpenALPRVersion>2.0.1</OpenALPRVersion>
+	<PlatformToolset>v120</PlatformToolset>
 	<OpenALPRWindowsDir>..\..\..\..\windows</OpenALPRWindowsDir>
 	<OpenALPRDistDir>$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)</OpenALPRDistDir>
 	<OpenCVVersion>248</OpenCVVersion>
