@@ -88,7 +88,7 @@ int main( int argc, const char** argv )
   if (benchmarkName.compare("segocr") == 0)
   {
     Config* config = new Config(country);
-    config->debugOff();
+    config->setDebug(false);
     config->skipDetection = true;
 
     AlprImpl alpr(country);
@@ -160,10 +160,10 @@ int main( int argc, const char** argv )
     timespec endTime;
 
     Config config(country);
-    config.debugOff();
+    config.setDebug(false);
 
     AlprImpl alpr(country);
-    alpr.config->debugOff();
+    alpr.config->setDebug(false);
     alpr.setDetectRegion(true);
 
     Detector* plateDetector = createDetector(&config);
