@@ -22,10 +22,6 @@
 #define OPENALPR_CONFIG_H
 
 
-#include "simpleini/simpleini.h"
-#include "support/filesystem.h"
-#include "support/platform.h"
-
 #include "constants.h"
 
 #include <stdio.h>
@@ -119,7 +115,7 @@ namespace alpr
       bool debugShowImages;
       bool debugPauseOnFrame;
 
-      void debugOff(bool value = true);
+      void setDebug(bool value);
 
       std::string getKeypointsRuntimeDir();
       std::string getCascadeRuntimeDir();
@@ -136,10 +132,6 @@ namespace alpr
       void loadCommonValues(std::string configFile);
       void loadCountryValues(std::string configFile, std::string country);
 
-      int getInt(CSimpleIniA* ini, std::string section, std::string key, int defaultValue);
-      float getFloat(CSimpleIniA* ini, std::string section, std::string key, float defaultValue);
-      std::string getString(CSimpleIniA* ini, std::string section, std::string key, std::string defaultValue);
-      bool getBoolean(CSimpleIniA* ini, std::string section, std::string key, bool defaultValue);
   };
 
 

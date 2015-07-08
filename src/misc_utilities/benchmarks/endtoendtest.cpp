@@ -18,7 +18,7 @@ void EndToEndTest::runTest(string country, vector<std::string> files)
   
   
   AlprImpl alpr(country);
-  alpr.config->debugOff();
+  alpr.config->setDebug(false);
   alpr.setDetectRegion(false);
 
   vector<EndToEndBenchmarkResult> benchmarkResults;

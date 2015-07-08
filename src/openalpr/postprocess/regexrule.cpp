@@ -17,6 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <sstream>
+
 #include "regexrule.h"
 
 using namespace std;
@@ -39,6 +41,7 @@ namespace alpr
       return;
     }
     
+    std::stringstream regexval;
     string::iterator utf_iterator = pattern.begin();
     numchars = 0;
     while (utf_iterator < pattern.end())
@@ -47,9 +50,10 @@ namespace alpr
       
       string utf_character = utf8chr(cp);
       
+      
       if (utf_character == "[")
       {
-        this->regex = this->regex + "[";
+        regexval << "[";
         
         while (utf_character != "]" )
         {
@@ -58,28 +62,28 @@ namespace alpr
           int cp = utf8::next(utf_iterator, pattern.end());
 
           utf_character = utf8chr(cp);
-          this->regex = this->regex + utf_character;
+          regexval << utf_character;
         }
         
       }
       else if (utf_character == "\\")
       {
         // Don't add "\" characters to our character count
-        this->regex = this->regex + utf_character;
+        regexval << utf_character;
         continue;
       }
       else if (utf_character == "?")
       {
-        this->regex = this->regex + '.';
+        regexval << ".";
         this->skipPositions.push_back(numchars);
       }
       else if (utf_character == "@")
       {
-        this->regex = this->regex + "\\p{Alpha}";
+        regexval << "\\" << "p" << "{Alpha}";
       }
       else if (utf_character == "#")
       {
-        this->regex = this->regex + "\\p{Digit}";
+        regexval << "\\" << "p" << "{Digit}";
       }
       else if ((utf_character == "*") || (utf_character == "+"))
       {
@@ -87,12 +91,13 @@ namespace alpr
       }
       else
       {
-        this->regex = this->regex + utf_character;
+        regexval << utf_character;
       }
 
       numchars++;
     }
 
+    this->regex = regexval.str();
     // Onigurama is not thread safe when compiling regex.  Using a mutex to ensure that
     // we don't crash
     regexrule_mutex_m.lock();
