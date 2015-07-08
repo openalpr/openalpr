@@ -23,7 +23,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>openalprnet</RootNamespace>
-	<OpenALPRVersion>2.0.1</OpenALPRVersion>
+	<OpenALPRVersion>2.1.0</OpenALPRVersion>
 	<PlatformToolset>v120</PlatformToolset>
 	<OpenALPRWindowsDir>..\..\..\..\windows</OpenALPRWindowsDir>
 	<OpenALPRDistDir>$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)</OpenALPRDistDir>
