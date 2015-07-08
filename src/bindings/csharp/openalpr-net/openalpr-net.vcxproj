@@ -23,7 +23,8 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>openalprnet</RootNamespace>
-	<OpenALPRVersion>2.0.1</OpenALPRVersion>
+	<OpenALPRVersion>2.1.0</OpenALPRVersion>
+	<PlatformToolset>v120</PlatformToolset>
 	<OpenALPRWindowsDir>..\..\..\..\windows</OpenALPRWindowsDir>
 	<OpenALPRDistDir>$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)</OpenALPRDistDir>
 	<OpenCVVersion>248</OpenCVVersion>
@@ -93,7 +94,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(OpenALPRWindowsDir)\tesseract-ocr\src\api;$(OpenALPRWindowsDir)\tesseract-ocr\src\ccstruct;$(OpenALPRWindowsDir)\tesseract-ocr\src\ccmain;$(OpenALPRWindowsDir)\tesseract-ocr\src\ccutil;$(OpenALPRWindowsDir)\opencv;$(OpenALPRWindowsDir)\opencv\include;$(OpenALPRWindowsDir)\opencv\include\opencv;$(OpenALPRWindowsDir)\opencv\modules\core\include;$(OpenALPRWindowsDir)\opencv\modules\flann\include;$(OpenALPRWindowsDir)\opencv\modules\imgproc\include;$(OpenALPRWindowsDir)\opencv\modules\highgui\include;$(OpenALPRWindowsDir)\opencv\modules\features2d\include;$(OpenALPRWindowsDir)\opencv\modules\calib3d\include;$(OpenALPRWindowsDir)\opencv\modules\ml\include;$(OpenALPRWindowsDir)\opencv\modules\video\include;$(OpenALPRWindowsDir)\opencv\modules\legacy\include;$(OpenALPRWindowsDir)\opencv\modules\objdetect\include;$(OpenALPRWindowsDir)\opencv\modules\photo\include;$(OpenALPRWindowsDir)\opencv\modules\gpu\include;$(OpenALPRWindowsDir)\opencv\modules\ocl\include;$(OpenALPRWindowsDir)\opencv\modules\nonfree\include;$(OpenALPRWindowsDir)\opencv\modules\contrib\include;$(OpenALPRWindowsDir)\opencv\modules\stitching\include;$(OpenALPRWindowsDir)\opencv\modules\superres\include;$(OpenALPRWindowsDir)\opencv\modules\ts\include;$(OpenALPRWindowsDir)\opencv\modules\videostab\include;$(OpenALPRWindowsDir)\..\src\openalpr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -106,7 +107,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(OpenALPRWindowsDir)\tesseract-ocr\src\api;$(OpenALPRWindowsDir)\tesseract-ocr\src\ccstruct;$(OpenALPRWindowsDir)\tesseract-ocr\src\ccmain;$(OpenALPRWindowsDir)\tesseract-ocr\src\ccutil;$(OpenALPRWindowsDir)\opencv;$(OpenALPRWindowsDir)\opencv\include;$(OpenALPRWindowsDir)\opencv\include\opencv;$(OpenALPRWindowsDir)\opencv\modules\core\include;$(OpenALPRWindowsDir)\opencv\modules\flann\include;$(OpenALPRWindowsDir)\opencv\modules\imgproc\include;$(OpenALPRWindowsDir)\opencv\modules\highgui\include;$(OpenALPRWindowsDir)\opencv\modules\features2d\include;$(OpenALPRWindowsDir)\opencv\modules\calib3d\include;$(OpenALPRWindowsDir)\opencv\modules\ml\include;$(OpenALPRWindowsDir)\opencv\modules\video\include;$(OpenALPRWindowsDir)\opencv\modules\legacy\include;$(OpenALPRWindowsDir)\opencv\modules\objdetect\include;$(OpenALPRWindowsDir)\opencv\modules\photo\include;$(OpenALPRWindowsDir)\opencv\modules\gpu\include;$(OpenALPRWindowsDir)\opencv\modules\ocl\include;$(OpenALPRWindowsDir)\opencv\modules\nonfree\include;$(OpenALPRWindowsDir)\opencv\modules\contrib\include;$(OpenALPRWindowsDir)\opencv\modules\stitching\include;$(OpenALPRWindowsDir)\opencv\modules\superres\include;$(OpenALPRWindowsDir)\opencv\modules\ts\include;$(OpenALPRWindowsDir)\opencv\modules\videostab\include;$(OpenALPRWindowsDir)\..\src\openalpr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -118,7 +119,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(OpenALPRWindowsDir)\tesseract-ocr\src\api;$(OpenALPRWindowsDir)\tesseract-ocr\src\ccstruct;$(OpenALPRWindowsDir)\tesseract-ocr\src\ccmain;$(OpenALPRWindowsDir)\tesseract-ocr\src\ccutil;$(OpenALPRWindowsDir)\opencv;$(OpenALPRWindowsDir)\opencv\include;$(OpenALPRWindowsDir)\opencv\include\opencv;$(OpenALPRWindowsDir)\opencv\modules\core\include;$(OpenALPRWindowsDir)\opencv\modules\flann\include;$(OpenALPRWindowsDir)\opencv\modules\imgproc\include;$(OpenALPRWindowsDir)\opencv\modules\highgui\include;$(OpenALPRWindowsDir)\opencv\modules\features2d\include;$(OpenALPRWindowsDir)\opencv\modules\calib3d\include;$(OpenALPRWindowsDir)\opencv\modules\ml\include;$(OpenALPRWindowsDir)\opencv\modules\video\include;$(OpenALPRWindowsDir)\opencv\modules\legacy\include;$(OpenALPRWindowsDir)\opencv\modules\objdetect\include;$(OpenALPRWindowsDir)\opencv\modules\photo\include;$(OpenALPRWindowsDir)\opencv\modules\gpu\include;$(OpenALPRWindowsDir)\opencv\modules\ocl\include;$(OpenALPRWindowsDir)\opencv\modules\nonfree\include;$(OpenALPRWindowsDir)\opencv\modules\contrib\include;$(OpenALPRWindowsDir)\opencv\modules\stitching\include;$(OpenALPRWindowsDir)\opencv\modules\superres\include;$(OpenALPRWindowsDir)\opencv\modules\ts\include;$(OpenALPRWindowsDir)\opencv\modules\videostab\include;$(OpenALPRWindowsDir)\..\src\openalpr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -130,7 +131,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <AdditionalIncludeDirectories>$(OpenALPRWindowsDir)\tesseract-ocr\src\api;$(OpenALPRWindowsDir)\tesseract-ocr\src\ccstruct;$(OpenALPRWindowsDir)\tesseract-ocr\src\ccmain;$(OpenALPRWindowsDir)\tesseract-ocr\src\ccutil;$(OpenALPRWindowsDir)\opencv;$(OpenALPRWindowsDir)\opencv\include;$(OpenALPRWindowsDir)\opencv\include\opencv;$(OpenALPRWindowsDir)\opencv\modules\core\include;$(OpenALPRWindowsDir)\opencv\modules\flann\include;$(OpenALPRWindowsDir)\opencv\modules\imgproc\include;$(OpenALPRWindowsDir)\opencv\modules\highgui\include;$(OpenALPRWindowsDir)\opencv\modules\features2d\include;$(OpenALPRWindowsDir)\opencv\modules\calib3d\include;$(OpenALPRWindowsDir)\opencv\modules\ml\include;$(OpenALPRWindowsDir)\opencv\modules\video\include;$(OpenALPRWindowsDir)\opencv\modules\legacy\include;$(OpenALPRWindowsDir)\opencv\modules\objdetect\include;$(OpenALPRWindowsDir)\opencv\modules\photo\include;$(OpenALPRWindowsDir)\opencv\modules\gpu\include;$(OpenALPRWindowsDir)\opencv\modules\ocl\include;$(OpenALPRWindowsDir)\opencv\modules\nonfree\include;$(OpenALPRWindowsDir)\opencv\modules\contrib\include;$(OpenALPRWindowsDir)\opencv\modules\stitching\include;$(OpenALPRWindowsDir)\opencv\modules\superres\include;$(OpenALPRWindowsDir)\opencv\modules\ts\include;$(OpenALPRWindowsDir)\opencv\modules\videostab\include;$(OpenALPRWindowsDir)\..\src\openalpr;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>

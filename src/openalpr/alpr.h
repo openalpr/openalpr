@@ -116,6 +116,7 @@ namespace alpr
   };
 
 
+  class Config;
   class AlprImpl;
   class Alpr
   {
@@ -144,6 +145,8 @@ namespace alpr
       bool isLoaded();
 
       static std::string getVersion();
+
+      Config* getConfig();
 
     private:
       AlprImpl* impl;
