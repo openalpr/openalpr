@@ -35,6 +35,8 @@ using namespace msclr::interop;
 using namespace System::Collections::Generic;
 using namespace System::Runtime::InteropServices;
 using namespace System::Drawing;
+using namespace System::Drawing::Imaging;
+using namespace System::IO;
 using namespace alpr;
 
 namespace openalprnet {
@@ -42,12 +44,101 @@ namespace openalprnet {
 	private ref class AlprHelper sealed
 	{
 	public:
+
 		static std::vector<char> ToVector(array<char>^ src)
 		{
 			std::vector<char> result(src->Length);
 			pin_ptr<char> pin(&src[0]);
 			char *first(pin), *last(pin + src->Length);
 			std::copy(first, last, result.begin());
+			return result;
+		}
+
+		static cv::Mat BitmapToMat(Bitmap^ bitmap)
+		{
+			int channels = 0;
+
+			switch(bitmap->PixelFormat)
+			{
+				case PixelFormat::Format8bppIndexed:
+				case PixelFormat::Format1bppIndexed:
+					channels = 1;
+					break;
+				case PixelFormat::Format24bppRgb:
+					channels = 3; 
+					break;
+				case PixelFormat::Format32bppRgb:
+				case PixelFormat::Format32bppArgb:
+				case PixelFormat::Format32bppPArgb:
+					channels = 4; 
+					break;
+				default:
+					throw gcnew NotImplementedException();
+			}
+
+			BitmapData^ bitmapData = bitmap->LockBits(
+				System::Drawing::Rectangle(0, 0, bitmap->Width, bitmap->Height), 
+				ImageLockMode::ReadOnly, 
+				bitmap->PixelFormat
+			);
+
+			cv::Mat dstMat(cv::Size(bitmap->Width, bitmap->Height), CV_8UC(channels), reinterpret_cast<char*>(bitmapData->Scan0.ToPointer()));
+
+			bitmap->UnlockBits(bitmapData);
+
+			return dstMat;
+		}
+
+		static Bitmap^ MatToBitmap(cv::Mat mat)
+		{
+			const int width = mat.size().width;
+			const int height = mat.size().height;
+			const int channels = mat.channels();
+			const int totalSize = mat.total();
+			void* data = reinterpret_cast<void*>(mat.data);
+			Bitmap ^bitmap;
+
+			if (channels == 1)
+			{
+				bitmap = gcnew Bitmap(width, height, PixelFormat::Format8bppIndexed);
+
+				ColorPalette ^palette = bitmap->Palette;
+				for (int i = 0; i < 256; i++) 
+				{
+					palette->Entries[i] = Color::FromArgb(i, i, i);
+				}
+
+				bitmap->Palette = palette;
+			}
+			else
+			{				
+				bitmap = gcnew Bitmap(width, height, PixelFormat::Format24bppRgb);
+			}
+
+			System::Drawing::Imaging::BitmapData ^bitmapData = bitmap->LockBits(
+				System::Drawing::Rectangle(0, 0, bitmap->Width, bitmap->Height), 
+				System::Drawing::Imaging::ImageLockMode::ReadWrite, 
+				bitmap->PixelFormat
+			);
+
+			::memcpy(bitmapData->Scan0.ToPointer(), data, totalSize);
+
+			bitmap->UnlockBits(bitmapData);
+
+			return bitmap;
+		}
+
+		static MemoryStream^ BitmapToMemoryStream(Bitmap^ bitmap, ImageFormat^ imageFormat)
+		{
+			MemoryStream^ ms = gcnew System::IO::MemoryStream();
+			bitmap->Save(ms, imageFormat);
+			return ms;
+		}
+
+		static std::vector<char> MemoryStreamToVector(MemoryStream^ ms)
+		{
+			unsigned char* byteArray = ToCharPtr(ms->ToArray());
+			std::vector<char> result(byteArray, byteArray + ms->Length);
 			return result;
 		}
 
@@ -88,6 +179,12 @@ namespace openalprnet {
 			}
 			return std::string();
 		}
+
+		static System::Drawing::Rectangle ToRectangle(cv::Rect rect)
+		{
+			return System::Drawing::Rectangle(rect.x, rect.y, rect.width, rect.height);
+		}
+
 	};
 
 	public enum class AlprDetectorTypeNet : int {
