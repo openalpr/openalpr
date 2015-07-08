@@ -119,7 +119,7 @@ namespace alpr
       bool debugShowImages;
       bool debugPauseOnFrame;
 
-      void debugOff(bool value);
+      void debugOff(bool value = true);
 
       std::string getKeypointsRuntimeDir();
       std::string getCascadeRuntimeDir();
