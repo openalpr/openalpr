@@ -1269,6 +1269,35 @@ namespace openalprnet {
 			cv::Mat frame = cv::imread( marshal_as<std::string>(filepath) );
 			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
 			AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, rois );
+		/// <summary>
+		/// Recognize from a bitmap
+		/// </summary>
+		AlprResultsNet^ recognize(Bitmap^ bitmap, List<System::Drawing::Rectangle>^ regionsOfInterest)
+		{
+			cv::Mat frame = AlprHelper::BitmapToMat(bitmap);
+			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
+			AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, rois);
+			return gcnew AlprResultsNet(results);
+		}
+
+		/// <summary>
+		/// Recognize from a bitmap
+		/// </summary>
+		AlprResultsNet^ recognize(Bitmap^ bitmap)
+		{
+			cv::Mat frame = AlprHelper::BitmapToMat(bitmap);
+			std::vector<AlprRegionOfInterest> rois;
+			AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, rois);
+			return gcnew AlprResultsNet(results);
+		}
+
+		/// <summary>
+		/// Recognize from MemoryStream representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
+		/// </summary>
+		AlprResultsNet^ recognize(MemoryStream^ memoryStream)
+		{
+			std::vector<char> p = AlprHelper::MemoryStreamToVector(memoryStream);
+			AlprResults results = m_Impl->recognize(p);
 			return gcnew AlprResultsNet(results);
 		}
 
