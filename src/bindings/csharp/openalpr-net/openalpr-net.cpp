@@ -1269,6 +1269,9 @@ namespace openalprnet {
 			cv::Mat frame = cv::imread( marshal_as<std::string>(filepath) );
 			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
 			AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, rois );
+			return gcnew AlprResultsNet(results);
+		}
+
 		/// <summary>
 		/// Recognize from a bitmap
 		/// </summary>
