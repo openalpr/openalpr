@@ -136,10 +136,6 @@ namespace alpr
       void loadCommonValues(std::string configFile);
       void loadCountryValues(std::string configFile, std::string country);
 
-      int getInt(CSimpleIniA* ini, std::string section, std::string key, int defaultValue);
-      float getFloat(CSimpleIniA* ini, std::string section, std::string key, float defaultValue);
-      std::string getString(CSimpleIniA* ini, std::string section, std::string key, std::string defaultValue);
-      bool getBoolean(CSimpleIniA* ini, std::string section, std::string key, bool defaultValue);
   };
 
 

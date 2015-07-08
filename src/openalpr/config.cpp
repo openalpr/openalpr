@@ -24,6 +24,13 @@ using namespace std;
 namespace alpr
 {
 
+  
+  int getInt(CSimpleIniA* ini, std::string section, std::string key, int defaultValue);
+  float getFloat(CSimpleIniA* ini, std::string section, std::string key, float defaultValue);
+  std::string getString(CSimpleIniA* ini, std::string section, std::string key, std::string defaultValue);
+  bool getBoolean(CSimpleIniA* ini, std::string section, std::string key, bool defaultValue);
+  
+  
   Config::Config(const std::string country, const std::string config_file, const std::string runtime_dir)
   {
 
@@ -277,52 +284,44 @@ namespace alpr
 
 
 
-  float Config::getFloat(CSimpleIniA* ini, string section, string key, float defaultValue)
+  float getFloat(CSimpleIniA* ini, string section, string key, float defaultValue)
   {
     const char * pszValue = ini->GetValue(section.c_str(), key.c_str(), NULL /*default*/);
     if (pszValue == NULL)
     {
-      if (this->debugGeneral)
-        std::cout << "Warning: missing configuration entry for: " << section << "->" << key << endl;
       return defaultValue;
     }
 
     float val = atof(pszValue);
     return val;
   }
-  int Config::getInt(CSimpleIniA* ini, string section, string key, int defaultValue)
+  int getInt(CSimpleIniA* ini, string section, string key, int defaultValue)
   {
     const char * pszValue = ini->GetValue(section.c_str(), key.c_str(), NULL /*default*/);
     if (pszValue == NULL)
     {
-      if (this->debugGeneral)
-        std::cout << "Warning: missing configuration entry for: " << section << "->" << key << endl;
       return defaultValue;
     }
 
     int val = atoi(pszValue);
     return val;
   }
-  bool Config::getBoolean(CSimpleIniA* ini, string section, string key, bool defaultValue)
+  bool getBoolean(CSimpleIniA* ini, string section, string key, bool defaultValue)
   {
     const char * pszValue = ini->GetValue(section.c_str(), key.c_str(), NULL /*default*/);
     if (pszValue == NULL)
     {
-      if (this->debugGeneral)
-        std::cout << "Warning: missing configuration entry for: " << section << "->" << key << endl;
       return defaultValue;
     }
 
     int val = atoi(pszValue);
     return val != 0;
   }
-  string Config::getString(CSimpleIniA* ini, string section, string key, string defaultValue)
+  string getString(CSimpleIniA* ini, string section, string key, string defaultValue)
   {
     const char * pszValue = ini->GetValue(section.c_str(), key.c_str(), NULL /*default*/);
     if (pszValue == NULL)
     {
-      if (this->debugGeneral)
-        std::cout << "Warning: missing configuration entry for: " << section << "->" << key << endl;
       return defaultValue;
     }
 
