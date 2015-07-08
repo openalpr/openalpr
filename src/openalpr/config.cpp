@@ -241,7 +241,7 @@ namespace alpr
     
   }
 
-  void Config::debugOff(bool value)
+  void Config::setDebug(bool value)
   {
     debugGeneral = !value;
     debugTiming = !value;
