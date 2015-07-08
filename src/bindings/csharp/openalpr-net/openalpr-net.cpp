@@ -984,7 +984,7 @@ namespace openalprnet {
 		bool m_cancel;
 	};
 
-	public ref class AlprNet sealed
+	public ref class AlprNet sealed : IDisposable
 	{
 	public:
 		// Allocate the native object on the C++ Heap via a constructor
@@ -993,11 +993,16 @@ namespace openalprnet {
 			this->m_config = gcnew AlprConfigNet(this->m_Impl->getConfig());
 		}
 
-		// Deallocate the native object on a destructor
-		~AlprNet(){
-			delete m_Impl;
-		}
+		~AlprNet() {
+			if(this->m_Disposed)
+			{
+				return;
+			}
 
+			this->!AlprNet();
+			this->m_Disposed = true;
+		}
+	
 		property AlprConfigNet^ Configuration {
 			AlprConfigNet^ get()
 			{
@@ -1128,5 +1133,6 @@ namespace openalprnet {
 		int m_topN;
 		bool m_detectRegion;
 		System::String^ m_defaultRegion;
+		bool m_Disposed;
 	};
 }
