@@ -20,6 +20,7 @@
 #include "openalpr-net.h"
 #include "alpr.h"
 #include "config.h" // alpr
+#include "motiondetector.h" // alpr
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
@@ -186,6 +187,89 @@ namespace openalprnet {
 		}
 
 	};
+
+	public enum class OpenCVMatType {
+		Unchanged = CV_LOAD_IMAGE_UNCHANGED,
+		Grayscale = CV_LOAD_IMAGE_GRAYSCALE,
+		Color = CV_LOAD_IMAGE_COLOR,
+		AnyDepth = CV_LOAD_IMAGE_ANYDEPTH,
+		AnyColor = CV_LOAD_IMAGE_ANYCOLOR
+	};
+
+	public ref class AlprMotionDetectionNet : IDisposable {
+	public:
+		AlprMotionDetectionNet()
+		{
+			m_motionDetector = new MotionDetector();
+		}
+
+		void ResetMotionDetection(Bitmap^ bitmap)
+		{
+			ResetMotionDetection(Mat(bitmap));
+		}
+
+		void ResetMotionDetection(String^ filename, OpenCVMatType matType)
+		{
+			return ResetMotionDetection(Mat(filename, matType));
+		}
+
+		System::Drawing::Rectangle MotionDetect(Bitmap^ bitmap)
+		{
+			return MotionDetect(Mat(bitmap));
+		}
+
+		System::Drawing::Rectangle MotionDetect(String^ filename, OpenCVMatType matType)
+		{
+			return MotionDetect(Mat(filename, matType));
+		}
+
+	private:
+		void ResetMotionDetection(cv::Mat mat)
+		{
+			this->m_motionDetector->ResetMotionDetection(&mat);
+		}
+
+		System::Drawing::Rectangle MotionDetect(cv::Mat mat)
+		{
+			cv::Rect rect = this->m_motionDetector->MotionDetect(&mat);
+			return AlprHelper::ToRectangle(rect);
+		}
+
+		cv::Mat Mat(String^ filename, OpenCVMatType matType)
+		{
+			cv::Mat mat = cv::imread(AlprHelper::ToStlString(filename), static_cast<int>(matType));
+			return mat;
+		}
+
+		cv::Mat Mat(Bitmap^ bitmap)
+		{
+			cv::Mat mat = AlprHelper::BitmapToMat(bitmap);
+			return mat;
+		}
+
+	private:
+
+		~AlprMotionDetectionNet()
+		{
+			if(this->m_Disposed)
+			{
+				return;
+			}
+
+			this->!AlprMotionDetectionNet();
+			this->m_Disposed = true;
+		}
+
+		!AlprMotionDetectionNet()
+		{
+			delete m_motionDetector;
+		}
+
+	private:
+		MotionDetector* m_motionDetector;
+		bool m_Disposed;
+	};
+
 
 	public enum class AlprDetectorTypeNet : int {
 		DetectorLbpCpu = alpr::DETECTOR_LBP_CPU,
