@@ -37,6 +37,7 @@ src.sln
 *.sdf
 *.opensdf
 *.dir/
+*.ipch
 Debug/
 Release/
 
