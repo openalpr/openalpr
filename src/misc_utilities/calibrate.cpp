@@ -373,8 +373,7 @@ int main(int argc, char** argv) {
 
   drawImage(imgOriginal);
 
-  
-  while (true)
+  while (cvGetWindowHandle(WINDOW_NAME.c_str()) != 0)
   {
 
     char c = waitKey(15);
@@ -382,8 +381,12 @@ int main(int argc, char** argv) {
     if (c == 'o')
     {
       cout << "prewarp = " << get_config() << endl;
-
+    } else if (c == 'q')
+    {
+      cout << "prewarp = " << get_config() << endl;
+      break;
     }
+
   }
 
   cvDestroyAllWindows();
