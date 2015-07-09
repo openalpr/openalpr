@@ -93,7 +93,10 @@ namespace openalprnet {
 				bitmap->PixelFormat
 			);
 
-			cv::Mat dstMat(cv::Size(bitmap->Width, bitmap->Height), CV_8UC(channels), reinterpret_cast<char*>(bitmapData->Scan0.ToPointer()));
+			char *src = reinterpret_cast<char*>(bitmapData->Scan0.ToPointer());
+			pin_ptr<char> pin(&src[0]);
+
+			cv::Mat dstMat(cv::Size(bitmap->Width, bitmap->Height), CV_8UC(channels), pin);
 
 			bitmap->UnlockBits(bitmapData);
 
@@ -147,7 +150,10 @@ namespace openalprnet {
 				bitmap->PixelFormat
 			);
 
-			::memcpy(bitmapData->Scan0.ToPointer(), data, totalSize);
+			char *src = reinterpret_cast<char*>(bitmapData->Scan0.ToPointer());
+			pin_ptr<char> pin(&src[0]);
+
+			::memcpy(pin, data, totalSize);
 
 			bitmap->UnlockBits(bitmapData);
 
