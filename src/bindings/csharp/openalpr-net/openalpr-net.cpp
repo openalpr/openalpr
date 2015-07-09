@@ -1332,6 +1332,14 @@ namespace openalprnet {
 		/// <summary>
 		/// Recognize from a bitmap
 		/// </summary>
+		AlprResultsNet^ recognize(Bitmap^ bitmap)
+		{
+			return recognize(bitmap, gcnew List<System::Drawing::Rectangle>());
+		}
+
+		/// <summary>
+		/// Recognize from a bitmap
+		/// </summary>
 		AlprResultsNet^ recognize(Bitmap^ bitmap, List<System::Drawing::Rectangle>^ regionsOfInterest)
 		{
 			cv::Mat frame = AlprHelper::BitmapToMat(bitmap);
@@ -1341,20 +1349,17 @@ namespace openalprnet {
 		}
 
 		/// <summary>
-		/// Recognize from a bitmap
+		/// Recognize from MemoryStream representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
 		/// </summary>
-		AlprResultsNet^ recognize(Bitmap^ bitmap)
+		AlprResultsNet^ recognize(MemoryStream^ memoryStream)
 		{
-			cv::Mat frame = AlprHelper::BitmapToMat(bitmap);
-			std::vector<AlprRegionOfInterest> rois;
-			AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, rois);
-			return gcnew AlprResultsNet(results);
+			return recognize(memoryStream, gcnew List<System::Drawing::Rectangle>());
 		}
 
 		/// <summary>
 		/// Recognize from MemoryStream representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
 		/// </summary>
-		AlprResultsNet^ recognize(MemoryStream^ memoryStream)
+		AlprResultsNet^ recognize(MemoryStream^ memoryStream, List<System::Drawing::Rectangle>^ regionsOfInterest)
 		{
 			std::vector<char> p = AlprHelper::MemoryStreamToVector(memoryStream);
 			AlprResults results = m_Impl->recognize(p);
@@ -1366,6 +1371,14 @@ namespace openalprnet {
 		/// </summary>
 		/// <param name="imageBuffer">Bytes representing image data</param>
 		AlprResultsNet^ recognize(cli::array<Byte>^ imageBuffer) {
+			return recognize(imageBuffer, gcnew List<System::Drawing::Rectangle>());
+		}
+
+		/// <summary>
+		/// Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
+		/// </summary>
+		/// <param name="imageBuffer">Bytes representing image data</param>
+		AlprResultsNet^ recognize(cli::array<Byte>^ imageBuffer, List<System::Drawing::Rectangle>^ regionsOfInterest) {
 			std::vector<char> p = AlprHelper::ToVector(imageBuffer);
 			AlprResults results = m_Impl->recognize(p);
 			return gcnew AlprResultsNet(results);
@@ -1374,8 +1387,15 @@ namespace openalprnet {
 		/// <summary>
 		/// Recognize from raw pixel data
 		/// </summary>
-		AlprResultsNet^ recognize(cli::array<Byte>^ pixelData, int bytesPerPixel, int imgWidth, int imgHeight, List<System::Drawing::Rectangle>^ regionsOfInterest) {
-			unsigned char* p = AlprHelper::ToCharPtr(pixelData);
+		AlprResultsNet^ recognize(cli::array<Byte>^ imageBuffer, int bytesPerPixel, int imgWidth, int imgHeight) {
+			return recognize(imageBuffer, bytesPerPixel, imgWidth, imgHeight, gcnew List<System::Drawing::Rectangle>());
+		}
+
+		/// <summary>
+		/// Recognize from raw pixel data
+		/// </summary>
+		AlprResultsNet^ recognize(cli::array<Byte>^ imageBuffer, int bytesPerPixel, int imgWidth, int imgHeight, List<System::Drawing::Rectangle>^ regionsOfInterest) {
+			unsigned char* p = AlprHelper::ToCharPtr(imageBuffer);
 			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
 			AlprResults results = m_Impl->recognize(p, bytesPerPixel, imgWidth, imgHeight, rois);
 			free(p); // ?? memory leak?
