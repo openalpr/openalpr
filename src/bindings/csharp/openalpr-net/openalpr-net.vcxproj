@@ -25,9 +25,12 @@
     <RootNamespace>openalprnet</RootNamespace>
 	<OpenALPRVersion>2.1.0</OpenALPRVersion>
 	<PlatformToolset>v120</PlatformToolset>
-	<OpenALPRWindowsDir>..\..\..\..\windows</OpenALPRWindowsDir>
-	<OpenALPRDistDir>$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)</OpenALPRDistDir>
-	<OpenCVVersion>248</OpenCVVersion>
+	<OpenALPRWindowsDir>..\..\..\..\windows</OpenALPRWindowsDir> 
+	<CudaGeneration Condition="$(CudaGeneration)=='' OR $(CudaGeneration)=='None'">None</CudaGeneration>
+	<OpenALPRDistDir Condition="$(CudaGeneration)=='None'">$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)</OpenALPRDistDir>
+	<OpenALPRDistDir Condition="$(CudaGeneration)=='Fermi'">$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)_CUDA_Fermi</OpenALPRDistDir>
+	<OpenALPRDistDir Condition="$(CudaGeneration)=='Kepler'">$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)_CUDA_Kepler</OpenALPRDistDir>
+	<OpenCVVersion>248</OpenCVVersion> 
 	<TesseractVersion>303</TesseractVersion>
 	<LeptonicaVersion>170</LeptonicaVersion>
 	<DebugPrefix Condition="'$(Configuration)'=='Debug'">d</DebugPrefix>

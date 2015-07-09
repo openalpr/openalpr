@@ -886,9 +886,9 @@ namespace openalprnet {
 			}
 		}
 
-		void DebugOff(bool value)
+		void SetDebug(bool value)
 		{
-			this->m_config->debugOff(value);
+			this->m_config->setDebug(value);
 		}
 
 		String^ GetKeypointsRuntimeDir()
