@@ -39,10 +39,21 @@ using namespace System::Drawing;
 using namespace System::Drawing::Imaging;
 using namespace System::IO;
 using namespace alpr;
+using namespace System::Threading;
 
 namespace openalprnet {
 
-	private ref class AlprHelper sealed
+	private ref class Lock {
+		Object^ m_pObject;
+	public:
+		Lock(Object ^ pObject) : m_pObject(pObject) {
+			Monitor::Enter(m_pObject);
+		}
+		~Lock() {
+			Monitor::Exit(m_pObject);
+		}
+	};
+
 	private ref class BitmapMat : IDisposable
 	{
 	private:
@@ -360,11 +371,13 @@ namespace openalprnet {
 	private:
 		void ResetMotionDetection(cv::Mat mat)
 		{
+			Lock lock(this);
 			this->m_motionDetector->ResetMotionDetection(&mat);
 		}
 
 		System::Drawing::Rectangle MotionDetect(cv::Mat mat)
 		{
+			Lock lock(this);
 			cv::Rect rect = this->m_motionDetector->MotionDetect(&mat);
 			return AlprHelper::ToRectangle(rect);
 		}
