@@ -382,7 +382,10 @@ int main(int argc, char** argv) {
     if (c == 'o')
     {
       cout << "prewarp = " << get_config() << endl;
-
+    } else if (c == 'q')
+    {
+      cout << "prewarp = " << get_config() << endl;
+      break;
     }
   }
 
