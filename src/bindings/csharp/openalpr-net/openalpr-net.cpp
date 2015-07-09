@@ -378,12 +378,12 @@ namespace openalprnet {
 			}
 		}
 
-		property float DetectionStrictness {
-			float get()
+		property int DetectionStrictness {
+			int get()
 			{
 				return this->m_config->detectionStrictness;
 			}
-			void set(float value)
+			void set(int value)
 			{
 				this->m_config->detectionStrictness = value;
 			}
