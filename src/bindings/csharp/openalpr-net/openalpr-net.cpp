@@ -43,29 +43,62 @@ using namespace alpr;
 namespace openalprnet {
 
 	private ref class AlprHelper sealed
+	private ref class BitmapMat : IDisposable
 	{
+	private:
+		cv::Mat* m_bitmap;
+		bool m_disposed;
 	public:
 
-		static std::vector<char> ToVector(array<char>^ src)
+		BitmapMat(array<Byte>^ byteArray)
 		{
-			std::vector<char> result(src->Length);
-			pin_ptr<char> pin(&src[0]);
-			char *first(pin), *last(pin + src->Length);
-			std::copy(first, last, result.begin());
-			return result;
+			this->m_bitmap = ByteArrayToMat(byteArray);
 		}
 
-		static std::vector<char> ToVector(array<Byte>^ src)
+		BitmapMat(Bitmap^ bitmap)
 		{
-			std::vector<char> result(src->Length);
-			pin_ptr<Byte> pin(&src[0]);
-			char* pch = reinterpret_cast<char*>(pin);
-			char *first(pch), *last(pch + src->Length);
-			std::copy(first, last, result.begin());
-			return result;
+			this->m_bitmap = BitmapToMat(bitmap);
 		}
 
-		static cv::Mat BitmapToMat(Bitmap^ bitmap)
+		BitmapMat(MemoryStream^ memoryStream)
+		{
+			this->m_bitmap = MemoryStreamBitmapToMat(memoryStream);
+		}
+
+		BitmapMat(String^ filename)
+		{
+			Bitmap^ bitmap = gcnew Bitmap(filename);
+			this->m_bitmap = BitmapToMat(bitmap);
+			delete bitmap;
+		}
+
+		property cv::Mat Value {
+			cv::Mat get()
+			{
+				cv::Mat value = this->m_bitmap->clone();
+				return value;
+			}
+		}
+
+		~BitmapMat()
+		{
+			if (this->m_disposed)
+			{
+				return;
+			}
+
+			this->!BitmapMat();
+			this->m_disposed = true;
+		}
+
+		!BitmapMat()
+		{
+			delete[] m_bitmap->data;
+		}
+
+	private:
+
+		static cv::Mat* BitmapToMat(Bitmap^ bitmap)
 		{
 			int channels = 0;
 
@@ -93,29 +126,57 @@ namespace openalprnet {
 				bitmap->PixelFormat
 			);
 
-			char *src = reinterpret_cast<char*>(bitmapData->Scan0.ToPointer());
-			pin_ptr<char> pin(&src[0]);
+			const int totalBytes = bitmap->Height * bitmapData->Stride;
 
-			cv::Mat dstMat(cv::Size(bitmap->Width, bitmap->Height), CV_8UC(channels), pin);
+			char *dst = new char[totalBytes];
+			::memcpy(dst, bitmapData->Scan0.ToPointer(), totalBytes);
+
+			cv::Mat* dstMat = new cv::Mat(cv::Size(bitmap->Width, bitmap->Height), CV_8UC(channels), dst);
 
 			bitmap->UnlockBits(bitmapData);
 
 			return dstMat;
 		}
 
-		static cv::Mat MemoryStreamBitmapToMat(MemoryStream^ memoryStream)
+		static cv::Mat* MemoryStreamBitmapToMat(MemoryStream^ memoryStream)
 		{
 			Bitmap^ bitmap = gcnew Bitmap(memoryStream);
-			cv::Mat mat = BitmapToMat(bitmap);
+			cv::Mat* mat = BitmapToMat(bitmap);
+			delete bitmap;
 			return mat;
 		}
 
-		static cv::Mat ByteArrayToMat(array<Byte>^ byteArray)
+		static cv::Mat* ByteArrayToMat(array<Byte>^ byteArray)
 		{
 			MemoryStream^ ms = gcnew MemoryStream(byteArray);
-			cv::Mat mat(MemoryStreamBitmapToMat(ms));
+			cv::Mat* mat = MemoryStreamBitmapToMat(ms);
 			delete ms;
 			return mat;
+		}
+
+	};
+
+	private ref class AlprHelper sealed
+	{
+	public:
+
+		static std::vector<char> ToVector(array<char>^ src)
+		{
+			std::vector<char> result(src->Length);
+			pin_ptr<char> pin(&src[0]);
+			char *first(pin), *last(pin + src->Length);
+			std::copy(first, last, result.begin());
+			return result;
+		}
+
+		static std::vector<char> ToVector(array<Byte>^ src)
+		{
+			std::vector<char> result(src->Length);
+			pin_ptr<Byte> pin(&src[0]);
+			char* pch = reinterpret_cast<char*>(pin);
+			char *first(pch), *last(pch + src->Length);
+			std::copy(first, last, result.begin());
+			return result;
 		}
 
 		static Bitmap^ MatToBitmap(cv::Mat mat)
@@ -217,14 +278,16 @@ namespace openalprnet {
 			return System::Drawing::Rectangle(rect.x, rect.y, rect.width, rect.height);
 		}
 
-	};
+		static List<System::Drawing::Rectangle>^ ToRectangleList(std::vector<cv::Rect> srcRects)
+		{
+			List<System::Drawing::Rectangle>^ rects = gcnew List<System::Drawing::Rectangle>();
+			for each(cv::Rect rect in srcRects)
+			{
+				rects->Add(ToRectangle(rect));
+			}
+			return rects;
+		}
 
-	public enum class OpenCVMatType {
-		Unchanged = CV_LOAD_IMAGE_UNCHANGED,
-		Grayscale = CV_LOAD_IMAGE_GRAYSCALE,
-		Color = CV_LOAD_IMAGE_COLOR,
-		AnyDepth = CV_LOAD_IMAGE_ANYDEPTH,
-		AnyColor = CV_LOAD_IMAGE_ANYCOLOR
 	};
 
 	public ref class AlprMotionDetectionNet : IDisposable {
@@ -236,42 +299,62 @@ namespace openalprnet {
 
 		void ResetMotionDetection(Bitmap^ bitmap)
 		{
-			ResetMotionDetection(Mat(bitmap));
+			BitmapMat^ wrapper = gcnew BitmapMat(bitmap);
+			ResetMotionDetection(wrapper->Value);
+			delete wrapper;
 		}
 
-		void ResetMotionDetection(String^ filename, OpenCVMatType matType)
+		void ResetMotionDetection(String^ filename)
 		{
-			return ResetMotionDetection(Mat(filename, matType));
+			BitmapMat^ wrapper = gcnew BitmapMat(filename);
+			ResetMotionDetection(wrapper->Value);
+			delete wrapper;
 		}
 
 		void ResetMotionDetection(MemoryStream^ memoryStream)
 		{
-			return ResetMotionDetection(Mat(memoryStream));
+			BitmapMat^ wrapper = gcnew BitmapMat(memoryStream);
+			ResetMotionDetection(wrapper->Value);
+			delete wrapper;
 		}
 
 		void ResetMotionDetection(array<Byte>^ byteArray)
 		{
-			return ResetMotionDetection(Mat(byteArray));
+			BitmapMat^ wrapper = gcnew BitmapMat(byteArray);
+			ResetMotionDetection(wrapper->Value);
+			delete wrapper;
 		}
 
 		System::Drawing::Rectangle MotionDetect(Bitmap^ bitmap)
 		{
-			return MotionDetect(Mat(bitmap));
+			BitmapMat^ wrapper = gcnew BitmapMat(bitmap);
+			System::Drawing::Rectangle motion = MotionDetect(wrapper->Value);
+			delete wrapper;
+			return motion;
 		}
 
-		System::Drawing::Rectangle MotionDetect(String^ filename, OpenCVMatType matType)
+		System::Drawing::Rectangle MotionDetect(String^ filename)
 		{
-			return MotionDetect(Mat(filename, matType));
+			BitmapMat^ wrapper = gcnew BitmapMat(filename);
+			System::Drawing::Rectangle motion = MotionDetect(wrapper->Value);
+			delete wrapper;
+			return motion;
 		}
 
 		System::Drawing::Rectangle MotionDetect(MemoryStream^ memoryStream)
 		{
-			return MotionDetect(Mat(memoryStream));
+			BitmapMat^ wrapper = gcnew BitmapMat(memoryStream);
+			System::Drawing::Rectangle motion = MotionDetect(wrapper->Value);
+			delete wrapper;
+			return motion;
 		}
 
 		System::Drawing::Rectangle MotionDetect(array<Byte>^ byteArray)
 		{
-			return MotionDetect(Mat(byteArray));
+			BitmapMat^ wrapper = gcnew BitmapMat(byteArray);
+			System::Drawing::Rectangle motion = MotionDetect(wrapper->Value);
+			delete wrapper;
+			return motion;
 		}
 
 	private:
@@ -284,30 +367,6 @@ namespace openalprnet {
 		{
 			cv::Rect rect = this->m_motionDetector->MotionDetect(&mat);
 			return AlprHelper::ToRectangle(rect);
-		}
-
-		cv::Mat Mat(String^ filename, OpenCVMatType matType)
-		{
-			cv::Mat mat = cv::imread(AlprHelper::ToStlString(filename), static_cast<int>(matType));
-			return mat;
-		}
-
-		cv::Mat Mat(Bitmap^ bitmap)
-		{
-			cv::Mat mat = AlprHelper::BitmapToMat(bitmap);
-			return mat;
-		}
-
-		cv::Mat Mat(MemoryStream^ memoryStream)
-		{
-			cv::Mat mat = AlprHelper::MemoryStreamBitmapToMat(memoryStream);
-			return mat;
-		}
-
-		cv::Mat Mat(array<Byte>^ byteArray)
-		{
-			cv::Mat mat = AlprHelper::ByteArrayToMat(byteArray);
-			return mat;
 		}
 
 	private:
@@ -1349,9 +1408,11 @@ namespace openalprnet {
 		/// </summary>
 		AlprResultsNet^ Recognize(Bitmap^ bitmap, List<System::Drawing::Rectangle>^ regionsOfInterest)
 		{
-			cv::Mat frame = AlprHelper::BitmapToMat(bitmap);
+			BitmapMat^ wrapper = gcnew BitmapMat(bitmap);
+			cv::Mat frame = wrapper->Value;
 			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
 			AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, rois);
+			delete wrapper;
 			return gcnew AlprResultsNet(results);
 		}
 
