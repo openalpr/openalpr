@@ -110,8 +110,7 @@ namespace openalprnet_cli
         private static void PerformAlpr(AlprNet alpr, byte[] buffer, bool benchmark, bool writeJson)
         {
             var sw = Stopwatch.StartNew();
-            sbyte[] signedBuffer = (sbyte[])(Array)buffer;
-            var results = alpr.recognize(signedBuffer);
+            var results = alpr.recognize(buffer);
             sw.Stop();
             if (benchmark)
             {
