@@ -100,6 +100,21 @@ namespace openalprnet {
 			return dstMat;
 		}
 
+		static cv::Mat MemoryStreamBitmapToMat(MemoryStream^ memoryStream)
+		{
+			Bitmap^ bitmap = gcnew Bitmap(memoryStream);
+			cv::Mat mat = BitmapToMat(bitmap);
+			return mat;
+		}
+
+		static cv::Mat ByteArrayToMat(array<Byte>^ byteArray)
+		{
+			MemoryStream^ ms = gcnew MemoryStream(byteArray);
+			cv::Mat mat(MemoryStreamBitmapToMat(ms));
+			delete ms;
+			return mat;
+		}
+
 		static Bitmap^ MatToBitmap(cv::Mat mat)
 		{
 			const int width = mat.size().width;
@@ -223,6 +238,16 @@ namespace openalprnet {
 			return ResetMotionDetection(Mat(filename, matType));
 		}
 
+		void ResetMotionDetection(MemoryStream^ memoryStream)
+		{
+			return ResetMotionDetection(Mat(memoryStream));
+		}
+
+		void ResetMotionDetection(array<Byte>^ byteArray)
+		{
+			return ResetMotionDetection(Mat(byteArray));
+		}
+
 		System::Drawing::Rectangle MotionDetect(Bitmap^ bitmap)
 		{
 			return MotionDetect(Mat(bitmap));
@@ -231,6 +256,16 @@ namespace openalprnet {
 		System::Drawing::Rectangle MotionDetect(String^ filename, OpenCVMatType matType)
 		{
 			return MotionDetect(Mat(filename, matType));
+		}
+
+		System::Drawing::Rectangle MotionDetect(MemoryStream^ memoryStream)
+		{
+			return MotionDetect(Mat(memoryStream));
+		}
+
+		System::Drawing::Rectangle MotionDetect(array<Byte>^ byteArray)
+		{
+			return MotionDetect(Mat(byteArray));
 		}
 
 	private:
@@ -254,6 +289,18 @@ namespace openalprnet {
 		cv::Mat Mat(Bitmap^ bitmap)
 		{
 			cv::Mat mat = AlprHelper::BitmapToMat(bitmap);
+			return mat;
+		}
+
+		cv::Mat Mat(MemoryStream^ memoryStream)
+		{
+			cv::Mat mat = AlprHelper::MemoryStreamBitmapToMat(memoryStream);
+			return mat;
+		}
+
+		cv::Mat Mat(array<Byte>^ byteArray)
+		{
+			cv::Mat mat = AlprHelper::ByteArrayToMat(byteArray);
 			return mat;
 		}
 
