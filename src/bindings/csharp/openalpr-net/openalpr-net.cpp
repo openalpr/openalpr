@@ -342,12 +342,13 @@ namespace openalprnet {
 
 	public ref class AlprConfigNet sealed
 	{
-	public:
-
-		AlprConfigNet(Config* config) : m_config (config)
+	internal:
+		AlprConfigNet(Config* config) : m_config(config)
 		{
-			
+
 		}
+
+	public:
 
 		property bool IsLoaded {
 			bool get()
