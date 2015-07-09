@@ -66,11 +66,11 @@ namespace openalprnet_cli
                                        val => { if (val.Any()) filename = val.First().Trim(); })
                 );
 
-            Console.WriteLine("OpenAlpr Version: {0}", AlprNet.getVersion());
+            Console.WriteLine("OpenAlpr Version: {0}", AlprNet.GetVersion());
             var config = Path.Combine(AssemblyDirectory, "openalpr.conf");
             var runtime_data = Path.Combine(AssemblyDirectory, "runtime_data");
             var alpr = new AlprNet(region, config, runtime_data);
-            if (!alpr.isLoaded())
+            if (!alpr.IsLoaded())
             {
                 Console.WriteLine("OpenAlpr failed to load!");
                 return;
@@ -110,7 +110,7 @@ namespace openalprnet_cli
         private static void PerformAlpr(AlprNet alpr, byte[] buffer, bool benchmark, bool writeJson)
         {
             var sw = Stopwatch.StartNew();
-            var results = alpr.recognize(buffer);
+            var results = alpr.Recognize(buffer);
             sw.Stop();
             if (benchmark)
             {
@@ -124,14 +124,14 @@ namespace openalprnet_cli
             else
             {
                 var i = 0;
-                foreach (var result in results.plates)
+                foreach (var result in results.Plates)
                 {
-                    Console.WriteLine("Plate {0}: {1} result(s)", i++, result.topNPlates.Count);
-                    Console.WriteLine("  Processing Time: {0} msec(s)", result.processing_time_ms);
-                    foreach (var plate in result.topNPlates)
+                    Console.WriteLine("Plate {0}: {1} result(s)", i++, result.TopNPlates.Count);
+                    Console.WriteLine("  Processing Time: {0} msec(s)", result.ProcessingTimeMs);
+                    foreach (var plate in result.TopNPlates)
                     {
-                        Console.WriteLine("  - {0}\t Confidence: {1}\tMatches Template: {2}", plate.characters,
-                                          plate.overall_confidence, plate.matches_template);
+                        Console.WriteLine("  - {0}\t Confidence: {1}\tMatches Template: {2}", plate.Characters,
+                                          plate.OverallConfidence, plate.MatchesTemplate);
                     }
                 }
             }

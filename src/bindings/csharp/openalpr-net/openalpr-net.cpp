@@ -314,13 +314,13 @@ namespace openalprnet {
 
 		~AlprMotionDetectionNet()
 		{
-			if(this->m_Disposed)
+			if(this->m_disposed)
 			{
 				return;
 			}
 
 			this->!AlprMotionDetectionNet();
-			this->m_Disposed = true;
+			this->m_disposed = true;
 		}
 
 		!AlprMotionDetectionNet()
@@ -330,7 +330,7 @@ namespace openalprnet {
 
 	private:
 		MotionDetector* m_motionDetector;
-		bool m_Disposed;
+		bool m_disposed;
 	};
 
 
@@ -477,7 +477,7 @@ namespace openalprnet {
 			}
 		}
 
-		property float minPlateSizeHeightPx {
+		property float MinPlateSizeHeightPx {
 			float get()
 			{
 				return this->m_config->minPlateSizeHeightPx;
@@ -994,19 +994,19 @@ namespace openalprnet {
 			m_matches_template=plate.matches_template;
 		}
 
-		property System::String^ characters {
+		property System::String^ Characters {
 			System::String^ get() {
 				return m_characters;
 			}
 		}
 
-		property float overall_confidence {
+		property float OverallConfidence {
 			float get() {
 				return m_overall_confidence;
 			}
 		}
 
-		property bool matches_template {
+		property bool MatchesTemplate {
 			bool get() {
 				return m_matches_template;
 			}
@@ -1042,49 +1042,49 @@ namespace openalprnet {
 			}
 		}
 
-		property int requested_topn {
+		property int RequestedTopN {
 			int get() {
 				return m_requested_topn;
 			}
 		}
 
-		property int regionConfidence {
+		property int RegionConfidence {
 			int get() {
 				return m_regionConfidence;
 			}
 		}
 
-		property int plate_index {
+		property int PlateIndex {
 			int get() {
 				return m_plate_index;
 			}
 		}
 
-		property System::String^ region {
+		property System::String^ Region {
 			System::String^ get() {
 				return m_region;
 			}
 		}
 
-		property AlprPlateNet^ bestPlate {
+		property AlprPlateNet^ BestPlate {
 			AlprPlateNet^ get() {
 				return m_bestPlate;
 			}
 		}
 
-		property List<System::Drawing::Point>^ plate_points {
+		property List<System::Drawing::Point>^ PlatePoints {
 			List<System::Drawing::Point>^ get() {
 				return m_plate_points;
 			}
 		} 
 
-		property List<AlprPlateNet^>^ topNPlates {
+		property List<AlprPlateNet^>^ TopNPlates {
 			List<AlprPlateNet^>^ get() {
 				return m_topNPlates;
 			}
 		}
 
-		property float processing_time_ms {
+		property float ProcessingTimeMs {
 			float get() {
 				return m_processing_time_ms;
 			}
@@ -1133,43 +1133,43 @@ namespace openalprnet {
 			m_json = AlprHelper::ToManagedString(json);
 		}
 
-		property long epoch_time {
+		property long EpochTime {
 			long get() {
 				return m_epoch_time;
 			}
 		}
 
-		property int img_width {
+		property int ImageWidth {
 			int get() {
 				return m_img_width;
 			}
 		}
 
-		property int img_height {
+		property int ImageHeight {
 			int get() {
 				return m_img_height;
 			}
 		}
 
-		property float total_processing_time_ms {
+		property float TotalProcessingTimeMs {
 			float get() {
 				return m_total_processing_time_ms;
 			}
 		}
 
-		property List<System::Drawing::Rectangle>^ regionsOfInterest {
+		property List<System::Drawing::Rectangle>^ RegionsOfInterest {
 			List<System::Drawing::Rectangle>^ get() {
 				return m_regionsOfInterest;
 			}
 		}
 
-		property List<AlprPlateResultNet^>^ plates {
+		property List<AlprPlateResultNet^>^ Plates {
 			List<AlprPlateResultNet^>^ get() {
 				return m_plates;
 			}
 		}
 
-		property System::String^ json {
+		property System::String^ Json {
 			System::String^ get() {
 				return m_json;
 			}
@@ -1239,13 +1239,13 @@ namespace openalprnet {
 		}
 
 		~AlprNet() {
-			if(this->m_Disposed)
+			if(this->m_disposed)
 			{
 				return;
 			}
 
 			this->!AlprNet();
-			this->m_Disposed = true;
+			this->m_disposed = true;
 		}
 	
 		property AlprConfigNet^ Configuration {
@@ -1321,7 +1321,7 @@ namespace openalprnet {
 		/// <summary>
 		/// Recognize from an image on disk
 		/// </summary>
-		AlprResultsNet^ recognize(System::String^ filepath) {
+		AlprResultsNet^ Recognize(System::String^ filepath) {
 			AlprResults results = m_Impl->recognize(marshal_as<std::string>(filepath));
 			return gcnew AlprResultsNet(results);
 		}
@@ -1329,7 +1329,7 @@ namespace openalprnet {
 		/// <summary>
 		/// Recognize from an image on disk
 		/// </summary>
-		AlprResultsNet^ recognize(System::String^ filepath, List<System::Drawing::Rectangle>^ regionsOfInterest) {
+		AlprResultsNet^ Recognize(System::String^ filepath, List<System::Drawing::Rectangle>^ regionsOfInterest) {
 			cv::Mat frame = cv::imread( marshal_as<std::string>(filepath) );
 			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
 			AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, rois );
@@ -1339,15 +1339,15 @@ namespace openalprnet {
 		/// <summary>
 		/// Recognize from a bitmap
 		/// </summary>
-		AlprResultsNet^ recognize(Bitmap^ bitmap)
+		AlprResultsNet^ Recognize(Bitmap^ bitmap)
 		{
-			return recognize(bitmap, gcnew List<System::Drawing::Rectangle>());
+			return Recognize(bitmap, gcnew List<System::Drawing::Rectangle>());
 		}
 
 		/// <summary>
 		/// Recognize from a bitmap
 		/// </summary>
-		AlprResultsNet^ recognize(Bitmap^ bitmap, List<System::Drawing::Rectangle>^ regionsOfInterest)
+		AlprResultsNet^ Recognize(Bitmap^ bitmap, List<System::Drawing::Rectangle>^ regionsOfInterest)
 		{
 			cv::Mat frame = AlprHelper::BitmapToMat(bitmap);
 			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
@@ -1358,15 +1358,15 @@ namespace openalprnet {
 		/// <summary>
 		/// Recognize from MemoryStream representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
 		/// </summary>
-		AlprResultsNet^ recognize(MemoryStream^ memoryStream)
+		AlprResultsNet^ Recognize(MemoryStream^ memoryStream)
 		{
-			return recognize(memoryStream, gcnew List<System::Drawing::Rectangle>());
+			return Recognize(memoryStream, gcnew List<System::Drawing::Rectangle>());
 		}
 
 		/// <summary>
 		/// Recognize from MemoryStream representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
 		/// </summary>
-		AlprResultsNet^ recognize(MemoryStream^ memoryStream, List<System::Drawing::Rectangle>^ regionsOfInterest)
+		AlprResultsNet^ Recognize(MemoryStream^ memoryStream, List<System::Drawing::Rectangle>^ regionsOfInterest)
 		{
 			std::vector<char> p = AlprHelper::MemoryStreamToVector(memoryStream);
 			AlprResults results = m_Impl->recognize(p);
@@ -1377,15 +1377,15 @@ namespace openalprnet {
 		/// Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
 		/// </summary>
 		/// <param name="imageBuffer">Bytes representing image data</param>
-		AlprResultsNet^ recognize(cli::array<Byte>^ imageBuffer) {
-			return recognize(imageBuffer, gcnew List<System::Drawing::Rectangle>());
+		AlprResultsNet^ Recognize(cli::array<Byte>^ imageBuffer) {
+			return Recognize(imageBuffer, gcnew List<System::Drawing::Rectangle>());
 		}
 
 		/// <summary>
 		/// Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
 		/// </summary>
 		/// <param name="imageBuffer">Bytes representing image data</param>
-		AlprResultsNet^ recognize(cli::array<Byte>^ imageBuffer, List<System::Drawing::Rectangle>^ regionsOfInterest) {
+		AlprResultsNet^ Recognize(cli::array<Byte>^ imageBuffer, List<System::Drawing::Rectangle>^ regionsOfInterest) {
 			std::vector<char> p = AlprHelper::ToVector(imageBuffer);
 			AlprResults results = m_Impl->recognize(p);
 			return gcnew AlprResultsNet(results);
@@ -1394,14 +1394,14 @@ namespace openalprnet {
 		/// <summary>
 		/// Recognize from raw pixel data
 		/// </summary>
-		AlprResultsNet^ recognize(cli::array<Byte>^ imageBuffer, int bytesPerPixel, int imgWidth, int imgHeight) {
-			return recognize(imageBuffer, bytesPerPixel, imgWidth, imgHeight, gcnew List<System::Drawing::Rectangle>());
+		AlprResultsNet^ Recognize(cli::array<Byte>^ imageBuffer, int bytesPerPixel, int imgWidth, int imgHeight) {
+			return Recognize(imageBuffer, bytesPerPixel, imgWidth, imgHeight, gcnew List<System::Drawing::Rectangle>());
 		}
 
 		/// <summary>
 		/// Recognize from raw pixel data
 		/// </summary>
-		AlprResultsNet^ recognize(cli::array<Byte>^ imageBuffer, int bytesPerPixel, int imgWidth, int imgHeight, List<System::Drawing::Rectangle>^ regionsOfInterest) {
+		AlprResultsNet^ Recognize(cli::array<Byte>^ imageBuffer, int bytesPerPixel, int imgWidth, int imgHeight, List<System::Drawing::Rectangle>^ regionsOfInterest) {
 			unsigned char* p = AlprHelper::ToCharPtr(imageBuffer);
 			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
 			AlprResults results = m_Impl->recognize(p, bytesPerPixel, imgWidth, imgHeight, rois);
@@ -1409,11 +1409,11 @@ namespace openalprnet {
 			return gcnew AlprResultsNet(results);
 		}
 
-		bool isLoaded() {
+		bool IsLoaded() {
 			return m_Impl->isLoaded();
 		}
 
-		static System::String^ getVersion() {
+		static System::String^ GetVersion() {
 			return AlprHelper::ToManagedString(Alpr::getVersion());
 		}
 
@@ -1430,6 +1430,6 @@ namespace openalprnet {
 		int m_topN;
 		bool m_detectRegion;
 		System::String^ m_defaultRegion;
-		bool m_Disposed;
+		bool m_disposed;
 	};
 }
