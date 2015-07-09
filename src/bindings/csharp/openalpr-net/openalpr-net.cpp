@@ -55,6 +55,16 @@ namespace openalprnet {
 			return result;
 		}
 
+		static std::vector<char> ToVector(array<Byte>^ src)
+		{
+			std::vector<char> result(src->Length);
+			pin_ptr<Byte> pin(&src[0]);
+			char* pch = reinterpret_cast<char*>(pin);
+			char *first(pch), *last(pch + src->Length);
+			std::copy(first, last, result.begin());
+			return result;
+		}
+
 		static cv::Mat BitmapToMat(Bitmap^ bitmap)
 		{
 			int channels = 0;
@@ -1308,7 +1318,7 @@ namespace openalprnet {
 		/// Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
 		/// </summary>
 		/// <param name="imageBuffer">Bytes representing image data</param>
-		AlprResultsNet^ recognize(cli::array<char>^ imageBuffer) {
+		AlprResultsNet^ recognize(cli::array<Byte>^ imageBuffer) {
 			std::vector<char> p = AlprHelper::ToVector(imageBuffer);
 			AlprResults results = m_Impl->recognize(p);
 			return gcnew AlprResultsNet(results);
@@ -1317,7 +1327,7 @@ namespace openalprnet {
 		/// <summary>
 		/// Recognize from raw pixel data
 		/// </summary>
-		AlprResultsNet^ recognize(cli::array<unsigned char>^ pixelData, int bytesPerPixel, int imgWidth, int imgHeight, List<System::Drawing::Rectangle>^ regionsOfInterest) {
+		AlprResultsNet^ recognize(cli::array<Byte>^ pixelData, int bytesPerPixel, int imgWidth, int imgHeight, List<System::Drawing::Rectangle>^ regionsOfInterest) {
 			unsigned char* p = AlprHelper::ToCharPtr(pixelData);
 			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
 			AlprResults results = m_Impl->recognize(p, bytesPerPixel, imgWidth, imgHeight, rois);
