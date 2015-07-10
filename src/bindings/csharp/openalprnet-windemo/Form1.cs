@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2015 OpenALPR Technology, Inc.
  *
  * This file is part of OpenALPR.
@@ -143,13 +143,6 @@ namespace openalprnet_windemo
                 }
                 picOriginal.ImageLocation = fileName;
                 picOriginal.Load();
-
-                var motionDetection = new AlprMotionDetectionNet();
-                var b = File.ReadAllBytes(fileName);
-                Parallel.For(0, int.MaxValue, (x) =>
-                {
-                    motionDetection.MotionDetect(b);
-                });
 
                 var results = alpr.Recognize(fileName);
 
