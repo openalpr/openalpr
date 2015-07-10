@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -23,20 +23,22 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>openalprnet</RootNamespace>
-	<OpenALPRVersion>2.1.0</OpenALPRVersion>
-	<PlatformToolset>v120</PlatformToolset>
-	<OpenALPRWindowsDir>..\..\..\..\windows</OpenALPRWindowsDir> 
-	<CudaGeneration Condition="$(CudaGeneration)=='' OR $(CudaGeneration)=='None'">None</CudaGeneration>
-	<OpenALPRDistDir Condition="$(CudaGeneration)=='None'">$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)</OpenALPRDistDir>
-	<OpenALPRDistDir Condition="$(CudaGeneration)=='Fermi'">$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)_CUDA_Fermi</OpenALPRDistDir>
-	<OpenALPRDistDir Condition="$(CudaGeneration)=='Kepler'">$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)_CUDA_Kepler</OpenALPRDistDir>
-	<OpenCVVersion>248</OpenCVVersion> 
-	<TesseractVersion>303</TesseractVersion>
-	<LeptonicaVersion>170</LeptonicaVersion>
-	<DebugPrefix Condition="'$(Configuration)'=='Debug'">d</DebugPrefix>
-	<DebugPrefix Condition="'$(Configuration)'!='Debug'"></DebugPrefix>
-	<TesseractDebugPrefix Condition="'$(Configuration)'=='Debug'">-debug</TesseractDebugPrefix>
-	<TesseractDebugPrefix Condition="'$(Configuration)'!='Debug'"></TesseractDebugPrefix>
+    <OpenALPRVersion>2.1.0</OpenALPRVersion>
+    <PlatformToolset>v120</PlatformToolset>
+    <OpenALPRWindowsDir>..\..\..\..\windows</OpenALPRWindowsDir>
+    <CudaGeneration Condition="$(CudaGeneration)=='' OR $(CudaGeneration)=='None'">None</CudaGeneration>
+    <OpenALPRDistDir Condition="$(CudaGeneration)=='None'">$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)</OpenALPRDistDir>
+    <OpenALPRDistDir Condition="$(CudaGeneration)=='Fermi'">$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)_CUDA_Fermi</OpenALPRDistDir>
+    <OpenALPRDistDir Condition="$(CudaGeneration)=='Kepler'">$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)_CUDA_Kepler</OpenALPRDistDir>
+    <OpenCVVersion>248</OpenCVVersion>
+    <TesseractVersion>303</TesseractVersion>
+    <LeptonicaVersion>170</LeptonicaVersion>
+    <DebugPrefix Condition="'$(Configuration)'=='Debug'">d</DebugPrefix>
+    <DebugPrefix Condition="'$(Configuration)'!='Debug'">
+    </DebugPrefix>
+    <TesseractDebugPrefix Condition="'$(Configuration)'=='Debug'">-debug</TesseractDebugPrefix>
+    <TesseractDebugPrefix Condition="'$(Configuration)'!='Debug'">
+    </TesseractDebugPrefix>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -150,12 +152,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bitmapmat-net.h" />
+    <ClInclude Include="config-net.h" />
+    <ClInclude Include="helper-net.h" />
+    <ClInclude Include="lock-net.h" />
+    <ClInclude Include="motiondetector-net.h" />
     <ClInclude Include="openalpr-net.h" />
+    <ClInclude Include="types-net.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="bitmapmat-net.cpp" />
+    <ClCompile Include="motiondetector-net.cpp" />
     <ClCompile Include="openalpr-net.cpp" />
     <ClCompile Include="Stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

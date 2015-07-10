@@ -24,6 +24,24 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bitmapmat-net.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="helper-net.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="motiondetectornet-net.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="config-net.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="types-net.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lock-net.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="openalpr-net.cpp">
@@ -33,6 +51,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bitmapmat-net.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="motiondetector-net.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
