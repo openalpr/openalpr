@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2015 OpenALPR Technology, Inc.
  *
  * This file is part of OpenALPR.
@@ -22,6 +22,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using openalprnet;
 
@@ -135,7 +136,7 @@ namespace openalprnet_windemo
             String runtime_data_dir = Path.Combine(AssemblyDirectory, "runtime_data");
             using (var alpr = new AlprNet(region, config_file, runtime_data_dir))
             {
-                if (!alpr.isLoaded())
+                if (!alpr.IsLoaded())
                 {
                     lbxPlates.Items.Add("Error initializing OpenALPR");
                     return;
@@ -143,24 +144,24 @@ namespace openalprnet_windemo
                 picOriginal.ImageLocation = fileName;
                 picOriginal.Load();
 
-                var results = alpr.recognize(fileName);
+                var results = alpr.Recognize(fileName);
 
-                var images = new List<Image>(results.plates.Count());
+                var images = new List<Image>(results.Plates.Count());
                 var i = 1;
-                foreach (var result in results.plates)
+                foreach (var result in results.Plates)
                 {
-                    var rect = boundingRectangle(result.plate_points);
+                    var rect = boundingRectangle(result.PlatePoints);
                     var img = Image.FromFile(fileName);
                     var cropped = cropImage(img, rect);
                     images.Add(cropped);
 
                     lbxPlates.Items.Add("\t\t-- Plate #" + i++ + " --");
-                    foreach (var plate in result.topNPlates)
+                    foreach (var plate in result.TopNPlates)
                     {
                         lbxPlates.Items.Add(string.Format(@"{0} {1}% {2}",
-                                                          plate.characters.PadRight(12),
-                                                          plate.overall_confidence.ToString("N1").PadLeft(8),
-                                                          plate.matches_template.ToString().PadLeft(8)));
+                                                          plate.Characters.PadRight(12),
+                                                          plate.OverallConfidence.ToString("N1").PadLeft(8),
+                                                          plate.MatchesTemplate.ToString().PadLeft(8)));
                     }
                 }
 
