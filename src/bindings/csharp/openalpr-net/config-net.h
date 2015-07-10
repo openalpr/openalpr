@@ -121,6 +121,11 @@ namespace openalprnet
 			}
 			void set(String^ value)
 			{
+				if(String::IsNullOrWhiteSpace(value))
+				{
+					this->m_config->prewarp = "";
+					return;
+				}
 				this->m_config->prewarp = marshal_as<std::string>(value);
 			}
 		}
@@ -407,6 +412,11 @@ namespace openalprnet
 			}
 			void set(String^ value)
 			{
+				if (String::IsNullOrWhiteSpace(value))
+				{
+					this->m_config->prewarp = "";
+					return;
+				}
 				this->m_config->ocrLanguage = marshal_as<std::string>(value);
 			}
 		}
