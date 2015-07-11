@@ -29,15 +29,14 @@ namespace alpr
   OCR::OCR(Config* config)
   : postProcessor(config)
   {
-    const string EXPECTED_TESSERACT_VERSION = "3.03";
+    const string MINIMUM_TESSERACT_VERSION = "3.03";
 
     this->config = config;
-
-
-    if (startsWith(tesseract.Version(), EXPECTED_TESSERACT_VERSION) == false)
+    
+    if (cmpVersion(tesseract.Version(), MINIMUM_TESSERACT_VERSION.c_str()) < 0)
     {
       std::cerr << "Warning: You are running an unsupported version of Tesseract." << endl;
-      std::cerr << "Expecting version " << EXPECTED_TESSERACT_VERSION << ", your version is: " << tesseract.Version() << endl;
+      std::cerr << "Expecting at least " << MINIMUM_TESSERACT_VERSION << ", your version is: " << tesseract.Version() << endl;
     }
 
     // Tesseract requires the prefix directory to be set as an env variable
