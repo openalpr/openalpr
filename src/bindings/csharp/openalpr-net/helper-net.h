@@ -12,7 +12,6 @@
 
 #include <vector>
 
-using namespace std;
 using namespace alpr;
 
 using namespace msclr::interop;
