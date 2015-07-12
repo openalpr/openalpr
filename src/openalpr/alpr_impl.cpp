@@ -29,6 +29,10 @@ namespace alpr
 {
   AlprImpl::AlprImpl(const std::string country, const std::string configFile, const std::string runtimeDir)
   {
+    
+    timespec startTime;
+    getTimeMonotonic(&startTime);
+    
     config = new Config(country, configFile, runtimeDir);
     
     plateDetector = ALPR_NULL_PTR;
@@ -51,7 +55,12 @@ namespace alpr
     setDefaultRegion("");
     
     prewarp = new PreWarp(config);
-
+    
+    timespec endTime;
+    getTimeMonotonic(&endTime);
+    if (config->debugTiming)
+      cout << "OpenALPR Initialization Time: " << diffclock(startTime, endTime) << "ms." << endl;
+    
   }
   AlprImpl::~AlprImpl()
   {
@@ -559,11 +568,21 @@ namespace alpr
 
   void AlprImpl::setDetectRegion(bool detectRegion)
   {
+    
     this->detectRegion = detectRegion;
     if (detectRegion && this->stateIdentifier == NULL)
     {
+        timespec startTime;
+        getTimeMonotonic(&startTime);
+        
         this->stateIdentifier = new StateIdentifier(this->config);
+        
+        timespec endTime;
+        getTimeMonotonic(&endTime);
+        if (config->debugTiming)
+          cout << "State Identification Initialization Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
+
 
   }
   void AlprImpl::setTopN(int topn)
