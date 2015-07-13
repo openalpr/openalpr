@@ -253,17 +253,17 @@ namespace alpr
 
   void Config::setDebug(bool value)
   {
-    debugGeneral = !value;
-    debugTiming = !value;
-    debugStateId = !value;
-    debugPlateLines = !value;
-    debugPlateCorners = !value;
-    debugCharSegmenter = !value;
-    debugCharAnalysis = !value;
-    debugColorFiler = !value;
-    debugOcr = !value;
-    debugPostProcess = !value;
-    debugPauseOnFrame = !value;
+    debugGeneral = value;
+    debugTiming = value;
+    debugStateId = value;
+    debugPlateLines = value;
+    debugPlateCorners = value;
+    debugCharSegmenter = value;
+    debugCharAnalysis = value;
+    debugColorFiler = value;
+    debugOcr = value;
+    debugPostProcess = value;
+    debugPauseOnFrame = value;
   }
 
 
