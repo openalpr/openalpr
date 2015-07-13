@@ -6,6 +6,7 @@ set(support_source_files
  tinythread.cpp
  platform.cpp
  utf8.cpp
+ version.cpp
 )
 
 set(regex_source_files

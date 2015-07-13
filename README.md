@@ -105,6 +105,11 @@ Install OpenALPR on Ubuntu 14.04 x64 with the following commands:
     sudo apt-get update
     sudo apt-get install openalpr openalpr-daemon openalpr-utils libopenalpr-dev
 
+Integrating the Library
+-----------------------
+
+OpenALPR is written in C++ and has bindings in C#, Python, and Java.  Please see this guide for examples showing how to run OpenALPR in your application: https://github.com/openalpr/openalpr/wiki/Integrating-OpenALPR
+
 Compiling
 -----------
 
