@@ -414,7 +414,6 @@ namespace openalprnet
 			{
 				if (String::IsNullOrWhiteSpace(value))
 				{
-					this->m_config->prewarp = "";
 					return;
 				}
 				this->m_config->ocrLanguage = marshal_as<std::string>(value);
