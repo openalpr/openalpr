@@ -257,6 +257,7 @@ namespace alpr
     debugTiming = value;
     debugStateId = value;
     debugPlateLines = value;
+    debugPrewarp = value;
     debugPlateCorners = value;
     debugCharSegmenter = value;
     debugCharAnalysis = value;
