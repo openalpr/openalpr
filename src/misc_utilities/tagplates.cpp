@@ -43,6 +43,17 @@ const int BACKSPACE_KEY = 8;
 const int DOWN_ARROW_KEY = 1;
 const int UP_ARROW_KEY= 0;
 
+#elif WINDOWS
+// https://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
+const int LEFT_ARROW_KEY = 37; // VK_LEFT
+const int RIGHT_ARROW_KEY = 39; // VK_RIGHT
+const int SPACE_KEY = 32; // VK_SPACE
+const int ENTER_KEY = 13; // VK_RETURN
+const int ESCAPE_KEY = 27; // VK_ESCAPE 
+const int BACKSPACE_KEY = 8; // VK_BACK
+
+const int DOWN_ARROW_KEY = 40; // VK_DOWN
+const int UP_ARROW_KEY= 38; // VK_UP
 #else
 const int LEFT_ARROW_KEY = 81;
 const int RIGHT_ARROW_KEY = 83;
