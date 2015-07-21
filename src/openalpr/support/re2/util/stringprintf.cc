@@ -38,7 +38,11 @@ static void StringAppendV(string* dst, const char* format, va_list ap) {
 
     // Restore the va_list before we use it again
     va_copy(backup_ap, ap);
-    result = vsnprintf(buf, length, format, backup_ap);
+	#ifdef WIN32
+    result = vsnprintf_s(buf, length, length, format, backup_ap);
+	#else
+	result = vsnprintf(buf, length, format, backup_ap);
+	#endif
     va_end(backup_ap);
 
     if ((result >= 0) && (result < length)) {
