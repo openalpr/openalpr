@@ -11,7 +11,9 @@
 
 #include <stdio.h>
 #include <string>
+#ifndef WIN32
 #include <pthread.h>
+#endif
 #include <errno.h>
 #include "util/atomicops.h"
 #include "util/util.h"
