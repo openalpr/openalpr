@@ -11,7 +11,7 @@
 
 #include "re2/util/util.h"
 #include "re2/util/sparse_array.h"
-#include "re2/re2.h"
+#include "re2.h"
 
 namespace re2 {
 

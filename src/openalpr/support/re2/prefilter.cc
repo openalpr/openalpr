@@ -4,7 +4,7 @@
 
 #include "util/util.h"
 #include "re2/prefilter.h"
-#include "re2/re2.h"
+#include "re2.h"
 #include "re2/unicode_casefold.h"
 #include "re2/walker-inl.h"
 

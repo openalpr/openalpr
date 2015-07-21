@@ -7,7 +7,7 @@
 // Originally the PCRE C++ wrapper, but adapted to use
 // the new automata-based regular expression engines.
 
-#include "re2/re2.h"
+#include "re2.h"
 
 #include <stdio.h>
 #include <string>
