@@ -25,6 +25,7 @@
     <RootNamespace>openalprnet</RootNamespace>
     <OpenALPRVersion>2.1.0</OpenALPRVersion>
     <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset Condition="$(VisualStudioVersion)=='14.0'">v140</PlatformToolset>
     <OpenALPRWindowsDir>..\..\..\..\windows</OpenALPRWindowsDir>
     <CudaGeneration Condition="$(CudaGeneration)=='' OR $(CudaGeneration)=='None'">None</CudaGeneration>
     <OpenALPRDistDir Condition="$(CudaGeneration)=='None'">$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)</OpenALPRDistDir>
