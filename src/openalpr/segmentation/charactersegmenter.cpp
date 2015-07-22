@@ -159,7 +159,6 @@ namespace alpr
       getTimeMonotonic(&startTime);
 
       filterEdgeBoxes(pipeline_data->thresholds, candidateBoxes, medianCharWidth, avgCharHeight);
-      candidateBoxes = filterMostlyEmptyBoxes(pipeline_data->thresholds, candidateBoxes);
       candidateBoxes = combineCloseBoxes(candidateBoxes, medianCharWidth);
 
       candidateBoxes = filterMostlyEmptyBoxes(pipeline_data->thresholds, candidateBoxes);
