@@ -326,7 +326,7 @@ namespace openalprnet {
 
 		event EventHandler<AlprFrameEventArgs^>^ FrameProcessed;
 
-		void recognizeFromVideo(System::String^ videoPath) {
+		void RecognizeFromVideo(System::String^ videoPath) {
 			if (System::IO::File::Exists(videoPath)) {
 				int framenum = 0;
 				cv::VideoCapture cap = cv::VideoCapture();
