@@ -69,18 +69,19 @@ namespace alpr
 
     float total = getTotal();
 
+    std::cout << "--------------------" << std::endl;
+    std::cout << "Total: " << total << std::endl;
     for (unsigned int i = 0; i < weight_ids.size(); i++)
     {
       float percent_of_total = (scores[i] * weights[i]) / total * 100;
 
-      std::cout << " - " << std::setw(longest_weight_id + 1) << std::left << weight_ids[i] << 
+      std::cout << "   - " << std::setw(longest_weight_id + 1) << std::left << weight_ids[i] << 
               " Weighted Score: " << std::setw(10) << std::left << (scores[i] * weights[i]) << 
               " Orig Score: " << std::setw(10) << std::left << scores[i] << 
               " (" << percent_of_total << "% of total)" << std::endl;
     }
 
-
-    std::cout << "Total: " << total << std::endl;
+    std::cout << "--------------------" << std::endl;
   }
   
 }
