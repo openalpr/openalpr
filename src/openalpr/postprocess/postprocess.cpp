@@ -386,12 +386,6 @@ namespace alpr
     return true;
   }
 
-  bool wordCompare( const PPResult &left, const PPResult &right )
-  {
-    if (left.totalscore < right.totalscore)
-      return false;
-    return true;
-  }
 
   bool letterCompare( const Letter &left, const Letter &right )
   {
