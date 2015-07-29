@@ -170,7 +170,7 @@ namespace alpr
     for (int i = 0; i < letters.size(); i++)
     {
       if (letters[i].size() > 0)
-        sort(letters[i].begin(), letters[i].end(), letterCompare);
+        std::stable_sort(letters[i].begin(), letters[i].end(), letterCompare);
     }
 
     if (this->config->debugPostProcess)
