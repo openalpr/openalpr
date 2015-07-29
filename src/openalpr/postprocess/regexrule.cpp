@@ -29,6 +29,7 @@ namespace alpr
 {
    
   RegexRule::RegexRule(string region, string pattern)
+  //: re2_regex("")
   {   
     this->original = pattern;
     this->region = region;
@@ -79,11 +80,11 @@ namespace alpr
       }
       else if (utf_character == "@")
       {
-        regexval << "\\" << "p" << "{Alpha}";
+        regexval << "\\pL";
       }
       else if (utf_character == "#")
       {
-        regexval << "\\" << "p" << "{Digit}";
+        regexval << "\\pN";
       }
       else if ((utf_character == "*") || (utf_character == "+"))
       {
@@ -98,20 +99,12 @@ namespace alpr
     }
 
     this->regex = regexval.str();
-    // Onigurama is not thread safe when compiling regex.  Using a mutex to ensure that
-    // we don't crash
-    regexrule_mutex_m.lock();
-    UChar* cstr_pattern = (UChar* )this->regex.c_str();
-    OnigErrorInfo einfo;
 
-    int r = onig_new(&onig_regex, cstr_pattern, cstr_pattern + strlen((char* )cstr_pattern),
-      ONIG_OPTION_DEFAULT, ONIG_ENCODING_UTF8, ONIG_SYNTAX_DEFAULT, &einfo);
-
-    regexrule_mutex_m.unlock(); 
+    re2_regex = new re2::RE2(this->regex);
     
-    if (r != ONIG_NORMAL) {
-      //char s[ONIG_MAX_ERROR_MESSAGE_LEN];
-      //onig_error_code_to_str(s, r, &einfo);
+
+    
+    if (!re2_regex->ok()) {
       cerr << "Unable to load regex: " << pattern << endl;
     }
     else
@@ -123,8 +116,7 @@ namespace alpr
   
   RegexRule::~RegexRule()
   {
-    onig_free(onig_regex);
-    onig_end();
+    delete re2_regex;
   }
 
   bool RegexRule::match(string text)
@@ -143,17 +135,9 @@ namespace alpr
     if (text_char_length != numchars)
       return false;
 
-    OnigRegion *region = onig_region_new();
-    unsigned char *start, *end;
-    UChar* cstr_text = (UChar* )text.c_str();
-    end   = cstr_text + strlen((char* )cstr_text);
-    start = cstr_text;
-    
-    int match = onig_match(onig_regex, cstr_text, end, start, region, ONIG_OPTION_NONE);
-    
-    onig_region_free(region, 1);
-    
-    return match == text.length();
+    bool match = re2::RE2::FullMatch(text, *re2_regex);
+
+    return match;
   }
 
   string RegexRule::filterSkips(string text)

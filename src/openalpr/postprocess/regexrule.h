@@ -24,7 +24,7 @@
 #include <string>
 #include <cstring>
 #include <vector>
-#include "support/regex/oniguruma.h"
+#include "support/re2.h"
 #include "support/utf8.h"
 #include "support/tinythread.h"
 
@@ -43,7 +43,7 @@ namespace alpr
       bool valid;
       
       int numchars;
-      regex_t* onig_regex;
+      re2::RE2* re2_regex;
       std::string original;
       std::string regex;
       std::string region;
