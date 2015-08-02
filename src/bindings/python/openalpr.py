@@ -9,7 +9,7 @@ class Alpr():
         if platform.system().lower().find("windows") != -1:
             self._openalprpy_lib = ctypes.cdll.LoadLibrary("openalprpy.dll")
         else:
-            self._openalprpy_lib = ctypes.cdll.LoadLibrary("/storage/projects/alpr/src/build/Debug/libopenalprpy.so")
+            self._openalprpy_lib = ctypes.cdll.LoadLibrary("libopenalprpy.so")
 
 
         self._initialize_func = self._openalprpy_lib.initialize
