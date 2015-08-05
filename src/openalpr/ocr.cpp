@@ -42,6 +42,7 @@ namespace alpr
     // Tesseract requires the prefix directory to be set as an env variable
     tesseract.Init(config->getTessdataPrefix().c_str(), config->ocrLanguage.c_str() 	);
     tesseract.SetVariable("save_blob_choices", "T");
+    tesseract.SetVariable("debug_file", "/dev/null");
     tesseract.SetPageSegMode(PSM_SINGLE_CHAR);
   }
 

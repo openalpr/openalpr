@@ -1,7 +1,7 @@
 #ifndef OPENALPR_PLATFORM_H
 #define OPENALPR_PLATFORM_H
 
-#include <string>
+#include <string.h>
 #include <sstream>
 
 #ifdef WINDOWS

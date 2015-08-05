@@ -53,7 +53,6 @@ namespace alpr
     std::vector<Letter> letter_details;
   };
 
-  bool wordCompare( const PPResult &left, const PPResult &right );
   bool letterCompare( const Letter &left, const Letter &right );
 
   
@@ -77,7 +76,7 @@ namespace alpr
       
     private:
       Config* config;
-      //void getTopN();
+
       void findAllPermutations(std::string templateregion, int topn);
       bool analyzePermutation(std::vector<int> letterIndices, std::string templateregion, int topn);
 

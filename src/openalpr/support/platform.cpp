@@ -30,8 +30,9 @@ namespace alpr
                   return directory;
           #else
                   char buffer[2048];
+                  memset(buffer, 0, sizeof(buffer));
 
-                  readlink("/proc/self/exe", buffer, 2048);
+                  readlink("/proc/self/exe", buffer, sizeof(buffer));
 
                   std::stringstream ss;
                   ss << buffer;

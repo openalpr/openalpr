@@ -16,10 +16,8 @@ extern "C" {
 
   using namespace alpr;
 
-  bool initialized = false;
-  static Alpr* nativeAlpr;
 
-  OPENALPR_EXPORT void initialize(char* ccountry, char* cconfigFile, char* cruntimeDir)
+  OPENALPR_EXPORT Alpr* initialize(char* ccountry, char* cconfigFile, char* cruntimeDir)
   {
     //printf("Initialize");
 
@@ -29,35 +27,29 @@ extern "C" {
     std::string runtimeDir(cruntimeDir);
 
     //std::cout << country << std::endl << configFile << std::endl << runtimeDir << std::endl;
-    nativeAlpr = new alpr::Alpr(country, configFile, runtimeDir);
+    Alpr* nativeAlpr = new alpr::Alpr(country, configFile, runtimeDir);
 
-    initialized = true;
-    return;
+    return nativeAlpr;
   }
 
 
 
 
-  OPENALPR_EXPORT void dispose()
+  OPENALPR_EXPORT void dispose(Alpr* nativeAlpr)
     {
-      //printf("Dispose");
-      initialized = false;
       delete nativeAlpr;
     }
 
 
-  OPENALPR_EXPORT bool isLoaded()
+  OPENALPR_EXPORT bool isLoaded(Alpr* nativeAlpr)
     {
       //printf("IS LOADED");
-
-      if (!initialized)
-        return false;
 
       return nativeAlpr->isLoaded();
 
     }
 
-  OPENALPR_EXPORT char* recognizeFile(char* cimageFile)
+  OPENALPR_EXPORT char* recognizeFile(Alpr* nativeAlpr, char* cimageFile)
     {
       //printf("Recognize file");
 
@@ -83,12 +75,13 @@ extern "C" {
   }
 
 
-  OPENALPR_EXPORT char* recognizeArray(unsigned char* buf, int len)
+  OPENALPR_EXPORT char* recognizeArray(Alpr* nativeAlpr, unsigned char* buf, int len)
     {
       //printf("Recognize byte array");
       //printf("buffer pointer: %p\n", buf);
       //printf("buffer length: %d\n", len);
-    
+
+      //std::cout << "Using instance: " << nativeAlpr << std::endl;
 
       std::vector<char> cvec(buf, buf+len);
 
@@ -103,7 +96,7 @@ extern "C" {
       return membuffer;
     }
 
-  OPENALPR_EXPORT void setDefaultRegion(char* cdefault_region)
+  OPENALPR_EXPORT void setDefaultRegion(Alpr* nativeAlpr, char* cdefault_region)
     {
       // Convert strings from java to C++ and release resources
       std::string default_region(cdefault_region);
@@ -111,17 +104,17 @@ extern "C" {
       nativeAlpr->setDefaultRegion(default_region);
     }
 
-  OPENALPR_EXPORT void setDetectRegion(bool detect_region)
+  OPENALPR_EXPORT void setDetectRegion(Alpr* nativeAlpr, bool detect_region)
     {
       nativeAlpr->setDetectRegion(detect_region);
     }
 
-  OPENALPR_EXPORT void setTopN(int top_n)
+  OPENALPR_EXPORT void setTopN(Alpr* nativeAlpr, int top_n)
     {
       nativeAlpr->setTopN(top_n);
     }
 
-  OPENALPR_EXPORT char* getVersion()
+  OPENALPR_EXPORT char* getVersion(Alpr* nativeAlpr)
     {
       std::string version = nativeAlpr->getVersion();
 
