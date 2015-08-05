@@ -17,4 +17,7 @@ set_target_properties(openalprpy PROPERTIES SOVERSION ${OPENALPR_MAJOR_VERSION})
 TARGET_LINK_LIBRARIES(openalprpy openalpr)
 
 
-install (TARGETS openalprpy   DESTINATION    ${CMAKE_INSTALL_PREFIX}/lib)
+install (TARGETS    openalprpy       DESTINATION     ${CMAKE_INSTALL_PREFIX}/lib)
+install (DIRECTORY  openalpr  DESTINATION     ${CMAKE_INSTALL_PREFIX}/lib/python2.7/dist-packages
+    USE_SOURCE_PERMISSIONS
+)
