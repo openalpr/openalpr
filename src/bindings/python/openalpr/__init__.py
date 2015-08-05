@@ -1,0 +1,1 @@
+from openalpr import Alpr
