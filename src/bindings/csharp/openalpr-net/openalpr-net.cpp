@@ -428,7 +428,8 @@ namespace openalprnet {
 		/// <param name="imageBuffer">Bytes representing image data</param>
 		AlprResultsNet^ Recognize(cli::array<Byte>^ imageBuffer, List<System::Drawing::Rectangle>^ regionsOfInterest) {
 			std::vector<char> p = AlprHelper::ToVector(imageBuffer);
-			AlprResults results = m_Impl->recognize(p);
+			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
+			AlprResults results = m_Impl->recognize(p, rois);
 			return gcnew AlprResultsNet(results);
 		}
 
