@@ -345,6 +345,13 @@ namespace alpr
     return this->recognize(img);
   }
 
+  AlprResults AlprImpl::recognize(std::vector<char> imageBytes, std::vector<AlprRegionOfInterest> regionsOfInterest)
+  {
+	  cv::Mat img = cv::imdecode(cv::Mat(imageBytes), 1);
+
+	  return this->recognize(img, regionsOfInterest);
+  }
+
   AlprResults AlprImpl::recognize( unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest)
   {
 

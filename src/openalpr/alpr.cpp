@@ -68,6 +68,11 @@ namespace alpr
     return impl->recognize(imageBytes);
   }
 
+  AlprResults Alpr::recognize(std::vector<char> imageBytes, std::vector<AlprRegionOfInterest> regionsOfInterest)
+  {
+	  return impl->recognize(imageBytes, regionsOfInterest);
+  }
+
   AlprResults Alpr::recognize(unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest)
   {
     return impl->recognize(pixelData, bytesPerPixel, imgWidth, imgHeight, regionsOfInterest);
