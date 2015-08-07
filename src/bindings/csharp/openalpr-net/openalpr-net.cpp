@@ -409,8 +409,9 @@ namespace openalprnet {
 		/// </summary>
 		AlprResultsNet^ Recognize(MemoryStream^ memoryStream, List<System::Drawing::Rectangle>^ regionsOfInterest)
 		{
-			std::vector<char> p = AlprHelper::MemoryStreamToVector(memoryStream);
-			AlprResults results = m_Impl->recognize(p);
+			std::vector<char> buffer = AlprHelper::MemoryStreamToVector(memoryStream);
+			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
+			AlprResults results = m_Impl->recognize(buffer, rois);
 			return gcnew AlprResultsNet(results);
 		}
 
@@ -427,9 +428,9 @@ namespace openalprnet {
 		/// </summary>
 		/// <param name="imageBuffer">Bytes representing image data</param>
 		AlprResultsNet^ Recognize(cli::array<Byte>^ imageBuffer, List<System::Drawing::Rectangle>^ regionsOfInterest) {
-			std::vector<char> p = AlprHelper::ToVector(imageBuffer);
+			std::vector<char> buffer = AlprHelper::ToVector(imageBuffer);
 			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
-			AlprResults results = m_Impl->recognize(p, rois);
+			AlprResults results = m_Impl->recognize(buffer, rois);
 			return gcnew AlprResultsNet(results);
 		}
 
