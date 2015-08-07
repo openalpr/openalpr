@@ -349,7 +349,10 @@ namespace alpr
   {
 	  cv::Mat img = cv::imdecode(cv::Mat(imageBytes), 1);
 
-	  return this->recognize(img, regionsOfInterest);
+    std::vector<cv::Rect> rois = convertRects(regionsOfInterest);
+
+    AlprFullDetails fullDetails = recognizeFullDetails(img, rois);
+    return fullDetails.results;
   }
 
   AlprResults AlprImpl::recognize( unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest)
