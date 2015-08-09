@@ -71,18 +71,30 @@ namespace alpr
     getTimeMonotonic(&startTime);
 
 
-    Mat originalCrop = pipeline_data->crop_gray;
-
+    // Compute the transformation matrix to go from the current image to the new plate corners
     Transformation imgTransform(this->pipeline_data->grayImg, pipeline_data->crop_gray, expandedRegion);
-
-    Size cropSize = imgTransform.getCropSize(pipeline_data->plate_corners, 
+    Size cropSize = imgTransform.getCropSize(pipeline_data->plate_corners,
             Size(pipeline_data->config->ocrImageWidthPx, pipeline_data->config->ocrImageHeightPx));
     Mat transmtx = imgTransform.getTransformationMatrix(pipeline_data->plate_corners, cropSize);
-    pipeline_data->crop_gray = imgTransform.crop(cropSize, transmtx);
+
+
+    // Crop the plate corners from the original color image (after un-applying prewarp)
+    vector<Point2f> projectedPoints = pipeline_data->prewarp->projectPoints(pipeline_data->plate_corners, true);
+    pipeline_data->color_deskewed = Mat::zeros(cropSize, pipeline_data->colorImg.type());
+    std::vector<cv::Point2f> deskewed_points;
+    deskewed_points.push_back(cv::Point2f(0,0));
+    deskewed_points.push_back(cv::Point2f(pipeline_data->color_deskewed.cols,0));
+    deskewed_points.push_back(cv::Point2f(pipeline_data->color_deskewed.cols,pipeline_data->color_deskewed.rows));
+    deskewed_points.push_back(cv::Point2f(0,pipeline_data->color_deskewed.rows));
+    cv::Mat color_transmtx = cv::getPerspectiveTransform(projectedPoints, deskewed_points);
+    cv::warpPerspective(pipeline_data->colorImg, pipeline_data->color_deskewed, color_transmtx, pipeline_data->color_deskewed.size());
+
+    // Make a grayscale copy as well for faster processing downstream
+    cv::cvtColor(pipeline_data->color_deskewed, pipeline_data->crop_gray, CV_BGR2GRAY);
 
 
     if (this->config->debugGeneral)
-      displayImage(config, "quadrilateral", pipeline_data->crop_gray);
+      displayImage(config, "quadrilateral", pipeline_data->color_deskewed);
 
 
 
