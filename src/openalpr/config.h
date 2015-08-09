@@ -122,12 +122,13 @@ namespace alpr
       std::string getPostProcessRuntimeDir();
       std::string getTessdataPrefix();
 
+      std::string runtimeBaseDir;
+
     private:
     
       float ocrImagePercent;
       float stateIdImagePercent;
-    
-      std::string runtimeBaseDir;
+
 
       void loadCommonValues(std::string configFile);
       void loadCountryValues(std::string configFile, std::string country);
