@@ -7,6 +7,7 @@
 #include "config.h"
 #include "textdetection/textline.h"
 #include "edges/scorekeeper.h"
+#include "prewarp.h"
 
 namespace alpr
 {
@@ -25,6 +26,8 @@ namespace alpr
       // Inputs
       Config* config;
 
+      PreWarp* prewarp;
+
       cv::Mat colorImg;
       cv::Mat grayImg;
       cv::Rect regionOfInterest;
@@ -32,6 +35,8 @@ namespace alpr
       bool isMultiline;
 
       cv::Mat crop_gray;
+
+      cv::Mat color_deskewed;
 
       bool hasPlateBorder;
       cv::Mat plateBorderMask;    
