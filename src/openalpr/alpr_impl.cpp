@@ -36,7 +36,7 @@ namespace alpr
     config = new Config(country, configFile, runtimeDir);
     
     plateDetector = ALPR_NULL_PTR;
-    stateIdentifier = ALPR_NULL_PTR;
+    stateDetector = ALPR_NULL_PTR;
     ocr = ALPR_NULL_PTR;
     prewarp = ALPR_NULL_PTR;
     
@@ -69,8 +69,8 @@ namespace alpr
     if (plateDetector != ALPR_NULL_PTR)
       delete plateDetector;
 
-    if (stateIdentifier != ALPR_NULL_PTR)
-      delete stateIdentifier;
+    if (stateDetector != ALPR_NULL_PTR)
+      delete stateDetector;
 
     if (ocr != ALPR_NULL_PTR)
       delete ocr;
@@ -152,6 +152,7 @@ namespace alpr
       plateQueue.pop();
 
       PipelineData pipeline_data(img, grayImg, plateRegion.rect, config);
+      pipeline_data.prewarp = prewarp;
 
       timespec platestarttime;
       getTimeMonotonic(&platestarttime);
@@ -180,11 +181,15 @@ namespace alpr
         
         if (detectRegion)
         {
-          stateIdentifier->recognize(&pipeline_data);
-          if (pipeline_data.region_confidence > 0)
+          std::vector<StateCandidate> state_candidates = stateDetector->detect(pipeline_data.color_deskewed.data,
+                                                                               pipeline_data.color_deskewed.elemSize(),
+                                                                               pipeline_data.color_deskewed.cols,
+                                                                               pipeline_data.color_deskewed.rows);
+
+          if (state_candidates.size() > 0)
           {
-            plateResult.region = pipeline_data.region_code;
-            plateResult.regionConfidence = (int) pipeline_data.region_confidence;
+            plateResult.region = state_candidates[0].state_code;
+            plateResult.regionConfidence = (int) state_candidates[0].confidence;
           }
         }
 
@@ -580,12 +585,12 @@ namespace alpr
   {
     
     this->detectRegion = detectRegion;
-    if (detectRegion && this->stateIdentifier == NULL)
+    if (detectRegion && this->stateDetector == NULL)
     {
         timespec startTime;
         getTimeMonotonic(&startTime);
         
-        this->stateIdentifier = new StateIdentifier(this->config);
+        this->stateDetector = new StateDetector(this->config->country, this->config->runtimeBaseDir);
         
         timespec endTime;
         getTimeMonotonic(&endTime);
