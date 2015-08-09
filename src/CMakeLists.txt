@@ -134,6 +134,7 @@ add_subdirectory(tests)
 ENDIF()
 
 add_subdirectory(openalpr)
+add_subdirectory(statedetection)
 add_subdirectory(video)
 
 if (WITH_BINDING_JAVA) 

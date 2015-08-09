@@ -26,7 +26,6 @@
 
 #include "postprocess/regexrule.h"
 #include "licenseplatecandidate.h"
-#include "stateidentifier.h"
 #include "utility.h"
 #include "support/filesystem.h"
 #include "ocr.h"

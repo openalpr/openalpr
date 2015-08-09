@@ -12,8 +12,6 @@ set(lpr_source_files
  detection/detectormorph.cpp
  licenseplatecandidate.cpp
  utility.cpp
- stateidentifier.cpp
- featurematcher.cpp
  ocr.cpp
  postprocess/postprocess.cpp
  postprocess/regexrule.cpp
@@ -51,6 +49,7 @@ set_target_properties(openalpr PROPERTIES SOVERSION ${OPENALPR_MAJOR_VERSION})
 
 TARGET_LINK_LIBRARIES(openalpr
   support
+  statedetection
   ${OpenCV_LIBS}
   ${Tesseract_LIBRARIES}
 )

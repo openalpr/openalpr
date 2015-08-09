@@ -23,6 +23,7 @@ ADD_EXECUTABLE(openalpr-utils-benchmark
 )
 TARGET_LINK_LIBRARIES(openalpr-utils-benchmark
     ${OPENALPR_LIB}
+    statedetection
     support
     pthread
     ${OpenCV_LIBS} 
@@ -72,4 +73,3 @@ ENDIF()
 install (TARGETS openalpr-utils-prepcharsfortraining DESTINATION bin)
 install (TARGETS openalpr-utils-tagplates DESTINATION bin)
 install (TARGETS openalpr-utils-calibrate DESTINATION bin)
-

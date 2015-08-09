@@ -167,7 +167,7 @@ int main( int argc, const char** argv )
     alpr.setDetectRegion(true);
 
     Detector* plateDetector = createDetector(&config);
-    StateIdentifier stateIdentifier(&config);
+    StateDetector stateDetector(country, config.runtimeBaseDir);
     OCR ocr(&config);
 
     vector<double> endToEndTimes;
@@ -210,8 +210,8 @@ int main( int argc, const char** argv )
 	  PipelineData pipeline_data(frame, regions[z].rect, &config);
 	  
           getTimeMonotonic(&startTime);
-	  
-          stateIdentifier.recognize(&pipeline_data);
+
+          //stateDetector.detect(&pipeline_data);
           getTimeMonotonic(&endTime);
           double stateidTime = diffclock(startTime, endTime);
           cout << "\tRegion " << z << ": State ID time: " << stateidTime << "ms." << endl;
