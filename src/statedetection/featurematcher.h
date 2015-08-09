@@ -44,20 +44,19 @@ namespace alpr
   {
 
     public:
-      FeatureMatcher(Config* config);
+      FeatureMatcher();
       virtual ~FeatureMatcher();
 
       RecognitionResult recognize( const cv::Mat& queryImg, bool drawOnImage, cv::Mat* outputImage,
                                    bool debug_on, std::vector<int> debug_matches_array );
 
-      bool loadRecognitionSet(std::string country);
+      bool loadRecognitionSet(std::string runtime_dir, std::string country);
 
       bool isLoaded();
 
       int numTrainingElements();
 
     private:
-      Config* config;
 
       cv::Ptr<cv::DescriptorMatcher> descriptorMatcher;
       cv::Ptr<cv::FastFeatureDetector> detector;
@@ -74,6 +73,9 @@ namespace alpr
       void surfStyleMatching( const cv::Mat& queryDescriptors, std::vector<cv::KeyPoint> queryKeypoints,
                               std::vector<cv::DMatch>& matches12 );
 
+
+      int w;
+      int h;
   };
 
 }
