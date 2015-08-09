@@ -17,38 +17,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENALPR_STATEIDENTIFIER_H
-#define OPENALPR_STATEIDENTIFIER_H
+#ifndef SRC_STATE_DETECTOR_IMPL_H
+#define SRC_STATE_DETECTOR_IMPL_H
 
-#include "opencv2/imgproc/imgproc.hpp"
-#include "constants.h"
+#include "state_detector.h"
 #include "featurematcher.h"
-#include "utility.h"
-#include "config.h"
-#include "pipeline_data.h"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
-namespace alpr
-{
+namespace alpr {
 
-  class StateIdentifier
-  {
-
+  class StateDetectorImpl {
     public:
-      StateIdentifier(Config* config);
-      virtual ~StateIdentifier();
+      StateDetectorImpl(const std::string country, const std::string runtimeDir);
+      virtual ~StateDetectorImpl();
 
-      bool recognize(PipelineData* pipeline_data);
+      bool isLoaded();
 
-      //int confidence;
+      // Maximum number of candidates to return
+      void setTopN(int topN);
 
-    protected:
-      Config* config;
+      std::vector<StateCandidate> detect(std::vector<char> imageBytes);
+      std::vector<StateCandidate> detect(unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight);
+      std::vector<StateCandidate> detect(cv::Mat image);
 
-    private:
-
-      FeatureMatcher* featureMatcher;
-
+      FeatureMatcher featureMatcher;
   };
 
 }
-#endif // OPENALPR_STATEIDENTIFIER_H
+
+#endif //SRC_STATE_DETECTOR_IMPL_H
