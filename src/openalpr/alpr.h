@@ -132,8 +132,11 @@ namespace alpr
       // Recognize from an image on disk
       AlprResults recognize(std::string filepath);
 
-      // Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
-      AlprResults recognize(std::vector<char> imageBytes);
+	  // Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
+	  AlprResults recognize(std::vector<char> imageBytes);
+
+	  // Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
+	  AlprResults recognize(std::vector<char> imageBytes, std::vector<AlprRegionOfInterest> regionsOfInterest);
 
       // Recognize from raw pixel data.  
       AlprResults recognize(unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest);
