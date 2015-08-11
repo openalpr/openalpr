@@ -243,7 +243,10 @@ namespace alpr
     plateLinesSensitivityHorizontal = getFloat(ini, "", "plateline_sensitivity_horizontal", 0);
 
     ocrLanguage = getString(ini, "", "ocr_language", "none");
-    
+
+    postProcessRegexLetters = getString(ini, "", "postprocess_regex_letters", "\\pL");
+    postProcessRegexNumbers = getString(ini, "", "postprocess_regex_numbers", "\\pN");
+
     ocrImageWidthPx = round(((float) templateWidthPx) * ocrImagePercent);
     ocrImageHeightPx = round(((float)templateHeightPx) * ocrImagePercent);
     stateIdImageWidthPx = round(((float)templateWidthPx) * stateIdImagePercent);

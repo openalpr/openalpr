@@ -100,6 +100,9 @@ namespace alpr
       unsigned int postProcessMinCharacters;
       unsigned int postProcessMaxCharacters;
 
+      std::string postProcessRegexLetters;
+      std::string postProcessRegexNumbers;
+
       bool debugGeneral;
       bool debugTiming;
       bool debugPrewarp;
