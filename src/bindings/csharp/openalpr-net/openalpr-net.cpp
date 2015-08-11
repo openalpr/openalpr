@@ -452,6 +452,32 @@ namespace openalprnet {
 			return gcnew AlprResultsNet(results);
 		}
 
+		/// <summary>
+		/// Pre-warp from raw pixel data. 
+		/// </summary>
+		array<Byte>^ PreWarp(array<Byte>^ imageBuffer)
+		{
+			std::vector<char> buffer = AlprHelper::ToVector(imageBuffer);
+			cv::Mat src = cv::imdecode(buffer, 1);
+
+			alpr::PreWarp *preWarp = new alpr::PreWarp(m_Impl->getConfig());
+			cv::Mat warpedImage = preWarp->warpImage(src);
+
+			std::vector<uchar> warpedImageVector;
+			cv::imencode(".jpg", warpedImage, warpedImageVector);
+
+			const size_t warpedImageSize = warpedImageVector.size();
+
+			array<Byte>^ warpedImageByteArray = gcnew array<Byte>(warpedImageSize);
+			pin_ptr<Byte> pin(&warpedImageByteArray[0]);
+
+			std::memcpy(pin, &warpedImageVector[0], warpedImageSize);
+
+			delete preWarp;
+
+			return warpedImageByteArray;
+		}
+
 		bool IsLoaded() {
 			return m_Impl->isLoaded();
 		}
