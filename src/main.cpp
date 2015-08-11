@@ -328,7 +328,7 @@ bool detectandshow( Alpr* alpr, cv::Mat frame, std::string region, bool writeJso
       for (int k = 0; k < results.plates[i].topNPlates.size(); k++)
       {
         std::cout << "    - " << results.plates[i].topNPlates[k].characters << "\t confidence: " << results.plates[i].topNPlates[k].overall_confidence;
-        if (templatePattern.size() > 0)
+        if (results.plates[i].regionConfidence > 0)
           std::cout << "\t pattern_match: " << results.plates[i].topNPlates[k].matches_template;
         
         std::cout << std::endl;
