@@ -48,7 +48,7 @@ namespace alpr
 
   OCR::~OCR()
   {
-    tesseract.Clear();
+    tesseract.End();
   }
 
   void OCR::performOCR(PipelineData* pipeline_data)
