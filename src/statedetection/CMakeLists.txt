@@ -17,6 +17,7 @@ set_target_properties(statedetection PROPERTIES SOVERSION ${OPENALPR_MAJOR_VERSI
 
 TARGET_LINK_LIBRARIES(statedetection
    ${OpenCV_LIBS}
+   support
 )
 
 
