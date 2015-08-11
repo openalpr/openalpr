@@ -33,7 +33,7 @@ namespace alpr
   class RegexRule
   {
     public:
-      RegexRule(std::string region, std::string pattern);
+      RegexRule(std::string region, std::string pattern, std::string letters_regex, std::string numbers_regex);
       virtual ~RegexRule();
 
       bool match(std::string text);

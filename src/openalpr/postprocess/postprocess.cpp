@@ -36,7 +36,7 @@ namespace alpr
     string region, pattern;
     while (infile >> region >> pattern)
     {
-      RegexRule* rule = new RegexRule(region, pattern);
+      RegexRule* rule = new RegexRule(region, pattern, config->postProcessRegexLetters, config->postProcessRegexNumbers);
       //cout << "REGION: " << region << " PATTERN: " << pattern << endl;
 
       if (rules.find(region) == rules.end())
