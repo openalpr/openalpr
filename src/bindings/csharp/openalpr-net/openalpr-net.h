@@ -1,6 +1,7 @@
 #pragma once
 
 #include "alpr.h"
+#include "prewarp.h"
 
 #include <stdlib.h>
 #include <string.h>

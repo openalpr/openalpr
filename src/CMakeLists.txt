@@ -101,6 +101,7 @@ ENDIF()
 
 TARGET_LINK_LIBRARIES(alpr
 	${OPENALPR_LIB}
+	statedetection
 	support
     video
 	${OpenCV_LIBS}

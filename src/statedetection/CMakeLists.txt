@@ -7,13 +7,17 @@ set(statedetector_source_files
   state_detector_impl.cpp
 )
 
-
-add_library(statedetection 		SHARED ${statedetector_source_files} )
+if (WIN32) 
+	add_library(statedetection 		STATIC ${statedetector_source_files} )
+ELSE()
+	add_library(statedetection 		SHARED ${statedetector_source_files} )
+ENDIF()
 
 set_target_properties(statedetection PROPERTIES SOVERSION ${OPENALPR_MAJOR_VERSION})
 
 TARGET_LINK_LIBRARIES(statedetection
    ${OpenCV_LIBS}
+   support
 )
 
 
