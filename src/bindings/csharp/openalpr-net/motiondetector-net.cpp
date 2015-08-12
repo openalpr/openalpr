@@ -14,23 +14,20 @@ void AlprMotionDetectionNet::ResetMotionDetection(Bitmap^ bitmap)
 
 void AlprMotionDetectionNet::ResetMotionDetection(String^ filename)
 {
-	BitmapMat^ wrapper = gcnew BitmapMat(filename);
-	ResetMotionDetection(wrapper->Value);
-	delete wrapper;
+	cv::Mat mat = cv::imread(marshal_as<std::string>(filename));
+	ResetMotionDetection(mat);
 }
 
 void AlprMotionDetectionNet::ResetMotionDetection(MemoryStream^ memoryStream)
 {
-	BitmapMat^ wrapper = gcnew BitmapMat(memoryStream);
-	ResetMotionDetection(wrapper->Value);
-	delete wrapper;
+	return ResetMotionDetection(memoryStream->ToArray());
 }
 
 void AlprMotionDetectionNet::ResetMotionDetection(array<Byte>^ byteArray)
 {
-	BitmapMat^ wrapper = gcnew BitmapMat(byteArray);
-	ResetMotionDetection(wrapper->Value);
-	delete wrapper;
+	std::vector<char> buffer = AlprHelper::ToVector(byteArray);
+	cv::Mat mat = cv::imdecode(buffer, 1);
+	ResetMotionDetection(mat);
 }
 
 System::Drawing::Rectangle AlprMotionDetectionNet::MotionDetect(Bitmap^ bitmap)
@@ -43,26 +40,21 @@ System::Drawing::Rectangle AlprMotionDetectionNet::MotionDetect(Bitmap^ bitmap)
 
 System::Drawing::Rectangle AlprMotionDetectionNet::MotionDetect(String^ filename)
 {
-	BitmapMat^ wrapper = gcnew BitmapMat(filename);
-	System::Drawing::Rectangle motion = MotionDetect(wrapper->Value);
-	delete wrapper;
+	cv::Mat mat = cv::imread(marshal_as<std::string>(filename));
+	System::Drawing::Rectangle motion = MotionDetect(mat);
 	return motion;
 }
 
 System::Drawing::Rectangle AlprMotionDetectionNet::MotionDetect(MemoryStream^ memoryStream)
 {
-	BitmapMat^ wrapper = gcnew BitmapMat(memoryStream);
-	System::Drawing::Rectangle motion = MotionDetect(wrapper->Value);
-	delete wrapper;
-	return motion;
+	return MotionDetect(memoryStream->ToArray());
 }
 
 System::Drawing::Rectangle AlprMotionDetectionNet::MotionDetect(array<Byte>^ byteArray)
 {
-	BitmapMat^ wrapper = gcnew BitmapMat(byteArray);
-	System::Drawing::Rectangle motion = MotionDetect(wrapper->Value);
-	delete wrapper;
-	return motion;
+	std::vector<char> buffer = AlprHelper::ToVector(byteArray);
+	cv::Mat mat = cv::imdecode(buffer, 1);
+	return MotionDetect(mat);
 }
 
 void AlprMotionDetectionNet::ResetMotionDetection(cv::Mat mat)
