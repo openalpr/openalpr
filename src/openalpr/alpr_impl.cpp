@@ -131,7 +131,9 @@ namespace alpr
     // Find all the candidate regions
     if (config->skipDetection == false)
     {
-      warpedPlateRegions = plateDetector->detect(grayImg, warpedRegionsOfInterest);
+		this->plateDetectorMutex.lock();
+		warpedPlateRegions = plateDetector->detect(grayImg, warpedRegionsOfInterest);
+		this->plateDetectorMutex.unlock();
     }
     else
     {
@@ -203,7 +205,10 @@ namespace alpr
           std::cerr << "Valid patterns are located in the " << config->country << ".patterns file" << std::endl;
         }
 
+		this->ocrMutex.lock();
         ocr->performOCR(&pipeline_data);
+		this->ocrMutex.unlock();
+
         ocr->postProcessor.analyze(plateResult.region, topN);
 
         timespec resultsStartTime;

@@ -51,6 +51,7 @@
    
 #include "support/platform.h"
 #include "support/utf8.h"
+#include "support/tinythread.h"
 
 #define DEFAULT_TOPN 25
 #define DEFAULT_DETECT_REGION false
@@ -107,6 +108,8 @@ namespace alpr
       int topN;
       bool detectRegion;
       std::string defaultRegion;
+	  tthread::mutex ocrMutex;
+	  tthread::mutex plateDetectorMutex;
 
       cv::Mat getCharacterTransformMatrix(PipelineData* pipeline_data );
       std::vector<AlprCoordinate> getCharacterPoints(cv::Rect char_rect, cv::Mat transmtx);
