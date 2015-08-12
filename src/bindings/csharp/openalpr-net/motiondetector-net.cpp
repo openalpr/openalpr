@@ -26,7 +26,7 @@ void AlprMotionDetectionNet::ResetMotionDetection(MemoryStream^ memoryStream)
 void AlprMotionDetectionNet::ResetMotionDetection(array<Byte>^ byteArray)
 {
 	std::vector<char> buffer = AlprHelper::ToVector(byteArray);
-	cv::Mat mat = cv::imdecode(buffer, 1);
+	cv::Mat mat = cv::imdecode(buffer, CV_LOAD_IMAGE_COLOR);
 	ResetMotionDetection(mat);
 }
 
@@ -53,7 +53,7 @@ System::Drawing::Rectangle AlprMotionDetectionNet::MotionDetect(MemoryStream^ me
 System::Drawing::Rectangle AlprMotionDetectionNet::MotionDetect(array<Byte>^ byteArray)
 {
 	std::vector<char> buffer = AlprHelper::ToVector(byteArray);
-	cv::Mat mat = cv::imdecode(buffer, 1);
+	cv::Mat mat = cv::imdecode(buffer, CV_LOAD_IMAGE_COLOR);
 	return MotionDetect(mat);
 }
 

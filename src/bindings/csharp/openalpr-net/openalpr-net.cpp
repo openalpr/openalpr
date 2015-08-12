@@ -457,7 +457,7 @@ namespace openalprnet {
 		array<Byte>^ PreWarp(array<Byte>^ imageBuffer)
 		{
 			std::vector<char> buffer = AlprHelper::ToVector(imageBuffer);
-			cv::Mat src = cv::imdecode(buffer, 1);
+			cv::Mat src = cv::imdecode(buffer, CV_LOAD_IMAGE_COLOR);
 
 			alpr::PreWarp *preWarp = new alpr::PreWarp(m_Impl->getConfig());
 			cv::Mat warpedImage = preWarp->warpImage(src);
