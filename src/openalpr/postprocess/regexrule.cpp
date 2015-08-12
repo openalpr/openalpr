@@ -28,7 +28,7 @@ tthread::mutex regexrule_mutex_m;
 namespace alpr
 {
    
-  RegexRule::RegexRule(string region, string pattern)
+  RegexRule::RegexRule(string region, string pattern, std::string letters_regex, std::string numbers_regex)
   //: re2_regex("")
   {   
     this->original = pattern;
@@ -80,11 +80,11 @@ namespace alpr
       }
       else if (utf_character == "@")
       {
-        regexval << "\\pL";
+        regexval << letters_regex;
       }
       else if (utf_character == "#")
       {
-        regexval << "\\pN";
+        regexval << numbers_regex;
       }
       else if ((utf_character == "*") || (utf_character == "+"))
       {

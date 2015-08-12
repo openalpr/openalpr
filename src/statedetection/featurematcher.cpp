@@ -29,10 +29,8 @@ namespace alpr
   //const int DEFAULT_TRAINING_FEATURES = 305;
   const float MAX_DISTANCE_TO_MATCH = 100.0f;
 
-  FeatureMatcher::FeatureMatcher(Config* config)
+  FeatureMatcher::FeatureMatcher()
   {
-    this->config = config;
-
     //this->descriptorMatcher = DescriptorMatcher::create( "BruteForce-HammingLUT" );
     this->descriptorMatcher = new BFMatcher(NORM_HAMMING, false);
 
@@ -152,8 +150,8 @@ namespace alpr
   // We assume that license plates won't be upside-down or backwards.  So expect lines to be closely parallel
   void FeatureMatcher::crisscrossFiltering(const vector<KeyPoint> queryKeypoints, const vector<DMatch> inputMatches, vector<DMatch> &outputMatches)
   {
-    Rect crissCrossAreaVertical(0, 0, config->stateIdImageWidthPx, config->stateIdimageHeightPx * 2);
-    Rect crissCrossAreaHorizontal(0, 0, config->stateIdImageWidthPx * 2, config->stateIdimageHeightPx);
+    Rect crissCrossAreaVertical(0, 0, w, h * 2);
+    Rect crissCrossAreaHorizontal(0, 0, w * 2, h);
 
     for (unsigned int i = 0; i < billMapping.size(); i++)
     {
@@ -175,8 +173,8 @@ namespace alpr
         KeyPoint tkp = trainingImgKeypoints[i][matchesForOnePlate[j].trainIdx];
         KeyPoint qkp = queryKeypoints[matchesForOnePlate[j].queryIdx];
 
-        vlines.push_back(LineSegment(tkp.pt.x, tkp.pt.y + config->stateIdimageHeightPx, qkp.pt.x, qkp.pt.y));
-        hlines.push_back(LineSegment(tkp.pt.x, tkp.pt.y, qkp.pt.x + config->stateIdImageWidthPx, qkp.pt.y));
+        vlines.push_back(LineSegment(tkp.pt.x, tkp.pt.y + h, qkp.pt.x, qkp.pt.y));
+        hlines.push_back(LineSegment(tkp.pt.x, tkp.pt.y, qkp.pt.x + w, qkp.pt.y));
         matchIdx.push_back(j);
       }
 
@@ -215,8 +213,8 @@ namespace alpr
 
         if (mostIntersectionsIndex >= 0)
         {
-          if (this->config->debugStateId)
-            cout << "Filtered intersection! " << billMapping[i] <<  endl;
+//          if (this->config->debugStateId)
+//            cout << "Filtered intersection! " << billMapping[i] <<  endl;
           vlines.erase(vlines.begin() + mostIntersectionsIndex);
           hlines.erase(hlines.begin() + mostIntersectionsIndex);
           matchIdx.erase(matchIdx.begin() + mostIntersectionsIndex);
@@ -232,10 +230,10 @@ namespace alpr
   }
 
   // Returns true if successful, false otherwise
-  bool FeatureMatcher::loadRecognitionSet(string country)
+  bool FeatureMatcher::loadRecognitionSet(string directory, string country)
   {
     std::ostringstream out;
-    out << config->getKeypointsRuntimeDir() << "/" << country << "/";
+    out << directory << "/keypoints/" << country << "/";
     string country_dir = out.str();
 
     if (DirectoryExists(country_dir.c_str()))
@@ -253,7 +251,6 @@ namespace alpr
 
         // convert to gray and resize to the size of the templates
         cvtColor(img, img, CV_BGR2GRAY);
-        resize(img, img, getSizeMaintainingAspect(img, config->stateIdImageWidthPx, config->stateIdimageHeightPx));
 
         if( img.empty() )
         {
@@ -289,6 +286,9 @@ namespace alpr
                                              )
   {
     RecognitionResult result;
+
+    this->w = queryImg.cols;
+    this->h = queryImg.rows;
 
     result.haswinner = false;
     result.confidence = 0;
@@ -381,13 +381,13 @@ namespace alpr
       }
     }
 
-    if (this->config->debugStateId)
-    {
-      for (unsigned int i = 0; i < billMapping.size(); i++)
-      {
-        cout << billMapping[i] << " : " << bill_match_counts[i] << endl;
-      }
-    }
+//    if (this->config->debugStateId)
+//    {
+//      for (unsigned int i = 0; i < billMapping.size(); i++)
+//      {
+//        cout << billMapping[i] << " : " << bill_match_counts[i] << endl;
+//      }
+//    }
 
     return result;
   }

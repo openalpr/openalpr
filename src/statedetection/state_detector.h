@@ -17,39 +17,39 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENALPR_REGEXRULE_H
-#define	OPENALPR_REGEXRULE_H
+#ifndef OPENALPR_STATE_DETECTOR_H
+#define OPENALPR_STATE_DETECTOR_H
 
-#include <iostream>
 #include <string>
-#include <cstring>
 #include <vector>
-#include "support/re2.h"
-#include "support/utf8.h"
-#include "support/tinythread.h"
 
-namespace alpr
-{
-  class RegexRule
+namespace alpr {
+
+  struct StateCandidate
   {
-    public:
-      RegexRule(std::string region, std::string pattern, std::string letters_regex, std::string numbers_regex);
-      virtual ~RegexRule();
-
-      bool match(std::string text);
-      std::string filterSkips(std::string text);
-
-    private:
-      bool valid;
-      
-      int numchars;
-      re2::RE2* re2_regex;
-      std::string original;
-      std::string regex;
-      std::string region;
-      std::vector<int> skipPositions;
+    std::string state_code;
+    float confidence;
   };
+
+  class StateDetectorImpl;
+  class StateDetector {
+
+    public:
+      StateDetector(const std::string country, const std::string runtimeDir);
+      virtual ~StateDetector();
+
+      bool isLoaded();
+
+      // Maximum number of candidates to return
+      void setTopN(int topN);
+
+      // Given an image of a license plate, provide the likely state candidates
+      std::vector<StateCandidate> detect(std::vector<char> imageBytes);
+      std::vector<StateCandidate> detect(unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight);
+
+      StateDetectorImpl* impl;
+  };
+
 }
 
-#endif	/* OPENALPR_REGEXRULE_H */
-
+#endif //OPENALPR_STATE_DETECTOR_H

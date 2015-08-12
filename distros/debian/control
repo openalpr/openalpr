@@ -69,3 +69,13 @@ Description: Utilities for the OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
  in C++. The library analyzes images and identifies license plates. The output
  is the text representation of any license plate characters found in the image.
+ 
+Package: python-openalpr
+Section: python
+Architecture: amd64
+Depends: libopenalpr-dev (= ${binary:Version}), ${misc:Depends}
+Description: Python binding for OpenALPR library
+ OpenALPR is an open source Automatic License Plate Recognition library written
+ in C++. The library analyzes images and identifies license plates. The output
+ is the text representation of any license plate characters found in the image.
+

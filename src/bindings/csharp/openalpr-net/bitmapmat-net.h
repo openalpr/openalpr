@@ -65,7 +65,7 @@ namespace openalprnet {
 				channels = 4;
 				break;
 			default:
-				throw gcnew NotImplementedException();
+				throw gcnew NotSupportedException(bitmap->PixelFormat.ToString());
 			}
 
 			BitmapData^ bitmapData = bitmap->LockBits(

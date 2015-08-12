@@ -35,7 +35,7 @@
 #include "prewarp.h"
 
 #include "licenseplatecandidate.h"
-#include "stateidentifier.h"
+#include "../statedetection/state_detector.h"
 #include "segmentation/charactersegmenter.h"
 #include "ocr.h"
 
@@ -76,6 +76,7 @@ namespace alpr
       AlprFullDetails recognizeFullDetails(cv::Mat img, std::vector<cv::Rect> regionsOfInterest);
 
       AlprResults recognize( std::vector<char> imageBytes );
+	    AlprResults recognize( std::vector<char> imageBytes, std::vector<AlprRegionOfInterest> regionsOfInterest );
       AlprResults recognize( unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest );
       AlprResults recognize( cv::Mat img );
       AlprResults recognize( cv::Mat img, std::vector<cv::Rect> regionsOfInterest );
@@ -99,7 +100,7 @@ namespace alpr
     private:
 
       Detector* plateDetector;
-      StateIdentifier* stateIdentifier;
+      StateDetector* stateDetector;
       OCR* ocr;
       PreWarp* prewarp;
 

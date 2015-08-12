@@ -25,7 +25,7 @@
 #include <sys/stat.h>
 
 #include "licenseplatecandidate.h"
-#include "stateidentifier.h"
+#include "../statedetection/state_detector.h"
 #include "utility.h"
 #include "support/filesystem.h"
 
@@ -36,7 +36,7 @@ using namespace alpr;
 // Given a directory full of pre-cropped images, identify the state that each image belongs to.
 // This is used to sort our own positive image database as a first step before grabbing characters to use to train the OCR.
 
-bool detectPlate( StateIdentifier* identifier, Mat frame);
+bool detectPlate( StateDetector* identifier, Mat frame);
 
 int main( int argc, const char** argv )
 {
@@ -59,7 +59,7 @@ int main( int argc, const char** argv )
   }
 
   Config config("us");
-  StateIdentifier identifier(&config);
+  StateDetector identifier(config.country, config.runtimeBaseDir);
 
   if (DirectoryExists(outDir.c_str()) == false)
   {
@@ -79,22 +79,17 @@ int main( int argc, const char** argv )
         cout << fullpath << endl;
         frame = imread( fullpath.c_str() );
 
-	PipelineData pipeline_data(frame, Rect(0, 0, frame.cols, frame.rows), &config);
-        identifier.recognize(&pipeline_data);
 
-        if (pipeline_data.region_confidence <= 20)
+        vector<StateCandidate> candidates = identifier.detect(frame.data, frame.elemSize(), frame.cols, frame.rows);
+
+        if (candidates.size() > 0)
         {
-	  pipeline_data.region_code = "zz";
-          pipeline_data.region_confidence = 100;
-        }
-        else
-	{
-          cout << pipeline_data.region_confidence << " : " << pipeline_data.region_code;
+          cout << candidates[0].confidence << " : " << candidates[0].state_code;
 
           ostringstream convert;   // stream used for the conversion
           convert << i;      // insert the textual representation of 'Number' in the characters in the stream
 
-          string copyCommand = "cp \"" + fullpath + "\" " + outDir + pipeline_data.region_code + convert.str() + ".png";
+          string copyCommand = "cp \"" + fullpath + "\" " + outDir + candidates[0].state_code + convert.str() + ".png";
           system( copyCommand.c_str() );
           waitKey(50);
           //while ((char) waitKey(50) != 'c') { }
@@ -104,4 +99,4 @@ int main( int argc, const char** argv )
   }
 }
 
-bool detectPlate( StateIdentifier* identifier, Mat frame);
+bool detectPlate( StateDetector* identifier, Mat frame);

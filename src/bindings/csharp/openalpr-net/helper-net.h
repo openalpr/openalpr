@@ -50,6 +50,11 @@ namespace openalprnet
 
 		static Bitmap^ MatToBitmap(cv::Mat mat)
 		{
+			if (mat.empty())
+			{
+				return nullptr;
+			}
+
 			const int width = mat.size().width;
 			const int height = mat.size().height;
 			const int channels = mat.channels();

@@ -101,6 +101,7 @@ ENDIF()
 
 TARGET_LINK_LIBRARIES(alpr
 	${OPENALPR_LIB}
+	statedetection
 	support
     video
 	${OpenCV_LIBS}
@@ -134,6 +135,7 @@ add_subdirectory(tests)
 ENDIF()
 
 add_subdirectory(openalpr)
+add_subdirectory(statedetection)
 add_subdirectory(video)
 
 if (WITH_BINDING_JAVA) 

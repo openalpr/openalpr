@@ -26,7 +26,6 @@
 
 #include "postprocess/regexrule.h"
 #include "licenseplatecandidate.h"
-#include "stateidentifier.h"
 #include "utility.h"
 #include "support/filesystem.h"
 #include "ocr.h"
@@ -324,7 +323,7 @@ vector<string> showCharSelection(Mat image, vector<Rect> charRegions, string sta
   for (int i = 0; i < charRegions.size(); i++)
     humanInputs[i] = SPACE;
 
-  RegexRule regex_rule("", "[\\p{Digit}\\p{Alpha}]");
+  RegexRule regex_rule("", "[\\pL\\pN]", "", "");
   
   int16_t waitkey = waitKey(50);
   while (waitkey != ENTER_KEY && waitkey != ESCAPE_KEY)

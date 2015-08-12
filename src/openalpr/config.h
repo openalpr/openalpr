@@ -100,6 +100,9 @@ namespace alpr
       unsigned int postProcessMinCharacters;
       unsigned int postProcessMaxCharacters;
 
+      std::string postProcessRegexLetters;
+      std::string postProcessRegexNumbers;
+
       bool debugGeneral;
       bool debugTiming;
       bool debugPrewarp;
@@ -122,12 +125,13 @@ namespace alpr
       std::string getPostProcessRuntimeDir();
       std::string getTessdataPrefix();
 
+      std::string runtimeBaseDir;
+
     private:
     
       float ocrImagePercent;
       float stateIdImagePercent;
-    
-      std::string runtimeBaseDir;
+
 
       void loadCommonValues(std::string configFile);
       void loadCountryValues(std::string configFile, std::string country);

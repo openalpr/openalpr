@@ -326,7 +326,7 @@ namespace openalprnet {
 
 		event EventHandler<AlprFrameEventArgs^>^ FrameProcessed;
 
-		void recognizeFromVideo(System::String^ videoPath) {
+		void RecognizeFromVideo(System::String^ videoPath) {
 			if (System::IO::File::Exists(videoPath)) {
 				int framenum = 0;
 				cv::VideoCapture cap = cv::VideoCapture();
@@ -409,8 +409,9 @@ namespace openalprnet {
 		/// </summary>
 		AlprResultsNet^ Recognize(MemoryStream^ memoryStream, List<System::Drawing::Rectangle>^ regionsOfInterest)
 		{
-			std::vector<char> p = AlprHelper::MemoryStreamToVector(memoryStream);
-			AlprResults results = m_Impl->recognize(p);
+			std::vector<char> buffer = AlprHelper::MemoryStreamToVector(memoryStream);
+			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
+			AlprResults results = m_Impl->recognize(buffer, rois);
 			return gcnew AlprResultsNet(results);
 		}
 
@@ -427,8 +428,9 @@ namespace openalprnet {
 		/// </summary>
 		/// <param name="imageBuffer">Bytes representing image data</param>
 		AlprResultsNet^ Recognize(cli::array<Byte>^ imageBuffer, List<System::Drawing::Rectangle>^ regionsOfInterest) {
-			std::vector<char> p = AlprHelper::ToVector(imageBuffer);
-			AlprResults results = m_Impl->recognize(p);
+			std::vector<char> buffer = AlprHelper::ToVector(imageBuffer);
+			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
+			AlprResults results = m_Impl->recognize(buffer, rois);
 			return gcnew AlprResultsNet(results);
 		}
 
@@ -448,6 +450,32 @@ namespace openalprnet {
 			AlprResults results = m_Impl->recognize(p, bytesPerPixel, imgWidth, imgHeight, rois);
 			free(p); // ?? memory leak?
 			return gcnew AlprResultsNet(results);
+		}
+
+		/// <summary>
+		/// Pre-warp from raw pixel data. 
+		/// </summary>
+		array<Byte>^ PreWarp(array<Byte>^ imageBuffer)
+		{
+			std::vector<char> buffer = AlprHelper::ToVector(imageBuffer);
+			cv::Mat src = cv::imdecode(buffer, 1);
+
+			alpr::PreWarp *preWarp = new alpr::PreWarp(m_Impl->getConfig());
+			cv::Mat warpedImage = preWarp->warpImage(src);
+
+			std::vector<uchar> warpedImageVector;
+			cv::imencode(".jpg", warpedImage, warpedImageVector);
+
+			const size_t warpedImageSize = warpedImageVector.size();
+
+			array<Byte>^ warpedImageByteArray = gcnew array<Byte>(warpedImageSize);
+			pin_ptr<Byte> pin(&warpedImageByteArray[0]);
+
+			std::memcpy(pin, &warpedImageVector[0], warpedImageSize);
+
+			delete preWarp;
+
+			return warpedImageByteArray;
 		}
 
 		bool IsLoaded() {
