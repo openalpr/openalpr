@@ -361,8 +361,7 @@ namespace openalprnet {
 		/// Recognize from an image on disk
 		/// </summary>
 		AlprResultsNet^ Recognize(System::String^ filepath) {
-			AlprResults results = m_Impl->recognize(marshal_as<std::string>(filepath));
-			return gcnew AlprResultsNet(results);
+			return Recognize(filepath, gcnew List<System::Drawing::Rectangle>());
 		}
 
 		/// <summary>
