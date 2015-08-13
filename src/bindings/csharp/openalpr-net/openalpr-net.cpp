@@ -361,8 +361,7 @@ namespace openalprnet {
 		/// Recognize from an image on disk
 		/// </summary>
 		AlprResultsNet^ Recognize(System::String^ filepath) {
-			AlprResults results = m_Impl->recognize(marshal_as<std::string>(filepath));
-			return gcnew AlprResultsNet(results);
+			return Recognize(filepath, gcnew List<System::Drawing::Rectangle>());
 		}
 
 		/// <summary>
@@ -419,7 +418,7 @@ namespace openalprnet {
 		/// Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
 		/// </summary>
 		/// <param name="imageBuffer">Bytes representing image data</param>
-		AlprResultsNet^ Recognize(cli::array<Byte>^ imageBuffer) {
+		AlprResultsNet^ Recognize(array<Byte>^ imageBuffer) {
 			return Recognize(imageBuffer, gcnew List<System::Drawing::Rectangle>());
 		}
 
@@ -427,7 +426,7 @@ namespace openalprnet {
 		/// Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
 		/// </summary>
 		/// <param name="imageBuffer">Bytes representing image data</param>
-		AlprResultsNet^ Recognize(cli::array<Byte>^ imageBuffer, List<System::Drawing::Rectangle>^ regionsOfInterest) {
+		AlprResultsNet^ Recognize(array<Byte>^ imageBuffer, List<System::Drawing::Rectangle>^ regionsOfInterest) {
 			std::vector<char> buffer = AlprHelper::ToVector(imageBuffer);
 			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
 			AlprResults results = m_Impl->recognize(buffer, rois);
@@ -437,14 +436,14 @@ namespace openalprnet {
 		/// <summary>
 		/// Recognize from raw pixel data
 		/// </summary>
-		AlprResultsNet^ Recognize(cli::array<Byte>^ imageBuffer, int bytesPerPixel, int imgWidth, int imgHeight) {
+		AlprResultsNet^ Recognize(array<Byte>^ imageBuffer, int bytesPerPixel, int imgWidth, int imgHeight) {
 			return Recognize(imageBuffer, bytesPerPixel, imgWidth, imgHeight, gcnew List<System::Drawing::Rectangle>());
 		}
 
 		/// <summary>
 		/// Recognize from raw pixel data
 		/// </summary>
-		AlprResultsNet^ Recognize(cli::array<Byte>^ imageBuffer, int bytesPerPixel, int imgWidth, int imgHeight, List<System::Drawing::Rectangle>^ regionsOfInterest) {
+		AlprResultsNet^ Recognize(array<Byte>^ imageBuffer, int bytesPerPixel, int imgWidth, int imgHeight, List<System::Drawing::Rectangle>^ regionsOfInterest) {
 			unsigned char* p = AlprHelper::ToCharPtr(imageBuffer);
 			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
 			AlprResults results = m_Impl->recognize(p, bytesPerPixel, imgWidth, imgHeight, rois);
@@ -458,7 +457,7 @@ namespace openalprnet {
 		array<Byte>^ PreWarp(array<Byte>^ imageBuffer)
 		{
 			std::vector<char> buffer = AlprHelper::ToVector(imageBuffer);
-			cv::Mat src = cv::imdecode(buffer, 1);
+			cv::Mat src = cv::imdecode(buffer, CV_LOAD_IMAGE_COLOR);
 
 			alpr::PreWarp *preWarp = new alpr::PreWarp(m_Impl->getConfig());
 			cv::Mat warpedImage = preWarp->warpImage(src);
