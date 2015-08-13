@@ -1,12 +1,24 @@
-#ifndef TIMING_H
-#define TIMING_H
+#ifndef OPENALPR_TIMING_H
+#define OPENALPR_TIMING_H
 
 #include <iostream>
 #include <ctime>
 #include <stdint.h>
 
+
+
 #ifdef WINDOWS
     // Import windows only stuff
+	#include <windows.h>
+	#if _MSC_VER < 1900
+	struct timespec
+	{
+		time_t tv_sec;  // Seconds - >= 0
+		long   tv_nsec; // Nanoseconds - [0, 999999999]
+	};
+	#else
+	//#define timespec timeval
+	#endif
 #else
     #include <sys/time.h>
 #endif
@@ -15,13 +27,6 @@
 #ifdef __MACH__
 #include <mach/clock.h>
 #include <mach/mach.h>
-#endif
-
-// Support for Windows
-#ifdef WINDOWS
-#include <windows.h>
-
-#define timespec timeval
 #endif
 
 namespace alpr
