@@ -48,67 +48,6 @@ namespace openalprnet
 			return result;
 		}
 
-		static Bitmap^ MatToBitmap(cv::Mat mat)
-		{
-			if (mat.empty())
-			{
-				return nullptr;
-			}
-
-			const int width = mat.size().width;
-			const int height = mat.size().height;
-			const int channels = mat.channels();
-			const int totalSize = mat.total();
-			void* data = reinterpret_cast<void*>(mat.data);
-			Bitmap ^bitmap;
-
-			if (channels == 1)
-			{
-				bitmap = gcnew Bitmap(width, height, PixelFormat::Format8bppIndexed);
-
-				ColorPalette ^palette = bitmap->Palette;
-				for (int i = 0; i < 256; i++)
-				{
-					palette->Entries[i] = Color::FromArgb(i, i, i);
-				}
-
-				bitmap->Palette = palette;
-			}
-			else
-			{
-				bitmap = gcnew Bitmap(width, height, PixelFormat::Format24bppRgb);
-			}
-
-			System::Drawing::Imaging::BitmapData ^bitmapData = bitmap->LockBits(
-				System::Drawing::Rectangle(0, 0, bitmap->Width, bitmap->Height),
-				System::Drawing::Imaging::ImageLockMode::ReadWrite,
-				bitmap->PixelFormat
-				);
-
-			char *src = reinterpret_cast<char*>(bitmapData->Scan0.ToPointer());
-			pin_ptr<char> pin(&src[0]);
-
-			::memcpy(pin, data, totalSize);
-
-			bitmap->UnlockBits(bitmapData);
-
-			return bitmap;
-		}
-
-		static MemoryStream^ BitmapToMemoryStream(Bitmap^ bitmap, ImageFormat^ imageFormat)
-		{
-			MemoryStream^ ms = gcnew System::IO::MemoryStream();
-			bitmap->Save(ms, imageFormat);
-			return ms;
-		}
-
-		static std::vector<char> MemoryStreamToVector(MemoryStream^ ms)
-		{
-			unsigned char* byteArray = ToCharPtr(ms->ToArray());
-			std::vector<char> result(byteArray, byteArray + ms->Length);
-			return result;
-		}
-
 		static std::vector<AlprRegionOfInterest> ToVector(List<System::Drawing::Rectangle>^ src)
 		{
 			std::vector<AlprRegionOfInterest> result;
@@ -133,18 +72,6 @@ namespace openalprnet
 		static System::String^ ToManagedString(std::string s)
 		{
 			return gcnew String(s.c_str());
-		}
-
-		static std::string ToStlString(System::String^ s)
-		{
-			IntPtr ptr = Marshal::StringToHGlobalAnsi(s);
-			if (ptr != IntPtr::Zero)
-			{
-				std::string tmp(reinterpret_cast<char*>(static_cast<void*>(ptr)));
-				Marshal::FreeHGlobal(ptr);
-				return tmp;
-			}
-			return std::string();
 		}
 
 		static System::Drawing::Rectangle ToRectangle(cv::Rect rect)

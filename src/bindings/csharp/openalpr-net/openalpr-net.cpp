@@ -408,10 +408,7 @@ namespace openalprnet {
 		/// </summary>
 		AlprResultsNet^ Recognize(MemoryStream^ memoryStream, List<System::Drawing::Rectangle>^ regionsOfInterest)
 		{
-			std::vector<char> buffer = AlprHelper::MemoryStreamToVector(memoryStream);
-			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
-			AlprResults results = m_Impl->recognize(buffer, rois);
-			return gcnew AlprResultsNet(results);
+			return Recognize(memoryStream->ToArray(), regionsOfInterest);
 		}
 
 		/// <summary>
