@@ -368,10 +368,8 @@ namespace openalprnet {
 		/// Recognize from an image on disk
 		/// </summary>
 		AlprResultsNet^ Recognize(System::String^ filepath, List<System::Drawing::Rectangle>^ regionsOfInterest) {
-			cv::Mat frame = cv::imread( marshal_as<std::string>(filepath) );
-			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
-			AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, rois );
-			return gcnew AlprResultsNet(results);
+			array<Byte>^ byteArray = File::ReadAllBytes(filepath);
+			return Recognize(byteArray, regionsOfInterest);
 		}
 
 		/// <summary>
