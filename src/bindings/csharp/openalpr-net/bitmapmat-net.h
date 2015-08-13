@@ -1,6 +1,9 @@
 #pragma once
 
-#include "opencv2/imgproc/imgproc.hpp"
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
+#include "helper-net.h"
 
 using namespace System;
 using namespace System::Drawing;
@@ -33,73 +36,15 @@ namespace openalprnet {
 
 		!BitmapMat()
 		{
-			delete[] m_bitmap->data;
+			m_bitmap->release();
+			delete m_bitmap;
 		}
 
 		property cv::Mat Value {
 			cv::Mat get()
 			{
-				cv::Mat value = this->m_bitmap->clone();
-				return value;
+				return *m_bitmap;
 			}
-		}
-
-	private:
-
-		static cv::Mat* BitmapToMat(Bitmap^ bitmap)
-		{
-			int channels = 0;
-
-			switch (bitmap->PixelFormat)
-			{
-			case PixelFormat::Format8bppIndexed:
-			case PixelFormat::Format1bppIndexed:
-				channels = 1;
-				break;
-			case PixelFormat::Format24bppRgb:
-				channels = 3;
-				break;
-			case PixelFormat::Format32bppRgb:
-			case PixelFormat::Format32bppArgb:
-			case PixelFormat::Format32bppPArgb:
-				channels = 4;
-				break;
-			default:
-				throw gcnew NotSupportedException(bitmap->PixelFormat.ToString());
-			}
-
-			BitmapData^ bitmapData = bitmap->LockBits(
-				System::Drawing::Rectangle(0, 0, bitmap->Width, bitmap->Height),
-				ImageLockMode::ReadOnly,
-				bitmap->PixelFormat
-				);
-
-			const int totalBytes = bitmap->Height * bitmapData->Stride;
-
-			char *dst = new char[totalBytes];
-			::memcpy(dst, bitmapData->Scan0.ToPointer(), totalBytes);
-
-			cv::Mat* dstMat = new cv::Mat(cv::Size(bitmap->Width, bitmap->Height), CV_8UC(channels), dst);
-
-			bitmap->UnlockBits(bitmapData);
-
-			return dstMat;
-		}
-
-		static cv::Mat* MemoryStreamBitmapToMat(MemoryStream^ memoryStream)
-		{
-			Bitmap^ bitmap = gcnew Bitmap(memoryStream);
-			cv::Mat* mat = BitmapToMat(bitmap);
-			delete bitmap;
-			return mat;
-		}
-
-		static cv::Mat* ByteArrayToMat(array<Byte>^ byteArray)
-		{
-			MemoryStream^ ms = gcnew MemoryStream(byteArray);
-			cv::Mat* mat = MemoryStreamBitmapToMat(ms);
-			delete ms;
-			return mat;
 		}
 
 	};

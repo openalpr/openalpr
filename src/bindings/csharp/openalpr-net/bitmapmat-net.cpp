@@ -5,23 +5,37 @@ using namespace openalprnet;
 
 BitmapMat::BitmapMat(array<Byte>^ byteArray)
 {
-	this->m_bitmap = ByteArrayToMat(byteArray);
+	m_bitmap = new cv::Mat();
+	std::vector<char> buffer = AlprHelper::ToVector(byteArray);
+	cv::imdecode(buffer, CV_LOAD_IMAGE_COLOR, this->m_bitmap);
 }
 
 BitmapMat::BitmapMat(Bitmap^ bitmap)
 {
-	this->m_bitmap = BitmapToMat(bitmap);
+	m_bitmap = new cv::Mat();
+
+	MemoryStream^ ms = gcnew MemoryStream();
+	bitmap->Save(ms, ImageFormat::Png);
+
+	std::vector<char> buffer = AlprHelper::ToVector(ms->ToArray());
+	cv::imdecode(buffer, CV_LOAD_IMAGE_COLOR, this->m_bitmap);
+
+	delete ms;
 }
 
 BitmapMat::BitmapMat(MemoryStream^ memoryStream)
 {
-	this->m_bitmap = MemoryStreamBitmapToMat(memoryStream);
+	m_bitmap = new cv::Mat();
+	std::vector<char> buffer = AlprHelper::ToVector(memoryStream->ToArray());
+	cv::imdecode(buffer, CV_LOAD_IMAGE_COLOR, this->m_bitmap);
 }
 
 BitmapMat::BitmapMat(String^ filename)
 {
-	Bitmap^ bitmap = gcnew Bitmap(filename);
-	this->m_bitmap = BitmapToMat(bitmap);
-	delete bitmap;
+	m_bitmap = new cv::Mat();
+	array<Byte>^ byteArray = File::ReadAllBytes(filename);
+	std::vector<char> buffer = AlprHelper::ToVector(byteArray);
+	cv::imdecode(buffer, CV_LOAD_IMAGE_COLOR, this->m_bitmap);
+	delete byteArray;
 }
 
