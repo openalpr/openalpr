@@ -381,19 +381,6 @@ namespace openalprnet {
 		}
 
 		/// <summary>
-		/// Recognize from a bitmap
-		/// </summary>
-		AlprResultsNet^ Recognize(Bitmap^ bitmap, List<System::Drawing::Rectangle>^ regionsOfInterest)
-		{
-			BitmapMat^ wrapper = gcnew BitmapMat(bitmap);
-			cv::Mat frame = wrapper->Value;
-			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
-			AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, rois);
-			delete wrapper;
-			return gcnew AlprResultsNet(results);
-		}
-
-		/// <summary>
 		/// Recognize from MemoryStream representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
 		/// </summary>
 		AlprResultsNet^ Recognize(MemoryStream^ memoryStream)
@@ -412,38 +399,29 @@ namespace openalprnet {
 		/// <summary>
 		/// Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
 		/// </summary>
-		/// <param name="imageBuffer">Bytes representing image data</param>
 		AlprResultsNet^ Recognize(array<Byte>^ imageBuffer) {
 			return Recognize(imageBuffer, gcnew List<System::Drawing::Rectangle>());
 		}
 
 		/// <summary>
+		/// Recognize from a bitmap
+		/// </summary>
+		AlprResultsNet^ Recognize(Bitmap^ bitmap, List<System::Drawing::Rectangle>^ regionsOfInterest)
+		{
+			BitmapMat^ wrapper = gcnew BitmapMat(bitmap);
+			AlprResultsNet^ results = Recognize(wrapper, regionsOfInterest);
+			delete wrapper;
+			return results;
+		}
+
+		/// <summary>
 		/// Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
 		/// </summary>
-		/// <param name="imageBuffer">Bytes representing image data</param>
 		AlprResultsNet^ Recognize(array<Byte>^ imageBuffer, List<System::Drawing::Rectangle>^ regionsOfInterest) {
-			std::vector<char> buffer = AlprHelper::ToVector(imageBuffer);
-			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
-			AlprResults results = m_Impl->recognize(buffer, rois);
-			return gcnew AlprResultsNet(results);
-		}
-
-		/// <summary>
-		/// Recognize from raw pixel data
-		/// </summary>
-		AlprResultsNet^ Recognize(array<Byte>^ imageBuffer, int bytesPerPixel, int imgWidth, int imgHeight) {
-			return Recognize(imageBuffer, bytesPerPixel, imgWidth, imgHeight, gcnew List<System::Drawing::Rectangle>());
-		}
-
-		/// <summary>
-		/// Recognize from raw pixel data
-		/// </summary>
-		AlprResultsNet^ Recognize(array<Byte>^ imageBuffer, int bytesPerPixel, int imgWidth, int imgHeight, List<System::Drawing::Rectangle>^ regionsOfInterest) {
-			unsigned char* p = AlprHelper::ToCharPtr(imageBuffer);
-			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
-			AlprResults results = m_Impl->recognize(p, bytesPerPixel, imgWidth, imgHeight, rois);
-			free(p); // ?? memory leak?
-			return gcnew AlprResultsNet(results);
+			BitmapMat^ wrapper = gcnew BitmapMat(imageBuffer);
+			AlprResultsNet^ results = Recognize(wrapper, regionsOfInterest);
+			delete wrapper;
+			return results;
 		}
 
 		/// <summary>
@@ -481,6 +459,14 @@ namespace openalprnet {
 		}
 
 	protected:
+
+		AlprResultsNet^ Recognize(BitmapMat^ bitmapMat, List<System::Drawing::Rectangle>^ regionsOfInterest) {
+			cv::Mat frame = bitmapMat->Value;
+			std::vector<AlprRegionOfInterest> rois = AlprHelper::ToVector(regionsOfInterest);
+			AlprResults results = m_Impl->recognize(frame.data, frame.elemSize(), frame.cols, frame.rows, rois);			
+			return gcnew AlprResultsNet(results);
+		}
+
 		// Deallocate the native object on the finalizer just in case no destructor is called
 		!AlprNet() {
 			delete m_Impl;
