@@ -14,7 +14,12 @@ static void StringAppendV(string* dst, const char* format, va_list ap) {
   // the data in it upon use.  The fix is to make a copy
   // of the structure before using it and use that copy instead.
   va_list backup_ap;
+
+  #if defined(WIN32)
+  backup_ap = ap;
+  #else
   va_copy(backup_ap, ap);
+  #endif
   int result = vsnprintf(space, sizeof(space), format, backup_ap);
   va_end(backup_ap);
 
@@ -37,7 +42,12 @@ static void StringAppendV(string* dst, const char* format, va_list ap) {
     char* buf = new char[length];
 
     // Restore the va_list before we use it again
+	#if defined(WIN32)
+	va_list backup_ap = ap;
+	#else
     va_copy(backup_ap, ap);
+	#endif
+
 	#ifdef WIN32
     result = vsnprintf_s(buf, length, length, format, backup_ap);
 	#else

@@ -36,7 +36,7 @@ const VariadicFunction2<bool, StringPiece*, const RE2&, RE2::Arg, RE2::ConsumeN>
 const VariadicFunction2<bool, StringPiece*, const RE2&, RE2::Arg, RE2::FindAndConsumeN> RE2::FindAndConsume = {};
 
 // This will trigger LNK2005 error in MSVC.
-#ifndef COMPILER_MSVC
+#ifndef WIN32
 const int RE2::Options::kDefaultMaxMem;  // initialized in re2.h
 #endif  // COMPILER_MSVC
 
