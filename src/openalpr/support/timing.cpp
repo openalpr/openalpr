@@ -67,7 +67,7 @@ namespace alpr
     microseconds = (double)t.QuadPart / frequencyToMicroseconds;
     t.QuadPart = microseconds;
     tv->tv_sec = t.QuadPart / 1000000;
-    tv->tv_usec = t.QuadPart % 1000000;
+    tv->tv_nsec = t.QuadPart % 1000000;
     return (0);
   }
 
@@ -83,7 +83,7 @@ namespace alpr
 
     timespec time_start;
     time_start.tv_sec = 0;
-    time_start.tv_usec = 0;
+    time_start.tv_nsec = 0;
 
     return diffclock(time_start, time);
   }
@@ -92,7 +92,7 @@ namespace alpr
   double diffclock(timespec time1,timespec time2)
   {
     timespec delta = diff(time1,time2);
-    double milliseconds = (delta.tv_sec * 1000) +  (((double) delta.tv_usec) / 1000.0);
+    double milliseconds = (delta.tv_sec * 1000) +  (((double) delta.tv_nsec) / 10000.0);
 
     return milliseconds;
   }
@@ -100,15 +100,15 @@ namespace alpr
   timespec diff(timespec start, timespec end)
   {
     timespec temp;
-    if ((end.tv_usec-start.tv_usec)<0)
+    if ((end.tv_nsec-start.tv_nsec)<0)
     {
       temp.tv_sec = end.tv_sec-start.tv_sec-1;
-      temp.tv_usec = 1000000+end.tv_usec-start.tv_usec;
+      temp.tv_nsec = 1000000+end.tv_nsec-start.tv_nsec;
     }
     else
     {
       temp.tv_sec = end.tv_sec-start.tv_sec;
-      temp.tv_usec = end.tv_usec-start.tv_usec;
+      temp.tv_nsec = end.tv_nsec-start.tv_nsec;
     }
     return temp;
   }

@@ -5,18 +5,20 @@
 #include <ctime>
 #include <stdint.h>
 
-#if WINDOWS
-struct timespec
-{
-    time_t tv_sec;  // Seconds - >= 0
-    long   tv_usec; // Nanoseconds - [0, 999999999]
-};
-#endif
+
 
 #ifdef WINDOWS
     // Import windows only stuff
 	#include <windows.h>
-
+	#if _MSC_VER < 1900
+	struct timespec
+	{
+		time_t tv_sec;  // Seconds - >= 0
+		long   tv_nsec; // Nanoseconds - [0, 999999999]
+	};
+	#else
+	//#define timespec timeval
+	#endif
 #else
     #include <sys/time.h>
 #endif
