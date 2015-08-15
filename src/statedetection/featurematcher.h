@@ -24,11 +24,10 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/video/tracking.hpp"
+#include "opencv2/highgui/highgui.hpp"
 
+#include "line_segment.h"
 #include "support/filesystem.h"
-#include "constants.h"
-#include "utility.h"
-#include "config.h"
 
 namespace alpr
 {

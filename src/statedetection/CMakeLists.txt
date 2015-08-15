@@ -4,6 +4,7 @@
 set(statedetector_source_files
   state_detector.cpp
   featurematcher.cpp
+  line_segment.cpp
   state_detector_impl.cpp
 )
 
