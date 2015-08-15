@@ -29,6 +29,7 @@ openalpr-*.asc
 openalpr-*.sig
 openalpr-*.tar.gz
 *.orig
+*~
 
 # Visual Studio files
 src.sln
