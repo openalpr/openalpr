@@ -166,6 +166,10 @@ namespace alpr
       lp.recognize();
 
       bool plateDetected = false;
+      if (pipeline_data.disqualified && config->debugGeneral)
+      {
+        cout << "Disqualify reason: " << pipeline_data.disqualify_reason << endl;
+      }
       if (!pipeline_data.disqualified)
       {
         AlprPlateResult plateResult;
