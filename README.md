@@ -108,7 +108,7 @@ Install OpenALPR on Ubuntu 14.04 x64 with the following commands:
 Integrating the Library
 -----------------------
 
-OpenALPR is written in C++ and has bindings in C#, Python, and Java.  Please see this guide for examples showing how to run OpenALPR in your application: https://github.com/openalpr/openalpr/wiki/Integrating-OpenALPR
+OpenALPR is written in C++ and has bindings in C#, Python, Node.js, and Java.  Please see this guide for examples showing how to run OpenALPR in your application: https://github.com/openalpr/openalpr/wiki/Integrating-OpenALPR
 
 Compiling
 -----------
