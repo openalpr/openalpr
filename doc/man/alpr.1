@@ -97,6 +97,13 @@ The config file is not provided on the CLI, so it will read the configuration da
 from /tmp/openalpr.conf
 .PP
 .RS
+\f(CW$ alpr -c us *.jpg
+.RE
+.PP
+This command will attempt to recognize number plates in all jpeg images in the current directory
+image using the USA\-style recognition data.
+.PP
+.RS
 \f(CW$ alpr \-j /source/video.mp4
 .RE
 .PP
@@ -104,13 +111,21 @@ This command reads data from an input video (/source/video.mp4) and outputs
 recognition data as JSON.
 .PP
 .RS
-\f(CW$ alpr \-j < /source/imagefilelist.txt > /out/recognitionresults.txt
+\f(CW$ alpr \-j stdin < /source/imagefilelist.txt > /out/recognitionresults.txt
 .RE
 .PP
 This command processes a list of image files provided in /source/imagefilelist.txt
 and writes JSON results to /out/recognitionresults.txt.
 .PP
+.RS
+\f(CW$ alpr webcam
 .RE
+.PP
+This command processes video from your webcam.  You can also use /dev/video0, /dev/video1, etc. 
+if you have multiple webcams.
+.PP
+.RE
+
 
 .SH "DIAGNOSTICS"
 

@@ -56,7 +56,7 @@ bool program_active = true;
 
 int main( int argc, const char** argv )
 {
-  std::string filename;
+  std::vector<std::string> filenames;
   std::string configFile = "";
   bool outputJson = false;
   int seektoms = 0;
@@ -66,7 +66,7 @@ int main( int argc, const char** argv )
 
   TCLAP::CmdLine cmd("OpenAlpr Command Line Utility", ' ', Alpr::getVersion());
 
-  TCLAP::UnlabeledValueArg<std::string>  fileArg( "image_file", "Image containing license plates", false, "", "image_file_path"  );
+  TCLAP::UnlabeledMultiArg<std::string>  fileArg( "image_file", "Image containing license plates", true, "", "image_file_path"  );
 
   
   TCLAP::ValueArg<std::string> countryCodeArg("c","country","Country code to identify (either us for USA or eu for Europe).  Default=us",false, "us" ,"country_code");
@@ -96,7 +96,7 @@ int main( int argc, const char** argv )
       return 1;
     }
 
-    filename = fileArg.getValue();
+    filenames = fileArg.getValue();
 
     country = countryCodeArg.getValue();
     seektoms = seekToMsArg.getValue();
@@ -132,147 +132,157 @@ int main( int argc, const char** argv )
     return 1;
   }
 
-  if (filename.empty())
+  for (unsigned int i = 0; i < filenames.size(); i++)
   {
-    std::string filename;
-    while (std::getline(std::cin, filename))
-    {
-      if (fileExists(filename.c_str()))
-      {
-	frame = cv::imread( filename );
-	detectandshow( &alpr, frame, "", outputJson);
-      }
-      else
-      {
-	std::cerr << "Image file not found: " << filename << std::endl;
-      }
+    std::string filename = filenames[i];
 
-    }
-  }
-  else if (filename == "webcam")
-  {
-    int framenum = 0;
-    cv::VideoCapture cap(0);
-    if (!cap.isOpened())
+    if (filename == "stdin")
     {
-      std::cout << "Error opening webcam" << std::endl;
-      return 1;
-    }
-
-    while (cap.read(frame))
-    {
-	  if (framenum == 0) motiondetector.ResetMotionDetection(&frame);
-	  detectandshow(&alpr, frame, "", outputJson);
-      sleep_ms(10);
-      framenum++;
-    }
-  }
-  else if (startsWith(filename, "http://") || startsWith(filename, "https://"))
-  {
-    int framenum = 0;
-    
-    VideoBuffer videoBuffer;
-    
-    videoBuffer.connect(filename, 5);
-    
-    cv::Mat latestFrame;
-    
-    while (program_active)
-    {
-      std::vector<cv::Rect> regionsOfInterest;
-      int response = videoBuffer.getLatestFrame(&latestFrame, regionsOfInterest);
-      
-      if (response != -1)
+      std::string filename;
+      while (std::getline(std::cin, filename))
       {
-		  if (framenum == 0) motiondetector.ResetMotionDetection(&latestFrame);
-		  detectandshow(&alpr, latestFrame, "", outputJson);
-      }
-      
-      // Sleep 10ms
-      sleep_ms(10);
-	  framenum++;
-	}
-    
-    videoBuffer.disconnect();
-    
-    std::cout << "Video processing ended" << std::endl;
-  }
-  else if (hasEndingInsensitive(filename, ".avi") || hasEndingInsensitive(filename, ".mp4") || hasEndingInsensitive(filename, ".webm") || 
-	   hasEndingInsensitive(filename, ".flv") || hasEndingInsensitive(filename, ".mjpg") || hasEndingInsensitive(filename, ".mjpeg") ||
-           hasEndingInsensitive(filename, ".mkv")
-          )
-  {
-    if (fileExists(filename.c_str()))
-    {
-      int framenum = 0;
-
-      cv::VideoCapture cap=cv::VideoCapture();
-      cap.open(filename);
-      cap.set(CV_CAP_PROP_POS_MSEC, seektoms);
-
-      while (cap.read(frame))
-      {
-        if (SAVE_LAST_VIDEO_STILL)
+        if (fileExists(filename.c_str()))
         {
-          cv::imwrite(LAST_VIDEO_STILL_LOCATION, frame);
-        }
-        std::cout << "Frame: " << framenum << std::endl;
-		if (framenum == 0) motiondetector.ResetMotionDetection(&frame);
-		detectandshow(&alpr, frame, "", outputJson);
-        //create a 1ms delay
-        sleep_ms(1);
-        framenum++;
-      }
-    }
-    else
-    {
-      std::cerr << "Video file not found: " << filename << std::endl;
-    }
-  }
-  else if (is_supported_image(filename))
-  {
-    if (fileExists(filename.c_str()))
-    {
-      frame = cv::imread( filename );
-
-      bool plate_found = detectandshow( &alpr, frame, "", outputJson);
-      
-      if (!plate_found && !outputJson)
-	std::cout << "No license plates found." << std::endl;
-    }
-    else
-    {
-      std::cerr << "Image file not found: " << filename << std::endl;
-    }
-  }
-  else if (DirectoryExists(filename.c_str()))
-  {
-    std::vector<std::string> files = getFilesInDir(filename.c_str());
-
-    std::sort( files.begin(), files.end(), stringCompare );
-
-    for (int i = 0; i< files.size(); i++)
-    {
-      if (is_supported_image(files[i]))
-      {
-        std::string fullpath = filename + "/" + files[i];
-        std::cout << fullpath << std::endl;
-        frame = cv::imread( fullpath.c_str() );
-        if (detectandshow( &alpr, frame, "", outputJson))
-        {
-          //while ((char) cv::waitKey(50) != 'c') { }
+          frame = cv::imread(filename);
+          detectandshow(&alpr, frame, "", outputJson);
         }
         else
         {
-          //cv::waitKey(50);
+          std::cerr << "Image file not found: " << filename << std::endl;
+        }
+
+      }
+    }
+    else if (filename == "webcam")
+    {
+      int framenum = 0;
+      cv::VideoCapture cap(0);
+      if (!cap.isOpened())
+      {
+        std::cout << "Error opening webcam" << std::endl;
+        return 1;
+      }
+
+      while (cap.read(frame))
+      {
+        if (framenum == 0)
+          motiondetector.ResetMotionDetection(&frame);
+        detectandshow(&alpr, frame, "", outputJson);
+        sleep_ms(10);
+        framenum++;
+      }
+    }
+    else if (startsWith(filename, "http://") || startsWith(filename, "https://"))
+    {
+      int framenum = 0;
+
+      VideoBuffer videoBuffer;
+
+      videoBuffer.connect(filename, 5);
+
+      cv::Mat latestFrame;
+
+      while (program_active)
+      {
+        std::vector<cv::Rect> regionsOfInterest;
+        int response = videoBuffer.getLatestFrame(&latestFrame, regionsOfInterest);
+
+        if (response != -1)
+        {
+          if (framenum == 0)
+            motiondetector.ResetMotionDetection(&latestFrame);
+          detectandshow(&alpr, latestFrame, "", outputJson);
+        }
+
+        // Sleep 10ms
+        sleep_ms(10);
+        framenum++;
+      }
+
+      videoBuffer.disconnect();
+
+      std::cout << "Video processing ended" << std::endl;
+    }
+    else if (hasEndingInsensitive(filename, ".avi") || hasEndingInsensitive(filename, ".mp4") ||
+                                                       hasEndingInsensitive(filename, ".webm") ||
+                                                       hasEndingInsensitive(filename, ".flv") || hasEndingInsensitive(filename, ".mjpg") ||
+                                                       hasEndingInsensitive(filename, ".mjpeg") ||
+             hasEndingInsensitive(filename, ".mkv")
+        )
+    {
+      if (fileExists(filename.c_str()))
+      {
+        int framenum = 0;
+
+        cv::VideoCapture cap = cv::VideoCapture();
+        cap.open(filename);
+        cap.set(CV_CAP_PROP_POS_MSEC, seektoms);
+
+        while (cap.read(frame))
+        {
+          if (SAVE_LAST_VIDEO_STILL)
+          {
+            cv::imwrite(LAST_VIDEO_STILL_LOCATION, frame);
+          }
+          std::cout << "Frame: " << framenum << std::endl;
+          if (framenum == 0)
+            motiondetector.ResetMotionDetection(&frame);
+          detectandshow(&alpr, frame, "", outputJson);
+          //create a 1ms delay
+          sleep_ms(1);
+          framenum++;
+        }
+      }
+      else
+      {
+        std::cerr << "Video file not found: " << filename << std::endl;
+      }
+    }
+    else if (is_supported_image(filename))
+    {
+      if (fileExists(filename.c_str()))
+      {
+        frame = cv::imread(filename);
+
+        bool plate_found = detectandshow(&alpr, frame, "", outputJson);
+
+        if (!plate_found && !outputJson)
+          std::cout << "No license plates found." << std::endl;
+      }
+      else
+      {
+        std::cerr << "Image file not found: " << filename << std::endl;
+      }
+    }
+    else if (DirectoryExists(filename.c_str()))
+    {
+      std::vector<std::string> files = getFilesInDir(filename.c_str());
+
+      std::sort(files.begin(), files.end(), stringCompare);
+
+      for (int i = 0; i < files.size(); i++)
+      {
+        if (is_supported_image(files[i]))
+        {
+          std::string fullpath = filename + "/" + files[i];
+          std::cout << fullpath << std::endl;
+          frame = cv::imread(fullpath.c_str());
+          if (detectandshow(&alpr, frame, "", outputJson))
+          {
+            //while ((char) cv::waitKey(50) != 'c') { }
+          }
+          else
+          {
+            //cv::waitKey(50);
+          }
         }
       }
     }
-  }
-  else
-  {
-    std::cerr << "Unknown file type" << std::endl;
-    return 1;
+    else
+    {
+      std::cerr << "Unknown file type" << std::endl;
+      return 1;
+    }
   }
 
   return 0;
