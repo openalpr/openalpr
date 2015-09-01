@@ -218,12 +218,15 @@ namespace alpr
         int bestPlateIndex = 0;
 
         cv::Mat charTransformMatrix = getCharacterTransformMatrix(&pipeline_data);
+        bool isBestPlateSelected = false;
         for (unsigned int pp = 0; pp < ppResults.size(); pp++)
         {
 
           // Set our "best plate" match to either the first entry, or the first entry with a postprocessor template match
-          if (bestPlateIndex == 0 && ppResults[pp].matchesTemplate)
+          if (isBestPlateSelected == false && ppResults[pp].matchesTemplate){
             bestPlateIndex = plateResult.topNPlates.size();
+            isBestPlateSelected = true;
+          }
             
           AlprPlate aplate;
           aplate.characters = ppResults[pp].letters;
