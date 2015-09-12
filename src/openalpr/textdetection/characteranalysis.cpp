@@ -51,6 +51,9 @@ namespace alpr
     timespec startTime;
     getTimeMonotonic(&startTime);
 
+    if (config->always_invert)
+      bitwise_not(pipeline_data->crop_gray, pipeline_data->crop_gray);
+
     pipeline_data->clearThresholds();
     pipeline_data->thresholds = produceThresholds(pipeline_data->crop_gray, config);
 
@@ -177,7 +180,13 @@ namespace alpr
 
     }
 
-    pipeline_data->plate_inverted = isPlateInverted();
+    if (config->auto_invert)
+      pipeline_data->plate_inverted = isPlateInverted();
+    else
+      pipeline_data->plate_inverted = config->always_invert;
+
+    if (config->debugGeneral)
+      cout << "Plate inverted: " << pipeline_data->plate_inverted << endl;
 
 
     if (pipeline_data->textLines.size() > 0)

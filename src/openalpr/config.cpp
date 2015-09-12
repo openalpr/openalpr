@@ -219,6 +219,24 @@ namespace alpr
 
     multiline = 	getBoolean(ini, "", "multiline",		false);
 
+    string invert_val = getString(ini, "", "invert", "auto");
+
+    if (invert_val == "always")
+    {
+      auto_invert = false;
+      always_invert = true;
+    }
+    else if (invert_val == "never")
+    {
+      auto_invert = false;
+      always_invert = false;
+    }
+    else
+    {
+      auto_invert = true;
+      always_invert = false;
+    }
+
     plateWidthMM = getFloat(ini, "", "plate_width_mm", 100);
     plateHeightMM = getFloat(ini, "", "plate_height_mm", 100);
 
