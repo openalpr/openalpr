@@ -54,6 +54,9 @@ namespace alpr
       
       bool skipDetection;
 
+      bool auto_invert;
+      bool always_invert;
+
       std::string prewarp;
       
       int maxPlateAngleDegrees;
