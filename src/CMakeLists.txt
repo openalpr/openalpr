@@ -59,16 +59,18 @@ include_directories(${Tesseract_INCLUDE_DIRS})
 # Discover OpenCV directory automatically
 find_path(OpenCV_DIR
   NAMES OpenCVConfig.cmake
-  HINTS ${CMAKE_SOURCE_DIR}/../libraries/opencv/)
-		
+  HINTS ${CMAKE_SOURCE_DIR}/../libraries/opencv/OpenCVConfig.cmake
+)
 # Opencv Package
 FIND_PACKAGE( OpenCV REQUIRED )
 IF (${OpenCV_VERSION} VERSION_LESS 2.4.7)
 	MESSAGE(FATAL_ERROR "OpenCV version is not compatible : ${OpenCV_VERSION}")
 ENDIF()
-IF (${OpenCV_VERSION} VERSION_GREATER 2.4.12)
-	MESSAGE(FATAL_ERROR "OpenCV version is not compatible : ${OpenCV_VERSION}")
-ENDIF()
+
+include_directories(${OpenCV_INCLUDE_DIRS})
+
+add_definitions( -DOPENCV_MAJOR_VERSION=${OpenCV_VERSION_MAJOR})
+
 
 include_directories(./openalpr )
 

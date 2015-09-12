@@ -35,9 +35,15 @@ namespace alpr
     this->descriptorMatcher = new BFMatcher(NORM_HAMMING, false);
 
     //this->descriptorMatcher = DescriptorMatcher::create( "FlannBased" );
-
+#if OPENCV_MAJOR_VERSION == 2
     this->detector = new FastFeatureDetector(10, true);
     this->extractor = new BRISK(10, 1, 0.9);
+#else
+    // OpenCV 3
+    this->detector = FastFeatureDetector::create();
+    this->extractor = BRISK::create(10, 1, 0.9);
+#endif
+
   }
 
   FeatureMatcher::~FeatureMatcher()

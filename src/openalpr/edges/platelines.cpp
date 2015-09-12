@@ -59,7 +59,7 @@ namespace alpr
 
     // Do a bilateral filter to clean the noise but keep edges sharp
     Mat smoothed(inputImage.size(), inputImage.type());
-    adaptiveBilateralFilter(inputImage, smoothed, Size(3,3), 45, 45);
+    bilateralFilter(inputImage, smoothed, 3, 45, 45);
 
 
     int morph_elem  = 2;
