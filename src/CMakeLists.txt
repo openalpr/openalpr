@@ -59,7 +59,7 @@ include_directories(${Tesseract_INCLUDE_DIRS})
 # Discover OpenCV directory automatically
 find_path(OpenCV_DIR
   NAMES OpenCVConfig.cmake
-  HINTS ${CMAKE_SOURCE_DIR}/../libraries/opencv/OpenCVConfig.cmake
+  HINTS ${CMAKE_SOURCE_DIR}/../libraries/opencv/
 )
 # Opencv Package
 FIND_PACKAGE( OpenCV REQUIRED )
