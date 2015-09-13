@@ -158,6 +158,8 @@ namespace alpr
       detector = DETECTOR_LBP_CPU;
     else if (detectorString.compare("lbpgpu") == 0)
       detector = DETECTOR_LBP_GPU;
+    else if (detectorString.compare("lbpopencl") == 0)
+      detector = DETECTOR_LBP_OPENCL;
     else if (detectorString.compare("morphcpu") == 0)
       detector = DETECTOR_MORPH_CPU;
     else

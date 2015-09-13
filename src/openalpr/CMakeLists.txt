@@ -8,6 +8,7 @@ set(lpr_source_files
  detection/detector.cpp
  detection/detectorcpu.cpp
  detection/detectorcuda.cpp
+ detection/detectorocl.cpp
  detection/detectorfactory.cpp
  detection/detectormorph.cpp
  licenseplatecandidate.cpp
