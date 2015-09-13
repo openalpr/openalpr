@@ -146,7 +146,8 @@ namespace alpr
   {
     DETECTOR_LBP_CPU=0,
     DETECTOR_LBP_GPU=1,
-    DETECTOR_MORPH_CPU=2
+    DETECTOR_MORPH_CPU=2,
+    DETECTOR_LBP_OPENCL=3
   };
 
 }
