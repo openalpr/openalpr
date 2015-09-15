@@ -18,11 +18,15 @@
 */
 
 #include "detectorocl.h"
+#include <support/tinythread.h>
 
 #if OPENCV_MAJOR_VERSION == 3
 
 using namespace cv;
 using namespace std;
+
+tthread::mutex ocl_detector_mutex_m;
+
 
 namespace alpr
 {
@@ -30,10 +34,9 @@ namespace alpr
 
   DetectorOCL::DetectorOCL(Config* config) : Detector(config) {
 
+    tthread::lock_guard<tthread::mutex> guard(ocl_detector_mutex_m);
+
     cv::ocl::setUseOpenCL(true);
-
-
-
 
     if (!ocl::haveOpenCL())
     {
@@ -91,20 +94,13 @@ namespace alpr
   vector<PlateRegion> DetectorOCL::doCascade(Mat orig_frame, int offset_x, int offset_y)
   {
 
+
     int w = orig_frame.size().width;
     int h = orig_frame.size().height;
 
     float scale_factor = computeScaleFactor(w, h);
 
-    UMat openclFrame;
-    orig_frame.copyTo(openclFrame);
-
     vector<Rect> plates;
-
-    equalizeHist( openclFrame, openclFrame );
-
-    if (scale_factor != 1.0)
-      resize(openclFrame, openclFrame, Size(w * scale_factor, h * scale_factor));
 
     //-- Detect plates
     timespec startTime;
@@ -112,13 +108,41 @@ namespace alpr
 
     float maxWidth = ((float) w) * (config->maxPlateWidthPercent / 100.0f) * scale_factor;
     float maxHeight = ((float) h) * (config->maxPlateHeightPercent / 100.0f) * scale_factor;
+
     Size minSize(config->minPlateSizeWidthPx * scale_factor, config->minPlateSizeHeightPx * scale_factor);
     Size maxSize(maxWidth, maxHeight);
 
-    plate_cascade.detectMultiScale( openclFrame, plates, config->detection_iteration_increase, config->detectionStrictness,
-                                    0,
-        //0|CV_HAAR_SCALE_IMAGE,
-                                    minSize, maxSize );
+    // If we have an OpenCL core available, use it.  Otherwise use CPU
+    if (ocl_detector_mutex_m.try_lock())
+    {
+      UMat openclFrame;
+      orig_frame.copyTo(openclFrame);
+
+      equalizeHist( openclFrame, openclFrame );
+
+      if (scale_factor != 1.0)
+        resize(openclFrame, openclFrame, Size(w * scale_factor, h * scale_factor));
+
+      plate_cascade.detectMultiScale( openclFrame, plates, config->detection_iteration_increase, config->detectionStrictness,
+                                      0,
+                                      minSize, maxSize );
+
+      ocl_detector_mutex_m.unlock();
+    }
+    else
+    {
+      equalizeHist( orig_frame, orig_frame );
+
+      if (scale_factor != 1.0)
+        resize(orig_frame, orig_frame, Size(w * scale_factor, h * scale_factor));
+
+      plate_cascade.detectMultiScale( orig_frame, plates, config->detection_iteration_increase, config->detectionStrictness,
+                                      0,
+                                      minSize, maxSize );
+    }
+
+
+
 
 
     if (config->debugTiming)
