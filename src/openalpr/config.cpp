@@ -21,6 +21,7 @@
 #include "support/filesystem.h"
 #include "support/platform.h"
 #include "simpleini/simpleini.h"
+#include "utility.h"
 
 using namespace std;
 
@@ -88,9 +89,6 @@ namespace alpr
     }
 
 
-    this->country = country;
-
-
     loadCommonValues(configFile);
 
     if (runtime_dir.compare("") != 0)
@@ -115,21 +113,24 @@ namespace alpr
       return;
     }
 
-    std::string country_config_file = this->runtimeBaseDir + "/config/" + country + ".conf";
-    if (fileExists(country_config_file.c_str()) == false)
-    {
-      std::cerr << "--(!) Country config file '" << country_config_file << "' does not exist.  Missing config for the country: '" << country<< "'!" << endl;
-      return;
-    }
-    
-    loadCountryValues(country_config_file, country);
+    this->loaded_countries = this->parse_country_string(country);
 
-    if (fileExists((this->runtimeBaseDir + "/ocr/tessdata/" + this->ocrLanguage + ".traineddata").c_str()) == false)
+    if (this->loaded_countries.size() == 0)
     {
-      std::cerr << "--(!) Runtime directory '" << this->runtimeBaseDir << "' is invalid.  Missing OCR data for the country: '" << country<< "'!" << endl;
+      std::cerr << "--(!) Country not specified." << endl;
       return;
     }
-    
+    for (unsigned int i = 0; i < loaded_countries.size(); i++)
+    {
+      bool country_loaded = setCountry(this->loaded_countries[i]);
+      if (!country_loaded)
+      {
+        return;
+      }
+    }
+    setCountry(this->loaded_countries[0]);
+
+
     if (this->debugGeneral)
     {
       std::cout << debug_message << endl;
@@ -309,7 +310,42 @@ namespace alpr
   }
 
 
+  std::vector<std::string> Config::parse_country_string(std::string countries)
+  {
+    std::istringstream ss(countries);
+    std::string token;
 
+    std::vector<std::string>  parsed_countries;
+    while(std::getline(ss, token, ',')) {
+      std::string trimmed_token = trim(token);
+      if (trimmed_token.size() > 0)
+        parsed_countries.push_back(trimmed_token);
+    }
+
+    return parsed_countries;
+  }
+
+  bool Config::setCountry(std::string country)
+  {
+    this->country = country;
+
+    std::string country_config_file = this->runtimeBaseDir + "/config/" + country + ".conf";
+    if (fileExists(country_config_file.c_str()) == false)
+    {
+      std::cerr << "--(!) Country config file '" << country_config_file << "' does not exist.  Missing config for the country: '" << country<< "'!" << endl;
+      return false;
+    }
+
+    loadCountryValues(country_config_file, country);
+
+    if (fileExists((this->runtimeBaseDir + "/ocr/tessdata/" + this->ocrLanguage + ".traineddata").c_str()) == false)
+    {
+      std::cerr << "--(!) Runtime directory '" << this->runtimeBaseDir << "' is invalid.  Missing OCR data for the country: '" << country<< "'!" << endl;
+      return false;
+    }
+
+    return true;
+  }
 
   float getFloat(CSimpleIniA* ini, string section, string key, float defaultValue)
   {
