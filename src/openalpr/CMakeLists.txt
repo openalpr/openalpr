@@ -35,6 +35,7 @@ set(lpr_source_files
  pipeline_data.cpp
  cjson.c
  motiondetector.cpp
+ result_aggregator.cpp
 )
 
  

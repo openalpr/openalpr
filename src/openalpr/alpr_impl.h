@@ -66,6 +66,13 @@ namespace alpr
     AlprResults results;
   };
 
+  struct AlprRecognizers
+  {
+    Detector* plateDetector;
+    StateDetector* stateDetector;
+    OCR* ocr;
+  };
+
   class AlprImpl
   {
 
@@ -83,6 +90,8 @@ namespace alpr
 
       void applyRegionTemplate(AlprPlateResult* result, std::string region);
 
+      AlprFullDetails analyzeSingleCountry(cv::Mat colorImg, cv::Mat grayImg, std::vector<cv::Rect> regionsOfInterest);
+
       void setDetectRegion(bool detectRegion);
       void setTopN(int topn);
       void setDefaultRegion(std::string region);
@@ -99,9 +108,8 @@ namespace alpr
 
     private:
 
-      Detector* plateDetector;
-      StateDetector* stateDetector;
-      OCR* ocr;
+      std::map<std::string, AlprRecognizers> recognizers;
+
       PreWarp* prewarp;
 
       int topN;

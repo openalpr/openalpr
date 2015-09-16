@@ -26,6 +26,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <vector>
 #include <stdlib.h>     /* getenv */
 #include <math.h>
 
@@ -130,11 +131,16 @@ namespace alpr
 
       std::string runtimeBaseDir;
 
+      std::vector<std::string> loaded_countries;
+
+      bool setCountry(std::string country);
+
     private:
     
       float ocrImagePercent;
       float stateIdImagePercent;
 
+      std::vector<std::string> parse_country_string(std::string countries);
 
       void loadCommonValues(std::string configFile);
       void loadCountryValues(std::string configFile, std::string country);

@@ -18,6 +18,7 @@
 */
 
 #include "alpr_impl.h"
+#include "result_aggregator.h"
 
 
 void plateAnalysisThread(void* arg);
@@ -34,11 +35,9 @@ namespace alpr
     getTimeMonotonic(&startTime);
     
     config = new Config(country, configFile, runtimeDir);
-    
-    plateDetector = ALPR_NULL_PTR;
-    stateDetector = ALPR_NULL_PTR;
-    ocr = ALPR_NULL_PTR;
+
     prewarp = ALPR_NULL_PTR;
+
     
     // Config file or runtime dir not found.  Don't process any further.
     if (config->loaded == false)
@@ -46,8 +45,24 @@ namespace alpr
       return;
     }
 
-    plateDetector = createDetector(config);
-    ocr = new OCR(config);
+    for (unsigned int i = 0; i < config->loaded_countries.size(); i++)
+    {
+      config->setCountry(config->loaded_countries[i]);
+
+      AlprRecognizers recognizer;
+      recognizer.plateDetector = createDetector(config);
+      recognizer.ocr = new OCR(config);
+
+      recognizer.stateDetector = new StateDetector(this->config->country, this->config->runtimeBaseDir);
+
+
+
+
+      recognizers[config->country] = recognizer;
+
+
+    }
+
     setNumThreads(0);
 
     setDetectRegion(DEFAULT_DETECT_REGION);
@@ -62,18 +77,24 @@ namespace alpr
       cout << "OpenALPR Initialization Time: " << diffclock(startTime, endTime) << "ms." << endl;
     
   }
+
   AlprImpl::~AlprImpl()
   {
     delete config;
 
-    if (plateDetector != ALPR_NULL_PTR)
-      delete plateDetector;
+    typedef std::map<std::string, AlprRecognizers>::iterator it_type;
+    for(it_type iterator = recognizers.begin(); iterator != recognizers.end(); iterator++) {
 
-    if (stateDetector != ALPR_NULL_PTR)
-      delete stateDetector;
+      if (iterator->second.plateDetector != ALPR_NULL_PTR)
+        delete iterator->second.plateDetector;
 
-    if (ocr != ALPR_NULL_PTR)
-      delete ocr;
+      if (iterator->second.stateDetector != ALPR_NULL_PTR)
+        delete iterator->second.stateDetector;
+
+      if (iterator->second.ocr != ALPR_NULL_PTR)
+        delete iterator->second.ocr;
+    }
+
     
     if (prewarp != ALPR_NULL_PTR)
       delete prewarp;
@@ -126,174 +147,24 @@ namespace alpr
     // Warp the image if prewarp is provided
     grayImg = prewarp->warpImage(grayImg);
     warpedRegionsOfInterest = prewarp->projectRects(regionsOfInterest, grayImg.cols, grayImg.rows, false);
-    
-    vector<PlateRegion> warpedPlateRegions;
-    // Find all the candidate regions
-    if (config->skipDetection == false)
+
+    // Iterate through each country provided (typically just one)
+    // and aggregate the results if necessary
+    ResultAggregator aggregator;
+    for (unsigned int i = 0; i < config->loaded_countries.size(); i++)
     {
-      warpedPlateRegions = plateDetector->detect(grayImg, warpedRegionsOfInterest);
+      if (config->debugGeneral)
+        cout << "Analyzing: " << config->loaded_countries[i] << endl;
+
+      config->setCountry(config->loaded_countries[i]);
+      AlprFullDetails sub_results = analyzeSingleCountry(img, grayImg, warpedRegionsOfInterest);
+
+      aggregator.addResults(sub_results);
     }
-    else
-    {
-      // They have elected to skip plate detection.  Instead, return a list of plate regions
-      // based on their regions of interest
-      for (unsigned int i = 0; i < warpedRegionsOfInterest.size(); i++)
-      {
-        PlateRegion pr;
-        pr.rect = cv::Rect(warpedRegionsOfInterest[i]);
-        warpedPlateRegions.push_back(pr);
-      }
-    }
+    response = aggregator.getAggregateResults();
 
-    queue<PlateRegion> plateQueue;
-    for (unsigned int i = 0; i < warpedPlateRegions.size(); i++)
-      plateQueue.push(warpedPlateRegions[i]);
-
-    int platecount = 0;
-    while(!plateQueue.empty())
-    {
-      PlateRegion plateRegion = plateQueue.front();
-      plateQueue.pop();
-
-      PipelineData pipeline_data(img, grayImg, plateRegion.rect, config);
-      pipeline_data.prewarp = prewarp;
-
-      timespec platestarttime;
-      getTimeMonotonic(&platestarttime);
-
-      LicensePlateCandidate lp(&pipeline_data);
-
-      lp.recognize();
-
-      bool plateDetected = false;
-      if (pipeline_data.disqualified && config->debugGeneral)
-      {
-        cout << "Disqualify reason: " << pipeline_data.disqualify_reason << endl;
-      }
-      if (!pipeline_data.disqualified)
-      {
-        AlprPlateResult plateResult;
-        plateResult.region = defaultRegion;
-        plateResult.regionConfidence = 0;
-        plateResult.plate_index = platecount++;
-
-        // If using prewarp, remap the plate corners to the original image
-        vector<Point2f> cornerPoints = pipeline_data.plate_corners;
-        cornerPoints = prewarp->projectPoints(cornerPoints, true);
-        
-        for (int pointidx = 0; pointidx < 4; pointidx++)
-        {
-          plateResult.plate_points[pointidx].x = (int) cornerPoints[pointidx].x;
-          plateResult.plate_points[pointidx].y = (int) cornerPoints[pointidx].y;
-        }
-        
-        if (detectRegion)
-        {
-          std::vector<StateCandidate> state_candidates = stateDetector->detect(pipeline_data.color_deskewed.data,
-                                                                               pipeline_data.color_deskewed.elemSize(),
-                                                                               pipeline_data.color_deskewed.cols,
-                                                                               pipeline_data.color_deskewed.rows);
-
-          if (state_candidates.size() > 0)
-          {
-            plateResult.region = state_candidates[0].state_code;
-            plateResult.regionConfidence = (int) state_candidates[0].confidence;
-          }
-        }
-
-        if (plateResult.region.length() > 0 && ocr->postProcessor.regionIsValid(plateResult.region) == false)
-        {
-          std::cerr << "Invalid pattern provided: " << plateResult.region << std::endl;
-          std::cerr << "Valid patterns are located in the " << config->country << ".patterns file" << std::endl;
-        }
-
-        ocr->performOCR(&pipeline_data);
-        ocr->postProcessor.analyze(plateResult.region, topN);
-
-        timespec resultsStartTime;
-        getTimeMonotonic(&resultsStartTime);
-
-        const vector<PPResult> ppResults = ocr->postProcessor.getResults();
-
-        int bestPlateIndex = 0;
-
-        cv::Mat charTransformMatrix = getCharacterTransformMatrix(&pipeline_data);
-        bool isBestPlateSelected = false;
-        for (unsigned int pp = 0; pp < ppResults.size(); pp++)
-        {
-
-          // Set our "best plate" match to either the first entry, or the first entry with a postprocessor template match
-          if (isBestPlateSelected == false && ppResults[pp].matchesTemplate){
-            bestPlateIndex = plateResult.topNPlates.size();
-            isBestPlateSelected = true;
-          }
-            
-          AlprPlate aplate;
-          aplate.characters = ppResults[pp].letters;
-          aplate.overall_confidence = ppResults[pp].totalscore;
-          aplate.matches_template = ppResults[pp].matchesTemplate;
-            
-          // Grab detailed results for each character
-          for (unsigned int c_idx = 0; c_idx < ppResults[pp].letter_details.size(); c_idx++)
-          {
-            AlprChar character_details;
-            character_details.character = ppResults[pp].letter_details[c_idx].letter;
-            character_details.confidence = ppResults[pp].letter_details[c_idx].totalscore;
-            cv::Rect char_rect = pipeline_data.charRegions[ppResults[pp].letter_details[c_idx].charposition];
-            std::vector<AlprCoordinate> charpoints = getCharacterPoints(char_rect, charTransformMatrix );
-            for (int cpt = 0; cpt < 4; cpt++)
-              character_details.corners[cpt] = charpoints[cpt];
-            aplate.character_details.push_back(character_details);
-          }
-          plateResult.topNPlates.push_back(aplate);
-        }
-
-        if (plateResult.topNPlates.size() > bestPlateIndex)
-        {
-          AlprPlate bestPlate;
-          bestPlate.characters = plateResult.topNPlates[bestPlateIndex].characters;
-          bestPlate.matches_template = plateResult.topNPlates[bestPlateIndex].matches_template;
-          bestPlate.overall_confidence = plateResult.topNPlates[bestPlateIndex].overall_confidence;
-          bestPlate.character_details = plateResult.topNPlates[bestPlateIndex].character_details;
-          
-          plateResult.bestPlate = bestPlate;
-        }
-
-        timespec plateEndTime;
-        getTimeMonotonic(&plateEndTime);
-        plateResult.processing_time_ms = diffclock(platestarttime, plateEndTime);
-        if (config->debugTiming)
-        {
-          cout << "Result Generation Time: " << diffclock(resultsStartTime, plateEndTime) << "ms." << endl;
-        }
-
-        if (plateResult.topNPlates.size() > 0)
-        {
-          plateDetected = true;
-          response.results.plates.push_back(plateResult);
-        }
-      }
-
-      if (!plateDetected)
-      {
-        // Not a valid plate
-        // Check if this plate has any children, if so, send them back up for processing
-        for (unsigned int childidx = 0; childidx < plateRegion.children.size(); childidx++)
-        {
-          plateQueue.push(plateRegion.children[childidx]);
-        }
-      }
-
-    }
-
-    // Unwarp plate regions if necessary
-    prewarp->projectPlateRegions(warpedPlateRegions, grayImg.cols, grayImg.rows, true);
-    response.plateRegions = warpedPlateRegions;
-    
     timespec endTime;
     getTimeMonotonic(&endTime);
-    response.results.total_processing_time_ms = diffclock(startTime, endTime);
-
     if (config->debugTiming)
     {
       cout << "Total Time to process image: " << diffclock(startTime, endTime) << "ms." << endl;
@@ -352,7 +223,183 @@ namespace alpr
     return response;
   }
 
+  AlprFullDetails AlprImpl::analyzeSingleCountry(cv::Mat colorImg, cv::Mat grayImg, std::vector<cv::Rect> warpedRegionsOfInterest)
+  {
+    AlprFullDetails response;
 
+    AlprRecognizers country_recognizers = recognizers[config->country];
+    timespec startTime;
+    getTimeMonotonic(&startTime);
+
+    vector<PlateRegion> warpedPlateRegions;
+    // Find all the candidate regions
+    if (config->skipDetection == false)
+    {
+      warpedPlateRegions = country_recognizers.plateDetector->detect(grayImg, warpedRegionsOfInterest);
+    }
+    else
+    {
+      // They have elected to skip plate detection.  Instead, return a list of plate regions
+      // based on their regions of interest
+      for (unsigned int i = 0; i < warpedRegionsOfInterest.size(); i++)
+      {
+        PlateRegion pr;
+        pr.rect = cv::Rect(warpedRegionsOfInterest[i]);
+        warpedPlateRegions.push_back(pr);
+      }
+    }
+
+    queue<PlateRegion> plateQueue;
+    for (unsigned int i = 0; i < warpedPlateRegions.size(); i++)
+      plateQueue.push(warpedPlateRegions[i]);
+
+    int platecount = 0;
+    while(!plateQueue.empty())
+    {
+      PlateRegion plateRegion = plateQueue.front();
+      plateQueue.pop();
+
+      PipelineData pipeline_data(colorImg, grayImg, plateRegion.rect, config);
+      pipeline_data.prewarp = prewarp;
+
+      timespec platestarttime;
+      getTimeMonotonic(&platestarttime);
+
+      LicensePlateCandidate lp(&pipeline_data);
+
+      lp.recognize();
+
+      bool plateDetected = false;
+      if (pipeline_data.disqualified && config->debugGeneral)
+      {
+        cout << "Disqualify reason: " << pipeline_data.disqualify_reason << endl;
+      }
+      if (!pipeline_data.disqualified)
+      {
+        AlprPlateResult plateResult;
+        plateResult.region = defaultRegion;
+        plateResult.regionConfidence = 0;
+        plateResult.plate_index = platecount++;
+
+        // If using prewarp, remap the plate corners to the original image
+        vector<Point2f> cornerPoints = pipeline_data.plate_corners;
+        cornerPoints = prewarp->projectPoints(cornerPoints, true);
+
+        for (int pointidx = 0; pointidx < 4; pointidx++)
+        {
+          plateResult.plate_points[pointidx].x = (int) cornerPoints[pointidx].x;
+          plateResult.plate_points[pointidx].y = (int) cornerPoints[pointidx].y;
+        }
+        
+        if (detectRegion)
+        {
+          std::vector<StateCandidate> state_candidates = country_recognizers.stateDetector->detect(pipeline_data.color_deskewed.data,
+                                                                               pipeline_data.color_deskewed.elemSize(),
+                                                                               pipeline_data.color_deskewed.cols,
+                                                                               pipeline_data.color_deskewed.rows);
+
+          if (state_candidates.size() > 0)
+          {
+            plateResult.region = state_candidates[0].state_code;
+            plateResult.regionConfidence = (int) state_candidates[0].confidence;
+          }
+        }
+
+        if (plateResult.region.length() > 0 && country_recognizers.ocr->postProcessor.regionIsValid(plateResult.region) == false)
+        {
+          std::cerr << "Invalid pattern provided: " << plateResult.region << std::endl;
+          std::cerr << "Valid patterns are located in the " << config->country << ".patterns file" << std::endl;
+        }
+
+        country_recognizers.ocr->performOCR(&pipeline_data);
+        country_recognizers.ocr->postProcessor.analyze(plateResult.region, topN);
+
+        timespec resultsStartTime;
+        getTimeMonotonic(&resultsStartTime);
+
+        const vector<PPResult> ppResults = country_recognizers.ocr->postProcessor.getResults();
+
+        int bestPlateIndex = 0;
+
+        cv::Mat charTransformMatrix = getCharacterTransformMatrix(&pipeline_data);
+        bool isBestPlateSelected = false;
+        for (unsigned int pp = 0; pp < ppResults.size(); pp++)
+        {
+
+          // Set our "best plate" match to either the first entry, or the first entry with a postprocessor template match
+          if (isBestPlateSelected == false && ppResults[pp].matchesTemplate){
+            bestPlateIndex = plateResult.topNPlates.size();
+            isBestPlateSelected = true;
+          }
+
+          AlprPlate aplate;
+          aplate.characters = ppResults[pp].letters;
+          aplate.overall_confidence = ppResults[pp].totalscore;
+          aplate.matches_template = ppResults[pp].matchesTemplate;
+
+          // Grab detailed results for each character
+          for (unsigned int c_idx = 0; c_idx < ppResults[pp].letter_details.size(); c_idx++)
+          {
+            AlprChar character_details;
+            character_details.character = ppResults[pp].letter_details[c_idx].letter;
+            character_details.confidence = ppResults[pp].letter_details[c_idx].totalscore;
+            cv::Rect char_rect = pipeline_data.charRegions[ppResults[pp].letter_details[c_idx].charposition];
+            std::vector<AlprCoordinate> charpoints = getCharacterPoints(char_rect, charTransformMatrix );
+            for (int cpt = 0; cpt < 4; cpt++)
+              character_details.corners[cpt] = charpoints[cpt];
+            aplate.character_details.push_back(character_details);
+          }
+          plateResult.topNPlates.push_back(aplate);
+        }
+
+        if (plateResult.topNPlates.size() > bestPlateIndex)
+        {
+          AlprPlate bestPlate;
+          bestPlate.characters = plateResult.topNPlates[bestPlateIndex].characters;
+          bestPlate.matches_template = plateResult.topNPlates[bestPlateIndex].matches_template;
+          bestPlate.overall_confidence = plateResult.topNPlates[bestPlateIndex].overall_confidence;
+          bestPlate.character_details = plateResult.topNPlates[bestPlateIndex].character_details;
+
+          plateResult.bestPlate = bestPlate;
+        }
+
+        timespec plateEndTime;
+        getTimeMonotonic(&plateEndTime);
+        plateResult.processing_time_ms = diffclock(platestarttime, plateEndTime);
+        if (config->debugTiming)
+        {
+          cout << "Result Generation Time: " << diffclock(resultsStartTime, plateEndTime) << "ms." << endl;
+        }
+
+        if (plateResult.topNPlates.size() > 0)
+        {
+          plateDetected = true;
+          response.results.plates.push_back(plateResult);
+        }
+      }
+
+      if (!plateDetected)
+      {
+        // Not a valid plate
+        // Check if this plate has any children, if so, send them back up for processing
+        for (unsigned int childidx = 0; childidx < plateRegion.children.size(); childidx++)
+        {
+          plateQueue.push(plateRegion.children[childidx]);
+        }
+      }
+
+    }
+
+    // Unwarp plate regions if necessary
+    prewarp->projectPlateRegions(warpedPlateRegions, grayImg.cols, grayImg.rows, true);
+    response.plateRegions = warpedPlateRegions;
+
+    timespec endTime;
+    getTimeMonotonic(&endTime);
+    response.results.total_processing_time_ms = diffclock(startTime, endTime);
+
+    return response;
+  }
 
   AlprResults AlprImpl::recognize( std::vector<char> imageBytes)
   {
@@ -596,18 +643,6 @@ namespace alpr
   {
     
     this->detectRegion = detectRegion;
-    if (detectRegion && this->stateDetector == NULL)
-    {
-        timespec startTime;
-        getTimeMonotonic(&startTime);
-        
-        this->stateDetector = new StateDetector(this->config->country, this->config->runtimeBaseDir);
-        
-        timespec endTime;
-        getTimeMonotonic(&endTime);
-        if (config->debugTiming)
-          cout << "State Identification Initialization Time: " << diffclock(startTime, endTime) << "ms." << endl;
-    }
 
 
   }
