@@ -12,6 +12,8 @@ before_script:
 script: 
   - make
   - make openalpr-utils-classifychars openalpr-utils-tagplates openalpr-utils-sortstate openalpr-utils-benchmark openalpr-utils-prepcharsfortraining
+  - sudo make install
   - ./tests/unittests
+
 
 
