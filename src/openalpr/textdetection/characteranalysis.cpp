@@ -338,7 +338,19 @@ namespace alpr
   // Goes through the contours for the plate and picks out possible char segments based on min/max height
   void CharacterAnalysis::filterByBoxSize(TextContours& textContours, int minHeightPx, int maxHeightPx)
   {
-    float idealAspect=config->charWidthMM / config->charHeightMM;
+    // For multiline plates, we want to target the biggest line for character analysis, since it should be easier to spot.
+    float larger_char_height_mm = 0;
+    float larger_char_width_mm = 0;
+    for (unsigned int i = 0; i < config->charHeightMM.size(); i++)
+    {
+      if (config->charHeightMM[i] > larger_char_height_mm)
+      {
+        larger_char_height_mm = config->charHeightMM[i];
+        larger_char_width_mm = config->charWidthMM[i];
+      }
+    }
+    
+    float idealAspect=larger_char_width_mm / larger_char_height_mm;
     float aspecttolerance=0.25;
 
 
@@ -619,31 +631,6 @@ namespace alpr
     return false;
   }
 
-  bool CharacterAnalysis::verifySize(Mat r, float minHeightPx, float maxHeightPx)
-  {
-    //Char sizes 45x90
-    float aspect=config->charWidthMM / config->charHeightMM;
-    float charAspect= (float)r.cols/(float)r.rows;
-    float error=0.35;
-    //float minHeight=TEMPLATE_PLATE_HEIGHT * .35;
-    //float maxHeight=TEMPLATE_PLATE_HEIGHT * .65;
-    //We have a different aspect ratio for number 1, and it can be ~0.2
-    float minAspect=0.2;
-    float maxAspect=aspect+aspect*error;
-    //area of pixels
-    float area=countNonZero(r);
-    //bb area
-    float bbArea=r.cols*r.rows;
-    //% of pixel in area
-    float percPixels=area/bbArea;
-
-    //if(DEBUG)
-    //cout << "Aspect: "<< aspect << " ["<< minAspect << "," << maxAspect << "] "  << "Area "<< percPixels <<" Char aspect " << charAspect  << " Height char "<< r.rows << "\n";
-    if(percPixels < 0.8 && charAspect > minAspect && charAspect < maxAspect && r.rows >= minHeightPx && r.rows < maxHeightPx)
-      return true;
-    else
-      return false;
-  }
 
   vector<Point> CharacterAnalysis::getCharArea(LineSegment topLine, LineSegment bottomLine)
   {

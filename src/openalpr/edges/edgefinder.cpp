@@ -48,10 +48,11 @@ namespace alpr
     // If it's a nice, long segment, then guess the correct box based on character height/position
     if (tlc.longerSegment.length > tlc.charHeight * 3)
     {
-      float charHeightToPlateWidthRatio = pipeline_data->config->plateWidthMM / pipeline_data->config->charHeightMM;
+
+      float charHeightToPlateWidthRatio = pipeline_data->config->plateWidthMM / pipeline_data->config->avgCharHeightMM;
       float idealPixelWidth = tlc.charHeight *  (charHeightToPlateWidthRatio * 1.03);	// Add 3% so we don't clip any characters
 
-      float charHeightToPlateHeightRatio = pipeline_data->config->plateHeightMM / pipeline_data->config->charHeightMM;
+      float charHeightToPlateHeightRatio = pipeline_data->config->plateHeightMM / pipeline_data->config->avgCharHeightMM;
       float idealPixelHeight = tlc.charHeight *  charHeightToPlateHeightRatio;
 
 
@@ -76,7 +77,6 @@ namespace alpr
     else
     {
 
-      //cout << "HEYOOO!" << endl;
       int expandX = (int) ((float) pipeline_data->crop_gray.cols) * 0.15f;
       int expandY = (int) ((float) pipeline_data->crop_gray.rows) * 0.15f;
       int w = pipeline_data->crop_gray.cols;

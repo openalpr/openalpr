@@ -138,7 +138,7 @@ namespace alpr
     LineSegment right;
 
 
-    float charHeightToPlateWidthRatio = pipelineData->config->plateWidthMM / pipelineData->config->charHeightMM;
+    float charHeightToPlateWidthRatio = pipelineData->config->plateWidthMM / pipelineData->config->avgCharHeightMM;
     float idealPixelWidth = tlc.charHeight *  (charHeightToPlateWidthRatio * 1.03);	// Add 3% so we don't clip any characters
 
     float confidenceDiff = 0;
@@ -242,7 +242,7 @@ namespace alpr
     LineSegment top;
     LineSegment bottom;
 
-    float charHeightToPlateHeightRatio = pipelineData->config->plateHeightMM / pipelineData->config->charHeightMM;
+    float charHeightToPlateHeightRatio = pipelineData->config->plateHeightMM / pipelineData->config->avgCharHeightMM;
     float idealPixelHeight = tlc.charHeight *  charHeightToPlateHeightRatio;
 
     float confidenceDiff = 0;
@@ -304,7 +304,7 @@ namespace alpr
     // Get the height difference
 
     float heightRatio = tlc.charHeight / plateHeightPx;
-    float idealHeightRatio = (pipelineData->config->charHeightMM / pipelineData->config->plateHeightMM);
+    float idealHeightRatio = (pipelineData->config->avgCharHeightMM / pipelineData->config->plateHeightMM);
     float heightRatioDiff = abs(heightRatio - idealHeightRatio);
 
     scoreKeeper.setScore("SCORING_PLATEHEIGHT_WEIGHT", heightRatioDiff, SCORING_PLATEHEIGHT_WEIGHT);

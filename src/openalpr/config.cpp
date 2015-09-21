@@ -33,7 +33,7 @@ namespace alpr
   float getFloat(CSimpleIniA* ini, std::string section, std::string key, float defaultValue);
   std::string getString(CSimpleIniA* ini, std::string section, std::string key, std::string defaultValue);
   bool getBoolean(CSimpleIniA* ini, std::string section, std::string key, bool defaultValue);
-  
+  std::vector<float> getAllFloats(CSimpleIniA* ini, string section, string key);
   
   Config::Config(const std::string country, const std::string config_file, const std::string runtime_dir)
   {
@@ -214,6 +214,7 @@ namespace alpr
   void Config::loadCountryValues(string configFile, string country)
   {
     CSimpleIniA iniObj;
+    iniObj.SetMultiKey(true);
     iniObj.LoadFile(configFile.c_str());
     CSimpleIniA* ini = &iniObj;
     
@@ -243,10 +244,23 @@ namespace alpr
     plateWidthMM = getFloat(ini, "", "plate_width_mm", 100);
     plateHeightMM = getFloat(ini, "", "plate_height_mm", 100);
 
-    charHeightMM = getFloat(ini, "", "char_height_mm", 100);
-    charWidthMM = getFloat(ini, "", "char_width_mm", 100);
+    charHeightMM = getAllFloats(ini, "", "char_height_mm");
+    charWidthMM = getAllFloats(ini, "", "char_width_mm");
+    
+    // Compute the average char height/widths 
+    avgCharHeightMM = 0;
+    avgCharWidthMM = 0;
+    for (unsigned int i = 0; i < charHeightMM.size(); i++)
+    {
+      avgCharHeightMM += charHeightMM[i];
+      avgCharWidthMM += charWidthMM[i];
+    }
+    avgCharHeightMM /= charHeightMM.size();
+    avgCharWidthMM /= charHeightMM.size();
+    
     charWhitespaceTopMM = getFloat(ini, "", "char_whitespace_top_mm", 100);
     charWhitespaceBotMM = getFloat(ini, "", "char_whitespace_bot_mm", 100);
+    charWhitespaceBetweenLinesMM = getFloat(ini, "", "char_whitespace_between_lines_mm", 5);
 
     templateWidthPx = getInt(ini, "", "template_max_width_px", 100);
     templateHeightPx = getInt(ini, "", "template_max_height_px", 100);
@@ -358,6 +372,27 @@ namespace alpr
     float val = atof(pszValue);
     return val;
   }
+  
+  std::vector<float> getAllFloats(CSimpleIniA* ini, string section, string key)
+  {
+    CSimpleIniA::TNamesDepend values;
+    
+    ini->GetAllValues(section.c_str(), key.c_str(), values);
+ 
+    // sort the values into the original load order
+    values.sort(CSimpleIniA::Entry::LoadOrder());
+
+    std::vector<float> response;
+    
+  // output all of the items
+    CSimpleIniA::TNamesDepend::const_iterator i;
+    for (i = values.begin(); i != values.end(); ++i) { 
+      response.push_back(atof(i->pItem));
+    }
+    
+    return response;
+  }
+  
   int getInt(CSimpleIniA* ini, string section, string key, int defaultValue)
   {
     const char * pszValue = ini->GetValue(section.c_str(), key.c_str(), NULL /*default*/);

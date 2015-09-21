@@ -65,8 +65,6 @@ namespace alpr
       std::vector<cv::Point> getCharArea(LineSegment topLine, LineSegment bottomLine);
       void filterBetweenLines(cv::Mat img, TextContours& textContours, std::vector<TextLine> textLines );
 
-      bool verifySize(cv::Mat r, float minHeightPx, float maxHeightPx);
-
 
   };
 

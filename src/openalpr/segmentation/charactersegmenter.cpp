@@ -70,7 +70,7 @@ namespace alpr
       this->bottom = pipeline_data->textLines[lineidx].bottomLine;
 
       float avgCharHeight = pipeline_data->textLines[lineidx].lineHeight;
-      float height_to_width_ratio = pipeline_data->config->charHeightMM / pipeline_data->config->charWidthMM;
+      float height_to_width_ratio = pipeline_data->config->charHeightMM[lineidx] / pipeline_data->config->charWidthMM[lineidx];
       float avgCharWidth = avgCharHeight / height_to_width_ratio;
 
       removeSmallContours(pipeline_data->thresholds, avgCharHeight, pipeline_data->textLines[lineidx]);

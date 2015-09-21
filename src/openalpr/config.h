@@ -70,10 +70,15 @@ namespace alpr
       float plateWidthMM;
       float plateHeightMM;
 
-      float charHeightMM;
-      float charWidthMM;
+      std::vector<float> charHeightMM;
+      std::vector<float> charWidthMM;
+      
+      float avgCharHeightMM;
+      float avgCharWidthMM;
+      
       float charWhitespaceTopMM;
       float charWhitespaceBotMM;
+      float charWhitespaceBetweenLinesMM;
 
       int templateWidthPx;
       int templateHeightPx;
