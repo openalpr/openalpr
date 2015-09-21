@@ -102,14 +102,14 @@ namespace alpr
     }
   }
 
-  Mat TextContours::drawDebugImage() {
+  Mat TextContours::drawDebugImage() const {
 
       Mat img_contours = Mat::zeros(Size(width, height), CV_8U);
 
       return drawDebugImage(img_contours);
   }
 
-  Mat TextContours::drawDebugImage(Mat baseImage) {
+  Mat TextContours::drawDebugImage(Mat baseImage) const {
       Mat img_contours(baseImage.size(), CV_8U);
       baseImage.copyTo(img_contours);
 

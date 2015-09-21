@@ -47,8 +47,8 @@ namespace alpr
     std::vector<bool> getIndicesCopy();
     void setIndices(std::vector<bool> newIndices);
 
-    cv::Mat drawDebugImage();
-    cv::Mat drawDebugImage(cv::Mat baseImage);
+    cv::Mat drawDebugImage() const;
+    cv::Mat drawDebugImage(cv::Mat baseImage) const;
 
   private:
 
