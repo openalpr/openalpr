@@ -26,6 +26,11 @@ TEST_CASE( "LineSegment Test", "[2d primitives]" ) {
   REQUIRE( flat_horizontal.midpoint().x == 11 );
   REQUIRE( flat_horizontal.getPointAt(11) == 1 );
   
+  LineSegment rising_45(1,1, 5,5);
+  
+  REQUIRE( rising_45.getPointAt(3) == 3 );
+  REQUIRE( rising_45.getXPointAt(3) == 3 );
+  
   // Test distance between points calculation
   REQUIRE( distanceBetweenPoints(Point(10,10), Point(20,20)) == Approx(14.1421) );
   REQUIRE( distanceBetweenPoints(Point(-5,10), Point(20,-12)) == Approx(33.3017) );

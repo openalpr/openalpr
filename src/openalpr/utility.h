@@ -55,6 +55,7 @@ namespace alpr
       bool isPointBelowLine(cv::Point tp);
 
       float getPointAt(float x);
+      float getXPointAt(float y);
 
       cv::Point closestPointOnSegmentTo(cv::Point p);
 

@@ -439,6 +439,12 @@ int levenshteinDistance (const std::string &s1, const std::string &s2, int max)
     return slope * (x - p2.x) + p2.y;
   }
 
+  float LineSegment::getXPointAt(float y)
+  {
+    float y_intercept = getPointAt(0);
+    return (y - y_intercept) / slope;
+  }
+  
   Point LineSegment::closestPointOnSegmentTo(Point p)
   {
     float top = (p.x - p1.x) * (p2.x - p1.x) + (p.y - p1.y)*(p2.y - p1.y);
