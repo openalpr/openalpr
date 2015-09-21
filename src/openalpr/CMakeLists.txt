@@ -18,7 +18,9 @@ set(lpr_source_files
  postprocess/regexrule.cpp
  binarize_wolf.cpp
  segmentation/charactersegmenter.cpp
- segmentation/verticalhistogram.cpp
+ segmentation/histogram.cpp
+ segmentation/histogramvertical.cpp
+ segmentation/histogramhorizontal.cpp
  edges/edgefinder.cpp
  edges/platecorners.cpp
  edges/platelines.cpp
