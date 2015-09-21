@@ -24,7 +24,7 @@
 #include "constants.h"
 #include "binarize_wolf.h"
 #include "utility.h"
-#include "verticalhistogram.h"
+#include "histogramvertical.h"
 #include "config.h"
 #include "textdetection/textcontours.h"
 #include "pipeline_data.h"
@@ -66,7 +66,7 @@ namespace alpr
 
       void removeSmallContours(std::vector<cv::Mat> thresholds, float avgCharHeight, TextLine textLine);
 
-      std::vector<cv::Rect> getHistogramBoxes(VerticalHistogram histogram, float avgCharWidth, float avgCharHeight, float* score);
+      std::vector<cv::Rect> getHistogramBoxes(HistogramVertical histogram, float avgCharWidth, float avgCharHeight, float* score);
       std::vector<cv::Rect> getBestCharBoxes(cv::Mat img, std::vector<cv::Rect> charBoxes, float avgCharWidth);
       std::vector<cv::Rect> combineCloseBoxes( std::vector<cv::Rect> charBoxes, float avgCharWidth);
 

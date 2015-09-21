@@ -89,7 +89,7 @@ namespace alpr
 
         fillConvexPoly(histogramMask, pipeline_data->textLines[lineidx].linePolygon.data(), pipeline_data->textLines[lineidx].linePolygon.size(), Scalar(255,255,255));
 
-        VerticalHistogram vertHistogram(pipeline_data->thresholds[i], histogramMask);
+        HistogramVertical vertHistogram(pipeline_data->thresholds[i], histogramMask);
 
         if (this->config->debugCharSegmenter)
         {
@@ -203,7 +203,7 @@ namespace alpr
 
   // Given a histogram and the horizontal line boundaries, respond with an array of boxes where the characters are
   // Scores the histogram quality as well based on num chars, char volume, and even separation
-  vector<Rect> CharacterSegmenter::getHistogramBoxes(VerticalHistogram histogram, float avgCharWidth, float avgCharHeight, float* score)
+  vector<Rect> CharacterSegmenter::getHistogramBoxes(HistogramVertical histogram, float avgCharWidth, float avgCharHeight, float* score)
   {
     float MIN_HISTOGRAM_HEIGHT = avgCharHeight * config->segmentationMinCharHeightPercent;
 
@@ -283,7 +283,7 @@ namespace alpr
         histoImg.at<uchar>(histoImg.rows -  columnCount, col) = 255;
     }
 
-    VerticalHistogram histogram(histoImg, Mat::ones(histoImg.size(), CV_8U));
+    HistogramVertical histogram(histoImg, Mat::ones(histoImg.size(), CV_8U));
 
     // Go through each row in the histoImg and score it.  Try to find the single line that gives me the most right-sized character regions (based on avgCharWidth)
 
