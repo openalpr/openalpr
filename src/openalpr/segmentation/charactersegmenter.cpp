@@ -214,7 +214,7 @@ namespace alpr
     int pxLeniency = 2;
 
     vector<Rect> charBoxes;
-    vector<Rect> allBoxes = get1DHits(histogram.histoImg, pxLeniency);
+    vector<Rect> allBoxes = convert1DHitsToRect(histogram.get1DHits(pxLeniency), top, bottom);
 
     for (unsigned int i = 0; i < allBoxes.size(); i++)
     {
@@ -294,7 +294,9 @@ namespace alpr
     for (int row = 0; row < histoImg.rows; row++)
     {
       vector<Rect> validBoxes;
-      vector<Rect> allBoxes = get1DHits(histoImg, row);
+      
+      int pxLeniency = 2;
+      vector<Rect> allBoxes = convert1DHitsToRect(histogram.get1DHits(pxLeniency), top, bottom);
 
       if (this->config->debugCharSegmenter)
         cout << "All Boxes size " << allBoxes.size() << endl;
@@ -373,36 +375,6 @@ namespace alpr
     return bestBoxes;
   }
 
-  vector<Rect> CharacterSegmenter::get1DHits(Mat img, int yOffset)
-  {
-    vector<Rect> hits;
-
-    bool onSegment = false;
-    int curSegmentLength = 0;
-    for (int col = 0; col < img.cols; col++)
-    {
-      bool isOn = img.at<uchar>(img.rows - 1 - yOffset, col);
-      if (isOn)
-      {
-        // We're on a segment.  Increment the length
-        onSegment = true;
-        curSegmentLength++;
-      }
-
-      if (onSegment && (isOn == false || (col == img.cols - 1)))
-      {
-        // A segment just ended or we're at the very end of the row and we're on a segment
-        Point topLeft = Point(col - curSegmentLength, top.getPointAt(col - curSegmentLength) - 1);
-        Point botRight = Point(col, bottom.getPointAt(col) + 1);
-        hits.push_back(Rect(topLeft, botRight));
-
-        onSegment = false;
-        curSegmentLength = 0;
-      }
-    }
-
-    return hits;
-  }
 
   void CharacterSegmenter::removeSmallContours(vector<Mat> thresholds, float avgCharHeight,  TextLine textLine)
   {
@@ -1019,6 +991,20 @@ namespace alpr
       rectangle(mask, charBoxes[i], Scalar(255, 255, 255), -1);
 
     return mask;
+  }
+  std::vector<cv::Rect> CharacterSegmenter::convert1DHitsToRect(vector<pair<int, int> > hits, LineSegment top, LineSegment bottom) {
+
+    vector<Rect> boxes;
+    
+    for (unsigned int i = 0; i < hits.size(); i++)
+    {
+      Point topLeft = Point(hits[i].first, top.getPointAt(hits[i].first) - 1);
+      Point botRight = Point(hits[i].second, bottom.getPointAt(hits[i].second) + 1);
+      
+      boxes.push_back(Rect(topLeft, botRight));
+    }
+    
+    return boxes;
   }
 
 }

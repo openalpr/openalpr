@@ -81,6 +81,7 @@ namespace alpr
 
       int isSkinnyLineInsideBox(cv::Mat threshold, cv::Rect box, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, float avgCharWidth, float avgCharHeight);
 
+      std::vector<cv::Rect> convert1DHitsToRect(std::vector<std::pair<int, int> >  hits, LineSegment top, LineSegment bottom);
   };
 
 }
