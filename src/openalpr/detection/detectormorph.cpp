@@ -179,7 +179,7 @@ for (int i = 0; i < rects.size(); i++) {
 		int numBlobs = plateBlobs.size();
 		int numBlobsInv = plateBlobsInv.size();
 	
-		float idealAspect = config->charWidthMM / config->charHeightMM;
+		float idealAspect = config->avgCharWidthMM / config->avgCharHeightMM;
 		for (int j = 0; j < numBlobs; j++) {
 			cv::Rect r0 = cv::boundingRect(cv::Mat(plateBlobs[j]));
 			
