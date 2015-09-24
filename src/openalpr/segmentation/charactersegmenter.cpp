@@ -159,7 +159,7 @@ namespace alpr
       getTimeMonotonic(&startTime);
 
       filterEdgeBoxes(pipeline_data->thresholds, candidateBoxes, medianCharWidth, avgCharHeight);
-      candidateBoxes = combineCloseBoxes(candidateBoxes, medianCharWidth);
+      candidateBoxes = combineCloseBoxes(candidateBoxes);
 
       candidateBoxes = filterMostlyEmptyBoxes(pipeline_data->thresholds, candidateBoxes);
 
@@ -409,8 +409,40 @@ namespace alpr
     }
   }
 
-  vector<Rect> CharacterSegmenter::combineCloseBoxes( vector<Rect> charBoxes, float biggestCharWidth)
+  vector<Rect> CharacterSegmenter::combineCloseBoxes( vector<Rect> charBoxes)
   {
+    // Don't bother combining if there are 2 or fewer characters
+    if (charBoxes.size() <= 2)
+      return charBoxes;
+    
+    // First find the median char gap (the space between characters)
+    
+    vector<int> char_gaps;
+    for (unsigned int i = 0; i < charBoxes.size(); i++)
+    {
+      if (i == charBoxes.size() - 1)
+        break;
+      
+      // the space between charbox i and i+1
+      int char_gap = charBoxes[i+1].x - (charBoxes[i].x + charBoxes[i].width);
+      char_gaps.push_back(char_gap);
+    }
+        
+    int median_char_gap = median(char_gaps.data(), char_gaps.size());
+    
+    
+    // Find the second largest char box.  Should help ignore a big outlier
+    vector<int> char_sizes;
+    float biggestCharWidth;
+    for (unsigned int i = 0; i < charBoxes.size(); i++)
+    {
+      char_sizes.push_back(charBoxes[i].width);
+    }
+
+    std::sort(char_sizes.begin(), char_sizes.end());
+    biggestCharWidth = char_sizes[char_sizes.size() - 2];
+    
+    
     vector<Rect> newCharBoxes;
 
     for (unsigned int i = 0; i < charBoxes.size(); i++)
@@ -422,12 +454,26 @@ namespace alpr
       }
       float bigWidth = (charBoxes[i + 1].x + charBoxes[i + 1].width - charBoxes[i].x);
 
-      float w1Diff = abs(charBoxes[i].width - biggestCharWidth);
-      float w2Diff = abs(charBoxes[i + 1].width - biggestCharWidth);
-      float bigDiff = abs(bigWidth - biggestCharWidth);
-      bigDiff *= 1.3;	// Make it a little harder to merge boxes.
+      float left_gap;
+      float right_gap;
+      
+      if (i == 0)
+        left_gap = 999999999999;
+      else
+        left_gap = charBoxes[i].x - (charBoxes[i-1].x + charBoxes[i-1].width);
+      
+      right_gap = charBoxes[i+1].x - (charBoxes[i].x + charBoxes[i].width);
+      
+      int min_gap = (int) ((float)median_char_gap) * 0.75;
+      int max_gap = (int) ((float)median_char_gap) * 1.25;
+      
+      int max_width = (int) ((float)biggestCharWidth) * 1.1;
+      
+      bool has_good_gap = (left_gap >= min_gap && left_gap <= max_gap) || (right_gap >= min_gap && right_gap <= max_gap);
+      
 
-      if (bigDiff < w1Diff && bigDiff < w2Diff)
+      
+      if (has_good_gap && bigWidth <= max_width)
       {
         Rect bigRect(charBoxes[i].x, charBoxes[i].y, bigWidth, charBoxes[i].height);
         newCharBoxes.push_back(bigRect);
