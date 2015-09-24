@@ -74,6 +74,8 @@ namespace alpr
 
       bool regionIsValid(std::string templateregion);
       
+      std::vector<std::string> getPatterns();
+      
     private:
       Config* config;
 
