@@ -386,6 +386,14 @@ namespace alpr
     return true;
   }
 
+  std::vector<string> PostProcess::getPatterns() {
+    vector<string> v;
+    for(map<string,std::vector<RegexRule*> >::iterator it = rules.begin(); it != rules.end(); ++it) {
+      v.push_back(it->first);
+    }
+    
+    return v;
+  }
 
   bool letterCompare( const Letter &left, const Letter &right )
   {

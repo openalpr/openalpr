@@ -277,7 +277,13 @@ namespace alpr
       if (!pipeline_data.disqualified)
       {
         AlprPlateResult plateResult;
-        plateResult.region = defaultRegion;
+        
+        // If there's only one pattern for a country, use it.  Otherwise use the default
+        if (country_recognizers.ocr->postProcessor.getPatterns().size() == 1)
+          plateResult.region = country_recognizers.ocr->postProcessor.getPatterns()[0];
+        else
+          plateResult.region = defaultRegion;
+        
         plateResult.regionConfidence = 0;
         plateResult.plate_index = platecount++;
 
