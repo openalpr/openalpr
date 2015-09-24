@@ -38,20 +38,60 @@ namespace alpr
 
     cv::ocl::setUseOpenCL(true);
 
+	if (config->debugDetector)
+	{
+		try{
+			cout << "\r\nUse of OpenCL LBP detector selected in config file." << endl;
+			cv::ocl::Device ocldevice;
+
+			std::vector<cv::ocl::PlatformInfo> platforms;
+			getPlatfomsInfo(platforms);
+			if (platforms.size()>0) cout << "OpenCL device(s) found:" << endl;
+			int n = 0;
+			for (size_t i = 0; i < platforms.size(); i++)
+			{
+				const cv::ocl::PlatformInfo* platform = &platforms[i];
+				for (int j = 0; j < platform->deviceNumber(); j++)
+				{
+					platform->getDevice(ocldevice, j);
+					cout << n << " " << ocldevice.name() << " (" << ocldevice.version() << ")" << endl;
+					n++;
+				}
+			}
+			if (n > 1)
+			{
+				ocldevice = cv::ocl::Device::getDefault();
+				if (ocldevice.available())
+				{
+					cout << "\r\nCurrent OpenCL device: \r\n  " << ocldevice.name() << " (" << ocldevice.version() << ").\r\n" << endl;
+				}
+				else
+				{
+					cout << "\r\nOpenCL error: The selected device is not available.\r\n" << endl;
+				}
+				cout << "Select the OpenCL device by adjusting the environment variable OPENCV_OPENCL_DEVICE, e.g.\r\n-In Windows type at the command prompt:\r\n  set OPENCV_OPENCL_DEVICE=::1\r\n" << endl;
+			}
+		}
+		catch (...)
+		{
+			cout << "OpenCL error: No OpenCL device found.\r\n" << endl;
+		}
+	}
+
     if (!ocl::haveOpenCL())
     {
       this->loaded = false;
       cerr << "OpenCL not detected" << endl;
     }
-    else if( this->plate_cascade.load( config->getCascadeRuntimeDir() + config->country + ".xml" ) )
-    {
-      this->loaded = true;
-    }
-    else
-    {
-      this->loaded = false;
-      printf("--(!)Error loading CPU classifier\n");
-    }
+	else if( this->plate_cascade.load( config->getCascadeRuntimeDir() + config->country + ".xml" ) )
+		{
+			this->loaded = true;
+		}
+		else
+		{
+			this->loaded = false;
+			cout << "--(!)Error loading cascade " << config->country << ".xml\n" << endl;
+		}
   }
 
 
