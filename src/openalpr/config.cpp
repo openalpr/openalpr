@@ -190,8 +190,6 @@ namespace alpr
 
     postProcessMinConfidence = getFloat(ini, "", "postprocess_min_confidence", 100);
     postProcessConfidenceSkipLevel = getFloat(ini, "", "postprocess_confidence_skip_level", 100);
-    postProcessMinCharacters = getInt(ini, "", "postprocess_min_characters", 100);
-    postProcessMaxCharacters = getInt(ini, "", "postprocess_max_characters", 100);
 
     debugGeneral = 	getBoolean(ini, "", "debug_general",		false);
     debugTiming = 	getBoolean(ini, "", "debug_timing",		false);
@@ -286,7 +284,9 @@ namespace alpr
     ocrImageHeightPx = round(((float)templateHeightPx) * ocrImagePercent);
     stateIdImageWidthPx = round(((float)templateWidthPx) * stateIdImagePercent);
     stateIdimageHeightPx = round(((float)templateHeightPx) * stateIdImagePercent);
-    
+
+    postProcessMinCharacters = getInt(ini, "", "postprocess_min_characters", 4);
+    postProcessMaxCharacters = getInt(ini, "", "postprocess_max_characters", 8);
   }
 
   void Config::setDebug(bool value)
