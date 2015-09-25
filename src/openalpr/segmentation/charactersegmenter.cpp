@@ -379,7 +379,7 @@ namespace alpr
   void CharacterSegmenter::removeSmallContours(vector<Mat> thresholds, float avgCharHeight,  TextLine textLine)
   {
     //const float MIN_CHAR_AREA = 0.02 * avgCharWidth * avgCharHeight;	// To clear out the tiny specks
-    const float MIN_CONTOUR_HEIGHT = 0.3 * avgCharHeight;
+    const float MIN_CONTOUR_HEIGHT = config->segmentationMinSpeckleHeightPercent * avgCharHeight;
 
     Mat textLineMask = Mat::zeros(thresholds[0].size(), CV_8U);
     fillConvexPoly(textLineMask, textLine.linePolygon.data(), textLine.linePolygon.size(), Scalar(255,255,255));

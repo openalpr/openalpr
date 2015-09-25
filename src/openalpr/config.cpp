@@ -270,6 +270,7 @@ namespace alpr
     charAnalysisHeightStepSize = getFloat(ini, "", "char_analysis_height_step_size", 0);
     charAnalysisNumSteps = getInt(ini, "", "char_analysis_height_num_steps", 0);
 
+    segmentationMinSpeckleHeightPercent = getFloat(ini, "", "segmentation_min_speckle_height_percent", 0);
     segmentationMinBoxWidthPx = getInt(ini, "", "segmentation_min_box_width_px", 0);
     segmentationMinCharHeightPercent = getFloat(ini, "", "segmentation_min_charheight_percent", 0);
     segmentationMaxCharWidthvsAverage = getFloat(ini, "", "segmentation_max_segment_width_percent_vs_average", 0);
