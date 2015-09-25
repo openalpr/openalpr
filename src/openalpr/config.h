@@ -97,6 +97,7 @@ namespace alpr
       float plateLinesSensitivityVertical;
       float plateLinesSensitivityHorizontal;
 
+      float segmentationMinSpeckleHeightPercent;
       int segmentationMinBoxWidthPx;
       float segmentationMinCharHeightPercent;
       float segmentationMaxCharWidthvsAverage;
