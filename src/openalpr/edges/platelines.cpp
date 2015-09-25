@@ -143,8 +143,8 @@ namespace alpr
     if (this->debug)
       cout << "PlateLines::getLines" << endl;
 
-    static int HORIZONTAL_SENSITIVITY = pipelineData->config->plateLinesSensitivityHorizontal;
-    static int VERTICAL_SENSITIVITY = pipelineData->config->plateLinesSensitivityVertical;
+    int HORIZONTAL_SENSITIVITY = pipelineData->config->plateLinesSensitivityHorizontal;
+    int VERTICAL_SENSITIVITY = pipelineData->config->plateLinesSensitivityVertical;
 
     vector<Vec2f> allLines;
     vector<PlateLine> filteredLines;

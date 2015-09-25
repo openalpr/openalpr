@@ -295,15 +295,15 @@ namespace alpr
 
   void CharacterAnalysis::filter(Mat img, TextContours& textContours)
   {
-    static int STARTING_MIN_HEIGHT = round (((float) img.rows) * config->charAnalysisMinPercent);
-    static int STARTING_MAX_HEIGHT = round (((float) img.rows) * (config->charAnalysisMinPercent + config->charAnalysisHeightRange));
-    static int HEIGHT_STEP = round (((float) img.rows) * config->charAnalysisHeightStepSize);
-    static int NUM_STEPS = config->charAnalysisNumSteps;
+    int STARTING_MIN_HEIGHT = round (((float) img.rows) * config->charAnalysisMinPercent);
+    int STARTING_MAX_HEIGHT = round (((float) img.rows) * (config->charAnalysisMinPercent + config->charAnalysisHeightRange));
+    int HEIGHT_STEP = round (((float) img.rows) * config->charAnalysisHeightStepSize);
+    int NUM_STEPS = config->charAnalysisNumSteps;
 
     int bestFitScore = -1;
 
     vector<bool> bestIndices;
-
+     
     for (int i = 0; i < NUM_STEPS; i++)
     {
 
