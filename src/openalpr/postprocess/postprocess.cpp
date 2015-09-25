@@ -381,9 +381,17 @@ namespace alpr
     if (allPossibilitiesLetters.end() != allPossibilitiesLetters.find(possibility.letters))
       return false;
 
-    allPossibilities.push_back(possibility);
-    allPossibilitiesLetters.insert(possibility.letters);
-    return true;
+    // If mustMatchPattern is toggled in the config and a template is provided, 
+    // only include this result if there is a pattern match
+    if (!config->mustMatchPattern || templateregion.size() == 0 || 
+        (config->mustMatchPattern && possibility.matchesTemplate))
+    {
+      allPossibilities.push_back(possibility);
+      allPossibilitiesLetters.insert(possibility.letters);
+      return true;
+    }
+    
+    return false;
   }
 
   std::vector<string> PostProcess::getPatterns() {

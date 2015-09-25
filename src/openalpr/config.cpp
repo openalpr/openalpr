@@ -176,6 +176,8 @@ namespace alpr
     maxDetectionInputWidth = getInt(ini, "", "max_detection_input_width", 1280);
     maxDetectionInputHeight = getInt(ini, "", "max_detection_input_height", 768);
 
+    mustMatchPattern = getBoolean(ini, "", "must_match_pattern", false);
+    
     skipDetection = getBoolean(ini, "", "skip_detection", false);
     
     prewarp = getString(ini, "", "prewarp", "");

@@ -42,6 +42,10 @@ max_detection_input_height = 720
 ; morphcpu  - Experimental detector that detects white rectangles in an image.  Does not require training.
 detector = lbpcpu
 
+; If set to true, all results must match a postprocess text pattern if a pattern is available.  
+; If not, the result is disqualified. 
+must_match_pattern = 0
+
 ; Bypasses plate detection.  If this is set to 1, the library assumes that each region provided is a likely plate area.
 skip_detection = 0
 

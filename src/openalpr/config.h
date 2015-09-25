@@ -104,6 +104,8 @@ namespace alpr
       std::string ocrLanguage;
       int ocrMinFontSize;
 
+      bool mustMatchPattern;
+      
       float postProcessMinConfidence;
       float postProcessConfidenceSkipLevel;
       unsigned int postProcessMinCharacters;
