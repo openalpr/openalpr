@@ -587,9 +587,10 @@ namespace alpr
         }
       }
 
-      Mat closureElement = getStructuringElement( 1,
-                           Size( 2 + 1, 2+1 ),
-                           Point( 1, 1 ) );
+      int morph_size = 1;
+      Mat closureElement = getStructuringElement( 2, // 0 Rect, 1 cross, 2 ellipse
+                           Size( 2 * morph_size + 1, 2* morph_size + 1 ),
+                           Point( morph_size, morph_size ) );
 
       //morphologyEx(thresholds[i], thresholds[i], MORPH_OPEN, element);
 
