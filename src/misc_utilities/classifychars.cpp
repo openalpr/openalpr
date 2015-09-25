@@ -144,7 +144,10 @@ int main( int argc, const char** argv )
         string statecodestr(statecode);
 
         CharacterAnalysis regionizer(&pipeline_data);
-
+        
+        if (pipeline_data.plate_inverted)
+          bitwise_not(pipeline_data.crop_gray, pipeline_data.crop_gray);
+        
         CharacterSegmenter charSegmenter(&pipeline_data);
 
         //ocr.cleanCharRegions(charSegmenter.thresholds, charSegmenter.characters);
