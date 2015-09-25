@@ -117,15 +117,6 @@ namespace alpr
         //drawAndWait(&histogramMask);
       }
 
-      float medianCharWidth = avgCharWidth;
-      vector<int> widthValues;
-      // Compute largest char width
-      for (unsigned int i = 0; i < lineBoxes.size(); i++)
-      {
-        widthValues.push_back(lineBoxes[i].width);
-      }
-
-      medianCharWidth = median(widthValues.data(), widthValues.size());
 
       if (config->debugTiming)
       {
@@ -134,7 +125,7 @@ namespace alpr
         cout << "  -- Character Segmentation Create and Score Histograms Time: " << diffclock(startTime, endTime) << "ms." << endl;
       }
 
-      vector<Rect> candidateBoxes = getBestCharBoxes(pipeline_data->thresholds[0], lineBoxes, medianCharWidth);
+      vector<Rect> candidateBoxes = getBestCharBoxes(pipeline_data->thresholds[0], lineBoxes, avgCharWidth);
 
       if (this->config->debugCharSegmenter)
       {
@@ -155,7 +146,7 @@ namespace alpr
 
       getTimeMonotonic(&startTime);
 
-      filterEdgeBoxes(pipeline_data->thresholds, candidateBoxes, medianCharWidth, avgCharHeight);
+      filterEdgeBoxes(pipeline_data->thresholds, candidateBoxes, avgCharWidth, avgCharHeight);
       candidateBoxes = combineCloseBoxes(candidateBoxes);
 
       candidateBoxes = filterMostlyEmptyBoxes(pipeline_data->thresholds, candidateBoxes);
