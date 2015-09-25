@@ -145,6 +145,22 @@ namespace alpr
       displayImage(config, "Matching Contours", img_contours);
     }
 
+    if (config->auto_invert)
+      pipeline_data->plate_inverted = isPlateInverted();
+    else
+      pipeline_data->plate_inverted = config->always_invert;
+
+    if (config->debugGeneral)
+      cout << "Plate inverted: " << pipeline_data->plate_inverted << endl;
+    
+    // Invert multiline plates and redo the thresholds before finding the second line
+    if (config->multiline && config->auto_invert && pipeline_data->plate_inverted)
+    {
+      bitwise_not(pipeline_data->crop_gray, pipeline_data->crop_gray);
+      pipeline_data->thresholds = produceThresholds(pipeline_data->crop_gray, pipeline_data->config);
+    }
+      
+    
     LineFinder lf(pipeline_data);
     vector<vector<Point> > linePolygons = lf.findLines(pipeline_data->crop_gray, bestContours);
 
@@ -179,14 +195,6 @@ namespace alpr
       }
 
     }
-
-    if (config->auto_invert)
-      pipeline_data->plate_inverted = isPlateInverted();
-    else
-      pipeline_data->plate_inverted = config->always_invert;
-
-    if (config->debugGeneral)
-      cout << "Plate inverted: " << pipeline_data->plate_inverted << endl;
 
 
     if (pipeline_data->textLines.size() > 0)
