@@ -53,9 +53,6 @@ namespace alpr
     if (this->config->debugCharSegmenter)
       cout << "Segmenter: inverted: " << pipeline_data->plate_inverted << endl;
 
-    if (pipeline_data->plate_inverted)
-      bitwise_not(pipeline_data->crop_gray, pipeline_data->crop_gray);
-
 
     if (this->config->debugCharSegmenter)
     {
