@@ -62,7 +62,7 @@ namespace alpr
     if (bestLine.size() > 0)
       linesFound.push_back(bestLine);
 
-    if (pipeline_data->isMultiline)
+    if (pipeline_data->isMultiline && bestCharArea.size() > 0)
     {
 
       vector<Point> next_best_line = findNextBestLine(Size(contours.width, contours.height), bestCharArea);
@@ -119,7 +119,7 @@ namespace alpr
 
       // Pull out a crop of the plate around the line we know about,
       // then do a horizontal histogram on all the thresholds.  Find the other line based on that histogram
-    
+       
       vector<Point> histogramArea = calculateCroppedRegionForHistogram(imageSize, bestLine);
       
       Size cropped_quad_size(distanceBetweenPoints(histogramArea[0], histogramArea[1]), distanceBetweenPoints(histogramArea[0], histogramArea[3]));
