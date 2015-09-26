@@ -874,7 +874,10 @@ namespace alpr
     if (leftEdge != 0 || rightEdge != thresholds[0].cols)
     {
       Mat mask = Mat::zeros(thresholds[0].size(), CV_8U);
-      rectangle(mask, Point(leftEdge, 0), Point(rightEdge, thresholds[0].rows), Scalar(255,255,255), -1);
+      bitwise_not(mask, mask);
+      
+      rectangle(mask, Point(0, charRegions[0].y), Point(leftEdge, charRegions[0].y+charRegions[0].height), Scalar(0,0,0), -1);
+      rectangle(mask, Point(rightEdge, charRegions[0].y), Point(mask.cols, charRegions[0].y+charRegions[0].height), Scalar(0,0,0), -1);
 
       if (abs(top.angle) > MIN_ANGLE_FOR_ROTATION)
       {
