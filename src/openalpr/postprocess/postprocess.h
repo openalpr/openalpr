@@ -40,6 +40,7 @@ namespace alpr
   struct Letter
   {
     std::string letter;
+    int line_index;
     int charposition;
     float totalscore;
     int occurences;
@@ -62,7 +63,7 @@ namespace alpr
       PostProcess(Config* config);
       ~PostProcess();
 
-      void addLetter(std::string letter, int charposition, float score);
+      void addLetter(std::string letter, int line_index, int charposition, float score);
 
       void clear();
       void analyze(std::string templateregion, int topn);
@@ -82,7 +83,7 @@ namespace alpr
       void findAllPermutations(std::string templateregion, int topn);
       bool analyzePermutation(std::vector<int> letterIndices, std::string templateregion, int topn);
 
-      void insertLetter(std::string letter, int charPosition, float score);
+      void insertLetter(std::string letter, int line_index, int charPosition, float score);
 
       std::map<std::string, std::vector<RegexRule*> > rules;
 

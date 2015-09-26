@@ -61,8 +61,15 @@ namespace alpr
     postProcessor.clear();
 
     // Don't waste time on OCR processing if it is impossible to get sufficient characters
-    if (pipeline_data->charRegions.size() < config->postProcessMinCharacters)
+    int total_char_spaces = 0;
+    for (unsigned int i = 0; i < pipeline_data->charRegions.size(); i++)
+      total_char_spaces += pipeline_data->charRegions[i].size();
+    if (total_char_spaces < config->postProcessMinCharacters)
+    {
+      pipeline_data->disqualify_reason = "Insufficient character boxes detected.  No OCR performed.";
+      pipeline_data->disqualified = true;
       return;
+    }
 
     for (unsigned int i = 0; i < pipeline_data->thresholds.size(); i++)
     {
@@ -72,62 +79,68 @@ namespace alpr
                           pipeline_data->thresholds[i].size().width, pipeline_data->thresholds[i].size().height, 
                           pipeline_data->thresholds[i].channels(), pipeline_data->thresholds[i].step1());
 
-      for (unsigned int j = 0; j < pipeline_data->charRegions.size(); j++)
+      int absolute_charpos = 0;
+      for (unsigned int line_idx = 0; line_idx < pipeline_data->charRegions.size(); line_idx++)
       {
-        Rect expandedRegion = expandRect( pipeline_data->charRegions[j], 2, 2, pipeline_data->thresholds[i].cols, pipeline_data->thresholds[i].rows) ;
-
-        tesseract.SetRectangle(expandedRegion.x, expandedRegion.y, expandedRegion.width, expandedRegion.height);
-        tesseract.Recognize(NULL);
-
-        tesseract::ResultIterator* ri = tesseract.GetIterator();
-        tesseract::PageIteratorLevel level = tesseract::RIL_SYMBOL;
-        do
+        for (unsigned int j = 0; j < pipeline_data->charRegions[line_idx].size(); j++)
         {
-          const char* symbol = ri->GetUTF8Text(level);
-          float conf = ri->Confidence(level);
-          
-          bool dontcare;
-          int fontindex = 0;
-          int pointsize = 0;
-          const char* fontName = ri->WordFontAttributes(&dontcare, &dontcare, &dontcare, &dontcare, &dontcare, &dontcare, &pointsize, &fontindex);
+          Rect expandedRegion = expandRect( pipeline_data->charRegions[line_idx][j], 2, 2, pipeline_data->thresholds[i].cols, pipeline_data->thresholds[i].rows) ;
 
-          // Ignore NULL pointers, spaces, and characters that are way too small to be valid
-          if(symbol != 0 && symbol[0] != SPACE_CHAR_CODE && pointsize >= config->ocrMinFontSize)
+          tesseract.SetRectangle(expandedRegion.x, expandedRegion.y, expandedRegion.width, expandedRegion.height);
+          tesseract.Recognize(NULL);
+
+          tesseract::ResultIterator* ri = tesseract.GetIterator();
+          tesseract::PageIteratorLevel level = tesseract::RIL_SYMBOL;
+          do
           {
-            postProcessor.addLetter(string(symbol), j, conf);
+            const char* symbol = ri->GetUTF8Text(level);
+            float conf = ri->Confidence(level);
+
+            bool dontcare;
+            int fontindex = 0;
+            int pointsize = 0;
+            const char* fontName = ri->WordFontAttributes(&dontcare, &dontcare, &dontcare, &dontcare, &dontcare, &dontcare, &pointsize, &fontindex);
+
+            // Ignore NULL pointers, spaces, and characters that are way too small to be valid
+            if(symbol != 0 && symbol[0] != SPACE_CHAR_CODE && pointsize >= config->ocrMinFontSize)
+            {
+              postProcessor.addLetter(string(symbol), line_idx, absolute_charpos, conf);
+
+              if (this->config->debugOcr)
+                printf("charpos%d line%d: threshold %d:  symbol %s, conf: %f font: %s (index %d) size %dpx", absolute_charpos, line_idx, i, symbol, conf, fontName, fontindex, pointsize);
+
+              bool indent = false;
+              tesseract::ChoiceIterator ci(*ri);
+              do
+              {
+                const char* choice = ci.GetUTF8Text();
+
+                postProcessor.addLetter(string(choice), line_idx, absolute_charpos, ci.Confidence());
+
+                if (this->config->debugOcr)
+                {
+                  if (indent) printf("\t\t ");
+                  printf("\t- ");
+                  printf("%s conf: %f\n", choice, ci.Confidence());
+                }
+
+                indent = true;
+              }
+              while(ci.Next());
+              
+            }
 
             if (this->config->debugOcr)
-              printf("charpos%d: threshold %d:  symbol %s, conf: %f font: %s (index %d) size %dpx", j, i, symbol, conf, fontName, fontindex, pointsize);
+              printf("---------------------------------------------\n");
 
-            bool indent = false;
-            tesseract::ChoiceIterator ci(*ri);
-            do
-            {
-              const char* choice = ci.GetUTF8Text();
-
-              postProcessor.addLetter(string(choice), j, ci.Confidence());
-
-              //letterScores.addScore(*choice, j, ci.Confidence() - MIN_CONFIDENCE);
-              if (this->config->debugOcr)
-              {
-                if (indent) printf("\t\t ");
-                printf("\t- ");
-                printf("%s conf: %f\n", choice, ci.Confidence());
-              }
-
-              indent = true;
-            }
-            while(ci.Next());
+            delete[] symbol;
           }
+          while((ri->Next(level)));
 
-          if (this->config->debugOcr)
-            printf("---------------------------------------------\n");
-
-          delete[] symbol;
+          delete ri;
+          
+          absolute_charpos++;
         }
-        while((ri->Next(level)));
-
-        delete ri;
       }
     }
 

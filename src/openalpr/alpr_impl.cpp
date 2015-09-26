@@ -347,9 +347,11 @@ namespace alpr
           for (unsigned int c_idx = 0; c_idx < ppResults[pp].letter_details.size(); c_idx++)
           {
             AlprChar character_details;
-            character_details.character = ppResults[pp].letter_details[c_idx].letter;
-            character_details.confidence = ppResults[pp].letter_details[c_idx].totalscore;
-            cv::Rect char_rect = pipeline_data.charRegions[ppResults[pp].letter_details[c_idx].charposition];
+            Letter l = ppResults[pp].letter_details[c_idx];
+            
+            character_details.character = l.letter;
+            character_details.confidence = l.totalscore;
+            cv::Rect char_rect = pipeline_data.charRegionsFlat[l.charposition];
             std::vector<AlprCoordinate> charpoints = getCharacterPoints(char_rect, charTransformMatrix );
             for (int cpt = 0; cpt < 4; cpt++)
               character_details.corners[cpt] = charpoints[cpt];
