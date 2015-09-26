@@ -68,6 +68,8 @@ namespace alpr
 
       std::vector<cv::Rect> getHistogramBoxes(HistogramVertical histogram, float avgCharWidth, float avgCharHeight, float* score);
       std::vector<cv::Rect> getBestCharBoxes(cv::Mat img, std::vector<cv::Rect> charBoxes, float avgCharWidth);
+      
+      int getCharGap(cv::Rect leftBox, cv::Rect rightBox);
       std::vector<cv::Rect> combineCloseBoxes( std::vector<cv::Rect> charBoxes);
 
       std::vector<cv::Rect> get1DHits(cv::Mat img, int yOffset);
