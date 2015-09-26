@@ -403,6 +403,11 @@ namespace alpr
       }
     }
   }
+  int CharacterSegmenter::getCharGap(cv::Rect leftBox, cv::Rect rightBox) {
+      int right_midpoint = (rightBox.x + (rightBox.width / 2));
+      int left_midpoint = (leftBox.x + (leftBox.width / 2));
+      return  right_midpoint - left_midpoint;
+  }
 
   vector<Rect> CharacterSegmenter::combineCloseBoxes( vector<Rect> charBoxes)
   {
@@ -410,7 +415,7 @@ namespace alpr
     if (charBoxes.size() <= 2)
       return charBoxes;
     
-    // First find the median char gap (the space between characters)
+    // First find the median char gap (the space from midpoint to midpoint of chars)
     
     vector<int> char_gaps;
     for (unsigned int i = 0; i < charBoxes.size(); i++)
@@ -419,8 +424,7 @@ namespace alpr
         break;
       
       // the space between charbox i and i+1
-      int char_gap = charBoxes[i+1].x - (charBoxes[i].x + charBoxes[i].width);
-      char_gaps.push_back(char_gap);
+      char_gaps.push_back(getCharGap(charBoxes[i], charBoxes[i+1]));
     }
         
     int median_char_gap = median(char_gaps.data(), char_gaps.size());
@@ -455,14 +459,14 @@ namespace alpr
       if (i == 0)
         left_gap = 999999999999;
       else
-        left_gap = charBoxes[i].x - (charBoxes[i-1].x + charBoxes[i-1].width);
+        left_gap = getCharGap(charBoxes[i-1], charBoxes[i]);
       
-      right_gap = charBoxes[i+1].x - (charBoxes[i].x + charBoxes[i].width);
+      right_gap = getCharGap(charBoxes[i], charBoxes[i+1]);
       
       int min_gap = (int) ((float)median_char_gap) * 0.75;
       int max_gap = (int) ((float)median_char_gap) * 1.25;
       
-      int max_width = (int) ((float)biggestCharWidth) * 1.1;
+      int max_width = (int) ((float)biggestCharWidth) * 1.2;
       
       bool has_good_gap = (left_gap >= min_gap && left_gap <= max_gap) || (right_gap >= min_gap && right_gap <= max_gap);
       
@@ -488,6 +492,11 @@ namespace alpr
       else
       {
         newCharBoxes.push_back(charBoxes[i]);
+        if (this->config->debugCharSegmenter)
+        {
+          cout << "Not Merging 2 boxes -- " << i << " and " << i + 1 << " -- has_good_gap: " << has_good_gap <<
+                  " bigWidth (" << bigWidth << ") > max_width ("  << max_width << ")" << endl;
+        }
       }
     }
 
