@@ -158,8 +158,9 @@ namespace alpr
 
       candidateBoxes = filterMostlyEmptyBoxes(pipeline_data->thresholds, candidateBoxes);
 
-      for (unsigned int cbox = 0; cbox < candidateBoxes.size(); cbox++)
-        pipeline_data->charRegions.push_back(candidateBoxes[cbox]);
+      pipeline_data->charRegions.push_back(candidateBoxes);
+      for (unsigned int cboxidx = 0; cboxidx < candidateBoxes.size(); cboxidx++)
+        pipeline_data->charRegionsFlat.push_back(candidateBoxes[cboxidx]);
 
       if (config->debugTiming)
       {
@@ -181,7 +182,13 @@ namespace alpr
       }
     }
 
-    cleanCharRegions(pipeline_data->thresholds, pipeline_data->charRegions);
+    vector<Rect> all_regions_combined;
+    for (unsigned int lidx = 0; lidx < pipeline_data->charRegions.size(); lidx++)
+    {
+      for (unsigned int boxidx = 0; boxidx < pipeline_data->charRegions[lidx].size(); boxidx++)
+        all_regions_combined.push_back(pipeline_data->charRegions[lidx][boxidx]);
+    }
+    cleanCharRegions(pipeline_data->thresholds, all_regions_combined);
 
     if (config->debugTiming)
     {

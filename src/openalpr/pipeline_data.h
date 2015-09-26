@@ -58,7 +58,12 @@ namespace alpr
       
       ScoreKeeper confidence_weights;
 
-      std::vector<cv::Rect> charRegions;
+      // Boxes around characters in cropped image
+      // Each row in a multiline plate is an entry in the vector
+      std::vector<std::vector<cv::Rect> > charRegions;
+      
+      // Same data, just not broken down by line
+      std::vector<cv::Rect> charRegionsFlat;
 
 
 

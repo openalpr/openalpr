@@ -72,17 +72,17 @@ namespace alpr
     }
   }
 
-  void PostProcess::addLetter(string letter, int charposition, float score)
+  void PostProcess::addLetter(string letter, int line_index, int charposition, float score)
   {
     if (score < config->postProcessMinConfidence)
       return;
 
-    insertLetter(letter, charposition, score);
+    insertLetter(letter, line_index, charposition, score);
 
     if (score < config->postProcessConfidenceSkipLevel)
     {
       float adjustedScore = abs(config->postProcessConfidenceSkipLevel - score) + config->postProcessMinConfidence;
-      insertLetter(SKIP_CHAR, charposition, adjustedScore );
+      insertLetter(SKIP_CHAR, line_index, charposition, adjustedScore );
     }
 
     //if (letter == '0')
@@ -91,7 +91,7 @@ namespace alpr
     //}
   }
 
-  void PostProcess::insertLetter(string letter, int charposition, float score)
+  void PostProcess::insertLetter(string letter, int line_index, int charposition, float score)
   {
     score = score - config->postProcessMinConfidence;
 
@@ -108,6 +108,7 @@ namespace alpr
     for (int i = 0; i < letters[charposition].size(); i++)
     {
       if (letters[charposition][i].letter == letter &&
+          letters[charposition][i].line_index == line_index &&
           letters[charposition][i].charposition == charposition)
       {
         existingIndex = i;
@@ -118,6 +119,7 @@ namespace alpr
     if (existingIndex == -1)
     {
       Letter newLetter;
+      newLetter.line_index = line_index;
       newLetter.charposition = charposition;
       newLetter.letter = letter;
       newLetter.occurences = 1;
@@ -179,7 +181,7 @@ namespace alpr
       for (int i = 0; i < letters.size(); i++)
       {
         for (int j = 0; j < letters[i].size(); j++)
-          cout << "PostProcess Letter: " << letters[i][j].charposition << " " << letters[i][j].letter << " -- score: " << letters[i][j].totalscore << " -- occurences: " << letters[i][j].occurences << endl;
+          cout << "PostProcess Line " << letters[i][j].line_index << " Letter: " << letters[i][j].charposition << " " << letters[i][j].letter << " -- score: " << letters[i][j].totalscore << " -- occurences: " << letters[i][j].occurences << endl;
       }
     }
 
@@ -340,6 +342,7 @@ namespace alpr
     possibility.matchesTemplate = false;
     int plate_char_length = 0;
 
+    int last_line = 0;
     for (int i = 0; i < letters.size(); i++)
     {
       if (letters[i].size() == 0)
@@ -347,6 +350,13 @@ namespace alpr
 
       Letter letter = letters[i][letterIndices[i]];
 
+      // Add a "\n" on new lines
+      if (letter.line_index != last_line)
+      {
+        possibility.letters = possibility.letters + "\n";
+      }
+      last_line = letter.line_index;
+      
       if (letter.letter != SKIP_CHAR)
       {
         possibility.letters = possibility.letters + letter.letter;
