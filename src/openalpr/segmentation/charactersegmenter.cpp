@@ -59,7 +59,8 @@ namespace alpr
       displayImage(config, "CharacterSegmenter  Thresholds", drawImageDashboard(pipeline_data->thresholds, CV_8U, 3));
     }
 
-
+    Mat edge_filter_mask = Mat::zeros(pipeline_data->thresholds[0].size(), CV_8U);
+    bitwise_not(edge_filter_mask, edge_filter_mask);
 
     for (unsigned int lineidx = 0; lineidx < pipeline_data->textLines.size(); lineidx++)
     {
@@ -153,7 +154,9 @@ namespace alpr
 
       getTimeMonotonic(&startTime);
 
-      filterEdgeBoxes(pipeline_data->thresholds, candidateBoxes, avgCharWidth, avgCharHeight);
+      Mat edge_mask = filterEdgeBoxes(pipeline_data->thresholds, candidateBoxes, avgCharWidth, avgCharHeight);
+      bitwise_and(edge_filter_mask, edge_mask, edge_filter_mask);
+      
       candidateBoxes = combineCloseBoxes(candidateBoxes);
 
       candidateBoxes = filterMostlyEmptyBoxes(pipeline_data->thresholds, candidateBoxes);
@@ -774,7 +777,7 @@ namespace alpr
     return newCharRegions;
   }
 
-  void CharacterSegmenter::filterEdgeBoxes(vector<Mat> thresholds, const vector<Rect> charRegions, float avgCharWidth, float avgCharHeight)
+  Mat CharacterSegmenter::filterEdgeBoxes(vector<Mat> thresholds, const vector<Rect> charRegions, float avgCharWidth, float avgCharHeight)
   {
     const float MIN_ANGLE_FOR_ROTATION = 0.4;
     int MIN_CONNECTED_EDGE_PIXELS = (avgCharHeight * 1.5);
@@ -785,6 +788,9 @@ namespace alpr
     if (alternate < MIN_CONNECTED_EDGE_PIXELS && alternate > avgCharHeight)
       MIN_CONNECTED_EDGE_PIXELS = alternate;
 
+    Mat empty_mask = Mat::zeros(thresholds[0].size(), CV_8U);
+    bitwise_not(empty_mask, empty_mask);
+    
     //
     // Pay special attention to the edge boxes.  If it's a skinny box, and the vertical height extends above our bounds... remove it.
     //while (charBoxes.size() > 0 && charBoxes[charBoxes.size() - 1].width < MIN_SEGMENT_WIDTH_EDGES)
@@ -797,7 +803,7 @@ namespace alpr
     // Check for long vertical lines.  Once the line is too long, mask the whole region
 
     if (charRegions.size() <= 1)
-      return;
+      return empty_mask;
 
     // Check both sides to see where the edges are
     // The first starts at the right edge of the leftmost char region and works its way left
@@ -917,10 +923,7 @@ namespace alpr
           cout << "Edge Filter: Entire right region is erased" << endl;
       }
 
-      for (unsigned int i = 0; i < thresholds.size(); i++)
-      {
-        bitwise_and(thresholds[i], mask, thresholds[i]);
-      }
+
 
       if (this->config->debugCharSegmenter)
       {
@@ -933,8 +936,11 @@ namespace alpr
         for (unsigned int z = 0; z < imgDbgCleanStages.size(); z++)
           fillMask(imgDbgCleanStages[z], invertedMask, Scalar(0,0,255));
       }
+      
+      return mask;
     }
 
+    return empty_mask;
   }
 
   int CharacterSegmenter::getLongestBlobLengthBetweenLines(Mat img, int col)

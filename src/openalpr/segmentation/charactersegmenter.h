@@ -77,7 +77,7 @@ namespace alpr
       void cleanCharRegions(std::vector<cv::Mat> thresholds, std::vector<cv::Rect> charRegions);
       void cleanBasedOnColor(std::vector<cv::Mat> thresholds, cv::Mat colorMask, std::vector<cv::Rect> charRegions);
       std::vector<cv::Rect> filterMostlyEmptyBoxes(std::vector<cv::Mat> thresholds, const  std::vector<cv::Rect> charRegions);
-      void filterEdgeBoxes(std::vector<cv::Mat> thresholds, const std::vector<cv::Rect> charRegions, float avgCharWidth, float avgCharHeight);
+      cv::Mat filterEdgeBoxes(std::vector<cv::Mat> thresholds, const std::vector<cv::Rect> charRegions, float avgCharWidth, float avgCharHeight);
 
       int getLongestBlobLengthBetweenLines(cv::Mat img, int col);
 
