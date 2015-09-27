@@ -107,9 +107,9 @@ int main( int argc, const char** argv )
   cout << "\tESC/Ent/Space	-- Back to plate selection" << endl;
 
   Config config(country);
-  config.debugGeneral = true;
-  config.debugCharAnalysis = true;
-  config.debugCharSegmenter = true;
+  config.debugGeneral = false;
+  config.debugCharAnalysis = false;
+  config.debugCharSegmenter = false;
   OCR ocr(&config);
 
   if (DirectoryExists(inDir.c_str()))
@@ -162,9 +162,9 @@ int main( int argc, const char** argv )
 
         int curDashboardSelection = 0;
 
-        vector<string> humanInputs(pipeline_data.charRegions.size());
+        vector<string> humanInputs(pipeline_data.charRegionsFlat.size());
 
-        for (int z = 0; z < pipeline_data.charRegions.size(); z++)
+        for (int z = 0; z < pipeline_data.charRegionsFlat.size(); z++)
           humanInputs[z] = SPACE;
 
         showDashboard(pipeline_data.thresholds, selectedBoxes, 0);
@@ -199,10 +199,10 @@ int main( int argc, const char** argv )
           }
           else if (waitkey == ENTER_KEY)
           {
-	    if (pipeline_data.charRegions.size() > 0)
+	    if (pipeline_data.charRegionsFlat.size() > 0)
 	    {
-	      vector<string> tempdata = showCharSelection(pipeline_data.thresholds[curDashboardSelection], pipeline_data.charRegions, statecodestr);
-	      for (int c = 0; c < pipeline_data.charRegions.size(); c++)
+	      vector<string> tempdata = showCharSelection(pipeline_data.thresholds[curDashboardSelection], pipeline_data.charRegionsFlat, statecodestr);
+	      for (int c = 0; c < pipeline_data.charRegionsFlat.size(); c++)
 		humanInputs[c] = tempdata[c];
 	    }
 	    else
@@ -228,7 +228,7 @@ int main( int argc, const char** argv )
                 break;
               }
             }
-            for (int c = 0; c < pipeline_data.charRegions.size(); c++)
+            for (int c = 0; c < pipeline_data.charRegionsFlat.size(); c++)
             {
               if (humanInputs[c] != SPACE)
               {
@@ -239,7 +239,7 @@ int main( int argc, const char** argv )
             // Save
             if (somethingSelected && chardataTagged)
             {
-              for (int c = 0; c < pipeline_data.charRegions.size(); c++)
+              for (int c = 0; c < pipeline_data.charRegionsFlat.size(); c++)
               {
                 if (humanInputs[c] == SPACE)
                   continue;
@@ -252,7 +252,7 @@ int main( int argc, const char** argv )
                   stringstream filename;
                   
                   // Ensure that crop rect does not extend beyond extent of image.
-                  cv::Rect char_region = expandRect(pipeline_data.charRegions[c], 0, 0, 
+                  cv::Rect char_region = expandRect(pipeline_data.charRegionsFlat[c], 0, 0, 
                           pipeline_data.thresholds[t].cols,
                           pipeline_data.thresholds[t].rows);
                   
