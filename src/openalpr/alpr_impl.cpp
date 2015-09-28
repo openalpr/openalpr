@@ -296,8 +296,8 @@ namespace alpr
           plateResult.plate_points[pointidx].x = (int) cornerPoints[pointidx].x;
           plateResult.plate_points[pointidx].y = (int) cornerPoints[pointidx].y;
         }
-        
-        if (detectRegion)
+
+        if (detectRegion && country_recognizers.stateDetector->isLoaded())
         {
           std::vector<StateCandidate> state_candidates = country_recognizers.stateDetector->detect(pipeline_data.color_deskewed.data,
                                                                                pipeline_data.color_deskewed.elemSize(),
