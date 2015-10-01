@@ -18,6 +18,7 @@
 */
 
 #include <opencv2/core/core.hpp>
+#include <functional>
 
 #include "utility.h"
 
