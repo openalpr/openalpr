@@ -196,27 +196,6 @@ namespace openalprnet
 			}
 		}
 
-		property float CharHeightMM {
-			float get()
-			{
-				return this->m_config->charHeightMM;
-			}
-			void set(float value)
-			{
-				this->m_config->charHeightMM = value;
-			}
-		}
-
-		property float CharWidthMM {
-			float get()
-			{
-				return this->m_config->charWidthMM;
-			}
-			void set(float value)
-			{
-				this->m_config->charWidthMM = value;
-			}
-		}
 
 		property float CharWhitespaceTopMM {
 			float get()
