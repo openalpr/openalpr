@@ -310,7 +310,7 @@ namespace alpr
         consecutiveNonMatches += 1;
       permutations.pop();
 
-      if (allPossibilities.size() >= topn || consecutiveNonMatches >= 10)
+      if (allPossibilities.size() >= topn || consecutiveNonMatches >= (topn*2))
         break;
 
       // add child permutations to queue
