@@ -31,8 +31,8 @@
     <OpenALPRDistDir Condition="$(CudaGeneration)=='None'">$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)</OpenALPRDistDir>
     <OpenALPRDistDir Condition="$(CudaGeneration)=='Fermi'">$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)_CUDA_Fermi</OpenALPRDistDir>
     <OpenALPRDistDir Condition="$(CudaGeneration)=='Kepler'">$(OpenALPRWindowsDir)\build\dist\$(OpenALPRVersion)\$(PlatformToolset)\$(Configuration)\$(Platform)_CUDA_Kepler</OpenALPRDistDir>
-    <OpenCVVersion>248</OpenCVVersion>
-    <TesseractVersion>304</TesseractVersion>
+    <OpenCVVersion>300</OpenCVVersion>
+    <TesseractVersion>303</TesseractVersion>
     <LeptonicaVersion>170</LeptonicaVersion>
     <DebugPrefix Condition="'$(Configuration)'=='Debug'">d</DebugPrefix>
     <DebugPrefix Condition="'$(Configuration)'!='Debug'">
