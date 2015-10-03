@@ -286,6 +286,7 @@ namespace alpr
         
         plateResult.regionConfidence = 0;
         plateResult.plate_index = platecount++;
+        plateResult.requested_topn = topN;
 
         // If using prewarp, remap the plate corners to the original image
         vector<Point2f> cornerPoints = pipeline_data.plate_corners;
