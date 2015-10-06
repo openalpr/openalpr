@@ -114,9 +114,7 @@ namespace alpr
 
     AlprFullDetails response;
 
-    response.results.epoch_time = getEpochTimeMs();
-    response.results.img_width = img.cols;
-    response.results.img_height = img.rows;
+    int64_t start_time = getEpochTimeMs();
 
     // Fix regions of interest in case they extend beyond the bounds of the image
     for (unsigned int i = 0; i < regionsOfInterest.size(); i++)
@@ -159,6 +157,10 @@ namespace alpr
       config->setCountry(config->loaded_countries[i]);
       AlprFullDetails sub_results = analyzeSingleCountry(img, grayImg, warpedRegionsOfInterest);
 
+      sub_results.results.epoch_time = start_time;
+      sub_results.results.img_width = img.cols;
+      sub_results.results.img_height = img.rows;
+      
       aggregator.addResults(sub_results);
     }
     response = aggregator.getAggregateResults();
@@ -226,7 +228,7 @@ namespace alpr
   AlprFullDetails AlprImpl::analyzeSingleCountry(cv::Mat colorImg, cv::Mat grayImg, std::vector<cv::Rect> warpedRegionsOfInterest)
   {
     AlprFullDetails response;
-
+    
     AlprRecognizers country_recognizers = recognizers[config->country];
     timespec startTime;
     getTimeMonotonic(&startTime);
