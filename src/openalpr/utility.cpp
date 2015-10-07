@@ -19,6 +19,7 @@
 
 #include <opencv2/core/core.hpp>
 #include <functional>
+#include <cctype>
 
 #include "utility.h"
 
