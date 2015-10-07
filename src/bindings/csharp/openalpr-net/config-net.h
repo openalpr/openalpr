@@ -384,6 +384,17 @@ namespace openalprnet
 			}
 		}
 
+		property bool MustMatchPattern {
+			bool get()
+			{
+				return this->m_config->mustMatchPattern;
+			}
+			void set(bool value)
+			{
+				this->m_config->mustMatchPattern = value;
+			}
+		}
+
 		property String^ OcrLanguage {
 			String^ get()
 			{
