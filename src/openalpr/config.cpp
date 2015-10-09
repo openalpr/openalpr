@@ -278,6 +278,8 @@ namespace alpr
     plateLinesSensitivityVertical = getFloat(ini, "", "plateline_sensitivity_vertical", 0);
     plateLinesSensitivityHorizontal = getFloat(ini, "", "plateline_sensitivity_horizontal", 0);
 
+    detectorFile = getString(ini, "", "detector_file", "");
+    
     ocrLanguage = getString(ini, "", "ocr_language", "none");
 
     postProcessRegexLetters = getString(ini, "", "postprocess_regex_letters", "\\pL");

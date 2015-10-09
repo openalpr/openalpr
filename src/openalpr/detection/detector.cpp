@@ -54,6 +54,14 @@ namespace alpr
     std::vector<PlateRegion> rois;
     return rois;
   }
+  
+  std::string Detector::get_detector_file() {
+    if (config->detectorFile.length() == 0)
+      return config->getCascadeRuntimeDir() + config->country + ".xml";
+    
+    return config->getCascadeRuntimeDir() + config->detectorFile;
+  }
+
 
   float Detector::computeScaleFactor(int width, int height) {
     

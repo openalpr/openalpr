@@ -30,14 +30,14 @@ namespace alpr
 
 
 
-    if( this->plate_cascade.load( config->getCascadeRuntimeDir() + config->country + ".xml" ) )
+    if( this->plate_cascade.load( get_detector_file() ) )
     {
       this->loaded = true;
     }
     else
     {
       this->loaded = false;
-      printf("--(!)Error loading CPU classifier\n");
+      printf("--(!)Error loading CPU classifier %s\n", get_detector_file().c_str());
     }
   }
 

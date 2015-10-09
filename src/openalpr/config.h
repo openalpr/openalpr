@@ -102,6 +102,8 @@ namespace alpr
       float segmentationMinCharHeightPercent;
       float segmentationMaxCharWidthvsAverage;
 
+      std::string detectorFile;
+      
       std::string ocrLanguage;
       int ocrMinFontSize;
 
