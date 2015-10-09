@@ -33,7 +33,7 @@ namespace alpr
 
 
 
-    if( this->cuda_cascade.load( config->getCascadeRuntimeDir() + config->country + ".xml" ) )
+    if( this->cuda_cascade.load( get_detector_file() ) )
     {
       this->loaded = true;
       printf("--(!)Loaded CUDA classifier\n");
@@ -41,7 +41,7 @@ namespace alpr
     else
     {
       this->loaded = false;
-      printf("--(!)Error loading CUDA classifier\n");
+      printf("--(!)Error loading CPU classifier %s\n", get_detector_file().c_str());
     }
   }
 

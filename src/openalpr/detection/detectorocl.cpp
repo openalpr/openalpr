@@ -83,14 +83,14 @@ namespace alpr
       this->loaded = false;
       cerr << "OpenCL not detected" << endl;
     }
-	else if( this->plate_cascade.load( config->getCascadeRuntimeDir() + config->country + ".xml" ) )
+	else if( this->plate_cascade.load( get_detector_file() ) )
 		{
 			this->loaded = true;
 		}
 		else
 		{
 			this->loaded = false;
-			cout << "--(!)Error loading cascade " << config->country << ".xml\n" << endl;
+			cerr << "--(!)Error loading cascade " << get_detector_file() << "\n" << endl;
 		}
   }
 

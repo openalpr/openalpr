@@ -54,6 +54,8 @@ namespace alpr
 
       bool loaded;
 
+      std::string get_detector_file();
+      
       float computeScaleFactor(int width, int height);
       std::vector<PlateRegion> aggregateRegions(std::vector<cv::Rect> regions);
 
