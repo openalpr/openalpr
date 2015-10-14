@@ -54,7 +54,7 @@ const int LEFT_ARROW_KEY = 81;
 const int RIGHT_ARROW_KEY = 83;
 const int SPACE_KEY = 32;
 const string SPACE = " ";
-const int ENTER_KEY = 10;
+const int ENTER_KEY = 13;
 const int ESCAPE_KEY = 27;
 
 const int DOWN_ARROW_KEY = 84;
