@@ -167,7 +167,7 @@ int main( int argc, const char** argv )
     alpr.setDetectRegion(true);
 
     Detector* plateDetector = createDetector(&config);
-    StateDetector stateDetector(country, config.runtimeBaseDir);
+    StateDetector stateDetector(country, config.config_file_path, config.runtimeBaseDir);
     OCR ocr(&config);
 
     vector<double> endToEndTimes;
