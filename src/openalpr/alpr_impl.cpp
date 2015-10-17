@@ -410,36 +410,62 @@ namespace alpr
 
   AlprResults AlprImpl::recognize( std::vector<char> imageBytes)
   {
-    cv::Mat img = cv::imdecode(cv::Mat(imageBytes), 1);
-
-    return this->recognize(img);
+    try
+    {
+      cv::Mat img = cv::imdecode(cv::Mat(imageBytes), 1);
+      return this->recognize(img);
+    }
+    catch (cv::Exception& e)
+    {
+      std::cerr << "Caught exception in OpenALPR recognize: " << e.msg << std::endl;
+      AlprResults emptyresults;
+      return emptyresults;
+    }
   }
 
   AlprResults AlprImpl::recognize(std::vector<char> imageBytes, std::vector<AlprRegionOfInterest> regionsOfInterest)
   {
-	  cv::Mat img = cv::imdecode(cv::Mat(imageBytes), 1);
+    try
+    {
+      cv::Mat img = cv::imdecode(cv::Mat(imageBytes), 1);
 
-    std::vector<cv::Rect> rois = convertRects(regionsOfInterest);
+      std::vector<cv::Rect> rois = convertRects(regionsOfInterest);
 
-    AlprFullDetails fullDetails = recognizeFullDetails(img, rois);
-    return fullDetails.results;
+      AlprFullDetails fullDetails = recognizeFullDetails(img, rois);
+      return fullDetails.results;
+    }
+    catch (cv::Exception& e)
+    {
+      std::cerr << "Caught exception in OpenALPR recognize: " << e.msg << std::endl;
+      AlprResults emptyresults;
+      return emptyresults;
+    }
   }
 
   AlprResults AlprImpl::recognize( unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight, std::vector<AlprRegionOfInterest> regionsOfInterest)
   {
 
-    int arraySize = imgWidth * imgHeight * bytesPerPixel;
-    cv::Mat imgData = cv::Mat(arraySize, 1, CV_8U, pixelData);
-    cv::Mat img = imgData.reshape(bytesPerPixel, imgHeight);
-
-    if (regionsOfInterest.size() == 0)
+    try
     {
-      AlprRegionOfInterest fullFrame(0,0, img.cols, img.rows);
+      int arraySize = imgWidth * imgHeight * bytesPerPixel;
+      cv::Mat imgData = cv::Mat(arraySize, 1, CV_8U, pixelData);
+      cv::Mat img = imgData.reshape(bytesPerPixel, imgHeight);
 
-      regionsOfInterest.push_back(fullFrame);
+      if (regionsOfInterest.size() == 0)
+      {
+        AlprRegionOfInterest fullFrame(0,0, img.cols, img.rows);
+
+        regionsOfInterest.push_back(fullFrame);
+      }
+
+      return this->recognize(img, this->convertRects(regionsOfInterest));
     }
-
-    return this->recognize(img, this->convertRects(regionsOfInterest));
+    catch (cv::Exception& e)
+    {
+      std::cerr << "Caught exception in OpenALPR recognize: " << e.msg << std::endl;
+      AlprResults emptyresults;
+      return emptyresults;
+    }
   }
 
   AlprResults AlprImpl::recognize(cv::Mat img)
