@@ -43,53 +43,51 @@ namespace alpr
     this->loaded = false;
 
 
-    string configFile;
 
     char* envConfigFile;
     envConfigFile = getenv (ENV_VARIABLE_CONFIG_FILE);
     if (config_file.compare("") != 0)
     {
         // User has supplied a config file.  Use that.
-      configFile = config_file;
+      config_file_path = config_file;
       debug_message = "Config file location provided via API";
     }
     else if (envConfigFile != NULL)
     {
       // Environment variable is non-empty.  Use that.
-      configFile = envConfigFile;
+      config_file_path = envConfigFile;
       debug_message = "Config file location provided via environment variable: " + string(ENV_VARIABLE_CONFIG_FILE);
     }
     else if (DirectoryExists(getExeDir().c_str()) && fileExists((getExeDir() + CONFIG_FILE).c_str()))
     {
-          configFile = getExeDir() + CONFIG_FILE;
+          config_file_path = getExeDir() + CONFIG_FILE;
       debug_message = "Config file location provided via exe location";
     }
     else
     {
       // Use the default
-      configFile = DEFAULT_CONFIG_FILE;
+      config_file_path = DEFAULT_CONFIG_FILE;
       debug_message = "Config file location provided via default location";
     }
 
-    //string configFile = (this->runtimeBaseDir + CONFIG_FILE);
 
-    if (fileExists(configFile.c_str()) == false)
+    if (fileExists(config_file_path.c_str()) == false)
     {
-      std::cerr << "--(!) Config file '" << configFile << "' does not exist!" << endl;
+      std::cerr << "--(!) Config file '" << config_file_path << "' does not exist!" << endl;
       std::cerr << "--(!)             You can specify the configuration file location via the command line " << endl;
       std::cerr << "--(!)             or by setting the environment variable '" << ENV_VARIABLE_CONFIG_FILE << "'" << endl;
       return;
     }
-    else if (DirectoryExists(configFile.c_str()))
+    else if (DirectoryExists(config_file_path.c_str()))
     {
-      std::cerr << "--(!) Config file '" << configFile << "' was specified as a directory, rather than a file!" << endl;
+      std::cerr << "--(!) Config file '" << config_file_path << "' was specified as a directory, rather than a file!" << endl;
       std::cerr << "--(!)             Please specify the full path to the 'openalpr.conf file'" << endl;
       std::cerr << "--(!)             e.g., /etc/openalpr/openalpr.conf" << endl;
       return;
     }
 
 
-    loadCommonValues(configFile);
+    loadCommonValues(config_file_path);
 
     if (runtime_dir.compare("") != 0)
     {
@@ -108,7 +106,7 @@ namespace alpr
     if (DirectoryExists(this->runtimeBaseDir.c_str()) == false)
     {
       std::cerr << "--(!) Runtime directory '" << this->runtimeBaseDir << "' does not exist!" << endl;
-      std::cerr << "--(!)                   Please update the OpenALPR config file: '" << configFile << "'" << endl;
+      std::cerr << "--(!)                   Please update the OpenALPR config file: '" << config_file_path << "'" << endl;
       std::cerr << "--(!)                   to point to the correct location of your runtime_dir" << endl;
       return;
     }
