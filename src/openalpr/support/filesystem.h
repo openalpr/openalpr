@@ -41,6 +41,9 @@ namespace alpr
   bool stringCompare( const std::string &left, const std::string &right );
 
   bool makePath(const char* path, mode_t mode);
+  
+  std::string get_directory_from_path(std::string file_path);
+  std::string get_filename_from_path(std::string file_path);
 }
 
 #endif // FILESYSTEM_H
