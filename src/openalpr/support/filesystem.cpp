@@ -114,7 +114,34 @@ namespace alpr
     int lastindex = filename.find_last_of(".");
     return filename.substr(0, lastindex);
   }
+  
+  std::string get_filename_from_path(std::string file_path)
+  {
 
+    size_t found;
+    found=file_path.find_last_of("/\\");
+    
+    if (found >= 0)
+      return file_path.substr(found+1);
+    
+    return "";
+   
+  }
+
+  std::string get_directory_from_path(std::string file_path)
+  {
+    if (DirectoryExists(file_path.c_str()))
+      return file_path;
+    
+    size_t found;
+    
+    found=file_path.find_last_of("/\\");
+    
+    if (found >= 0)
+      return file_path.substr(0,found);
+    
+    return "";
+  }
 
   #ifdef WINDOWS
   // Stub out these functions on Windows.  They're used for the daemon anyway, which isn't supported on Windows.
