@@ -24,7 +24,7 @@ using namespace std;
 
 namespace alpr {
 
-  StateDetector::StateDetector(const std::string country, const std::string runtimeDir)  {
+  StateDetector::StateDetector(const std::string country, const std::string configFile, const std::string runtimeDir)  {
     impl = new StateDetectorImpl(country, runtimeDir);
   }
 

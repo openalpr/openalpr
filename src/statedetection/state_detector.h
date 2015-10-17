@@ -35,7 +35,7 @@ namespace alpr {
   class StateDetector {
 
     public:
-      StateDetector(const std::string country, const std::string runtimeDir);
+      StateDetector(const std::string country, const std::string configFile, const std::string runtimeDir);
       virtual ~StateDetector();
 
       bool isLoaded();

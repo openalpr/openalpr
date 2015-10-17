@@ -59,7 +59,7 @@ int main( int argc, const char** argv )
   }
 
   Config config("us");
-  StateDetector identifier(config.country, config.runtimeBaseDir);
+  StateDetector identifier(config.country, config.config_file_path, config.runtimeBaseDir);
 
   if (DirectoryExists(outDir.c_str()) == false)
   {

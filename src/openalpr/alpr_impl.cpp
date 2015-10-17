@@ -53,13 +53,9 @@ namespace alpr
       recognizer.plateDetector = createDetector(config);
       recognizer.ocr = new OCR(config);
 
-      recognizer.stateDetector = new StateDetector(this->config->country, this->config->runtimeBaseDir);
-
-
-
+      recognizer.stateDetector = new StateDetector(this->config->country, this->config->config_file_path, this->config->runtimeBaseDir);
 
       recognizers[config->country] = recognizer;
-
 
     }
 
