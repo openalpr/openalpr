@@ -41,6 +41,8 @@ namespace alpr
       virtual ~Config();
 
       bool loaded;
+      
+      std::string config_file_path;
 
       std::string country;
 
