@@ -40,28 +40,31 @@ using namespace alpr;
 #ifdef __APPLE__
 const int LEFT_ARROW_KEY = 2;
 const int RIGHT_ARROW_KEY = 3;
-const int SPACE_KEY = 32;
-const string SPACE = " ";
-const int ENTER_KEY = 13;
-const int ESCAPE_KEY = 27;
 
 const int DOWN_ARROW_KEY = 1;
 const int UP_ARROW_KEY= 0;
-const int DASHBOARD_COLUMNS = 9;
 
+#elif WIN32
+const int LEFT_ARROW_KEY = 2424832;
+const int RIGHT_ARROW_KEY = 2555904;
+
+const int DOWN_ARROW_KEY = 2621440;
+const int UP_ARROW_KEY = 2490368;
 #else
 const int LEFT_ARROW_KEY = 81;
 const int RIGHT_ARROW_KEY = 83;
-const int SPACE_KEY = 32;
-const string SPACE = " ";
-const int ENTER_KEY = 10;
-const int ESCAPE_KEY = 27;
 
 const int DOWN_ARROW_KEY = 84;
 const int UP_ARROW_KEY= 82;
-const int DASHBOARD_COLUMNS = 3;
 
 #endif
+
+const string SPACE = " ";
+const int SPACE_KEY = 32;
+const int ESCAPE_KEY = 27;
+const int ENTER_KEY_ONE = 13;
+const int ENTER_KEY_TWO = 10;
+const int DASHBOARD_COLUMNS = 3;
 
 void showDashboard(vector<Mat> images, vector<bool> selectedImages, int selectedIndex);
 vector<string> showCharSelection(Mat image, vector<Rect> charRegions, string state);
@@ -169,9 +172,9 @@ int main( int argc, const char** argv )
 
         showDashboard(pipeline_data.thresholds, selectedBoxes, 0);
 
-        char waitkey = (char) waitKey(50);
+        int waitkey = waitKey(50);
 
-        while (waitkey != 'n' && waitkey != 'p')	 // Next image
+        while ((char) waitkey != 'n' && (char) waitkey != 'p')	 // Next image
         {
           if (waitkey == LEFT_ARROW_KEY) // left arrow key
           {
@@ -197,7 +200,7 @@ int main( int argc, const char** argv )
               curDashboardSelection -= DASHBOARD_COLUMNS;
             showDashboard(pipeline_data.thresholds, selectedBoxes, curDashboardSelection);
           }
-          else if (waitkey == ENTER_KEY)
+          else if (waitkey == ENTER_KEY_ONE || waitkey == ENTER_KEY_TWO)
           {
 	    if (pipeline_data.charRegionsFlat.size() > 0)
 	    {
@@ -210,12 +213,12 @@ int main( int argc, const char** argv )
 	      cout << "No character regions available in this image" << endl;
 	    }
           }
-          else if (waitkey == SPACE_KEY)
+          else if ((char) waitkey == SPACE_KEY)
           {
             selectedBoxes[curDashboardSelection] = !selectedBoxes[curDashboardSelection];
             showDashboard(pipeline_data.thresholds, selectedBoxes, curDashboardSelection);
           }
-          else if (waitkey == 's' || waitkey == 'S' )
+          else if ((char) waitkey == 's' || (char) waitkey == 'S' )
           {
 
             bool somethingSelected = false;
@@ -268,17 +271,18 @@ int main( int argc, const char** argv )
             else if (chardataTagged == false)
               cout << "You have not tagged any characters" << endl;
 
-            if (waitkey == 'W')
+            if ((char) waitkey == 'W')
             {
               waitkey = 'n';
               continue;
             }
           }
 
-          waitkey = (char) waitKey(50);
+          waitkey = waitKey(50);
+		  //std::cout << "key: " << (int) waitkey << std::endl;
         }
 
-        if (waitkey == 'p')
+        if ((char) waitkey == 'p')
           i = i - 2;
         if (i < -1)
           i = -1;
@@ -329,7 +333,7 @@ vector<string> showCharSelection(Mat image, vector<Rect> charRegions, string sta
   RegexRule regex_rule("", "[\\pL\\pN]", "", "");
   
   int16_t waitkey = waitKey(50);
-  while (waitkey != ENTER_KEY && waitkey != ESCAPE_KEY)
+  while (waitkey != ENTER_KEY_ONE && waitkey != ENTER_KEY_TWO && waitkey != ESCAPE_KEY)
   {
     Mat imgCopy(image.size(), image.type());
     image.copyTo(imgCopy);
@@ -356,7 +360,7 @@ vector<string> showCharSelection(Mat image, vector<Rect> charRegions, string sta
 
       if (curCharIdx >= charRegions.size())
       {
-        waitkey = ENTER_KEY;
+        waitkey = ENTER_KEY_ONE;
         break;
       }
     }
@@ -369,7 +373,7 @@ vector<string> showCharSelection(Mat image, vector<Rect> charRegions, string sta
     waitkey = waitKey(50);
   }
 
-  if (waitkey == ENTER_KEY)
+  if (waitkey == ENTER_KEY_ONE || waitkey == ENTER_KEY_TWO)
   {
     // Save all the inputs
     for (int i = 0; i < charRegions.size(); i++)
