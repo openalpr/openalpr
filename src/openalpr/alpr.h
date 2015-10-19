@@ -25,6 +25,12 @@
 #include <fstream> 
 #include <stdint.h>
 
+#ifdef WIN32
+  #define OPENALPR_DLL_EXPORT __declspec( dllexport )
+#else
+  #define OPENALPR_DLL_EXPORT 
+#endif
+
 namespace alpr
 {
   
@@ -118,7 +124,7 @@ namespace alpr
 
   class Config;
   class AlprImpl;
-  class Alpr
+  class OPENALPR_DLL_EXPORT Alpr
   {
 
     public:
