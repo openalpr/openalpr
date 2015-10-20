@@ -1,3 +1,18 @@
+openalpr (2.2.0-0.1) experimental; urgency=low
+
+  * Non-maintainer upload
+  * Added training data for Singapore and Great Britain
+  * Improved accuracy and reduced false positives for US plate detector
+  * Improved support for 2-line plates (requires training data)
+  * Supports analyzing multiple training datasets in one pass
+  * Added OpenCL GPU support (works with Nvidia, AMD, and Intel GPUs)
+  * Upgraded to OpenCV 3.0
+  * Support Tesseract 3.04
+  * .NET library API improvements
+  * Bug Fixes
+
+ -- Matthew Hill <matthill@openalpr.com>  Mon, 19 Oct 2015 18:15:00 -0500
+
 openalpr (2.1.0-0.1) experimental; urgency=low
 
   * Non-maintainer upload
