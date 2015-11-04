@@ -52,18 +52,37 @@ IF (WIN32 AND WITH_DAEMON)
   SET(WITH_DAEMON OFF)
 ENDIF()
 
-FIND_PACKAGE( Tesseract REQUIRED )
+IF(Tesseract_IOS_FRAMEWORK_PATH AND Leptonica_IOS_FRAMEWORK_PATH) 
+  MESSAGE(STATUS "Using Tesseract iOS framework: ${Tesseract_IOS_FRAMEWORK_PATH}")
+  MESSAGE(STATUS "Using Leptonica iOS framework: ${Leptonica_IOS_FRAMEWORK_PATH}")
+  # http://www.vtk.org/Wiki/CMake:HowToUseExistingOSXFrameworks
+  SET(Tesseract_LIBRARIES "${Tesseract_IOS_FRAMEWORK_PATH};${Leptonica_IOS_FRAMEWORK_PATH}")
+  SET(Tesseract_INCLUDE_DIRS "${Tesseract_IOS_FRAMEWORK_PATH}/Headers")
+ELSE()
+  FIND_PACKAGE( Tesseract REQUIRED )
+ENDIF()
 
 include_directories(${Tesseract_INCLUDE_DIRS})
 
-# Discover OpenCV directory automatically
-find_path(OpenCV_DIR
-  NAMES OpenCVConfig.cmake
-  HINTS ${CMAKE_SOURCE_DIR}/../libraries/opencv/
-        /storage/projects/alpr/libraries/opencv/
-)
-# Opencv Package
-FIND_PACKAGE( OpenCV REQUIRED )
+IF(OpenCV_IOS_FRAMEWORK_PATH)
+  MESSAGE(STATUS "Using OpenCV iOS framework: ${OpenCV_IOS_FRAMEWORK_PATH}")
+  SET(OpenCV_INCLUDE_DIRS "${OpenCV_IOS_FRAMEWORK_PATH}/Headers")
+  SET(OpenCV_LIBS ${OpenCV_IOS_FRAMEWORK_PATH})
+
+  # OpenCV's released framework has this disabled, so we must too.
+  # http://stackoverflow.com/a/32710441/868173
+  SET(CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE NO)
+ELSE()
+  # Discover OpenCV directory automatically
+  find_path(OpenCV_DIR
+    NAMES OpenCVConfig.cmake
+    HINTS ${CMAKE_SOURCE_DIR}/../libraries/opencv/
+    /storage/projects/alpr/libraries/opencv/
+    )
+  # Opencv Package
+  FIND_PACKAGE( OpenCV REQUIRED )
+ENDIF()
+
 IF (${OpenCV_VERSION} VERSION_LESS 2.4.7)
 	MESSAGE(FATAL_ERROR "OpenCV version is not compatible : ${OpenCV_VERSION}")
 ENDIF()
@@ -94,7 +113,9 @@ ENDIF()
 
 
 set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall ")
-ADD_EXECUTABLE( alpr  main.cpp )
+if (NOT IOS)
+  ADD_EXECUTABLE( alpr  main.cpp )
+ENDIF()
 
 if (WIN32) 
    SET(OPENALPR_LIB openalpr-static)
@@ -102,15 +123,17 @@ ELSE()
    SET(OPENALPR_LIB openalpr)
 ENDIF()
 
-TARGET_LINK_LIBRARIES(alpr
-	${OPENALPR_LIB}
-	statedetection
-	support
+if (NOT IOS)
+  TARGET_LINK_LIBRARIES(alpr
+    ${OPENALPR_LIB}
+    statedetection
+    support
     video
-	${OpenCV_LIBS}
-	${Tesseract_LIBRARIES}
+    ${OpenCV_LIBS}
+    ${Tesseract_LIBRARIES}
     ${Extra_LIBS}
   )
+ENDIF()
 
 # Compile the alprd library on Unix-based OS
 IF (WITH_DAEMON)
@@ -149,8 +172,10 @@ if (WITH_BINDING_PYTHON)
 add_subdirectory(bindings/python)
 ENDIF()
 
-install (TARGETS    alpr DESTINATION   ${CMAKE_INSTALL_PREFIX}/bin)
-install (FILES      ${CMAKE_SOURCE_DIR}/../doc/man/alpr.1 DESTINATION       ${CMAKE_INSTALL_PREFIX}/share/man/man1 COMPONENT doc)
+if (NOT IOS)
+  install (TARGETS    alpr DESTINATION   ${CMAKE_INSTALL_PREFIX}/bin)
+  install (FILES      ${CMAKE_SOURCE_DIR}/../doc/man/alpr.1 DESTINATION       ${CMAKE_INSTALL_PREFIX}/share/man/man1 COMPONENT doc)
+ENDIF()
 install (DIRECTORY  ${CMAKE_SOURCE_DIR}/../runtime_data DESTINATION         ${CMAKE_INSTALL_PREFIX}/share/openalpr)
 
 # set runtime_data to reflect the current CMAKE_INSTALL_PREFIX

@@ -8,7 +8,7 @@ set(statedetector_source_files
   state_detector_impl.cpp
 )
 
-if (WIN32) 
+if (WIN32 OR IOS) 
 	add_library(statedetection 		STATIC ${statedetector_source_files} )
 ELSE()
 	add_library(statedetection 		SHARED ${statedetector_source_files} )
