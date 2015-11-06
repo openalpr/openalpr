@@ -1,3 +1,4 @@
+openalpr : read the .gitignore , git add -A openalpr/ , 20151106
 openalpr---caroid, 20150913,origin
 ========
 
