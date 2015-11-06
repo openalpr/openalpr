@@ -84,6 +84,9 @@ namespace alpr
       // The number requested is always >= the topNPlates count
       int requested_topn;
 
+      // The country (training data code) that was used to recognize the plate
+      std::string country;
+      
       // the best plate is the topNPlate with the highest confidence
       AlprPlate bestPlate;
       
