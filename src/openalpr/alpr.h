@@ -110,10 +110,13 @@ namespace alpr
   class AlprResults
   {
     public:
-      AlprResults() {};
+      AlprResults() {
+        frame_number = -1;
+      };
       virtual ~AlprResults() {};
 
       int64_t epoch_time;
+      int64_t frame_number;
       int img_width;
       int img_height;
       float total_processing_time_ms;
