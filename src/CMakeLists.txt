@@ -52,22 +52,22 @@ IF (WIN32 AND WITH_DAEMON)
   SET(WITH_DAEMON OFF)
 ENDIF()
 
-IF(Tesseract_IOS_FRAMEWORK_PATH AND Leptonica_IOS_FRAMEWORK_PATH) 
-  MESSAGE(STATUS "Using Tesseract iOS framework: ${Tesseract_IOS_FRAMEWORK_PATH}")
-  MESSAGE(STATUS "Using Leptonica iOS framework: ${Leptonica_IOS_FRAMEWORK_PATH}")
+IF(Tesseract_FRAMEWORK_PATH AND Leptonica_FRAMEWORK_PATH) 
+  MESSAGE(STATUS "Using Tesseract iOS framework: ${Tesseract_FRAMEWORK_PATH}")
+  MESSAGE(STATUS "Using Leptonica iOS framework: ${Leptonica_FRAMEWORK_PATH}")
   # http://www.vtk.org/Wiki/CMake:HowToUseExistingOSXFrameworks
-  SET(Tesseract_LIBRARIES "${Tesseract_IOS_FRAMEWORK_PATH};${Leptonica_IOS_FRAMEWORK_PATH}")
-  SET(Tesseract_INCLUDE_DIRS "${Tesseract_IOS_FRAMEWORK_PATH}/Headers")
+  SET(Tesseract_LIBRARIES "${Tesseract_FRAMEWORK_PATH};${Leptonica_FRAMEWORK_PATH}")
+  SET(Tesseract_INCLUDE_DIRS "${Tesseract_FRAMEWORK_PATH}/Headers")
 ELSE()
   FIND_PACKAGE( Tesseract REQUIRED )
 ENDIF()
 
 include_directories(${Tesseract_INCLUDE_DIRS})
 
-IF(OpenCV_IOS_FRAMEWORK_PATH)
-  MESSAGE(STATUS "Using OpenCV iOS framework: ${OpenCV_IOS_FRAMEWORK_PATH}")
-  SET(OpenCV_INCLUDE_DIRS "${OpenCV_IOS_FRAMEWORK_PATH}/Headers")
-  SET(OpenCV_LIBS ${OpenCV_IOS_FRAMEWORK_PATH})
+IF(OpenCV_FRAMEWORK_PATH)
+  MESSAGE(STATUS "Using OpenCV iOS framework: ${OpenCV_FRAMEWORK_PATH}")
+  SET(OpenCV_INCLUDE_DIRS "${OpenCV_FRAMEWORK_PATH}/Headers")
+  SET(OpenCV_LIBS ${OpenCV_FRAMEWORK_PATH})
 
   # OpenCV's released framework has this disabled, so we must too.
   # http://stackoverflow.com/a/32710441/868173
