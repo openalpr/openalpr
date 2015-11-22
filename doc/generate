@@ -1,0 +1,3 @@
+#!/bin/bash
+
+make -f makefile clean && make -f makefile html

@@ -1,0 +1,13 @@
+Babel==2.1.1
+Jinja2==2.8
+MarkupSafe==0.23
+Pygments==2.0.2
+Sphinx==1.3.1
+alabaster==0.7.6
+argparse==1.2.1
+docutils==0.12
+pytz==2015.7
+six==1.10.0
+snowballstemmer==1.2.0
+sphinx-rtd-theme==0.1.9
+wsgiref==0.1.2
