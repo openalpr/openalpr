@@ -42,5 +42,8 @@ src.sln
 Debug/
 Release/
 
+# JetBrains IDEA / PyCharm
+.idea/
+
 
 cmake_install.cmake
