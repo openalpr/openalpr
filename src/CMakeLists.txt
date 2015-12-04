@@ -135,18 +135,21 @@ if (NOT IOS)
   )
 ENDIF()
 
+
 # Compile the alprd library on Unix-based OS
 IF (WITH_DAEMON)
   ADD_EXECUTABLE( alprd  daemon.cpp daemon/beanstalk.c daemon/beanstalk.cc )
 
+  FIND_PACKAGE( log4cplus REQUIRED )
+
   TARGET_LINK_LIBRARIES(alprd
-	  openalpr
+      ${OPENALPR_LIB}
 	  support
       video
 	  curl
-	  log4cplus
 	  ${OpenCV_LIBS}
 	  ${Tesseract_LIBRARIES}
+	  ${log4cplus_LIBRARIES}
       ${Extra_LIBS}
     )
 	
