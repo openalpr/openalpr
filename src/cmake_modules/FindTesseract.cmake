@@ -17,6 +17,8 @@ find_path(Tesseract_INCLUDE_BASEAPI_DIR
         "/usr/include/tesseract"
         "/usr/local/include"
         "/usr/local/include/tesseract"
+        "/opt/local/include"
+        "/opt/local/include/tesseract"
         ${Tesseract_PKGCONF_INCLUDE_DIRS}
 		${CMAKE_SOURCE_DIR}/../libraries/tesseract-ocr/api/
 )
@@ -26,6 +28,8 @@ find_path(Tesseract_INCLUDE_CCSTRUCT_DIR
         "/usr/include/tesseract"
         "/usr/local/include"
         "/usr/local/include/tesseract"
+        "/opt/local/include"
+        "/opt/local/include/tesseract"
         ${Tesseract_PKGCONF_INCLUDE_DIRS}
 		${CMAKE_SOURCE_DIR}/../libraries/tesseract-ocr/ccstruct/
 )
@@ -35,6 +39,8 @@ find_path(Tesseract_INCLUDE_CCMAIN_DIR
         "/usr/include/tesseract"
         "/usr/local/include"
         "/usr/local/include/tesseract"
+        "/opt/local/include"
+        "/opt/local/include/tesseract"
         ${Tesseract_PKGCONF_INCLUDE_DIRS}
 		${CMAKE_SOURCE_DIR}/../libraries/tesseract-ocr/ccmain/
 )
@@ -44,6 +50,8 @@ find_path(Tesseract_INCLUDE_CCUTIL_DIR
         "/usr/include/tesseract"
         "/usr/local/include"
         "/usr/local/include/tesseract"
+        "/opt/local/include"
+        "/opt/local/include/tesseract"
         ${Tesseract_PKGCONF_INCLUDE_DIRS}
 		${CMAKE_SOURCE_DIR}/../libraries/tesseract-ocr/ccutil/
 )
@@ -54,6 +62,7 @@ find_library(Tesseract_LIB
   NAMES tesseract tesseract-static libtesseract303-static
   HINTS "/usr/lib"
         "/usr/local/lib"
+        "/opt/local/lib"
         ${Tesseract_PKGCONF_LIBRARY_DIRS}
 		${CMAKE_SOURCE_DIR}/../libraries/tesseract-ocr/api/.libs
 		${CMAKE_SOURCE_DIR}/../libraries/tesseract-ocr/vs2010/LIB_Release
@@ -63,6 +72,7 @@ find_library(Leptonica_LIB
   NAMES liblept170 liblept lept
   HINTS "/usr/lib"
         "/usr/local/lib"
+        "/opt/local/lib"
         ${Tesseract_PKGCONF_LIBRARY_DIRS}
 		${CMAKE_SOURCE_DIR}/../libraries/tesseract-ocr/api/.libs
 		${CMAKE_SOURCE_DIR}/../libraries/tesseract-ocr/vs2010/LIB_Release
