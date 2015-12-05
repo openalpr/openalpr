@@ -82,8 +82,8 @@ The :ref:`OpenALPR agent <alprd>`  is installed as either a Virtual Machine (VM)
 Virtual Machine Install
 -------------------------
 
-- Start downloading the latest OpenALPR Virtual Machine.
-- Download and install the VirtualBox installer for your operating system. The OpenALPR VM will also work with other hypervisors such as VMware, Xen, or HyperV if you prefer to use one of those.
+- Start downloading the `latest OpenALPR Virtual Machine <http://deb.openalpr.com/downloads/openalpr.ova>`_.
+- Download and install the `VirtualBox installer <https://www.virtualbox.org/wiki/Downloads>`_ for your operating system. The OpenALPR VM will also work with other hypervisors such as VMware, Xen, or HyperV if you prefer to use one of those.
 - Open VirtualBox and choose File → Import Appliance
 - Choose the openalpr.ova file downloaded in step #1
 - Accept the default memory and CPU settings and click "Import"
