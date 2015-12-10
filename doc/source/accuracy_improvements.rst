@@ -34,7 +34,7 @@ Now test the new settings on a few images from this camera to make sure that the
 
     ./alpr camera_image.jpg
 
-.. image:: images/configuration_calibration_before.jpg
+.. image:: images/configuration_calibration_after.jpg
     :scale: 100%
     :alt: Calibration after adjustments
 
