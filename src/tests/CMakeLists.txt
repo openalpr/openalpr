@@ -1,3 +1,6 @@
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 enable_testing()
 
 ADD_EXECUTABLE( unittests 
