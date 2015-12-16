@@ -4,6 +4,11 @@ set -e
 # Source debconf library.
 . /usr/share/debconf/confmodule
 
+# Create openalpr:openalpr if it doesn't already exist
+USER=openalpr
+GROUP=openalpr
+getent group $GROUP >/dev/null || addgroup $GROUP >/dev/null
+getent passwd $USER >/dev/null || adduser --system --no-create-home --home /nonexistent $USER >/dev/null
 
 chown openalpr:openalpr /var/lib/openalpr/plateimages
 
