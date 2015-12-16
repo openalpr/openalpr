@@ -51,6 +51,7 @@ Package: openalpr-daemon
 Section: video
 Architecture: amd64
 Depends: libopenalpr2 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends},
+ adduser,
  beanstalkd
 Description: Daemon to run OpenALPR in the background
  OpenALPR is an open source Automatic License Plate Recognition library written
