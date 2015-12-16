@@ -1,43 +1,49 @@
+/*
+ * Copyright (C) 2010 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.openalpr.jni.json;
 
+// Note: this class was written without inspecting the non-free org.json sourcecode.
+
 /**
- * The JSONException is thrown by the JSON.org classes when things are amiss.
+ * Thrown to indicate a problem with the JSON API. Such problems include:
+ * <ul>
+ *   <li>Attempts to parse or construct malformed documents
+ *   <li>Use of null as a name
+ *   <li>Use of numeric types not available to JSON, such as {@link
+ *       Double#isNaN() NaNs} or {@link Double#isInfinite() infinities}.
+ *   <li>Lookups using an out of range index or nonexistent name
+ *   <li>Type mismatches on lookups
+ * </ul>
  *
- * @author JSON.org
- * @version 2014-05-03
+ * <p>Although this is a checked exception, it is rarely recoverable. Most
+ * callers should simply wrap this exception in an unchecked exception and
+ * rethrow:
+ * <pre>  public JSONArray toJSONObject() {
+ *     try {
+ *         JSONObject result = new JSONObject();
+ *         ...
+ *     } catch (JSONException e) {
+ *         throw new RuntimeException(e);
+ *     }
+ * }</pre>
  */
-public class JSONException extends RuntimeException {
-    private static final long serialVersionUID = 0;
-    private Throwable cause;
+public class JSONException extends Exception {
 
-    /**
-     * Constructs a JSONException with an explanatory message.
-     *
-     * @param message
-     *            Detail about the reason for the exception.
-     */
-    public JSONException(String message) {
-        super(message);
-    }
-
-    /**
-     * Constructs a new JSONException with the specified cause.
-     * @param cause The cause.
-     */
-    public JSONException(Throwable cause) {
-        super(cause.getMessage());
-        this.cause = cause;
-    }
-
-    /**
-     * Returns the cause of this exception or null if the cause is nonexistent
-     * or unknown.
-     *
-     * @return the cause of this exception or null if the cause is nonexistent
-     *          or unknown.
-     */
-    @Override
-    public Throwable getCause() {
-        return this.cause;
+    public JSONException(String s) {
+        super(s);
     }
 }
