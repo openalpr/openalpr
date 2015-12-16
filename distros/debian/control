@@ -7,6 +7,8 @@ Build-Depends: debhelper (>= 9), git, cmake, quilt,
  libcurl3-dev, uuid-dev
 Standards-Version: 3.9.5
 Homepage: https://github.com/openalpr/openalpr
+Vcs-Browser: https://github.com/openalpr/openalpr
+Vcs-Git: https://github.com/openalpr/openalpr.git
 
 Package: libopenalpr2
 Section: libs
