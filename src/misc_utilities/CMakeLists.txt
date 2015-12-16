@@ -64,7 +64,6 @@ TARGET_LINK_LIBRARIES(openalpr-utils-calibrate
 install (TARGETS openalpr-utils-calibrate DESTINATION bin)
 
 
-install (TARGETS openalpr-utils-sortstate DESTINATION bin)
 install (TARGETS openalpr-utils-classifychars DESTINATION bin)
 
 if (NOT DEFINED WIN32)
