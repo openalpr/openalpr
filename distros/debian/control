@@ -72,7 +72,24 @@ Description: Utilities for the OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
  in C++. The library analyzes images and identifies license plates. The output
  is the text representation of any license plate characters found in the image.
- 
+ .
+ The OpenALPR utils package contains a collection of binaries that help with 
+ training new data.  The following binaries are included:
+ .
+ openalpr-utils-calibrate - Calibrates the software for cameras capturing plate
+ images at an angle
+ .
+ openalpr-utils-benchmark - Benchmarks accuracy/speed against a testing dataset
+ .
+ openalpr-utils-tagplates - Utility to tag the location and plate number for 
+ testing and training
+ .
+ openalpr-utils-classifychars - Extracts character images from cropped plate
+ images for OCR training
+ .
+ openalpr-utils-prepcharsfortraining - Reformates character images into a format
+ that Tesseract can use for OCR training
+
 Package: python-openalpr
 Section: python
 Architecture: amd64
