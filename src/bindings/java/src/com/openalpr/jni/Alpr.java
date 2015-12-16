@@ -1,5 +1,7 @@
 package com.openalpr.jni;
 
+import com.openalpr.jni.json.JSONException;
+
 public class Alpr {
     static {
         // Load the OpenALPR library at runtime
@@ -36,17 +38,27 @@ public class Alpr {
         return is_loaded();
     }
 
-    public AlprResults recognize(String imageFile)
+    public AlprResults recognize(String imageFile) throws AlprException
     {
-        String json = native_recognize(imageFile);
-        return new AlprResults(json);
+        try {
+            String json = native_recognize(imageFile);
+            return new AlprResults(json);
+        } catch (JSONException e)
+        {
+            throw new AlprException("Unable to parse ALPR results");
+        }
     }
 
 
-    public AlprResults recognize(byte[] imageBytes)
+    public AlprResults recognize(byte[] imageBytes) throws AlprException
     {
-        String json = native_recognize(imageBytes);
-        return new AlprResults(json);
+        try {
+            String json = native_recognize(imageBytes);
+            return new AlprResults(json);
+        } catch (JSONException e)
+        {
+            throw new AlprException("Unable to parse ALPR results");
+        }
     }
 
 

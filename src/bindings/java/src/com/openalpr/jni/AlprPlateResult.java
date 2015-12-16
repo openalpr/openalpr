@@ -2,6 +2,7 @@ package com.openalpr.jni;
 
 
 import com.openalpr.jni.json.JSONArray;
+import com.openalpr.jni.json.JSONException;
 import com.openalpr.jni.json.JSONObject;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class AlprPlateResult {
     private final int regionConfidence;
     private final String region;
 
-    AlprPlateResult(JSONObject plateResult)
+    AlprPlateResult(JSONObject plateResult) throws JSONException
     {
         requested_topn = plateResult.getInt("requested_topn");
 
