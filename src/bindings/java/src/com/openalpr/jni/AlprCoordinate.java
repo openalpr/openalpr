@@ -1,13 +1,14 @@
 package com.openalpr.jni;
 
 
+import com.openalpr.jni.json.JSONException;
 import com.openalpr.jni.json.JSONObject;
 
 public class AlprCoordinate {
     private final int x;
     private final int y;
 
-    AlprCoordinate(JSONObject coordinateObj)
+    AlprCoordinate(JSONObject coordinateObj) throws JSONException
     {
         x = coordinateObj.getInt("x");
         y = coordinateObj.getInt("y");

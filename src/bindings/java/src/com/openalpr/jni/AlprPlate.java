@@ -1,6 +1,7 @@
 package com.openalpr.jni;
 
 
+import com.openalpr.jni.json.JSONException;
 import com.openalpr.jni.json.JSONObject;
 
 public class AlprPlate {
@@ -8,7 +9,7 @@ public class AlprPlate {
     private final float overall_confidence;
     private final boolean matches_template;
 
-    AlprPlate(JSONObject plateObj)
+    AlprPlate(JSONObject plateObj) throws JSONException
     {
         characters = plateObj.getString("plate");
         overall_confidence = (float) plateObj.getDouble("confidence");

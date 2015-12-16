@@ -1,6 +1,7 @@
 package com.openalpr.jni;
 
 import com.openalpr.jni.json.JSONArray;
+import com.openalpr.jni.json.JSONException;
 import com.openalpr.jni.json.JSONObject;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class AlprResults {
 
     private List<AlprRegionOfInterest> regionsOfInterest;
 
-    AlprResults(String json)
+    AlprResults(String json) throws JSONException
     {
         JSONObject jobj = new JSONObject(json);
 
