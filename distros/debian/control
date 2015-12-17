@@ -19,6 +19,8 @@ Description: Automated License Plate Recognition library (OpenALPR)
  OpenALPR is an open source Automatic License Plate Recognition library written
  in C++. The library analyzes images and identifies license plates. The output
  is the text representation of any license plate characters found in the image.
+ .
+ This package contains the runtime libraries used to interface with OpenALPR.
 
 Package: libopenalpr-dev
 Section: libdevel
@@ -28,6 +30,9 @@ Description: Development files for the OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
  in C++. The library analyzes images and identifies license plates. The output
  is the text representation of any license plate characters found in the image.
+ .
+ This package contains the header files and static libraries used to link
+ OpenALPR into another program.
 
 Package: libopenalpr-data
 Section: misc
@@ -37,6 +42,9 @@ Description: Runtime data for the OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
  in C++. The library analyzes images and identifies license plates. The output
  is the text representation of any license plate characters found in the image.
+ .
+ This package contains the runtime training data used by OpenALPR to recognize
+ license plates from various countries. 
 
 Package: openalpr
 Section: video
@@ -46,6 +54,9 @@ Description: Command line program to operate the OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
  in C++. The library analyzes images and identifies license plates. The output
  is the text representation of any license plate characters found in the image.
+ .
+ This package contains a command-line program to analyze images for license 
+ plates. 
 
 Package: openalpr-daemon
 Section: video
