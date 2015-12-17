@@ -1,3 +1,12 @@
+openalpr (2.2.1-1) unstable; urgency=low
+
+  * Initial upload to Debian (Closes: #747509)
+  * Debian Packaging enhancements
+  * Added binding for Go
+  * Upload sponsored by Petter Reinholdtsen
+
+ -- Matthew Hill <matthill@openalpr.com>  Thu, 17 Dec 2015 18:10:05 -0500
+
 openalpr (2.2.0-0.1) experimental; urgency=low
 
   * Non-maintainer upload
