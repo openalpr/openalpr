@@ -43,6 +43,10 @@ if ( NOT DEFINED WITH_BINDING_PYTHON )
   SET(WITH_BINDING_PYTHON ON)
 ENDIF()
 
+if ( NOT DEFINED WITH_BINDING_GO )
+  SET(WITH_BINDING_GO ON)
+ENDIF()
+
 if ( NOT DEFINED WITH_UTILITIES )
   SET(WITH_UTILITIES ON)
 ENDIF()
@@ -173,6 +177,12 @@ ENDIF()
 
 if (WITH_BINDING_PYTHON)
 add_subdirectory(bindings/python)
+ENDIF()
+
+if (WITH_BINDING_GO)
+    set(OPENALPR_LIB_GO openalprgo)
+    set(TAG_OPENALPR_LIB_GO "-l${OPENALPR_LIB_GO}")
+    add_subdirectory(bindings/go)
 ENDIF()
 
 if (NOT IOS)

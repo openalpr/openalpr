@@ -1,8 +1,7 @@
 package openalpr
 
 /*
-#cgo CFLAGS: -I${SRCDIR}/..
-#cgo LDFLAGS: -L${SRCDIR}/.. -lopenalprgo
+#cgo pkg-config: openalpr
 #include <openalprgo.h>
 #include <stdlib.h>
 */
