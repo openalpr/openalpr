@@ -47,7 +47,6 @@ Description: Runtime data for the OpenALPR library
  license plates from various countries. 
 
 Package: openalpr
-Section: video
 Architecture: amd64
 Depends: libopenalpr2 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: Command line program to operate the OpenALPR library
@@ -59,7 +58,6 @@ Description: Command line program to operate the OpenALPR library
  plates. 
 
 Package: openalpr-daemon
-Section: video
 Architecture: amd64
 Depends: libopenalpr2 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends},
  adduser,
