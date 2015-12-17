@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: OpenALPR
+Description: Open source Automatic License Plate Recognition library
+Version: @VERSION@
+Libs: -L${libdir} -lopenalpr @TAG_OPENALPR_LIB_GO@
+Cflags: -I${includedir}
