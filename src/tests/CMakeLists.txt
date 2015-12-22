@@ -14,3 +14,5 @@ TARGET_LINK_LIBRARIES(unittests
   )
 
 add_test(unittests unittests)
+
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
