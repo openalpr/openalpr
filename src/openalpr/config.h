@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2015 OpenALPR Technology, Inc.
  * Open source Automated License Plate Recognition [http://www.openalpr.com]
- * 
+ *
  * This file is part of OpenALPR.
- * 
+ *
  * OpenALPR is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License 
- * version 3 as published by the Free Software Foundation 
- * 
+ * it under the terms of the GNU Affero General Public License
+ * version 3 as published by the Free Software Foundation
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
@@ -41,7 +41,7 @@ namespace alpr
       virtual ~Config();
 
       bool loaded;
-      
+
       std::string config_file_path;
 
       std::string country;
@@ -54,14 +54,14 @@ namespace alpr
       float maxPlateHeightPercent;
       int maxDetectionInputWidth;
       int maxDetectionInputHeight;
-      
+
       bool skipDetection;
 
       bool auto_invert;
       bool always_invert;
 
       std::string prewarp;
-      
+
       int maxPlateAngleDegrees;
 
       float minPlateSizeWidthPx;
@@ -74,10 +74,10 @@ namespace alpr
 
       std::vector<float> charHeightMM;
       std::vector<float> charWidthMM;
-      
+
       float avgCharHeightMM;
       float avgCharWidthMM;
-      
+
       float charWhitespaceTopMM;
       float charWhitespaceBotMM;
       float charWhitespaceBetweenLinesMM;
@@ -105,12 +105,12 @@ namespace alpr
       float segmentationMaxCharWidthvsAverage;
 
       std::string detectorFile;
-      
+
       std::string ocrLanguage;
       int ocrMinFontSize;
 
       bool mustMatchPattern;
-      
+
       float postProcessMinConfidence;
       float postProcessConfidenceSkipLevel;
       unsigned int postProcessMinCharacters;
@@ -118,6 +118,7 @@ namespace alpr
 
       std::string postProcessRegexLetters;
       std::string postProcessRegexNumbers;
+      std::string postProcessMatchTemplatePattern;
 
       bool debugGeneral;
       bool debugTiming;
@@ -148,7 +149,7 @@ namespace alpr
       bool setCountry(std::string country);
 
     private:
-    
+
       float ocrImagePercent;
       float stateIdImagePercent;
 
