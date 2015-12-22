@@ -125,7 +125,7 @@ int main( int argc, const char** argv )
 
   if (templatePattern.empty() == false)
     alpr.setDefaultRegion(templatePattern);
-
+    
   if (alpr.isLoaded() == false)
   {
     std::cerr << "Error loading OpenALPR" << std::endl;

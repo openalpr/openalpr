@@ -1,6 +1,8 @@
 *~
 build/
 windows/
+MyVersion/
+latestVersion/
 scratch/
 out/
 debian_repo

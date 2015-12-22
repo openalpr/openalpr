@@ -18,6 +18,8 @@
 */
 
 #include "postprocess.h"
+#include "../config.h"
+#include "../support/timing.h"
 
 using namespace std;
 

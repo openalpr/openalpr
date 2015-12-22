@@ -1,18 +1,18 @@
 /*
  * Copyright (c) 2015 OpenALPR Technology, Inc.
  * Open source Automated License Plate Recognition [http://www.openalpr.com]
- * 
+ *
  * This file is part of OpenALPR.
- * 
+ *
  * OpenALPR is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License 
- * version 3 as published by the Free Software Foundation 
- * 
+ * it under the terms of the GNU Affero General Public License
+ * version 3 as published by the Free Software Foundation
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
@@ -28,13 +28,13 @@ using namespace std;
 namespace alpr
 {
 
-  
+
   int getInt(CSimpleIniA* ini, std::string section, std::string key, int defaultValue);
   float getFloat(CSimpleIniA* ini, std::string section, std::string key, float defaultValue);
   std::string getString(CSimpleIniA* ini, std::string section, std::string key, std::string defaultValue);
   bool getBoolean(CSimpleIniA* ini, std::string section, std::string key, bool defaultValue);
   std::vector<float> getAllFloats(CSimpleIniA* ini, string section, string key);
-  
+
   Config::Config(const std::string country, const std::string config_file, const std::string runtime_dir)
   {
 
@@ -138,7 +138,7 @@ namespace alpr
   }
   Config::~Config()
   {
-    
+
   }
 
   void Config::loadCommonValues(string configFile)
@@ -147,10 +147,11 @@ namespace alpr
     CSimpleIniA iniObj;
     iniObj.LoadFile(configFile.c_str());
     CSimpleIniA* ini = &iniObj;
-    
+
     runtimeBaseDir = getString(ini, "", "runtime_dir", "/usr/share/openalpr/runtime_data");
 
     std::string detectorString = getString(ini, "", "detector", "lbpcpu");
+    postProcessMatchTemplatePattern = getString(ini, "", "match_template", "ca");
     std::transform(detectorString.begin(), detectorString.end(), detectorString.begin(), ::tolower);
 
     if (detectorString.compare("lbpcpu") == 0)
@@ -166,7 +167,7 @@ namespace alpr
       std::cerr << "Invalid detector specified: " << detectorString << ".  Using default" << std::endl;
       detector = DETECTOR_LBP_CPU;
     }
-    
+
     detection_iteration_increase = getFloat(ini, "", "detection_iteration_increase", 1.1);
     detectionStrictness = getInt(ini, "", "detection_strictness", 3);
     maxPlateWidthPercent = getFloat(ini, "", "max_plate_width_percent", 100);
@@ -175,11 +176,11 @@ namespace alpr
     maxDetectionInputHeight = getInt(ini, "", "max_detection_input_height", 768);
 
     mustMatchPattern = getBoolean(ini, "", "must_match_pattern", false);
-    
+
     skipDetection = getBoolean(ini, "", "skip_detection", false);
-    
+
     prewarp = getString(ini, "", "prewarp", "");
-            
+
     maxPlateAngleDegrees = getInt(ini, "", "max_plate_angle_degrees", 15);
 
 
@@ -207,15 +208,15 @@ namespace alpr
     debugPauseOnFrame = 	getBoolean(ini, "", "debug_pause_on_frame",	false);
 
   }
-  
-  
+
+
   void Config::loadCountryValues(string configFile, string country)
   {
     CSimpleIniA iniObj;
     iniObj.SetMultiKey(true);
     iniObj.LoadFile(configFile.c_str());
     CSimpleIniA* ini = &iniObj;
-    
+
     minPlateSizeWidthPx = getInt(ini, "", "min_plate_size_width_px", 100);
     minPlateSizeHeightPx = getInt(ini, "", "min_plate_size_height_px", 100);
 
@@ -244,8 +245,8 @@ namespace alpr
 
     charHeightMM = getAllFloats(ini, "", "char_height_mm");
     charWidthMM = getAllFloats(ini, "", "char_width_mm");
-    
-    // Compute the average char height/widths 
+
+    // Compute the average char height/widths
     avgCharHeightMM = 0;
     avgCharWidthMM = 0;
     for (unsigned int i = 0; i < charHeightMM.size(); i++)
@@ -255,7 +256,7 @@ namespace alpr
     }
     avgCharHeightMM /= charHeightMM.size();
     avgCharWidthMM /= charHeightMM.size();
-    
+
     charWhitespaceTopMM = getFloat(ini, "", "char_whitespace_top_mm", 100);
     charWhitespaceBotMM = getFloat(ini, "", "char_whitespace_bot_mm", 100);
     charWhitespaceBetweenLinesMM = getFloat(ini, "", "char_whitespace_between_lines_mm", 5);
@@ -277,7 +278,7 @@ namespace alpr
     plateLinesSensitivityHorizontal = getFloat(ini, "", "plateline_sensitivity_horizontal", 0);
 
     detectorFile = getString(ini, "", "detector_file", "");
-    
+
     ocrLanguage = getString(ini, "", "ocr_language", "none");
 
     postProcessRegexLetters = getString(ini, "", "postprocess_regex_letters", "\\pL");
@@ -375,27 +376,27 @@ namespace alpr
     float val = atof(pszValue);
     return val;
   }
-  
+
   std::vector<float> getAllFloats(CSimpleIniA* ini, string section, string key)
   {
     CSimpleIniA::TNamesDepend values;
-    
+
     ini->GetAllValues(section.c_str(), key.c_str(), values);
- 
+
     // sort the values into the original load order
     values.sort(CSimpleIniA::Entry::LoadOrder());
 
     std::vector<float> response;
-    
+
   // output all of the items
     CSimpleIniA::TNamesDepend::const_iterator i;
-    for (i = values.begin(); i != values.end(); ++i) { 
+    for (i = values.begin(); i != values.end(); ++i) {
       response.push_back(atof(i->pItem));
     }
-    
+
     return response;
   }
-  
+
   int getInt(CSimpleIniA* ini, string section, string key, int defaultValue)
   {
     const char * pszValue = ini->GetValue(section.c_str(), key.c_str(), NULL /*default*/);

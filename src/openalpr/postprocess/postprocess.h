@@ -21,15 +21,15 @@
 #define OPENALPR_POSTPROCESS_H
 
 #include "regexrule.h"
-#include "constants.h"
-#include "utility.h"
+#include "../constants.h"
+#include "../utility.h"
 #include <fstream>
 #include <iostream>
 #include <stdio.h>
 #include <queue>
 #include <vector>
 #include <set>
-#include "config.h"
+#include "../config.h"
 
 
 #define SKIP_CHAR "~"
