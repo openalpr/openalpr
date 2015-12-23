@@ -1,4 +1,6 @@
 #include "filesystem.h"
+#include <sstream>
+#include <algorithm>
 
 namespace alpr
 {
@@ -146,41 +148,51 @@ namespace alpr
   #ifdef WINDOWS
   // Stub out these functions on Windows.  They're used for the daemon anyway, which isn't supported on Windows.
 
-  int64_t getFileSize(std::string filename) { return 0; }
-  static int makeDir(char *path, mode_t mode) { return 0; }
-  bool makePath(char* path, mode_t mode) { return true; }
-  int64_t getFileCreationTime(std::string filename) { return 0; }
+  static int makeDir(const char *path, mode_t mode) { return 0; }
+  bool makePath(const char* path, mode_t mode) {
+	  std::stringstream pathstream;
+	  pathstream << "mkdir " << path;
+	  std::string candidate_path = pathstream.str();
+	  std::replace(candidate_path.begin(), candidate_path.end(), '/', '\\');
+
+	  system(candidate_path.c_str());
+	  return true; 
+  }
+  FileInfo getFileInfo(std::string filename) { 
+    FileInfo response;
+    response.creation_time = 0;
+    response.size = 0;
+    return response;
+  }
 
   #else
 
-  int64_t getFileSize(std::string filename)
+  FileInfo getFileInfo(std::string filename)
   {
-      struct stat stat_buf;
-      int rc = stat(filename.c_str(), &stat_buf);
-      //return rc == 0 ? stat_buf.st_size : -1;
+    FileInfo response;
+    
+    struct stat stat_buf;
+    int rc = stat(filename.c_str(), &stat_buf);
+    //return rc == 0 ? stat_buf.st_size : -1;
 
-      // 512 bytes is the standard block size
-      if (rc == 0)
-        return 512 * stat_buf.st_blocks;
-
-      return -1;
-  }
-
-  int64_t getFileCreationTime(std::string filename)
-  {
-      struct stat stat_buf;
-      int rc = stat(filename.c_str(), &stat_buf);
-
-      if (rc != 0)
-        return 0;
-
-#if defined(__APPLE__)
-      double milliseconds = (stat_buf.st_ctimespec.tv_sec * 1000) +  (((double) stat_buf.st_ctimespec.tv_nsec) / 1000000.0);
-#else
-      double milliseconds = (stat_buf.st_ctim.tv_sec * 1000) +  (((double) stat_buf.st_ctim.tv_nsec) / 1000000.0);
-#endif
-
-      return (int64_t) milliseconds;
+    // 512 bytes is the standard block size
+    if (rc == 0)
+    {
+      #if defined(__APPLE__)
+            double milliseconds = (stat_buf.st_ctimespec.tv_sec * 1000) +  (((double) stat_buf.st_ctimespec.tv_nsec) / 1000000.0);
+      #else
+            double milliseconds = (stat_buf.st_ctim.tv_sec * 1000) +  (((double) stat_buf.st_ctim.tv_nsec) / 1000000.0);
+      #endif
+      response.size = 512 * stat_buf.st_blocks;
+      response.creation_time = (int64_t) milliseconds;
+    }
+    else
+    {
+      response.creation_time = 0;
+      response.size = 0;
+    }
+    
+    return response;
   }
 
   static int makeDir(const char *path, mode_t mode)
