@@ -233,7 +233,7 @@ namespace alpr
     if (status == 0)
         status = makeDir(path, mode);
     free(copypath);
-    return (status);
+    return (status == 0);
 
   }
 
