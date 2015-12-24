@@ -1,0 +1,223 @@
+--- 
+version: 1
+manufacturers:
+  A-Linking: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/GetData.cgi"
+  Airlink: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/mjpeg.cgi"
+      - "http://[username]:[password]@[ip_address]/cgi/mjpg/mjpeg.cgi"
+      - "http://[username]:[password]@[ip_address]/cgi/jpg/image.cgi"
+  Airlive: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/video.mjpg"
+      - "http://[username]:[password]@[ip_address]/mjpg/video.mjpg"
+  Airwave: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/cgi-bin/pusher.cgi"
+  Arecont: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/mjpeg?res=full&x0=0&y0=0&x1=100%&y1=100%&quality=12&doublescan=0&fps=15&ver=HTTP/1.1"
+      - "http://[username]:[password]@[ip_address]/image?res=half&x0=0&y0=0&x1=1600&y1=1200&quality=15&doublescan=0"
+  Aviosys: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/GetData.cgi"
+      - "http://[username]:[password]@[ip_address]/cgi-bin/Stream?Video?Authorization="
+  Axis: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/axis-cgi/mjpg/video.cgi?fps=15"
+    h264:
+      - "rtsp://[username]:[password]@[ip_address]/axis-media/media.amp"
+      - "rtsp://[username]:[password]@[ip_address]/mpeg4/media.amp"
+  Bosch: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/rtsp_tunnel?h26x=4&line=1&inst=2"
+    h264:
+      - "rtsp://[username]:[password]@[ip_address]/rtsp_tunnel"
+  Bowya: 
+    mjpeg:
+      - "http://[username]:[password]@[ip_address]/video.cgi"
+  Canon: 
+    mjpeg:
+      - "http://[username]:[password]@[ip_address]/-wvhttp-01-/"
+      - "http://[username]:[password]@[ip_address]/-wvhttp-01-/GetOneShot"
+      - "http://[username]:[password]@[ip_address]/-wvhttp-01-/GetOneShot?frame_count=no_limit"
+      - "http://[username]:[password]@[ip_address]/-wvhttp-01-/GetStillImage"
+  Cisco:
+    h264:
+      - "rtsp://[username]:[password]@[ip_address]/"
+  Convision: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/fullsize.push?camera=1&sleep=15"
+  CNB:
+    h264:
+      - "rtsp://[username]:[password]@[ip_address]/"
+  D-Link: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/video/mjpg.cgi"
+      - "http://[username]:[password]@[ip_address]/video.cgi"
+      - "http://[username]:[password]@[ip_address]/mjpeg.cgi"
+      - "http://[username]:[password]@[ip_address]/cgi-bin/video.jpg"
+      - "http://[username]:[password]@[ip_address]/IMAGE.jpg"
+      - "http://[username]:[password]@[ip_address]/cgi-bin/video.vam"
+      - "http://[username]:[password]@[ip_address]/_gCVimage.jpg"
+  Digicom: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/mjpeg.cgi"
+  Easyn: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/videostream.cgi?user=username&pwd=password"
+  Edimax: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/jpg/image.jpg"
+      - "http://[username]:[password]@[ip_address]/mjpg/video.mjpg"
+      - "http://[username]:[password]@[ip_address]/snapshot.cgi"
+  Ego: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/cgi-bin/sf.cgi"
+  Foscam: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/videostream.cgi"
+      - "http://[username]:[password]@[ip_address]/snapshot.cgi"
+  Fulicom: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/cgi-bin/sf.cgi"
+  Gadspot: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/Jpeg/CamImg.jpg"
+      - "http://[username]:[password]@[ip_address]/GetData.cgi?Status=0"
+  Goscam: 
+    mjpeg: 
+      - "http://[ip_address]/cgi-bin/Stream?Video?Acc=[username]?Pwd=[password]?webcamPWD=RootCookies00000"
+  Hamlet: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/mjpeg.cgi"
+  Hikvision:
+    mjpeg:
+      - "http://[username]:[password]@[ip_address]/cgi-bin/video.jpg?cam=1&quality=3&size=2"
+    h264:
+      - "rtsp://[username]:[password]@[ip_address]/h264/ch1/sub/"
+      - "rtsp://[username]:[password]@[ip_address]:554/Streaming/Channels/1"
+      - "rtsp://[username]:[password]@[ip_address]:554/ch0_0.h264"
+  IQeye: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/now.jpg?snap=spush"
+  Intellinet: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/jpg/image.jpg"
+  JVC: 
+    mjpeg:
+      - "http://[username]:[password]@[ip_address]/api/video?encode=jpeg&framerate=15&boundary=on"
+  Kingnow: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/cgi-bin/sf.cgi"
+  Linksys: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/img/video.mjpeg"
+      - "http://[username]:[password]@[ip_address]/img/mjpeg.cgi"
+      - "http://[username]:[password]@[ip_address]/img/snapshot.cgi?size=2"
+      - "http://[username]:[password]@[ip_address]/adm/file.cgi?h_videotype=mjpeg&todo=save"
+  Linudix: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/cgi-bin/nph-update_4ch.cgi?ch=1"
+  Lumenera: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/cgi-bin/nph-video"
+  Lumens: 
+    h264: 
+      - "rtsp://[username]:[password]@[ip_address]:8557/h264"
+  Marmitek: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/cgi/mjpg/mjpeg.cgi"
+  Mobotix: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/record/current.jpg"
+      - "http://[username]:[password]@[ip_address]/control/faststream.jpg?stream=full"
+      - "http://[username]:[password]@[ip_address]/faststream.jpg?stream=full&fps=1.0 (1 fps)"
+      - "http://[username]:[password]@[ip_address]/faststream.jpg?stream=full&fps=3.0 (1 fps)"
+      - "http://[username]:[password]@[ip_address]/faststream.jpg?stream=full&fps=0 (max frame rate)"
+  Moxa: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/cgi-bin/video.jpg"
+  PLANET: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/jpg/image.jpg"
+  Panasonic: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/nphMotionJpeg?Resolution=640x480&Quality=Clarity"
+      - "http://[username]:[password]@[ip_address]/cgi-bin/nphContinuousServerPush"
+      - "http://[username]:[password]@[ip_address]/SnapshotJPEG?mode=Refresh"
+      - "http://[username]:[password]@[ip_address]/cgi-bin/camera"
+    h264:
+      - "rtsp://[username]:[password]@[ip_address]/MediaInput/h264/stream_1"
+  Pixord: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/Getimage.cgi"
+      - "http://[username]:[password]@[ip_address]/Getimage?camera=1&fmt=full"
+      - "http://[username]:[password]@[ip_address]/Getimage?camera=1&fmt=qsif"
+  Qnap: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/cgi/mjpg/mjpeg.cgi"
+  Samsung_SNB: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/video?submenu=mjpg"
+      - "http://[username]:[password]@[ip_address]/video?submenu=jpg"
+  Sanyo: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/liveimg.cgi?serverpush=1"
+  Sharkx: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/stream.jpg"
+  Shenzen_Sunsky: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/cgi-bin/sf.cgi"
+  Skyway_Security: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/GetData.cgi?Status=0"
+      - "http://[username]:[password]@[ip_address]/Jpeg/CamImg.jpg"
+  Sony: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/image"
+      - "http://[username]:[password]@[ip_address]/image?speed=0"
+      - "http://[username]:[password]@[ip_address]/oneshotimage.jpg"
+  Surecom: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/mjpeg.cgi"
+  Swann: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/cgi/jpg/image.cgi"
+  TP-Link: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/jpg/image.jpg"
+      - "http://[username]:[password]@[ip_address]/video.mjpg"
+  Topcom: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/mjpeg.cgi"
+  Toshiba: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/__live.jpg?&&&"
+      - "http://[username]:[password]@[ip_address]getstream.cgi?10&10&&&10&0&0&0&0"
+  Trendnet: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/goform/video"
+      - "http://[username]:[password]@[ip_address]/goform/video2"
+      - "http://[username]:[password]@[ip_address]/cgi/mjpg/mjpg.cgi"
+      - "http://[username]:[password]@[ip_address]/GetData.cgi"
+      - "http://[username]:[password]@[ip_address]/image.jpg"
+  Vilar: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/cgi-bin/sf.cgi"
+  Vivotek: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/video.mjpg"
+      - "http://[username]:[password]@[ip_address]/cgi-bin/video.jpg"
+      - "http://[username]:[password]@[ip_address]/cgi-bin/viewer/video.jpg"
+    h264:
+      - "rtsp://[username]:[password]@[ip_address]/live.sdp"
+  Y-Cam: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/stream.jpg"
+  Zavio: 
+    mjpeg: 
+      - "http://[username]:[password]@[ip_address]/jpg/image.jpg"
