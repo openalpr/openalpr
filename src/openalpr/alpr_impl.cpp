@@ -81,19 +81,12 @@ namespace alpr
     typedef std::map<std::string, AlprRecognizers>::iterator it_type;
     for(it_type iterator = recognizers.begin(); iterator != recognizers.end(); iterator++) {
 
-      if (iterator->second.plateDetector != ALPR_NULL_PTR)
-        delete iterator->second.plateDetector;
-
-      if (iterator->second.stateDetector != ALPR_NULL_PTR)
-        delete iterator->second.stateDetector;
-
-      if (iterator->second.ocr != ALPR_NULL_PTR)
-        delete iterator->second.ocr;
+      delete iterator->second.plateDetector;
+      delete iterator->second.stateDetector;
+      delete iterator->second.ocr;
     }
 
-    
-    if (prewarp != ALPR_NULL_PTR)
-      delete prewarp;
+    delete prewarp;
   }
 
   bool AlprImpl::isLoaded()
