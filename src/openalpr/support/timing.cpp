@@ -67,11 +67,12 @@ namespace alpr
     microseconds = (double)t.QuadPart / frequencyToMicroseconds;
     t.QuadPart = microseconds;
     tv->tv_sec = t.QuadPart / 1000000;
-    tv->tv_nsec = t.QuadPart % 1000000;
+    tv->tv_nsec = (t.QuadPart % 1000000)*1000;
     return (0);
   }
 
   void getTimeMonotonic(timespec* time)
+
   {
     clock_gettime(0, time);
   }
@@ -92,7 +93,7 @@ namespace alpr
   double diffclock(timespec time1,timespec time2)
   {
     timespec delta = diff(time1,time2);
-    double milliseconds = (delta.tv_sec * 1000) +  (((double) delta.tv_nsec) / 10000.0);
+    double milliseconds = (delta.tv_sec * 1000) +  (((double) delta.tv_nsec) / 1000000.0);
 
     return milliseconds;
   }
@@ -103,7 +104,7 @@ namespace alpr
     if ((end.tv_nsec-start.tv_nsec)<0)
     {
       temp.tv_sec = end.tv_sec-start.tv_sec-1;
-      temp.tv_nsec = 1000000+end.tv_nsec-start.tv_nsec;
+      temp.tv_nsec = 1000000000+end.tv_nsec-start.tv_nsec;
     }
     else
     {
