@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
     
     if (cmd.parse( argc, argv ) == false)
     {
-      // Error occured while parsing.  Exit now.
+      // Error occurred while parsing.  Exit now.
       return 1;
     }
 

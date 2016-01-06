@@ -122,13 +122,13 @@ namespace alpr
       newLetter.line_index = line_index;
       newLetter.charposition = charposition;
       newLetter.letter = letter;
-      newLetter.occurences = 1;
+      newLetter.occurrences = 1;
       newLetter.totalscore = score;
       letters[charposition].push_back(newLetter);
     }
     else
     {
-      letters[charposition][existingIndex].occurences = letters[charposition][existingIndex].occurences + 1;
+      letters[charposition][existingIndex].occurrences = letters[charposition][existingIndex].occurrences + 1;
       letters[charposition][existingIndex].totalscore = letters[charposition][existingIndex].totalscore + score;
     }
   }
@@ -181,7 +181,7 @@ namespace alpr
       for (int i = 0; i < letters.size(); i++)
       {
         for (int j = 0; j < letters[i].size(); j++)
-          cout << "PostProcess Line " << letters[i][j].line_index << " Letter: " << letters[i][j].charposition << " " << letters[i][j].letter << " -- score: " << letters[i][j].totalscore << " -- occurences: " << letters[i][j].occurences << endl;
+          cout << "PostProcess Line " << letters[i][j].line_index << " Letter: " << letters[i][j].charposition << " " << letters[i][j].letter << " -- score: " << letters[i][j].totalscore << " -- occurrences: " << letters[i][j].occurrences << endl;
       }
     }
 
@@ -260,7 +260,7 @@ namespace alpr
     {
       if (letters[i].size() > 0)
       {
-        totalScore += (letters[i][0].totalscore / letters[i][0].occurences) + config->postProcessMinConfidence;
+        totalScore += (letters[i][0].totalscore / letters[i][0].occurrences) + config->postProcessMinConfidence;
         numScores++;
       }
     }
