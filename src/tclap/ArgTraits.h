@@ -44,7 +44,7 @@ struct ValueLike
 
 /**
  * A string like argument value type is a value that can be set using
- * operator=(string). Usefull if the value type contains spaces which
+ * operator=(string). Useful if the value type contains spaces which
  * will be broken up into individual tokens by operator>>.
  */
 struct StringLike

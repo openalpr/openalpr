@@ -557,12 +557,12 @@ public class JSONTokener {
 
     /**
      * Advances past all input up to and including the next occurrence of
-     * {@code thru}. If the remaining input doesn't contain {@code thru}, the
+     * {@code through}. If the remaining input doesn't contain {@code through}, the
      * input is exhausted.
      */
-    public void skipPast(String thru) {
-        int thruStart = in.indexOf(thru, pos);
-        pos = thruStart == -1 ? in.length() : (thruStart + thru.length());
+    public void skipPast(String through) {
+        int throughStart = in.indexOf(through, pos);
+        pos = throughStart == -1 ? in.length() : (throughStart + through.length());
     }
 
     /**

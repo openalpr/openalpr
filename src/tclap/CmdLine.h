@@ -120,7 +120,7 @@ class CmdLine : public CmdLineInterface
 
     /**
      * A list of Visitors to be explicitly deleted when the destructor
-     * is called.  At the moment, these are the Vistors created for the
+     * is called.  At the moment, these are the Visitors created for the
      * default Args.
      */
     std::list<Visitor*> _visitorDeleteOnExitList;

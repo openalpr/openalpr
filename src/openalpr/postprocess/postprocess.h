@@ -43,7 +43,7 @@ namespace alpr
     int line_index;
     int charposition;
     float totalscore;
-    int occurences;
+    int occurrences;
   };
 
   struct PPResult
