@@ -32,19 +32,24 @@ namespace alpr
                   char buffer[2048];
                   memset(buffer, 0, sizeof(buffer));
 
-                  readlink("/proc/self/exe", buffer, sizeof(buffer));
-
-                  std::stringstream ss;
-                  ss << buffer;
-                  std::string exeFile = ss.str();
-                  std::string directory;
-
-                  const size_t last_slash_idx = exeFile.rfind('/');
-                  if (std::string::npos != last_slash_idx)
+                  if (readlink("/proc/self/exe", buffer, sizeof(buffer)) > 0)
                   {
-                          directory = exeFile.substr(0, last_slash_idx);
+                    std::stringstream ss;
+                    ss << buffer;
+                    std::string exeFile = ss.str();
+                    std::string directory;
+
+                    const size_t last_slash_idx = exeFile.rfind('/');
+                    if (std::string::npos != last_slash_idx)
+                    {
+                            directory = exeFile.substr(0, last_slash_idx);
+                    }
+                    return directory;
                   }
-                  return directory;
+                  else
+                  {
+                    return "/";
+                  }
           #endif
   }
   
