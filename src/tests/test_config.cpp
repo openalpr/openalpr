@@ -18,25 +18,25 @@ Config get_config(std::string countries)
   return config;
 }
 
-TEST_CASE( "Loading Countries", "[Config]" ) {
-
-  REQUIRE( get_config("us,eu").loaded_countries.size() == 2 );
-
-  REQUIRE( get_config("us").loaded_countries.size() == 1 );
-
-  REQUIRE( get_config("eu").loaded_countries.size() == 1 );
-
-  REQUIRE( get_config("us, eu").loaded_countries.size() == 2 );
-
-  REQUIRE( get_config("us, eu, au, kr").loaded_countries.size() == 4 );
-
-  REQUIRE( get_config("us , eu").loaded_countries.size() == 2 );
-
-  REQUIRE( get_config("us,eu,").loaded_countries.size() == 2 );
-
-  REQUIRE( get_config(",,us,eu,").loaded_countries.size() == 2 );
-
-}
+//TEST_CASE( "Loading Countries", "[Config]" ) {
+//
+//  REQUIRE( get_config("us,eu").loaded_countries.size() == 2 );
+//
+//  REQUIRE( get_config("us").loaded_countries.size() == 1 );
+//
+//  REQUIRE( get_config("eu").loaded_countries.size() == 1 );
+//
+//  REQUIRE( get_config("us, eu").loaded_countries.size() == 2 );
+//
+//  REQUIRE( get_config("us, eu, au, kr").loaded_countries.size() == 4 );
+//
+//  REQUIRE( get_config("us , eu").loaded_countries.size() == 2 );
+//
+//  REQUIRE( get_config("us,eu,").loaded_countries.size() == 2 );
+//
+//  REQUIRE( get_config(",,us,eu,").loaded_countries.size() == 2 );
+//
+//}
 
 
 //TEST_CASE( "Modifying Countries", "[Config]" )
