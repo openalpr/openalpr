@@ -94,6 +94,11 @@ namespace alpr
       // Make a grayscale copy as well for faster processing downstream
       cv::cvtColor(pipeline_data->color_deskewed, pipeline_data->crop_gray, CV_BGR2GRAY);
     }
+    else
+    {
+      // Copy the already grayscale image to the crop_gray img
+      pipeline_data->color_deskewed.copyTo(pipeline_data->crop_gray);
+    }
 
 
     if (this->config->debugGeneral)
