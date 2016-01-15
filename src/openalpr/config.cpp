@@ -296,9 +296,10 @@ namespace alpr
   {
     debugGeneral = value;
     debugTiming = value;
+    debugPrewarp = value;
+    debugDetector = value;
     debugStateId = value;
     debugPlateLines = value;
-    debugPrewarp = value;
     debugPlateCorners = value;
     debugCharSegmenter = value;
     debugCharAnalysis = value;
@@ -306,6 +307,7 @@ namespace alpr
     debugOcr = value;
     debugPostProcess = value;
     debugPauseOnFrame = value;
+    debugShowImages = value;
   }
 
 
