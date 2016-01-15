@@ -63,6 +63,7 @@ int main( int argc, const char** argv )
   bool detectRegion = false;
   std::string country;
   int topn;
+  bool debug_mode = false;
 
   TCLAP::CmdLine cmd("OpenAlpr Command Line Utility", ' ', Alpr::getVersion());
 
@@ -76,6 +77,7 @@ int main( int argc, const char** argv )
   TCLAP::ValueArg<int> topNArg("n","topn","Max number of possible plate numbers to return.  Default=10",false, 10 ,"topN");
 
   TCLAP::SwitchArg jsonSwitch("j","json","Output recognition results in JSON format.  Default=off", cmd, false);
+  TCLAP::SwitchArg debugSwitch("","debug","Enable debug output.  Default=off", cmd, false);
   TCLAP::SwitchArg detectRegionSwitch("d","detect_region","Attempt to detect the region of the plate image.  [Experimental]  Default=off", cmd, false);
   TCLAP::SwitchArg clockSwitch("","clock","Measure/print the total time to process image and all plates.  Default=off", cmd, false);
   TCLAP::SwitchArg motiondetect("", "motion", "Use motion detection on video file or stream.  Default=off", cmd, false);
@@ -101,6 +103,7 @@ int main( int argc, const char** argv )
     country = countryCodeArg.getValue();
     seektoms = seekToMsArg.getValue();
     outputJson = jsonSwitch.getValue();
+    debug_mode = debugSwitch.getValue();
     configFile = configFileArg.getValue();
     detectRegion = detectRegionSwitch.getValue();
     templatePattern = templatePatternArg.getValue();
@@ -119,6 +122,11 @@ int main( int argc, const char** argv )
 
   Alpr alpr(country, configFile);
   alpr.setTopN(topn);
+  
+  if (debug_mode)
+  {
+    alpr.getConfig()->setDebug(true);
+  }
 
   if (detectRegion)
     alpr.setDetectRegion(detectRegion);
