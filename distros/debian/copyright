@@ -215,6 +215,7 @@ License: Apache-2.0
   You may obtain a copy of the License at
   .
        http://www.apache.org/licenses/LICENSE-2.0
+       /usr/share/common-licenses/Apache-2.0 (on Debian systems)
   .
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
@@ -224,7 +225,7 @@ License: Apache-2.0
 
 Files: src/tests/catch.hpp
 Copyright: Two Blue Cubes Ltd. All rights reserved.
-License: Boost 1.0
+License: Boost-1.0
   Permission is hereby granted, free of charge, to any person obtaining a
   copy of this software and/or associated documentation files (the
   "Materials"), to deal in the Materials without restriction, including
