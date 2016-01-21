@@ -182,25 +182,25 @@ int main( int argc, const char** argv )
               curDashboardSelection--;
             showDashboard(pipeline_data.thresholds, selectedBoxes, curDashboardSelection);
           }
-          else if (waitkey == RIGHT_ARROW_KEY) // right arrow key
+          else if ((char)waitkey == RIGHT_ARROW_KEY) // right arrow key
           {
             if (curDashboardSelection < pipeline_data.thresholds.size() - 1)
               curDashboardSelection++;
             showDashboard(pipeline_data.thresholds, selectedBoxes, curDashboardSelection);
           }
-          else if (waitkey == DOWN_ARROW_KEY)
+          else if ((char)waitkey == DOWN_ARROW_KEY)
           {
             if (curDashboardSelection + DASHBOARD_COLUMNS <= pipeline_data.thresholds.size() - 1)
               curDashboardSelection += DASHBOARD_COLUMNS;
             showDashboard(pipeline_data.thresholds, selectedBoxes, curDashboardSelection);
           }
-          else if (waitkey == UP_ARROW_KEY)
+          else if ((char)waitkey == UP_ARROW_KEY)
           {
             if (curDashboardSelection - DASHBOARD_COLUMNS >= 0)
               curDashboardSelection -= DASHBOARD_COLUMNS;
             showDashboard(pipeline_data.thresholds, selectedBoxes, curDashboardSelection);
           }
-          else if (waitkey == ENTER_KEY_ONE || waitkey == ENTER_KEY_TWO)
+          else if ((char)waitkey == ENTER_KEY_ONE || (char)waitkey == ENTER_KEY_TWO)
           {
 	    if (pipeline_data.charRegionsFlat.size() > 0)
 	    {
