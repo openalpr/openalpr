@@ -447,6 +447,46 @@ ALPR group results are sent in the following JSON format:
       "best_plate_number": "A13709"
     }
 
+Heartbeat
+-------------
+
+Every minute, the OpenALPR agent adds a heartbeat message to the queue.  The heartbeat provides general health and status information.  The format is as follows:
+
+.. code-block:: json
+
+    {
+      "version": 1,
+      "data_type": "heartbeat",
+      "company_id": "xxxxxxxx-yyyy-yyyy-yyyy-zzzzzzzzzzzz",
+      "site_id": "your-unique-sitename",
+      "timestamp": 1453426302097,
+      "system_uptime_seconds": 2595123,
+      "daemon_uptime_seconds": 2594832,
+      "internal_ip_address": "192.168.0.54",
+      "cpu_cores": 2,
+      "cpu_last_update": 1453426297878,
+      "cpu_usage_percent": 18.579235,
+      "disk_quota_total_bytes": 8000000000,
+      "disk_quota_consumed_bytes": 0,
+      "disk_quota_last_update": 1453408254586,
+      "memory_consumed_bytes": 2083704832,
+      "memory_last_update": 1453426297878,
+      "memory_swapused_bytes": 0,
+      "memory_swaptotal_bytes": 1608511488,
+      "memory_total_bytes": 2099093504,
+      "processing_threads_active": 1,
+      "processing_threads_configured": 1,
+      "beanstalk_queue_size": 0,
+      "video_streams": [
+        {
+          "camera_id": 1630410444,
+          "fps": 12,
+          "is_streaming": true,
+          "url": "rtsp://192.168.0.5:554/axis-media/media.amp?videocodec=h264&resolution=1280x720&compression=30&mirror=0&rotation=0&textposition=top&text=1&clock=1&date=0&overlayimage=0&fps=11&keyframe_interval=32&videobitrate=0&maxframesize=0",
+          "last_update": 1453426302086
+        }
+      ]
+    }
 
 Web Services
 -------------
