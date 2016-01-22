@@ -461,7 +461,7 @@ In some cases, you may prefer to just retrieve a cropped image around the licens
 
   - http://[*Agent_IP*]:8355/crop/[*plate_event_uuid*]?x1=477&y1=258&x2=632&y2=297
 
-
+Additionally, the web server exposes a `web service API <api/>`_ for searching license plates and groups.  Detailed documentation is available in the :ref:`web server section <web_services_api>`
 
 OpenALPR Agent Docker Container
 ----------------------------------
