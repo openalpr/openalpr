@@ -48,7 +48,7 @@ Add the OpenALPR GPG key and setup the OpenALPR deb repository
 .. code-block:: bash
 
     wget -O - http://deb.openalpr.com/openalpr.gpg.key | sudo apt-key add -
-    echo "deb http://deb.openalpr.com/web_server/ openalpr-web main" | sudo tee /etc/apt/sources.list.d/openalpr-web.list
+    echo "deb http://deb.openalpr.com/commercial/ trusty main" | sudo tee /etc/apt/sources.list.d/openalpr.list
 
     sudo apt-get update && sudo apt-get -y install openalpr-web
 
@@ -138,7 +138,7 @@ From the terminal:
     wget -O - http://deb.openalpr.com/openalpr.gpg.key | sudo apt-key add -
 
     # Add the OpenALPR repository to your server
-    echo "deb http://deb.openalpr.com/commercial/ openalpr main" | sudo tee /etc/apt/sources.list.d/openalpr.list
+    echo "deb http://deb.openalpr.com/commercial/ trusty main" | sudo tee /etc/apt/sources.list.d/openalpr.list
 
     # Install the OpenALPR software
     sudo apt-get update

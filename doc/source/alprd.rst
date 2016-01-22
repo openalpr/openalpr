@@ -248,7 +248,7 @@ Add the OpenALPR GPG key and setup the OpenALPR deb repository
 .. code-block:: bash
 
     wget -O - http://deb.openalpr.com/openalpr.gpg.key | sudo apt-key add -
-    echo "deb http://deb.openalpr.com/commercial/ openalpr main" | sudo tee /etc/apt/sources.list.d/openalpr.list
+    echo "deb http://deb.openalpr.com/commercial/ trusty main" | sudo tee /etc/apt/sources.list.d/openalpr.list
 
     sudo apt-get update && sudo apt-get -y install openalpr openalpr-daemon
 
