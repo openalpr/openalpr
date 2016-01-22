@@ -1,0 +1,421 @@
+---
+swagger: '2.0'
+
+info:
+  title: OpenALPR REST API
+  version: v1.0
+  description: |
+    The OpenALPR REST API allows you to search license plate data programmatically from the 
+    OpenALPR Web server.  Using this API you can search for license plate groups, individual 
+    reads, and alerts.  You can also retrieve the plate images from the agent.
+
+tags:
+  -
+    name: webserver
+    description: REST API for the Web Server and plate metadata
+  -
+    name: agent
+    description: REST API for the agent and image data
+
+paths:
+  /api/search/group:
+    get:
+      tags:
+        - webserver
+      description: Search for ALPR group results
+      parameters:
+        - description: Company UUID used for authentication
+          in: query
+          name: company_id
+          required: true
+          type: string
+        - description: unique ID for the site
+          in: query
+          name: site
+          required: false
+          type: string
+        - description: unique camera number
+          in: query
+          name: camera
+          required: false
+          type: number
+        - description: Start time in ISO 8601 format. At least start or end must be defined.
+          in: query
+          name: start
+          required: false
+          type: string
+        - description: End time in ISO 8601 format.  At least start or end must be defined.
+          in: query
+          name: end
+          required: false
+          type: string
+        - description: Plate Number to search for
+          in: query
+          name: plate
+          required: false
+          type: string
+        - description: Search plate using regular expression.  Disabled (0) or Enabled (1)
+          in: query
+          name: wildcard
+          required: false
+          type: number
+        - description: Maximum number of results to return
+          in: query
+          name: topn
+          required: false
+          type: number
+        - description: Order can be either desc or asc
+          in: query
+          name: order
+          required: false
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/group'
+        '400':
+          description: "Bad input provided.  Adjust the query parameters and try again.\nThe text accompanying the error will provide more detail about which query \nparameters are incorrect.\n"
+        '401':
+          description: "Unauthorized.  You must either provide a valid company_id or \nhave a logged in session\n"
+  /api/search/plate:
+    get:
+      tags:
+        - webserver
+      description: Search for individual plate results
+      parameters:
+        - description: Company UUID used for authentication
+          in: query
+          name: company_id
+          required: true
+          type: string
+        - description: unique ID for the site
+          in: query
+          name: site
+          required: false
+          type: string
+        - description: unique camera number
+          in: query
+          name: camera
+          required: false
+          type: number
+        - description: Start time in ISO 8601 format. At least start or end must be defined.
+          in: query
+          name: start
+          required: false
+          type: string
+        - description: End time in ISO 8601 format.  At least start or end must be defined.
+          in: query
+          name: end
+          required: false
+          type: string
+        - description: Plate Number to search for
+          in: query
+          name: plate
+          required: false
+          type: string
+        - description: Search plate using regular expression.  Disabled (0) or Enabled (1)
+          in: query
+          name: wildcard
+          required: false
+          type: number
+        - description: Maximum number of results to return
+          in: query
+          name: topn
+          required: false
+          type: number
+        - description: Order can be either desc or asc
+          in: query
+          name: order
+          required: false
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/plate'
+        '400':
+          description: "Bad input provided.  Adjust the query parameters and try again.\nThe text accompanying the error will provide more detail about which query \nparameters are incorrect.\n"
+        '401':
+          description: "Unauthorized.  You must either provide a valid company_id or \nhave a logged in session\n"
+  '/api/detail/group/{group_id}':
+    get:
+      tags:
+        - webserver
+      description: Get detailed results for a group record
+      parameters:
+        - in: path
+          name: group_id
+          required: true
+          type: string
+        - description: Company UUID used for authentication
+          in: query
+          name: company_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/group_detail'
+
+        '401':
+          description: "Unauthorized.  You must either provide a valid company_id or \nhave a logged in session\n"
+        '404':
+          description: |
+            The requested ID was not found
+  '/api/detail/plate/{plate_id}':
+    get:
+      tags:
+        - webserver
+      description: Get detailed results for a plate record
+      parameters:
+        - in: path
+          name: plate_id
+          required: true
+          type: string
+        - description: Company UUID used for authentication
+          in: query
+          name: company_id
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/plate_detail'
+        '401':
+          description: "Unauthorized.  You must either provide a valid company_id or \nhave a logged in session\n"
+        '404':
+          description: |
+            The requested ID was not found
+  '/img/{uuid}.jpg':
+    get:
+      tags:
+        - agent
+      description: Get an image for the requested plate.  This web service is served on port 8355.
+      parameters:
+        - in: path
+          name: uuid
+          required: true
+          type: string
+      produces:
+        - image/jpeg
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/plate'
+        '404':
+          description: not found
+securityDefinitions: {}
+swagger: '2.0'
+
+definitions:
+  plate:
+    type: object
+    properties:
+      pk:
+        type: integer
+        description: "Unique integer ID for this plate"
+      model:
+        type: string
+        description: "Name of the data type"
+      fields:
+        type: object
+        properties:
+          best_confidence:
+            type: number
+            description: "Percent confidence of the license plate result"
+          best_plate:
+            type: string
+            description: "The plate number with the highest confidence"
+          uuid:
+            type: string
+            description: "Unique identifier for the image where the license plate was found"
+          epoch_time:
+            type: string
+            description: "Time that the plate was seen in ISO-8601 format"
+          camera:
+            type: integer
+            description: "Unique ID of the camera"
+          company:
+            type: integer
+            description: "Company ID"
+          site:
+            type: string
+            description: "Site ID where the plate was captured"
+          plate_index:
+            type: integer
+            description: "Within a single image (UUID) there may be multiple plates.  This is the unique ID of the single plate within an image"
+          img_width:
+            type: integer
+            description: "Image width in pixels"
+          img_height:
+            type: integer
+            description: "Image height in pixels"
+          processing_time_ms:
+            type: number
+            description: "Time in milliseconds taken to identify the license plate from an image"
+          x1:
+            type: integer
+            description: "Pixel coordinates for the license plate.  x1,y1 -> x4,y4 forms a polygon starting from the top-left and working clockwise to the bottom-left corners."
+          y1:
+            type: integer
+          x2:
+            type: integer
+          y2:
+            type: integer
+          x3:
+            type: integer
+          y3:
+            type: integer
+          x4:
+            type: integer
+          y4:
+            type: integer
+
+  group:
+    type: object
+    properties:
+      pk:
+        type: integer
+        description: "Unique integer ID for this plate"
+      model:
+        type: string
+        description: "Name of the data type"
+      fields:
+        type: object
+        properties:
+          best_confidence:
+            type: number
+            description: "Percent confidence of the license plate result"
+          best_plate:
+            type: string
+            description: "The plate number with the highest confidence"
+          best_index:
+            type: integer
+            description: "Within a single image (UUID) there may be multiple plates.  This is the unique ID of the single plate within an image"
+          best_uuid:
+            type: string
+            description: "Unique identifier for the image where the highest confidence license plate was found"
+          epoch_time_start:
+            type: string
+            description: "Time that the plate was initially seen in ISO-8601 format"
+          epoch_time_end:
+            type: string
+            description: "Time that the plate was last seen in ISO-8601 format"
+          camera:
+            type: integer
+            description: "Unique ID of the camera"
+          company:
+            type: integer
+            description: "Company ID"
+          site:
+            type: string
+            description: "Site ID where the plate was captured"
+
+  plate_detail:
+    type: object
+    properties:
+      best_confidence:
+        type: number
+        description: "Percent confidence of the license plate result"
+      best_plate:
+        type: string
+        description: "The plate number with the highest confidence"
+      uuid:
+        type: string
+        description: "Unique identifier for the image where the license plate was found"
+      epoch_time:
+        type: string
+        description: "Time that the plate was seen in ISO-8601 format"
+      camera:
+        $ref: '#/definitions/camera_info'
+      regions_of_interest:
+        type: object
+        description: "Areas that were analyzed.  Typically wherever motion is found"
+        properties:
+          x: { type: integer }
+          y: { type: integer }
+          width: { type: integer }
+          height: { type: integer }
+      candidates:
+        type: array
+        items:
+          type: object
+          properties:
+            plate_number: { type: string }
+            confidence: { type: number }
+      coordinates:
+        type: array
+        items:
+          type: object
+          properties:
+            x: { type: integer }
+            y: { type: integer }
+      site:
+        type: string
+        description: "Site ID where the plate was captured"
+      plate_index:
+        type: integer
+        description: "Within a single image (UUID) there may be multiple plates.  This is the unique ID of the single plate within an image"
+      img_width:
+        type: integer
+        description: "Image width in pixels"
+      img_height:
+        type: integer
+        description: "Image height in pixels"
+      processing_time_ms:
+        type: number
+        description: "Time in milliseconds taken to identify the license plate from an image"
+
+  group_detail:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: "Unique ID for the group"
+      camera:
+        $ref: '#/definitions/camera_info'
+      site:
+        type: string
+        description: "Site ID where the plate was captured"
+      epoch_time_start:
+        type: string
+        description: "Time that the plate was initially seen in ISO-8601 format"
+      epoch_time_end:
+        type: string
+        description: "Time that the plate was last seen in ISO-8601 format"
+      best_confidence:
+        type: number
+        description: "Percent confidence of the license plate result"
+      best_plate:
+        type: string
+        description: "The plate number with the highest confidence"
+      best_index:
+        type: integer
+        description: "Within a single image (UUID) there may be multiple plates.  This is the unique ID of the single plate within an image"
+      best_uuid:
+        type: string
+        description: "Unique identifier for the image where the highest confidence license plate was found"
+      uuids:
+        type: array
+        items:
+          type: string
+
+  camera_info:
+    type: object
+    properties:
+      camera_number:
+        type: integer
+        description: "Unique ID of the camera"
+      camera_name: 
+        type: string
+        description: "Friendly name of the camera"
