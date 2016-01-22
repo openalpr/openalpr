@@ -151,7 +151,7 @@ Configure the company_id, site_id, country, and stream values as described in th
 .. code-block:: bash
 
     # Restart the alprd process
-    sudo /etc/init.d/openalprd-daemon start
+    sudo service openalprd-daemon start
 
     # Tail the logs to see if the daemon is running successfully
     tail -f /var/log/alpr.log
