@@ -165,7 +165,7 @@ On an Ubuntu 14.04 64-bit Linux Install
 
 Alternatively, you may prefer to install the OpenALPR agent directly onto the server.   These steps are not required if you installed the Virtual Machine referenced above.
 
-First install a copy of Ubuntu 14.04 64-bit Linux server and gain console access.
+First install a copy of `Ubuntu 14.04 64-bit Linux server <http://www.ubuntu.com/download/server/thank-you?country=US&version=14.04.3&architecture=amd64>`_ and gain console access.
 
 From the terminal:
 
@@ -196,6 +196,8 @@ Configure the company_id, site_id, country, and stream values as described in th
                     
 If all goes well, the log should show that the video stream is being processed and plates are being identified and uploaded. Once a plate is uploaded it should show up on the OpenALPR Cloud dashboard after a few seconds.
 
+
+.. _web_services_api:
 
 Web Services API
 ------------------
