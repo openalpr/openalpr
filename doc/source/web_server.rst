@@ -35,7 +35,7 @@ Architecture
 
 As depicted in the diagram above, the OpenALPR agent reads a video stream from your IP camera, processes it, and uploads plate metadata to the OpenALPR cloud. The agent also stores all of the plate images on a rolling buffer in its hard drive.
 
-There is a constant stream of data flowing between the camera and the agent as well as between the agent and the cloud. When you log into the OpenALPR Cloud web portal to view your data, that information is retrieved on-demand. OpenALPR Cloud does not store your plate images, these are downloaded directly from the agent when you select a plate to view.
+There is a constant stream of data flowing between the camera and the agent as well as between the agent and the cloud.  The data sent to the cloud is relatively low-bandwidth because it contains text metadata describing the license plates, and not the images.  When you log into the OpenALPR Cloud web portal to view your data, that information is retrieved on-demand. OpenALPR Cloud does not store your plate images, these are downloaded directly from the agent when you select a plate to view.
 
 
 Web Server Installation
@@ -77,7 +77,7 @@ Click on the "Getting Started" link and make note of your "Company ID."  You wil
 Agent Installation
 ===================
 
-The :ref:`OpenALPR agent <alprd>`  is installed as either a Virtual Machine (VM) or a Debian install for 64-bit Ubuntu Linux. The VM installs in a matter of minutes and can run on any operating system (e.g., Windows, Linux, Mac OS X). The Debian installer for 64-bit Ubuntu Linux is a more advanced install option.
+The :ref:`OpenALPR agent <alprd>`  is installed as either a Virtual Machine (VM) or a Debian install for 64-bit Ubuntu Linux. The VM installs in a few minutes and can run on any operating system (e.g., Windows, Linux, Mac OS X). The Debian installer for 64-bit Ubuntu Linux is a more advanced install option.
 
 Virtual Machine Install
 -------------------------
@@ -92,15 +92,15 @@ Virtual Machine Install
     :scale: 100%
     :alt: OpenALPR VM installation step 1
 
-- Select the openalpr-daemon-vm and click "Start"
-- The VM should boot up quickly and provide you with a login prompt. Login with the default credentials: root/openalpr
+- Select the openalpr-agent-vm and click "Start"
+- The VM should boot up quickly and provide you with a login prompt. Login with the default credentials: admin/admin
 - You should see a menu like the one below. Use the up/down, tab, and enter keys to navigate the menu.
 
 .. image:: images/webserver_vminstall2.png
     :scale: 100%
     :alt: OpenALPR VM installation step 2
 
-- First setup the network by choosing Network → eth0.
+- First setup the network by choosing **Network** → **eth0**.
     - Select either DHCP or static depending on your LAN configuration
     - Select Network → Test and make sure that you can successfully ping www.google.com
 
@@ -108,27 +108,64 @@ Virtual Machine Install
     :scale: 100%
     :alt: OpenALPR VM installation step 3
 
-- Select "Upgrade" from the main menu. The OpenALPR software is updated more frequently than the VM, there may be updates available.
-- Optionally, select "Password" from the main menu to change your password to something more secure.
-- Choose "Configure" from the main menu to configure the OpenALPR agent.
-    - Add your company ID to the company_id parameter. For example, it may read: company_id = ca5e6e0f-4988-4cbb-ba7a-45226b8126d1
-    - Choose an appropriate Site ID. Use letters, numbers, and dashes (no spaces or special characters). For example "company-hq" or "leesburg-office-park"
-    - Configure your country. You should use "us" for US-style plates (12 inches by 6 inches) or "eu" for European plates (520mm by 110mm)
-    - Configure at least one camera stream. This is the MJPEG or H264 URL for your IP camera. Each camera stream should be on one line that starts with stream =. There are a few examples in the config, but they are prefaced with semicolons (which comments them out). Make sure your stream entries do not have a semicolon in front.
-    - Use the "tab" key to select OK and press enter to select it.
+- Select **Upgrade** from the main menu. The OpenALPR software is updated more frequently than the VM, there may be updates available.
+- Optional Steps:
+  
+  - Optionally, select **Password** from the main menu to change your password to something more secure.
+  - You may optionally install the OpenALPR web server onto this VM.  Select **Install Web** to start the install process.  Doing this will allow you to search, browse, and alert on license plates from your local VM rather than from the cloud.  This requires an on-premises license, please contact info@openalpr.com for an evaluation license.
+- Select **Configure** from the main menu.  This will provide you with a URL to connect to in a browser to complete the process.  
+  
+  - You will be directed to: http://[Agent-IP-Address]/agentconfig
 
 .. image:: images/webserver_vminstall4.png
     :scale: 100%
     :alt: OpenALPR VM installation step 4
 
-- The menu now monitors the latest output from the OpenALPR process. If there were any problems with the configuration, it will tell you at this point. Otherwise, you'll see output indicating that OpenALPR is actively processing your video stream and uploading the results to the OpenALPR Cloud.
+- In the agentconfig web interface, select **Remote Connection**.  This connects your local agent with your web server.  If using the cloud service, the web server is located at cloud.openalpr.com.  Otherwise it is the IP/hostname of the server where you installed the OpenALPR web software.  If you installed OpenALPR on the same system, use **localhost**.
+- Type in your username (e-mail address) and password, and click **Connect**.  You should see a message indicating that the connection was successful.
+- Click **Agent Config**
+  - You may be prompted to login.  Use the e-mail address and password that you just used to authenticate with the web server.
 
-Debian install for 64-bit Ubuntu Linux
+.. image:: images/webserver_vminstall5.png
+    :scale: 100%
+    :alt: OpenALPR VM installation step 4
+
+- Scroll to the bottom and add a video stream.
+- Select the model of IP camera you wish to connect to.  Fill in the IP address.  If the camera requires credentials, check the box and enter your camera's username and password.
+- Click **Test**.  After a few seconds, you will see a window indicating whether the connection was successful or not.  If it was successful, click **Save Camera**.  Otherwise, try another option (such as H264 Alt1 or MJPEG) and click **Test** again until you succeed.
+
+.. image:: images/webserver_vminstall-testsuccess.png
+    :scale: 100%
+    :alt: OpenALPR VM installation step 4
+
+- Next, configure the **Agent Parameters**.  
+
+  - Choose a sensible name for your **Site ID**.  This is usually the location of the agent system (e.g., headquarters, dallas-branch, warehouse3, etc.).  Each agent should be given a unique Site ID.
+  - Choose the **country** where the camera is located.  US will recognize North American-style plates (12 inches x 6 inches).  EU will recognize European-style plates.  There is also support for other countries that have plates with different dimensions.
+  - The number of **Processing Cores**  controls how much CPU is allocated to the LPR process.  The more processing cores you provide (up to the number of CPU cores on the system) the more frames per second (fps) you can process.  Higher fps generally contributes to better accuracy and capability to detect plates on faster moving vehicles.
+  - **Disk Quota** controls how much space is reserved for storing vehicle and license plate images.  It operates as a rolling buffer, so once it runs out of space, the oldest images are removed.
+  - **Pattern** should be set to the State (in the USA) or country (in Europe) that the camera is located in.  This gives OpenALPR additional information about the patterns on the plates.  It won't disqualify values from other states/countries, but it will help weigh results to give higher confidence to plates that do match the pattern.
+
+- Click **Update**.
+
+.. image:: images/webserver_vminstall6.png
+    :scale: 100%
+    :alt: OpenALPR VM installation step 4
+
+- Lastly, if you scroll to the top of the page you can watch the agent status.  At this point you should see **Video FPS** and other information indicating that video is being pulled from the camera and license plates are being recognized.  Now that the agent is configured, it will continue collecting data from the configured video streams.  If the agent is rebooted, it will pick back up on restart.  If the camera goes down and comes back, or the network is down temporarily, the agent will retry until connectivity is restored.  All results are queued, so no data is lost in the event of an outage.
+
+.. image:: images/webserver_vminstall7.png
+    :scale: 100%
+    :alt: OpenALPR VM installation step 4
+
+- Click on the **Web Server** link at the top of the page to start browsing license plate results.
+
+On an Ubuntu 14.04 64-bit Linux Install
 ---------------------------------------
 
-Alternatively, you may prefer to install the OpenALPR agent directly into an Ubuntu Linux server. These steps are not required if you installed the Virtual Machine referenced above.
+Alternatively, you may prefer to install the OpenALPR agent directly onto the server.   These steps are not required if you installed the Virtual Machine referenced above.
 
-First install a copy of 64-bit Ubuntu Linux server and gain console access.
+First install a copy of Ubuntu 14.04 64-bit Linux server and gain console access.
 
 From the terminal:
 
@@ -142,9 +179,10 @@ From the terminal:
 
     # Install the OpenALPR software
     sudo apt-get update
-    sudo apt-get install openalpr openalpr-daemon openalpr-utils libopenalpr-dev
-                        
-Edit the configuration file /etc/openalpr/alprd.conf
+    sudo apt-get install openalpr openalpr-daemon openalpr-utils libopenalpr-dev openalpr-daemonconfig
+             
+
+You may use the web interface to configure the agent (http://[agent-ip-address]/agentconfig or you may edit the configuration file /etc/openalpr/alprd.conf
 
 Configure the company_id, site_id, country, and stream values as described in the Virtual Machine section. Make sure that the value for upload_data is set to 1 and that the upload_address setting is configured to http://[on_premises_webserver]/push
 
@@ -162,4 +200,4 @@ If all goes well, the log should show that the video stream is being processed a
 Web Services API
 ------------------
 
-The Web Services API can be used to query your On-Premises server for data.  The API is documented `here <https://anypoint.mulesoft.com/apiplatform/openalpr/#/portals/apis/21174/versions/22584/pages/35526>`_
+The `Web Services API <api/>`_ can be used to query your On-Premises server for data.  The API is documented `here <api/>`_
