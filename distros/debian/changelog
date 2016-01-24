@@ -1,3 +1,10 @@
+openalpr (2.2.3-1) unstable; urgency=low
+
+  * Changed Debian config to build on all architectures
+  * Upload sponsored by Petter Reinholdtsen
+
+ -- Matthew Hill <matthill@openalpr.com>  Sun, 24 Jan 2016 15:33:25 -0500
+
 openalpr (2.2.2-1) unstable; urgency=low
 
   * Minor bug fixes
