@@ -12,7 +12,7 @@ Vcs-Git: https://github.com/openalpr/openalpr.git
 
 Package: libopenalpr2
 Section: libs
-Architecture: amd64
+Architecture: any
 Depends: libopenalpr-data (= ${source:Version}), ${shlibs:Depends},
  ${misc:Depends}
 Description: Automated License Plate Recognition library (OpenALPR)
@@ -24,7 +24,7 @@ Description: Automated License Plate Recognition library (OpenALPR)
 
 Package: libopenalpr-dev
 Section: libdevel
-Architecture: amd64
+Architecture: any
 Depends: libopenalpr2 (= ${binary:Version}), ${misc:Depends}
 Description: Development files for the OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
@@ -47,7 +47,7 @@ Description: Runtime data for the OpenALPR library
  license plates from various countries. 
 
 Package: openalpr
-Architecture: amd64
+Architecture: any
 Depends: libopenalpr2 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: Command line program to operate the OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
@@ -58,7 +58,7 @@ Description: Command line program to operate the OpenALPR library
  plates. 
 
 Package: openalpr-daemon
-Architecture: amd64
+Architecture: any
 Depends: libopenalpr2 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends},
  adduser,
  beanstalkd
@@ -75,7 +75,7 @@ Description: Daemon to run OpenALPR in the background
 
 Package: openalpr-utils
 Section: utils
-Architecture: amd64
+Architecture: any
 Depends: libopenalpr2 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: Utilities for the OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
@@ -101,7 +101,7 @@ Description: Utilities for the OpenALPR library
 
 Package: python-openalpr
 Section: python
-Architecture: amd64
+Architecture: any
 Depends: libopenalpr-dev (= ${binary:Version}), ${misc:Depends}
 Description: Python binding for OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
