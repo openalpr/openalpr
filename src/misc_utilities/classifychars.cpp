@@ -50,20 +50,24 @@ const int RIGHT_ARROW_KEY = 2555904;
 
 const int DOWN_ARROW_KEY = 2621440;
 const int UP_ARROW_KEY = 2490368;
+
+const int ENTER_KEY_ONE = 13;
+const int ENTER_KEY_TWO = 10;
 #else
-const int LEFT_ARROW_KEY = 81;
-const int RIGHT_ARROW_KEY = 83;
+const int LEFT_ARROW_KEY = 1113937;
+const int RIGHT_ARROW_KEY = 1113939;
 
-const int DOWN_ARROW_KEY = 84;
-const int UP_ARROW_KEY= 82;
+const int DOWN_ARROW_KEY = 1113940;
+const int UP_ARROW_KEY= 1113938;
 
+const int ENTER_KEY_ONE = 1048586;
+const int ENTER_KEY_TWO = 1048586;
 #endif
 
 const string SPACE = " ";
 const int SPACE_KEY = 32;
 const int ESCAPE_KEY = 27;
-const int ENTER_KEY_ONE = 13;
-const int ENTER_KEY_TWO = 10;
+
 const int DASHBOARD_COLUMNS = 3;
 
 void showDashboard(vector<Mat> images, vector<bool> selectedImages, int selectedIndex);
