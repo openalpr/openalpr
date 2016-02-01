@@ -232,7 +232,9 @@ int main( int argc, const char** argv )
           {
             cv::imwrite(LAST_VIDEO_STILL_LOCATION, frame);
           }
-          std::cout << "Frame: " << framenum << std::endl;
+          if (!outputJson)
+            std::cout << "Frame: " << framenum << std::endl;
+          
           if (framenum == 0)
             motiondetector.ResetMotionDetection(&frame);
           detectandshow(&alpr, frame, "", outputJson);
