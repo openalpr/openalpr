@@ -24,7 +24,7 @@
 #endif
 
 // Support for OS X
-#ifdef __MACH__
+#if defined(__APPLE__) && defined(__MACH__)
 #include <mach/clock.h>
 #include <mach/mach.h>
 #endif

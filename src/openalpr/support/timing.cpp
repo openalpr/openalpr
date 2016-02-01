@@ -124,7 +124,7 @@ namespace alpr
 
   void _getTime(bool realtime, timespec* time)
   {
-    #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
+    #if defined(__APPLE__) && defined(__MACH__) // OS X does not have clock_gettime, use clock_get_time
       clock_serv_t cclock;
       mach_timespec_t mts;
       host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
