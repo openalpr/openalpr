@@ -1,7 +1,7 @@
 openalpr
 ========
 
-OpenALPR is an open source *Automatic License Plate Recognition* library written in C++ with bindings in C#, Java, Node.js, and Python.  The library analyzes images and video streams to identify license plates.  The output is the text representation of any license plate characters.
+OpenALPR is an open source *Automatic License Plate Recognition* library written in C++ with bindings in C#, Java, Node.js, Go, and Python.  The library analyzes images and video streams to identify license plates.  The output is the text representation of any license plate characters.
 
 Check out a live online demo here: http://www.openalpr.com/demo-image.html
 
@@ -113,7 +113,7 @@ Detailed documentation is available at [doc.openalpr.com] (http://doc.openalpr.c
 Integrating the Library
 -----------------------
 
-OpenALPR is written in C++ and has bindings in C#, Python, Node.js, and Java.  Please see this guide for examples showing how to run OpenALPR in your application: http://doc.openalpr.com/bindings.html
+OpenALPR is written in C++ and has bindings in C#, Python, Node.js, Go, and Java.  Please see this guide for examples showing how to run OpenALPR in your application: http://doc.openalpr.com/bindings.html
 
 Compiling
 -----------
