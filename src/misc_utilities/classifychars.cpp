@@ -364,7 +364,7 @@ vector<string> showCharSelection(Mat image, vector<Rect> charRegions, string sta
 
       if (curCharIdx >= charRegions.size())
       {
-        waitkey = ENTER_KEY_ONE;
+        waitkey = (int16_t) ENTER_KEY_ONE;
         break;
       }
     }
