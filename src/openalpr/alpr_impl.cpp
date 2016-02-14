@@ -45,19 +45,7 @@ namespace alpr
       return;
     }
 
-    for (unsigned int i = 0; i < config->loaded_countries.size(); i++)
-    {
-      config->setCountry(config->loaded_countries[i]);
-
-      AlprRecognizers recognizer;
-      recognizer.plateDetector = createDetector(config);
-      recognizer.ocr = new OCR(config);
-
-      recognizer.stateDetector = new StateDetector(this->config->country, this->config->config_file_path, this->config->runtimeBaseDir);
-
-      recognizers[config->country] = recognizer;
-
-    }
+    loadRecognizers();
 
     setNumThreads(0);
 
@@ -666,6 +654,11 @@ namespace alpr
     return allResults;
   }
 
+  void AlprImpl::setCountry(std::string country) {
+    config->load_countries(country);
+    loadRecognizers();
+  }
+
 
   void AlprImpl::setDetectRegion(bool detectRegion)
   {
@@ -690,6 +683,28 @@ namespace alpr
     ss << OPENALPR_MAJOR_VERSION << "." << OPENALPR_MINOR_VERSION << "." << OPENALPR_PATCH_VERSION;
     return ss.str();
   }
+  
+  
+  void AlprImpl::loadRecognizers() {
+    for (unsigned int i = 0; i < config->loaded_countries.size(); i++)
+    {
+      config->setCountry(config->loaded_countries[i]);
+
+      if (recognizers.find(config->country) == recognizers.end())
+      {
+        // Country training data has not already been loaded.  Load it.
+        AlprRecognizers recognizer;
+        recognizer.plateDetector = createDetector(config);
+        recognizer.ocr = new OCR(config);
+
+        recognizer.stateDetector = new StateDetector(this->config->country, this->config->config_file_path, this->config->runtimeBaseDir);
+
+        recognizers[config->country] = recognizer;
+      }
+
+    }
+  }
+
   
   cv::Mat AlprImpl::getCharacterTransformMatrix(PipelineData* pipeline_data ) {
     std::vector<Point2f> crop_corners;

@@ -137,6 +137,9 @@ namespace alpr
       Alpr(const std::string country, const std::string configFile = "", const std::string runtimeDir = "");
       virtual ~Alpr();
 
+      // Set the country used for plate recognition
+      void setCountry(std::string country);
+      
       void setDetectRegion(bool detectRegion);
       void setTopN(int topN);
       void setDefaultRegion(std::string region);

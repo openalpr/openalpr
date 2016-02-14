@@ -111,36 +111,45 @@ namespace alpr
       return;
     }
 
-    this->loaded_countries = this->parse_country_string(country);
-
-    if (this->loaded_countries.size() == 0)
-    {
-      std::cerr << "--(!) Country not specified." << endl;
-      return;
-    }
-    for (unsigned int i = 0; i < loaded_countries.size(); i++)
-    {
-      bool country_loaded = setCountry(this->loaded_countries[i]);
-      if (!country_loaded)
-      {
-        return;
-      }
-    }
-    setCountry(this->loaded_countries[0]);
-
+    bool countries_loaded = load_countries(country);
 
     if (this->debugGeneral)
     {
       std::cout << debug_message << endl;
     }
 
-    this->loaded = true;
+    this->loaded = countries_loaded;
   }
+  
   Config::~Config()
   {
     
   }
+  
+  bool Config::load_countries(const std::string countries) {
 
+    this->loaded_countries = this->parse_country_string(countries);
+
+    if (this->loaded_countries.size() == 0)
+    {
+      std::cerr << "--(!) Country not specified." << endl;
+      return false;
+    }
+    for (unsigned int i = 0; i < loaded_countries.size(); i++)
+    {
+      bool country_loaded = setCountry(this->loaded_countries[i]);
+      if (!country_loaded)
+      {
+        return false;
+      }
+    }
+    
+    setCountry(this->loaded_countries[0]);
+    
+    return true;
+  }
+
+  
   void Config::loadCommonValues(string configFile)
   {
 
@@ -344,9 +353,21 @@ namespace alpr
     return parsed_countries;
   }
 
+  bool Config::country_is_loaded(std::string country) {
+    for (uint32_t i = 0; i < loaded_countries.size(); i++)
+    {
+      if (loaded_countries[i] == country)
+        return true;
+    }
+    
+    return false;
+  }
+
   bool Config::setCountry(std::string country)
   {
     this->country = country;
+    
+    
 
     std::string country_config_file = this->runtimeBaseDir + "/config/" + country + ".conf";
     if (fileExists(country_config_file.c_str()) == false)
@@ -363,6 +384,9 @@ namespace alpr
       return false;
     }
 
+    if (!country_is_loaded(country))
+      this->loaded_countries.push_back(country);
+    
     return true;
   }
 

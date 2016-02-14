@@ -92,6 +92,7 @@ namespace alpr
 
       AlprFullDetails analyzeSingleCountry(cv::Mat colorImg, cv::Mat grayImg, std::vector<cv::Rect> regionsOfInterest);
 
+      void setCountry(std::string country);
       void setDetectRegion(bool detectRegion);
       void setTopN(int topn);
       void setDefaultRegion(std::string region);
@@ -116,6 +117,8 @@ namespace alpr
       bool detectRegion;
       std::string defaultRegion;
 
+      void loadRecognizers();
+      
       cv::Mat getCharacterTransformMatrix(PipelineData* pipeline_data );
       std::vector<AlprCoordinate> getCharacterPoints(cv::Rect char_rect, cv::Mat transmtx);
       std::vector<cv::Rect> convertRects(std::vector<AlprRegionOfInterest> regionsOfInterest);
