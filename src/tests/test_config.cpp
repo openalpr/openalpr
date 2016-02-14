@@ -14,7 +14,7 @@ using namespace alpr;
 
 Config get_config(std::string countries)
 {
-  Config config(countries, "", "");
+  Config config(countries, OPENALPR_TESTING_CONFIG_PATH, OPENALPR_TESTING_RUNTIME_DIR);
   return config;
 }
 

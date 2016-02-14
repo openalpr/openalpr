@@ -1,5 +1,8 @@
 enable_testing()
 
+add_definitions( -DOPENALPR_TESTING_CONFIG_PATH="${CMAKE_SOURCE_DIR}/../config/openalpr.conf.in")
+add_definitions( -DOPENALPR_TESTING_RUNTIME_DIR="${CMAKE_SOURCE_DIR}/../runtime_data/")
+
 ADD_EXECUTABLE( unittests 
   test_api.cpp 
   test_utility.cpp
