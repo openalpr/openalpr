@@ -140,6 +140,9 @@ namespace alpr
       // Set the country used for plate recognition
       void setCountry(std::string country);
       
+      // Update the prewarp setting without reloading the library
+      void setPrewarp(std::string prewarp_config);
+      
       void setDetectRegion(bool detectRegion);
       void setTopN(int topN);
       void setDefaultRegion(std::string region);

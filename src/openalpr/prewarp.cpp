@@ -28,15 +28,22 @@ using namespace cv;
 namespace alpr
 {
 
-  PreWarp::PreWarp(Config* config) {
+  PreWarp::PreWarp(Config* config)
+  {
     this->config = config;
-    
-    string warp_config = config->prewarp;
+    initialize(config->prewarp);
+  }
+  
+
+  void PreWarp::initialize(std::string prewarp_config) {
+
+    timespec startTime;
+    getTimeMonotonic(&startTime);
     
     // Do a cursory verification based on number of commas
-    int commacount = count(warp_config.begin(), warp_config.end(), ',');
+    int commacount = count(prewarp_config.begin(), prewarp_config.end(), ',');
     
-    if (warp_config.length() < 4)
+    if (prewarp_config.length() < 4)
     {
       // No config specified.  ignore
       if (this->config->debugPrewarp)
@@ -55,10 +62,10 @@ namespace alpr
     {
 
       // Parse the warp_config
-      int first_comma = warp_config.find(",");
+      int first_comma = prewarp_config.find(",");
 
 
-      string name = warp_config.substr(0, first_comma);
+      string name = prewarp_config.substr(0, first_comma);
       
       if (name != "planar")
       {
@@ -66,7 +73,7 @@ namespace alpr
       }
       else
       {
-        stringstream ss(warp_config.substr(first_comma + 1, warp_config.length()));
+        stringstream ss(prewarp_config.substr(first_comma + 1, prewarp_config.length()));
 
         ss >> w;
         ss.ignore();
@@ -90,8 +97,12 @@ namespace alpr
       }
 
     }
+    
+    timespec endTime;
+    getTimeMonotonic(&endTime);
+    if (config->debugTiming)
+      cout << "Prewarp Initialization Time: " << diffclock(startTime, endTime) << "ms." << endl;
   }
-
 
   PreWarp::~PreWarp() {
   }

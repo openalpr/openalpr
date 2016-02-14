@@ -659,6 +659,11 @@ namespace alpr
     loadRecognizers();
   }
 
+  void AlprImpl::setPrewarp(std::string prewarp_config)
+  {
+    prewarp->initialize(prewarp_config);
+  }
+
 
   void AlprImpl::setDetectRegion(bool detectRegion)
   {

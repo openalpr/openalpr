@@ -91,6 +91,10 @@ namespace alpr
     impl->setCountry(country);
   }
 
+  void Alpr::setPrewarp(std::string prewarp_config) {
+    impl->setPrewarp(prewarp_config);
+  }
+
 
   void Alpr::setDetectRegion(bool detectRegion)
   {

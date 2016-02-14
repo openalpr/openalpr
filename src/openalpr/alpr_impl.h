@@ -93,6 +93,8 @@ namespace alpr
       AlprFullDetails analyzeSingleCountry(cv::Mat colorImg, cv::Mat grayImg, std::vector<cv::Rect> regionsOfInterest);
 
       void setCountry(std::string country);
+      void setPrewarp(std::string prewarp_config);
+      
       void setDetectRegion(bool detectRegion);
       void setTopN(int topn);
       void setDefaultRegion(std::string region);
