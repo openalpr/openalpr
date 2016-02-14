@@ -78,6 +78,8 @@ class Alpr():
 
         self._free_json_mem_func = self._openalprpy_lib.freeJsonMem
 
+        self._set_country_func = self._openalprpy_lib.setCountry
+        self._set_country_func.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
         self._set_default_region_func = self._openalprpy_lib.setDefaultRegion
         self._set_default_region_func.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
@@ -167,6 +169,17 @@ class Alpr():
         :return: None
         """
         self._set_top_n_func(self.alpr_pointer, topn)
+
+    def set_country(self, country):
+        """
+        This sets the country for detecting license plates. For example,
+        setting country to "us" for United States or "eu" for Europe.
+
+        :param region: A unicode/ascii string (Python 2/3) or bytes array (Python 3)
+        :return: None
+        """
+        country = _convert_to_charp(country)
+        self._set_country_func(self.alpr_pointer, country)
 
     def set_default_region(self, region):
         """

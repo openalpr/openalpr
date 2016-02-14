@@ -96,6 +96,14 @@ extern "C" {
       return membuffer;
     }
 
+  OPENALPR_EXPORT void setCountry(Alpr* nativeAlpr, char* ccountry)
+    {
+      // Convert strings from java to C++ and release resources
+      std::string country(ccountry);
+
+      nativeAlpr->setCountry(country);
+    }
+  
   OPENALPR_EXPORT void setDefaultRegion(Alpr* nativeAlpr, char* cdefault_region)
     {
       // Convert strings from java to C++ and release resources
