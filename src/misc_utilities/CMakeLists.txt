@@ -2,7 +2,7 @@
 ADD_EXECUTABLE( openalpr-utils-sortstate sortstate.cpp  )
 TARGET_LINK_LIBRARIES(openalpr-utils-sortstate
     ${OPENALPR_LIB}
-	statedetection
+	${STATE_DETECTION_LIB}
     support
     ${OpenCV_LIBS} 
 	${Tesseract_LIBRARIES}
@@ -24,7 +24,7 @@ ADD_EXECUTABLE(openalpr-utils-benchmark
 )
 TARGET_LINK_LIBRARIES(openalpr-utils-benchmark
     ${OPENALPR_LIB}
-    statedetection
+    ${STATE_DETECTION_LIB}
     support
     pthread
     ${OpenCV_LIBS} 
