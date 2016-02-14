@@ -171,7 +171,7 @@ class Alpr():
     def set_default_region(self, region):
         """
         This sets the default region for detecting license plates. For example,
-        setting region to "us" for United States or "eu" for Europe.
+        setting region to "md" for Maryland or "fr" for France.
 
         :param region: A unicode/ascii string (Python 2/3) or bytes array (Python 3)
         :return: None
