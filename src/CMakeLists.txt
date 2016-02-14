@@ -127,10 +127,11 @@ ELSE()
    SET(OPENALPR_LIB openalpr)
 ENDIF()
 
+SET(STATE_DETECTION_LIB statedetection)
+
 if (NOT IOS)
   TARGET_LINK_LIBRARIES(alpr
     ${OPENALPR_LIB}
-    statedetection
     support
     video
     ${OpenCV_LIBS}
