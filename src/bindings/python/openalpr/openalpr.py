@@ -81,6 +81,9 @@ class Alpr():
         self._set_country_func = self._openalprpy_lib.setCountry
         self._set_country_func.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
+        self._set_prewarp_func = self._openalprpy_lib.setPrewarp
+        self._set_prewarp_func.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+
         self._set_default_region_func = self._openalprpy_lib.setDefaultRegion
         self._set_default_region_func.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
 
@@ -180,6 +183,18 @@ class Alpr():
         """
         country = _convert_to_charp(country)
         self._set_country_func(self.alpr_pointer, country)
+
+    def set_prewarp(self, prewarp):
+        """
+        Updates the prewarp configuration used to skew images in OpenALPR before
+        processing.
+
+        :param prewarp: A unicode/ascii string (Python 2/3) or bytes array (Python 3)
+        :return: None
+        """
+        prewarp = _convert_to_charp(prewarp)
+        self._set_prewarp_func(self.alpr_pointer, prewarp)
+
 
     def set_default_region(self, region):
         """
