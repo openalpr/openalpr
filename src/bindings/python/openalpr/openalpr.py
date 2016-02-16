@@ -175,7 +175,7 @@ class Alpr():
         This sets the country for detecting license plates. For example,
         setting country to "us" for United States or "eu" for Europe.
 
-        :param region: A unicode/ascii string (Python 2/3) or bytes array (Python 3)
+        :param country: A unicode/ascii string (Python 2/3) or bytes array (Python 3)
         :return: None
         """
         country = _convert_to_charp(country)
