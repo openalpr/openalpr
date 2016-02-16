@@ -591,10 +591,11 @@ namespace alpr
         continue;
 
       totalChars++;
-
-	  tempFullContour = Mat::zeros(plateMask.size(), CV_8U);
-	  drawContours(tempFullContour, textContours.contours, i, Scalar(255,255,255), CV_FILLED, 8, textContours.hierarchy);
+      tempFullContour = Mat::zeros(plateMask.size(), CV_8U);
+      drawContours(tempFullContour, textContours.contours, i, Scalar(255,255,255), CV_FILLED, 8, textContours.hierarchy);
       bitwise_and(tempFullContour, plateMask, tempMaskedContour);
+      
+      textContours.goodIndices[i] = false;
 
       float beforeMaskWhiteness = mean(tempFullContour)[0];
       float afterMaskWhiteness = mean(tempMaskedContour)[0];
