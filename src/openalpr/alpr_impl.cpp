@@ -661,7 +661,10 @@ namespace alpr
 
   void AlprImpl::setPrewarp(std::string prewarp_config)
   {
-    prewarp->initialize(prewarp_config);
+    if (prewarp_config.length() == 0)
+      prewarp ->clear();
+    else
+      prewarp->initialize(prewarp_config);
   }
 
 

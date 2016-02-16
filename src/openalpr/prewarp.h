@@ -35,6 +35,7 @@ namespace alpr
     virtual ~PreWarp();
 
     void initialize(std::string prewarp_config);
+    void clear();
     
     cv::Mat warpImage(cv::Mat image);
     std::vector<cv::Point2f> projectPoints(std::vector<cv::Point2f> points, bool inverse);

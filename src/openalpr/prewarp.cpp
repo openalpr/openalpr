@@ -103,6 +103,9 @@ namespace alpr
     if (config->debugTiming)
       cout << "Prewarp Initialization Time: " << diffclock(startTime, endTime) << "ms." << endl;
   }
+  void PreWarp::clear() {
+    this->valid = false;
+  }
 
   PreWarp::~PreWarp() {
   }
