@@ -132,6 +132,7 @@ SET(STATE_DETECTION_LIB statedetection)
 if (NOT IOS)
   TARGET_LINK_LIBRARIES(alpr
     ${OPENALPR_LIB}
+    ${STATE_DETECTION_LIB}
     support
     video
     ${OpenCV_LIBS}
