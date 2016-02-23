@@ -99,7 +99,8 @@ namespace alpr
         {
           bestCharCount = charsRecognized;
           winningIndex = imgIndex;
-          winningParentId = parentId;
+          //winningParentId = parentId;
+          winningParentId = bestParentId;
           lowestArea = boxArea;
         }
       }
