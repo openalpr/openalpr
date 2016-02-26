@@ -40,6 +40,8 @@ bool detectPlate( StateDetector* identifier, Mat frame);
 
 int main( int argc, const char** argv )
 {
+  #ifndef SKIP_STATE_DETECTION
+
   string inDir;
   string outDir;
   Mat frame;
@@ -97,6 +99,9 @@ int main( int argc, const char** argv )
       }
     }
   }
+  #endif
+
+  return 1;
 }
 
 bool detectPlate( StateDetector* identifier, Mat frame);

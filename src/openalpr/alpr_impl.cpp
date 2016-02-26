@@ -279,6 +279,8 @@ namespace alpr
           plateResult.plate_points[pointidx].y = (int) cornerPoints[pointidx].y;
         }
 
+        
+        #ifndef SKIP_STATE_DETECTION
         if (detectRegion && country_recognizers.stateDetector->isLoaded())
         {
           std::vector<StateCandidate> state_candidates = country_recognizers.stateDetector->detect(pipeline_data.color_deskewed.data,
@@ -292,6 +294,7 @@ namespace alpr
             plateResult.regionConfidence = (int) state_candidates[0].confidence;
           }
         }
+        #endif
 
         if (plateResult.region.length() > 0 && country_recognizers.ocr->postProcessor.regionIsValid(plateResult.region) == false)
         {
@@ -705,7 +708,11 @@ namespace alpr
         recognizer.plateDetector = createDetector(config);
         recognizer.ocr = new OCR(config);
 
+        #ifndef SKIP_STATE_DETECTION
         recognizer.stateDetector = new StateDetector(this->config->country, this->config->config_file_path, this->config->runtimeBaseDir);
+        #else
+        recognizer.stateDetector = NULL;
+        #endif
 
         recognizers[config->country] = recognizer;
       }

@@ -27,6 +27,10 @@ IF ( NOT DEFINED WITH_DAEMON )
   SET(WITH_DAEMON ON)
 ENDIF()
 
+IF ( NOT DEFINED WITH_STATEDETECTION )
+  SET(WITH_STATEDETECTION ON)
+ENDIF()
+
 if ( NOT DEFINED WITH_GPU_DETECTOR )
   SET(WITH_GPU_DETECTOR OFF)
 ENDIF()
@@ -127,7 +131,13 @@ ELSE()
    SET(OPENALPR_LIB openalpr)
 ENDIF()
 
-SET(STATE_DETECTION_LIB statedetection)
+IF (WITH_STATEDETECTION)
+  SET(STATE_DETECTION_LIB statedetection)
+  add_subdirectory(statedetection)
+ELSE()
+  SET(STATE_DETECTION_LIB "")
+  add_definitions( -DSKIP_STATE_DETECTION=1 )
+ENDIF()
 
 if (NOT IOS)
   TARGET_LINK_LIBRARIES(alpr
@@ -170,7 +180,6 @@ add_subdirectory(tests)
 ENDIF()
 
 add_subdirectory(openalpr)
-add_subdirectory(statedetection)
 add_subdirectory(video)
 
 if (WITH_BINDING_JAVA) 
