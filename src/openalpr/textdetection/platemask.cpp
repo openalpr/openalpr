@@ -60,6 +60,8 @@ namespace alpr
       int charsRecognized = 0;
       int parentId = -1;
       bool hasParent = false;
+      int bestParentId = -1;
+      vector < int > charsRecognizedInContours(contours[imgIndex].goodIndices.size(),0);
       for (unsigned int i = 0; i < contours[imgIndex].goodIndices.size(); i++)
       {
         if (contours[imgIndex].goodIndices[i]) charsRecognized++;
@@ -67,6 +69,7 @@ namespace alpr
         {
           parentId = contours[imgIndex].hierarchy[i][3];
           hasParent = true;
+          charsRecognizedInContours[parentId] ++;
         }
       }
 
@@ -75,7 +78,18 @@ namespace alpr
 
       if (hasParent)
       {
-        double boxArea = contourArea(contours[imgIndex].contours[parentId]);
+     	charsRecognized = 0;
+  	for(unsigned int i = 0 ; i < contours[imgIndex].goodIndices.size(); i++)
+  	{
+  	   if(charsRecognizedInContours[i] > charsRecognized)
+  	   {
+  	   	charsRecognized = charsRecognizedInContours[i];
+  		bestParentId = i;
+  	   }
+  	}
+      	
+  	double boxArea = contourArea(contours[imgIndex].contours[bestParentId]);
+  	
         if (boxArea < min_parent_area)
           continue;
 
@@ -85,7 +99,8 @@ namespace alpr
         {
           bestCharCount = charsRecognized;
           winningIndex = imgIndex;
-          winningParentId = parentId;
+          //winningParentId = parentId;
+          winningParentId = bestParentId;
           lowestArea = boxArea;
         }
       }
