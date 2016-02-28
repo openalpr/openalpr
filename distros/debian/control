@@ -123,5 +123,5 @@ Description: Python 3 binding for OpenALPR library
  in C++. The library analyzes images and identifies license plates. The output
  is the text representation of any license plate characters found in the image.
  .
- The Python 3 package allows Python 3 code to interface with OpenALPR directly via
- native Python 3 bindings.
+ The Python 3 package allows Python 3 code to interface with OpenALPR directly 
+ via native Python 3 bindings.
