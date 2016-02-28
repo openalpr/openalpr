@@ -103,7 +103,7 @@ Description: Utilities for the OpenALPR library
 Package: python-openalpr
 Section: python
 Architecture: all
-Depends: libopenalpr-dev (>= ${source:Version}), (libopenalpr-dev << ${source:Version}.1~),
+Depends: libopenalpr-dev (>= ${binary:Version}), 
  ${python:Depends}, ${misc:Depends}
 Description: Python binding for OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
@@ -116,7 +116,7 @@ Description: Python binding for OpenALPR library
 Package: python3-openalpr
 Section: python
 Architecture: all
-Depends: libopenalpr-dev (>= ${source:Version}), (libopenalpr-dev << ${source:Version}.1~),
+Depends: libopenalpr-dev (>= ${source:Version}), 
  ${python3:Depends}, ${misc:Depends}
 Description: Python 3 binding for OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
