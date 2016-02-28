@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Matthew Hill <matthill@openalpr.com>
 Build-Depends: debhelper (>= 9), cmake, quilt, 
  libtesseract-dev, libleptonica-dev, liblog4cplus-dev,
- libcurl3-dev, uuid-dev, libopencv-dev, default-jdk,
+ libcurl3-dev, libopencv-dev, default-jdk,
  python, python3, dh-python
 Standards-Version: 3.9.6
 Homepage: https://github.com/openalpr/openalpr
