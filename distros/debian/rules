@@ -29,7 +29,7 @@ TARBALL = ../$(PKG)_$(VER)$(DTYPE).orig.tar.xz
 
 # main packaging script based on dh7 syntax
 %:
-	dh $@ --sourcedirectory=src --with quilt
+	dh $@ --sourcedirectory=src --with quilt,python2,python3
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
@@ -37,6 +37,14 @@ override_dh_auto_configure:
 	  -DCMAKE_INSTALL_SYSCONFDIR=/etc \
 	  -DCMAKE_VERBOSE_MAKEFILE=OFF \
 	  -DCMAKE_COLOR_MAKEFILE=ON
+
+override_dh_auto_install:
+	dh_auto_install
+	cd $(CURDIR)/src/bindings/python ; python3 ./setup.py install --install-layout=deb --root $(CURDIR)/debian/python3-openalpr
+
+override_dh_auto_clean:
+	dh_auto_clean
+	rm -rf $(CURDIR)/src/bindings/python/build
 
 # Inspired by https://wiki.debian.org/onlyjob/get-orig-source
 .PHONY: get-orig-source

@@ -4,7 +4,8 @@ Priority: optional
 Maintainer: Matthew Hill <matthill@openalpr.com>
 Build-Depends: debhelper (>= 9), cmake, quilt, 
  libtesseract-dev, libleptonica-dev, liblog4cplus-dev,
- libcurl3-dev, uuid-dev, libopencv-dev, default-jdk
+ libcurl3-dev, uuid-dev, libopencv-dev, default-jdk,
+ python, python3, dh-python
 Standards-Version: 3.9.6
 Homepage: https://github.com/openalpr/openalpr
 Vcs-Browser: https://github.com/openalpr/openalpr
@@ -101,8 +102,9 @@ Description: Utilities for the OpenALPR library
 
 Package: python-openalpr
 Section: python
-Architecture: any
-Depends: libopenalpr-dev (= ${binary:Version}), ${misc:Depends}
+Architecture: all
+Depends: libopenalpr-dev (>= ${source:Version}), (libopenalpr-dev << ${source:Version}.1~),
+ ${python:Depends}, ${misc:Depends}
 Description: Python binding for OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
  in C++. The library analyzes images and identifies license plates. The output
@@ -110,3 +112,16 @@ Description: Python binding for OpenALPR library
  .
  The Python package allows Python code to interface with OpenALPR directly via 
  native Python bindings.
+
+Package: python3-openalpr
+Section: python
+Architecture: all
+Depends: libopenalpr-dev (>= ${source:Version}), (libopenalpr-dev << ${source:Version}.1~),
+ ${python3:Depends}, ${misc:Depends}
+Description: Python 3 binding for OpenALPR library
+ OpenALPR is an open source Automatic License Plate Recognition library written
+ in C++. The library analyzes images and identifies license plates. The output
+ is the text representation of any license plate characters found in the image.
+ .
+ The Python 3 package allows Python 3 code to interface with OpenALPR directly via
+ native Python 3 bindings.

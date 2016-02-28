@@ -1,3 +1,16 @@
+openalpr (2.2.4-1) unstable; urgency=low
+
+  * Added Python3 bindings (Closes: #815961)
+  * Remove frame number from JSON output (Closes: #813290)
+  * Use dh-python to generate proper depends for python-openalpr (Closes:
+    #815960)
+  * Change python-openalpr from arch any to arch all (Closes: #815959)
+  * Fixed build failure on Hurd (Closes: #812738)
+  * Add bindings package for python3, python3-openalpr
+  * Upload sponsored by Petter Reinholdtsen
+
+ -- Matthew Hill <matthill@openalpr.com>  Sun, 28 Feb 2016 09:51:25 -0500
+
 openalpr (2.2.3-1) unstable; urgency=low
 
   * Changed Debian config to build on all architectures
