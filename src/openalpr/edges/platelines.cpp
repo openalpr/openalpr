@@ -61,12 +61,6 @@ namespace alpr
     Mat smoothed(inputImage.size(), inputImage.type());
     bilateralFilter(inputImage, smoothed, 3, 45, 45);
 
-
-    int morph_elem  = 2;
-    int morph_size = 2;
-    Mat element = getStructuringElement( morph_elem, Size( 2*morph_size + 1, 2*morph_size+1 ), Point( morph_size, morph_size ) );
-
-
     Mat edges(inputImage.size(), inputImage.type());
     Canny(smoothed, edges, 66, 133);
 
