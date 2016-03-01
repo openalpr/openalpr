@@ -21,13 +21,9 @@ run mkdir /srv/openalpr/src/build
 workdir /srv/openalpr/src/build
 
 # Setup the compile environment
-run cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc ..
-
-# Compile the library
-run make
-
-# Install the binaries/libraries to your local system (prefix is /usr)
-run make install
+run cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && \
+    make -j2 && \
+    make install
 
 workdir /data
 
