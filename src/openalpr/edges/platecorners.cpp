@@ -257,28 +257,28 @@ namespace alpr
       bottom = tlc.centerHorizontalLine.getParallelLine(-1 * idealPixelHeight / 2 );
 
       missingSegmentPenalty = 2;
-      confidenceDiff += 2;
+      //confidenceDiff += 2;
     }
     else if (h1 != NO_LINE && h2 != NO_LINE)
     {
       top = this->plateLines->horizontalLines[h1].line;
       bottom = this->plateLines->horizontalLines[h2].line;
-      confidenceDiff += (1.0 - this->plateLines->horizontalLines[h1].confidence);
-      confidenceDiff += (1.0 - this->plateLines->horizontalLines[h2].confidence);
+      //confidenceDiff += (1.0 - this->plateLines->horizontalLines[h1].confidence);
+      //confidenceDiff += (1.0 - this->plateLines->horizontalLines[h2].confidence);
     }
     else if (h1 == NO_LINE && h2 != NO_LINE)
     {
       bottom = this->plateLines->horizontalLines[h2].line;
       top = bottom.getParallelLine(idealPixelHeight);
       missingSegmentPenalty++;
-      confidenceDiff += (1.0 - this->plateLines->horizontalLines[h2].confidence);
+      //confidenceDiff += (1.0 - this->plateLines->horizontalLines[h2].confidence);
     }
     else if (h1 != NO_LINE && h2 == NO_LINE)
     {
       top = this->plateLines->horizontalLines[h1].line;
       bottom = top.getParallelLine(-1 * idealPixelHeight);
       missingSegmentPenalty++;
-      confidenceDiff += (1.0 - this->plateLines->horizontalLines[h1].confidence);
+      //confidenceDiff += (1.0 - this->plateLines->horizontalLines[h1].confidence);
     }
 
     scoreKeeper.setScore("SCORING_MISSING_SEGMENT_PENALTY_HORIZONTAL", missingSegmentPenalty, SCORING_MISSING_SEGMENT_PENALTY_HORIZONTAL);
