@@ -36,7 +36,8 @@ paths:
           description: |
             Tasks to execute.  You can choose to detect the license plate, 
             as well as additional metadata about the vehicle.  Each additional 
-            option costs an API credit.
+            option costs an API credit.  Valid values are: plate, color, make, makemodel.
+            Use commas to specify multiple recognition types in one pass
           required: true
           type: array
           items: 
