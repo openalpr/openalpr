@@ -211,7 +211,7 @@ namespace alpr
       if (absangle > config->maxPlateAngleDegrees)
         confidenceDrainers += 91;
       else if (absangle > 1)
-        confidenceDrainers += (config->maxPlateAngleDegrees - absangle) ;
+        confidenceDrainers += absangle ;
 
       // If a multiline plate has only one line, disqualify
       if (pipeline_data->isMultiline && pipeline_data->textLines.size() < 2)
