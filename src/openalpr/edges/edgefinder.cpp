@@ -40,6 +40,11 @@ namespace alpr
 
   std::vector<cv::Point2f> EdgeFinder::findEdgeCorners() {
 
+    return normalDetection();
+  }
+  
+  vector<cv::Point2f> EdgeFinder::normalDetection() {
+
     TextLineCollection tlc(pipeline_data->textLines);
 
     vector<Point> corners;
@@ -139,7 +144,11 @@ namespace alpr
     vector<Point2f> cornersInOriginalImg = imgTransform.remapSmallPointstoCrop(smallPlateCorners, newCropTransmtx);
 
     return cornersInOriginalImg;
+  }
 
+  vector<cv::Point2f> EdgeFinder::highContrastDetection() {
+    vector<Point2f> cornersInOriginalImg;
+    return cornersInOriginalImg;
   }
 
 }

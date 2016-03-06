@@ -40,6 +40,9 @@ namespace alpr
   private:
     PipelineData* pipeline_data;
 
+    std::vector<cv::Point2f> highContrastDetection();
+    std::vector<cv::Point2f> normalDetection();
+    
   };
 
 }
