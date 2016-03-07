@@ -242,7 +242,9 @@ namespace alpr
 
     LineSegment top;
     LineSegment bottom;
-
+    
+    // Add a few extra pixels to the guessed line, so we don't accidentally crop the characters
+    int extra_vertical_pixels = 3;
     float charHeightToPlateHeightRatio = pipelineData->config->plateHeightMM / pipelineData->config->avgCharHeightMM;
     float idealPixelHeight = tlc.charHeight *  charHeightToPlateHeightRatio;
 
@@ -266,13 +268,13 @@ namespace alpr
     else if (h1 == NO_LINE && h2 != NO_LINE)
     {
       bottom = this->plateLines->horizontalLines[h2].line;
-      top = bottom.getParallelLine(idealPixelHeight);
+      top = bottom.getParallelLine(idealPixelHeight + extra_vertical_pixels);
       missingSegmentPenalty++;
     }
     else if (h1 != NO_LINE && h2 == NO_LINE)
     {
       top = this->plateLines->horizontalLines[h1].line;
-      bottom = top.getParallelLine(-1 * idealPixelHeight);
+      bottom = top.getParallelLine(-1 * idealPixelHeight + extra_vertical_pixels);
       missingSegmentPenalty++;
     }
 
