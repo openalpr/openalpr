@@ -86,6 +86,7 @@ namespace alpr
 
       Mat imgCorners = Mat(inputImage.size(), inputImage.type());
       inputImage.copyTo(imgCorners);
+      cvtColor(imgCorners, imgCorners, CV_GRAY2BGR);
 
       for (unsigned int linenum = 0; linenum < textLines.size(); linenum++)
       {

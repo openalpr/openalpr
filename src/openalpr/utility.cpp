@@ -520,7 +520,39 @@ int levenshteinDistance (const std::string &s1, const std::string &s2, int max)
 
     return result;
   }
+  
+  cv::Point findClosestPoint(cv::Point2f* polygon_points, int num_points, cv::Point position)
+  {
+    int closest_point_index = 0;
+    unsigned int smallest_distance = INT_MAX;
+    for (unsigned int i = 0; i < num_points; i++)
+    {
+      Point pos((int)polygon_points[i].x, (int)polygon_points[i].y);
+      unsigned int distance = distanceBetweenPoints(pos, position);
+      //std::cout << "polys Distance between: " << position << " and " << pos << " = " << distance << endl;
+      if (distance < smallest_distance)
+      {
+        smallest_distance = distance;
+        closest_point_index = i;
+      }
+    }
+    
+    return Point((int)polygon_points[closest_point_index].x, (int)polygon_points[closest_point_index].y);
+  }
+  
+  std::vector<cv::Point> sortPolygonPoints(cv::Point2f* polygon_points, cv::Size surrounding_image)
+  {
+    
+    vector<Point> return_points;
+    
+    // Find top-left
+    return_points.push_back( findClosestPoint(polygon_points, 4, Point(0, 0)) );
+    return_points.push_back( findClosestPoint(polygon_points, 4,Point(surrounding_image.width, 0)) );
+    return_points.push_back( findClosestPoint(polygon_points, 4,Point(surrounding_image.width, surrounding_image.height)) );
+    return_points.push_back( findClosestPoint(polygon_points, 4,Point(0, surrounding_image.height)) );
 
+    return return_points;
+  }
   // Given a contour and a mask, this function determines what percentage of the contour (area)
   // is inside the masked area. 
   float getContourAreaPercentInsideMask(cv::Mat mask, std::vector<std::vector<cv::Point> > contours, std::vector<cv::Vec4i> hierarchy, int contourIndex)
