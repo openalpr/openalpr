@@ -40,9 +40,13 @@ namespace alpr
   private:
     PipelineData* pipeline_data;
 
-    std::vector<cv::Point2f> highContrastDetection();
-    std::vector<cv::Point2f> normalDetection();
+    std::vector<cv::Point2f> detection(bool high_contrast);
     
+    std::vector<cv::Point> highContrastDetection(cv::Mat newCrop, std::vector<TextLine> newLines);
+    std::vector<cv::Point> normalDetection(cv::Mat newCrop, std::vector<TextLine> newLines);
+    
+    
+    bool is_high_contrast(const cv::Mat crop);
   };
 
 }
