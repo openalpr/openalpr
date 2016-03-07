@@ -57,6 +57,8 @@ namespace alpr
       int maxDetectionInputWidth;
       int maxDetectionInputHeight;
       
+      float contrastDetectionThreshold;
+      
       bool skipDetection;
 
       bool auto_invert;

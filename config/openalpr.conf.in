@@ -49,6 +49,10 @@ must_match_pattern = 0
 ; Bypasses plate detection.  If this is set to 1, the library assumes that each region provided is a likely plate area.
 skip_detection = 0
 
+; OpenALPR detects high-contrast plate crops and uses an alternative edge detection technique.  Setting this to 0.0 
+; would classify  ALL images as high-contrast, setting it to 1.0 would classify no images as high-contrast. 
+contrast_detection_threshold = 0.3
+
 max_plate_angle_degrees = 15
 
 ocr_min_font_point = 6

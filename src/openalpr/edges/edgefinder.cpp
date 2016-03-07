@@ -339,7 +339,7 @@ namespace alpr
       cout << "High Contrast Detection Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
     
-    return contrast > 0.3;
+    return contrast > pipeline_data->config->contrastDetectionThreshold;
   }
 
 }
