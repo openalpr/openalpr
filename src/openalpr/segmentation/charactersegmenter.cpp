@@ -308,7 +308,7 @@ namespace alpr
     {
       vector<Rect> validBoxes;
       
-      int pxLeniency = 0;
+      int pxLeniency = row;
       vector<Rect> allBoxes = convert1DHitsToRect(histogram.get1DHits(pxLeniency), top, bottom);
 
       if (this->config->debugCharSegmenter)
