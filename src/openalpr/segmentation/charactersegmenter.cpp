@@ -964,8 +964,8 @@ namespace alpr
 
       bool isOn = img.at<uchar>(row, col);
       // check two rows at a time.
-      if (!isOn && col < img.cols)
-        isOn = img.at<uchar>(row, col);
+      //if (!isOn && col < img.cols)
+      //  isOn = img.at<uchar>(row, col);
 
       if (isOn)
       {
