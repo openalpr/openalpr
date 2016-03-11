@@ -274,7 +274,7 @@ namespace alpr
     else if (h1 != NO_LINE && h2 == NO_LINE)
     {
       top = this->plateLines->horizontalLines[h1].line;
-      bottom = top.getParallelLine(-1 * idealPixelHeight + extra_vertical_pixels);
+      bottom = top.getParallelLine(-1 * idealPixelHeight - extra_vertical_pixels);
       missingSegmentPenalty++;
     }
 
