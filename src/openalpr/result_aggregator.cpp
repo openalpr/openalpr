@@ -220,29 +220,32 @@ namespace alpr
           }
         }
         
-        // Figure out the best region for this cluster
-        ResultRegionScore regionResults = findBestRegion(clusters[unique_plate_idx]);
-        
-        AlprPlateResult firstResult = clusters[unique_plate_idx][0];
-        AlprPlateResult copyResult;
-        copyResult.bestPlate = sorted_results[0].second.plate;
-        copyResult.plate_index = firstResult.plate_index;
-        copyResult.region = regionResults.region;
-        copyResult.regionConfidence = regionResults.confidence;
-        copyResult.processing_time_ms = firstResult.processing_time_ms;
-        copyResult.requested_topn = firstResult.requested_topn;
-        for (int p_idx = 0; p_idx < 4; p_idx++)
-          copyResult.plate_points[p_idx] = firstResult.plate_points[p_idx];
-        
-        for (int i = 0; i < sorted_results.size(); i++)
+        if (sorted_results.size() > 0)
         {
-          if (i >= topn)
-            break;
+          // Figure out the best region for this cluster
+          ResultRegionScore regionResults = findBestRegion(clusters[unique_plate_idx]);
 
-          copyResult.topNPlates.push_back(sorted_results[i].second.plate);
+          AlprPlateResult firstResult = clusters[unique_plate_idx][0];
+          AlprPlateResult copyResult;
+          copyResult.bestPlate = sorted_results[0].second.plate;
+          copyResult.plate_index = firstResult.plate_index;
+          copyResult.region = regionResults.region;
+          copyResult.regionConfidence = regionResults.confidence;
+          copyResult.processing_time_ms = firstResult.processing_time_ms;
+          copyResult.requested_topn = firstResult.requested_topn;
+          for (int p_idx = 0; p_idx < 4; p_idx++)
+            copyResult.plate_points[p_idx] = firstResult.plate_points[p_idx];
+
+          for (int i = 0; i < sorted_results.size(); i++)
+          {
+            if (i >= topn)
+              break;
+
+            copyResult.topNPlates.push_back(sorted_results[i].second.plate);
+          }
+          
+          response.results.plates.push_back(copyResult);
         }
-        
-        response.results.plates.push_back(copyResult);
 
       }
     }
