@@ -114,8 +114,9 @@ namespace alpr
               do
               {
                 const char* choice = ci.GetUTF8Text();
-
-                postProcessor.addLetter(string(choice), line_idx, absolute_charpos, ci.Confidence());
+                //1/17/2016 adt adding check to avoid double adding same character if ci is same as symbol. Otherwise first choice from ResultsIterator will get added twice when choiceIterator run.
+                if (string(symbol) != string(choice))
+                  postProcessor.addLetter(string(choice), line_idx, absolute_charpos, ci.Confidence());
 
                 if (this->config->debugOcr)
                 {
