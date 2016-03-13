@@ -189,6 +189,8 @@ namespace alpr
     
     skipDetection = getBoolean(ini, "", "skip_detection", false);
     
+    analysis_count = getInt(ini, "", "analysis_count", 1);
+    
     prewarp = getString(ini, "", "prewarp", "");
             
     maxPlateAngleDegrees = getInt(ini, "", "max_plate_angle_degrees", 15);

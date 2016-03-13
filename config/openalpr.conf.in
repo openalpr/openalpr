@@ -49,6 +49,10 @@ must_match_pattern = 0
 ; Bypasses plate detection.  If this is set to 1, the library assumes that each region provided is a likely plate area.
 skip_detection = 0
 
+; OpenALPR can scan the same image multiple times with different randomization.  Setting this to a value larger than
+; 1 may increase accuracy, but will increase processing time linearly (e.g., analysis_count = 3 is 3x slower)
+analysis_count = 1
+
 ; OpenALPR detects high-contrast plate crops and uses an alternative edge detection technique.  Setting this to 0.0 
 ; would classify  ALL images as high-contrast, setting it to 1.0 would classify no images as high-contrast. 
 contrast_detection_threshold = 0.3

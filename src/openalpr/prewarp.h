@@ -42,15 +42,18 @@ namespace alpr
     std::vector<cv::Rect> projectRects(std::vector<cv::Rect> rects, int maxWidth, int maxHeight, bool inverse);
     void projectPlateRegions(std::vector<PlateRegion>& plateRegions, int maxWidth, int maxHeight, bool inverse);
 
+    void setTransform(float w, float h, float rotationx, float rotationy, float rotationz, float panX, float panY, float stretchX, float dist);
+    
     bool valid;
     
   private:
     Config* config;
     cv::Mat transform;
     
+    cv::Mat getTransform(float w, float h, float rotationx, float rotationy, float rotationz, float panX, float panY, float stretchX, float dist);
+    
     float w, h, rotationx, rotationy, rotationz, stretchX, dist, panX, panY;
     
-    cv::Mat findTransform(float w, float h, float rotationx, float rotationy, float rotationz, float panX, float panY, float stretchX, float dist);
   };
 
 }

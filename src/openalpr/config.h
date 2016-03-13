@@ -61,6 +61,8 @@ namespace alpr
       
       bool skipDetection;
 
+      int analysis_count;
+      
       bool auto_invert;
       bool always_invert;
 

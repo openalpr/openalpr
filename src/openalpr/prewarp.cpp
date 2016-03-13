@@ -75,6 +75,7 @@ namespace alpr
       {
         stringstream ss(prewarp_config.substr(first_comma + 1, prewarp_config.length()));
 
+        float w, h, rotationx, rotationy, rotationz, panX, panY,  stretchX, dist;
         ss >> w;
         ss.ignore();
         ss >> h;
@@ -93,7 +94,7 @@ namespace alpr
         ss.ignore();  // Ignore comma
         ss >> panY;
         
-        this->valid = true;
+        setTransform(w, h, rotationx, rotationy, rotationz, panX, panY, stretchX, dist);
       }
 
     }
@@ -110,6 +111,20 @@ namespace alpr
   PreWarp::~PreWarp() {
   }
   
+  void PreWarp::setTransform(float w, float h, float rotationx, float rotationy, float rotationz, float panX, float panY, float stretchX, float dist)
+  {
+    this->w = w;
+    this->h = h;
+    this->rotationx = rotationx;
+    this->rotationy = rotationy;
+    this->rotationz = rotationz;
+    this->panX = panX;
+    this->panY = panY;
+    this->stretchX = stretchX;
+    this->dist = dist;
+    
+    this->valid = true;
+  }
   
   cv::Mat PreWarp::warpImage(Mat image) {
     if (!this->valid)
@@ -129,7 +144,7 @@ namespace alpr
     float py = panY / height_ratio;
 
 
-    transform = findTransform(image.cols, image.rows, rx, ry, rotationz, px, py, stretchX, dist);
+    transform = getTransform(image.cols, image.rows, rx, ry, rotationz, px, py, stretchX, dist);
     
     
     Mat warped_image;
@@ -208,7 +223,7 @@ namespace alpr
     }
   }
   
-  cv::Mat PreWarp::findTransform(float w, float h, 
+  cv::Mat PreWarp::getTransform(float w, float h, 
           float rotationx, float rotationy, float rotationz, 
           float panX, float panY, float stretchX, float dist) {
 

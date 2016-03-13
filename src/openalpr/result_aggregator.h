@@ -22,7 +22,7 @@
 
 
 #include "alpr_impl.h"
-
+#include "prewarp.h"
 
 // Runs the analysis for multiple training sets, and aggregates the results into the best matches
 
@@ -37,10 +37,30 @@ struct PlateShapeInfo
 namespace alpr
 {
 
+  enum ResultMergeStrategy
+  {
+    MERGE_COMBINE,  // Used when running an analysis multiple times for accuracy improvement.  Merges results together
+    MERGE_PICK_BEST // Used when analyzing multiple countries.  Chooses results from one country or the other
+  };
+  
+  struct ResultPlateScore
+  {
+    AlprPlate plate;
+    float score_total;
+    int count;
+  };
+  
+  struct ResultRegionScore
+  {
+    std::string region;
+    float confidence;
+    
+  };
+  
   class ResultAggregator
   {
   public:
-    ResultAggregator();
+    ResultAggregator(ResultMergeStrategy merge_strategy, int topn, Config* config);
 
     virtual ~ResultAggregator();
 
@@ -48,11 +68,22 @@ namespace alpr
 
     AlprFullDetails getAggregateResults();
 
+    cv::Mat applyImperceptibleChange(cv::Mat image, int index);
+    
   private:
+    
+    int topn;
+    PreWarp* prewarp;
+    Config* config;
+    
     std::vector<AlprFullDetails> all_results;
 
     PlateShapeInfo getShapeInfo(AlprPlateResult plate);
 
+    ResultMergeStrategy merge_strategy;
+    
+    ResultRegionScore findBestRegion(std::vector<AlprPlateResult> cluster);
+    
     std::vector<std::vector<AlprPlateResult> > findClusters();
     int overlaps(AlprPlateResult plate, std::vector<std::vector<AlprPlateResult> > clusters);
   };

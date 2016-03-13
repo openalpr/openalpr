@@ -125,22 +125,33 @@ namespace alpr
 
     // Iterate through each country provided (typically just one)
     // and aggregate the results if necessary
-    ResultAggregator aggregator;
+    ResultAggregator country_aggregator(MERGE_PICK_BEST, topN, config);
     for (unsigned int i = 0; i < config->loaded_countries.size(); i++)
     {
       if (config->debugGeneral)
         cout << "Analyzing: " << config->loaded_countries[i] << endl;
 
       config->setCountry(config->loaded_countries[i]);
-      AlprFullDetails sub_results = analyzeSingleCountry(img, grayImg, warpedRegionsOfInterest);
-
+      
+      // Reapply analysis for each multiple analysis value set in the config,
+      // make a minor imperceptible tweak to the input image each time
+      ResultAggregator iter_aggregator(MERGE_COMBINE, topN, config);
+      for (unsigned int iteration = 0; iteration < 2; iteration++)
+      {
+        Mat iteration_image = iter_aggregator.applyImperceptibleChange(grayImg, iteration);
+        //drawAndWait(iteration_image);
+        AlprFullDetails iter_results = analyzeSingleCountry(img, iteration_image, warpedRegionsOfInterest);
+        iter_aggregator.addResults(iter_results);
+      }
+      
+      AlprFullDetails sub_results = iter_aggregator.getAggregateResults();
       sub_results.results.epoch_time = start_time;
       sub_results.results.img_width = img.cols;
       sub_results.results.img_height = img.rows;
       
-      aggregator.addResults(sub_results);
+      country_aggregator.addResults(sub_results);
     }
-    response = aggregator.getAggregateResults();
+    response = country_aggregator.getAggregateResults();
 
     timespec endTime;
     getTimeMonotonic(&endTime);
