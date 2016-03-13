@@ -696,8 +696,7 @@ namespace alpr
     //const float MIN_AREA_PERCENT = 0.1;
     const float MIN_CONTOUR_HEIGHT_PERCENT = config->segmentationMinCharHeightPercent;
 
-    Mat mask = getCharBoxMask(thresholds[0], charRegions);
-
+    
     vector<int> boxScores(charRegions.size());
 
     for (unsigned int i = 0; i < charRegions.size(); i++)
@@ -963,9 +962,6 @@ namespace alpr
       bool isbetweenLines = false;
 
       bool isOn = img.at<uchar>(row, col);
-      // check two rows at a time.
-      if (!isOn && col < img.cols)
-        isOn = img.at<uchar>(row, col);
 
       if (isOn)
       {
