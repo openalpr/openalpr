@@ -117,7 +117,13 @@ namespace alpr
                 //1/17/2016 adt adding check to avoid double adding same character if ci is same as symbol. Otherwise first choice from ResultsIterator will get added twice when choiceIterator run.
                 if (string(symbol) != string(choice))
                   postProcessor.addLetter(string(choice), line_idx, absolute_charpos, ci.Confidence());
-
+                else
+                {
+                  // Explictly double-adding the first character.  This leads to higher accuracy right now, likely because other sections of code
+                  // have expected it and compensated. 
+                  // TODO: Figure out how to remove this double-counting of the first letter without impacting accuracy
+                  postProcessor.addLetter(string(choice), line_idx, absolute_charpos, ci.Confidence());
+                }
                 if (this->config->debugOcr)
                 {
                   if (indent) printf("\t\t ");
