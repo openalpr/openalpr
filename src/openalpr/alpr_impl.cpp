@@ -136,7 +136,7 @@ namespace alpr
       // Reapply analysis for each multiple analysis value set in the config,
       // make a minor imperceptible tweak to the input image each time
       ResultAggregator iter_aggregator(MERGE_COMBINE, topN, config);
-      for (unsigned int iteration = 0; iteration < 2; iteration++)
+      for (unsigned int iteration = 0; iteration < config->analysis_count; iteration++)
       {
         Mat iteration_image = iter_aggregator.applyImperceptibleChange(grayImg, iteration);
         //drawAndWait(iteration_image);
