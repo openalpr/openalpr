@@ -57,6 +57,7 @@ float dist = 1.0;
 Mat imgOriginal;
 Mat curWarpedImage;
 
+//config file??
 alpr::Config config("us");
 
 const string WINDOW_NAME = "Adjust OpenALPR Perspective";
@@ -305,8 +306,15 @@ int main(int argc, char** argv) {
     cerr << "Could not find image file: " << filename << endl;
   }
   
-  config = alpr::Config(country);
+  if (config_path !=""){
+      config= alpr::Config(country,config_path);
+  }else{
+      config = alpr::Config(country);
+  }
+  cout << config.config_file_path <<endl;
   
+
+
   panning = false;
   left_clicking = false;
 
@@ -378,10 +386,15 @@ int main(int argc, char** argv) {
 
     char c = waitKey(15);
 
+
     if (c == 'o')
     {
       cout << "prewarp = " << get_config() << endl;
-    } else if (c == 'q')
+    }else if (c == 'w')
+    {
+      cout << "prewarp = " << get_config() << endl;
+      config.updatePrewarp(config.config_file_path,get_config());
+    }else if (c == 'q')
     {
       cout << "prewarp = " << get_config() << endl;
       break;
