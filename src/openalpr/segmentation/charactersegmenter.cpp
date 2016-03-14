@@ -308,8 +308,7 @@ namespace alpr
     {
       vector<Rect> validBoxes;
       
-      int pxLeniency = row;
-      vector<Rect> allBoxes = convert1DHitsToRect(histogram.get1DHits(pxLeniency), top, bottom);
+      vector<Rect> allBoxes = convert1DHitsToRect(histogram.get1DHits(row), top, bottom);
 
       if (this->config->debugCharSegmenter)
         cout << "All Boxes size " << allBoxes.size() << endl;
