@@ -428,8 +428,8 @@ namespace alpr
 
   vector<Rect> CharacterSegmenter::combineCloseBoxes( vector<Rect> charBoxes)
   {
-    // Don't bother combining if there are 2 or fewer characters
-    if (charBoxes.size() <= 2)
+    // Don't bother combining if there are fewer than the min number of characters
+    if (charBoxes.size() < config->postProcessMinCharacters)
       return charBoxes;
     
     // First find the median char gap (the space from midpoint to midpoint of chars)
