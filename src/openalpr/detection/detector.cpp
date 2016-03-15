@@ -64,9 +64,80 @@ namespace alpr
 
   vector<PlateRegion> Detector::detect(Mat frame, std::vector<cv::Rect> regionsOfInterest)
   {
-    // Must be implemented by subclass
-    std::vector<PlateRegion> rois;
-    return rois;
+
+    Mat frame_gray;
+    
+    if (frame.channels() > 2)
+    {
+      cvtColor( frame, frame_gray, CV_BGR2GRAY );
+    }
+    else
+    {
+      frame.copyTo(frame_gray);
+    }
+
+    // Apply the detection mask if it has been specified by the user
+    if (detector_mask.mask_loaded)
+      frame_gray = detector_mask.apply_mask(frame_gray);
+
+    vector<PlateRegion> detectedRegions;   
+    for (int i = 0; i < regionsOfInterest.size(); i++)
+    {
+      Rect roi = regionsOfInterest[i];
+      
+      // Adjust the ROI to be inside the detection mask (if it exists)
+      if (detector_mask.mask_loaded)
+        roi = detector_mask.getRoiInsideMask(roi);
+      
+      // Sanity check.  If roi width or height is less than minimum possible plate size,
+      // then skip it
+      if ((roi.width < config->minPlateSizeWidthPx) || 
+          (roi.height < config->minPlateSizeHeightPx))
+        continue;
+      
+      Mat cropped = frame_gray(roi);
+
+      int w = cropped.size().width;
+      int h = cropped.size().height;
+      int offset_x = roi.x;
+      int offset_y = roi.y;
+      float scale_factor = computeScaleFactor(w, h);
+
+      if (scale_factor != 1.0)
+        resize(cropped, cropped, Size(w * scale_factor, h * scale_factor));
+
+    
+      float maxWidth = ((float) w) * (config->maxPlateWidthPercent / 100.0f) * scale_factor;
+      float maxHeight = ((float) h) * (config->maxPlateHeightPercent / 100.0f) * scale_factor;
+      Size minPlateSize(config->minPlateSizeWidthPx * scale_factor, config->minPlateSizeHeightPx * scale_factor);
+      Size maxPlateSize(maxWidth, maxHeight);
+    
+      vector<Rect> allRegions = find_plates(cropped, minPlateSize, maxPlateSize);
+      
+      // Aggregate the Rect regions into a hierarchical representation
+      for( unsigned int i = 0; i < allRegions.size(); i++ )
+      {
+        allRegions[i].x = (allRegions[i].x / scale_factor);
+        allRegions[i].y = (allRegions[i].y / scale_factor);
+        allRegions[i].width = allRegions[i].width / scale_factor;
+        allRegions[i].height = allRegions[i].height / scale_factor;
+
+        // Ensure that the rectangle isn't < 0 or > maxWidth/Height
+        allRegions[i] = expandRect(allRegions[i], 0, 0, w, h);
+
+        allRegions[i].x = allRegions[i].x + offset_x;
+        allRegions[i].y = allRegions[i].y + offset_y;
+      }
+
+      vector<PlateRegion> orderedRegions = aggregateRegions(allRegions);
+
+      
+
+      for (int j = 0; j < orderedRegions.size(); j++)
+        detectedRegions.push_back(orderedRegions[j]);
+    }
+            
+    return detectedRegions;
   }
   
   std::string Detector::get_detector_file() {

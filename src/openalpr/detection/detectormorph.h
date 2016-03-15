@@ -38,7 +38,7 @@ namespace alpr {
     DetectorMorph(Config* config, PreWarp* prewarp);
     virtual ~DetectorMorph();
 
-    std::vector<PlateRegion> detect(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);
+    std::vector<cv::Rect> find_plates(cv::Mat frame, cv::Size min_plate_size, cv::Size max_plate_size);
 
   private:
     bool CheckSizes(cv::RotatedRect& mr);
