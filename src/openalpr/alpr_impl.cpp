@@ -45,6 +45,8 @@ namespace alpr
       return;
     }
 
+    prewarp = new PreWarp(config);
+    
     loadRecognizers();
 
     setNumThreads(0);
@@ -52,8 +54,6 @@ namespace alpr
     setDetectRegion(DEFAULT_DETECT_REGION);
     this->topN = DEFAULT_TOPN;
     setDefaultRegion("");
-    
-    prewarp = new PreWarp(config);
     
     timespec endTime;
     getTimeMonotonic(&endTime);
@@ -716,7 +716,7 @@ namespace alpr
       {
         // Country training data has not already been loaded.  Load it.
         AlprRecognizers recognizer;
-        recognizer.plateDetector = createDetector(config);
+        recognizer.plateDetector = createDetector(config, prewarp);
         recognizer.ocr = new OCR(config);
 
         #ifndef SKIP_STATE_DETECTION
