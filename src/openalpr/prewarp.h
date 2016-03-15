@@ -24,7 +24,7 @@
 #include "config.h"
 #include "utility.h"
 #include "opencv2/imgproc/imgproc.hpp"
-#include "detection/detector.h"
+#include "detection/detector_types.h"
 
 namespace alpr
 {
