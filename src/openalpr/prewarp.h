@@ -46,6 +46,8 @@ namespace alpr
     
     bool valid;
     
+    std::string toString();
+    
   private:
     Config* config;
     cv::Mat transform;

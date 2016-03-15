@@ -111,6 +111,18 @@ namespace alpr
   PreWarp::~PreWarp() {
   }
   
+  std::string PreWarp::toString() {
+    
+    if (!this->valid)
+      return "";
+    
+    stringstream sstream;
+    sstream << "planar," << w << "," << h << "," << rotationx << "," << rotationy << "," << rotationz << ","
+            << panX << "," << panY << "," << stretchX << "," << dist;
+    
+    return sstream.str();
+  }
+
   void PreWarp::setTransform(float w, float h, float rotationx, float rotationy, float rotationz, float panX, float panY, float stretchX, float dist)
   {
     this->w = w;
