@@ -29,11 +29,25 @@ namespace alpr
   {
     this->config = config;
 
+    // Load the mask specified in the config if it exists
+    if (config->detection_mask_image.length() > 0 && fileExists(config->detection_mask_image.c_str()))
+    {
+      // Load the image mask
+      if (config->debugDetector)
+        cout << "Loading detector mask: " << config->detection_mask_image << endl;
+      Mat newMask = cv::imread(config->detection_mask_image);
+
+      setMask(newMask);
+    }
   }
 
   Detector::~Detector()
   {
 
+  }
+  
+  void Detector::setMask(cv::Mat mask) {
+    detector_mask.setMask(mask);
   }
 
   bool Detector::isLoaded()

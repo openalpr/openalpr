@@ -26,11 +26,10 @@ namespace alpr
 {
 
 
-  DetectorCPU::DetectorCPU(Config* config) : Detector(config) {
-
   DetectorCPU::DetectorCPU(Config* config, PreWarp* prewarp) : Detector(config, prewarp) {
 
 
+    
     if( this->plate_cascade.load( get_detector_file() ) )
     {
       this->loaded = true;
@@ -60,18 +59,27 @@ namespace alpr
       frame.copyTo(frame_gray);
     }
 
+    // Apply the detection mask if it has been specified by the user
+    if (detector_mask.mask_loaded)
+      frame_gray = detector_mask.apply_mask(frame_gray);
 
     vector<PlateRegion> detectedRegions;   
     for (int i = 0; i < regionsOfInterest.size(); i++)
     {
+      Rect roi = regionsOfInterest[i];
+      
+      // Adjust the ROI to be inside the detection mask (if it exists)
+      if (detector_mask.mask_loaded)
+        roi = detector_mask.getRoiInsideMask(roi);
+      
       // Sanity check.  If roi width or height is less than minimum possible plate size,
       // then skip it
-      if ((regionsOfInterest[i].width < config->minPlateSizeWidthPx) || 
-          (regionsOfInterest[i].height < config->minPlateSizeHeightPx))
+      if ((roi.width < config->minPlateSizeWidthPx) || 
+          (roi.height < config->minPlateSizeHeightPx))
         continue;
       
-      Mat cropped = frame_gray(regionsOfInterest[i]);
-      vector<PlateRegion> subRegions = doCascade(cropped, regionsOfInterest[i].x, regionsOfInterest[i].y);
+      Mat cropped = frame_gray(roi);
+      vector<PlateRegion> subRegions = doCascade(cropped, roi.x, roi.y);
 
       for (int j = 0; j < subRegions.size(); j++)
         detectedRegions.push_back(subRegions[j]);
@@ -79,6 +87,7 @@ namespace alpr
     return detectedRegions;
   }
 
+  
   vector<PlateRegion> DetectorCPU::doCascade(Mat frame, int offset_x, int offset_y)
   {
 
@@ -102,7 +111,7 @@ namespace alpr
     float maxHeight = ((float) h) * (config->maxPlateHeightPercent / 100.0f) * scale_factor;
     Size minSize(config->minPlateSizeWidthPx * scale_factor, config->minPlateSizeHeightPx * scale_factor);
     Size maxSize(maxWidth, maxHeight);
-
+    
     plate_cascade.detectMultiScale( frame, plates, config->detection_iteration_increase, config->detectionStrictness,
                                       CV_HAAR_DO_CANNY_PRUNING,
                                       //0|CV_HAAR_SCALE_IMAGE,
