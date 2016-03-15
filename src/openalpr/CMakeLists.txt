@@ -11,6 +11,7 @@ set(lpr_source_files
  detection/detectorocl.cpp
  detection/detectorfactory.cpp
  detection/detectormorph.cpp
+ detection/detectormask.cpp
  licenseplatecandidate.cpp
  utility.cpp
  ocr.cpp
