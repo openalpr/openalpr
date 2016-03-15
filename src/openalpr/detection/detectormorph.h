@@ -35,7 +35,7 @@ namespace alpr {
 
   class DetectorMorph : public Detector {
   public:
-    DetectorMorph(Config* config);
+    DetectorMorph(Config* config, PreWarp* prewarp);
     virtual ~DetectorMorph();
 
     std::vector<PlateRegion> detect(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);

@@ -17,38 +17,50 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENALPR_DETECTORCPU_H
-#define	OPENALPR_DETECTORCPU_H
+#ifndef OPENALPR_DETECTORMASK_H
+#define	OPENALPR_DETECTORMASK_H
 
-#include <stdio.h>
 #include <iostream>
-#include <vector>
-
-#include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/core/core.hpp"
-#include "opencv2/ml/ml.hpp"
-
-#include "detector.h"
+#include "config.h"
+#include "prewarp.h"
 
 namespace alpr
 {
 
-  class DetectorCPU : public Detector {
+  class DetectorMask {
   public:
-      DetectorCPU(Config* config, PreWarp* prewarp);
-      virtual ~DetectorCPU();
+    
+    DetectorMask(Config* config, PreWarp* prewarp);
+    virtual ~DetectorMask();
 
-      std::vector<PlateRegion> detect(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);
-
+    void setMask(cv::Mat mask);
+    
+    cv::Rect getRoiInsideMask(cv::Rect roi);
+    
+    cv::Size mask_size();
+    
+    bool region_is_masked(cv::Rect region);
+    
+    cv::Mat apply_mask(cv::Mat image);
+    
+    bool mask_loaded;
+    
   private:
 
-      cv::CascadeClassifier plate_cascade;
-
-      std::vector<PlateRegion> doCascade(cv::Mat frame, int offset_x, int offset_y);
+    PreWarp* prewarp;
+    std::string last_prewarp_hash;
+    
+    cv::Mat mask;
+    
+    cv::Mat resized_mask;
+    bool resized_mask_loaded;
+    
+    Config* config;
+    cv::Rect scan_area;
+   
   };
 
 }
-
-#endif	/* OPENALPR_DETECTORCPU_H */
+#endif	/* DETECTORMASK_H */
 

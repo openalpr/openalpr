@@ -39,7 +39,7 @@ namespace alpr
 
   class DetectorOCL : public Detector {
   public:
-    DetectorOCL(Config* config);
+    DetectorOCL(Config* config, PreWarp* prewarp);
     virtual ~DetectorOCL();
 
     std::vector<PlateRegion> detect(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);

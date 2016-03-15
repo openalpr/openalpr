@@ -28,6 +28,7 @@ namespace alpr
 
   DetectorCPU::DetectorCPU(Config* config) : Detector(config) {
 
+  DetectorCPU::DetectorCPU(Config* config, PreWarp* prewarp) : Detector(config, prewarp) {
 
 
     if( this->plate_cascade.load( get_detector_file() ) )

@@ -27,7 +27,7 @@
 namespace alpr
 {
 
-  Detector* createDetector(Config* config);
+  Detector* createDetector(Config* config, PreWarp* prewarp);
 
 }
 #endif	/* OPENALPR_DETECTORFACTORY_H */

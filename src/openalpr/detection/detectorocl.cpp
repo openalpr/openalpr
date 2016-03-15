@@ -32,7 +32,7 @@ namespace alpr
 {
 
 
-  DetectorOCL::DetectorOCL(Config* config) : Detector(config) {
+  DetectorOCL::DetectorOCL(Config* config, PreWarp* prewarp) : Detector(config, prewarp) {
 
     tthread::lock_guard<tthread::mutex> guard(ocl_detector_mutex_m);
 

@@ -29,7 +29,7 @@ using namespace std;
 namespace alpr
 {
 
-  DetectorCUDA::DetectorCUDA(Config* config) : Detector(config) {
+  DetectorCUDA::DetectorCUDA(Config* config, PreWarp* prewarp) : Detector(config, prewarp) {
 
 
 

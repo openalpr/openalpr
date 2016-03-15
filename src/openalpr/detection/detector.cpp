@@ -25,7 +25,7 @@ using namespace std;
 namespace alpr
 {
 
-  Detector::Detector(Config* config)
+  Detector::Detector(Config* config, PreWarp* prewarp) : detector_mask(config, prewarp)
   {
     this->config = config;
 

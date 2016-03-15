@@ -24,7 +24,7 @@ using namespace std;
 
 namespace alpr {
 
-  DetectorMorph::DetectorMorph(Config* config) : Detector(config) {
+  DetectorMorph::DetectorMorph(Config* config, PreWarp* prewarp) : Detector(config, prewarp) {
 
     this->loaded = true;
   }

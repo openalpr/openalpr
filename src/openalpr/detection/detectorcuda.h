@@ -43,7 +43,7 @@ namespace alpr
 
   class DetectorCUDA : public Detector {
   public:
-      DetectorCUDA(Config* config);
+      DetectorCUDA(Config* config, PreWarp* prewarp);
       virtual ~DetectorCUDA();
 
       std::vector<PlateRegion> detect(cv::Mat frame, std::vector<cv::Rect> regionsOfInterest);

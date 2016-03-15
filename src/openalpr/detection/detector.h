@@ -49,6 +49,8 @@ namespace alpr
       Config* config;
 
       bool loaded;
+      
+      DetectorMask detector_mask;
 
       std::string get_detector_file();
       
