@@ -104,7 +104,7 @@ namespace alpr
     Size maxSize(maxWidth, maxHeight);
 
     plate_cascade.detectMultiScale( frame, plates, config->detection_iteration_increase, config->detectionStrictness,
-                                      0,
+                                      CV_HAAR_DO_CANNY_PRUNING,
                                       //0|CV_HAAR_SCALE_IMAGE,
                                       minSize, maxSize );
 
