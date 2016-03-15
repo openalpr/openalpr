@@ -183,21 +183,26 @@ namespace alpr
     
     for (unsigned int i = 0; i < rects.size(); i++)
     {
+      Rect r = projectRect(rects[i], maxWidth, maxHeight, inverse);
+      projected_rects.push_back(r);
+    }
+    
+    return projected_rects;
+  }
+  
+  Rect PreWarp::projectRect(Rect rect, int maxWidth, int maxHeight, bool inverse) {
       vector<Point2f> points;
-      points.push_back(Point(rects[i].x, rects[i].y));
-      points.push_back(Point(rects[i].x + rects[i].width, rects[i].y));
-      points.push_back(Point(rects[i].x + rects[i].width, rects[i].y + rects[i].height));
-      points.push_back(Point(rects[i].x, rects[i].y + rects[i].height));
+      points.push_back(Point(rect.x, rect.y));
+      points.push_back(Point(rect.x + rect.width, rect.y));
+      points.push_back(Point(rect.x + rect.width, rect.y + rect.height));
+      points.push_back(Point(rect.x, rect.y + rect.height));
       
       vector<Point2f> projectedPoints = projectPoints(points, inverse);
       
       Rect projectedRect = boundingRect(projectedPoints);
       projectedRect = expandRect(projectedRect, 0, 0, maxWidth, maxHeight);
-      projected_rects.push_back(projectedRect);
       
-    }
-    
-    return projected_rects;
+      return projectedRect;
   }
 
   vector<Point2f> PreWarp::projectPoints(vector<Point2f> points, bool inverse) {

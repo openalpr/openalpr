@@ -40,6 +40,7 @@ namespace alpr
     cv::Mat warpImage(cv::Mat image);
     std::vector<cv::Point2f> projectPoints(std::vector<cv::Point2f> points, bool inverse);
     std::vector<cv::Rect> projectRects(std::vector<cv::Rect> rects, int maxWidth, int maxHeight, bool inverse);
+    cv::Rect projectRect(cv::Rect rect, int maxWidth, int maxHeight, bool inverse);
     void projectPlateRegions(std::vector<PlateRegion>& plateRegions, int maxWidth, int maxHeight, bool inverse);
 
     void setTransform(float w, float h, float rotationx, float rotationy, float rotationz, float panX, float panY, float stretchX, float dist);
