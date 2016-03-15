@@ -189,6 +189,8 @@ namespace alpr
     
     skipDetection = getBoolean(ini, "", "skip_detection", false);
     
+    detection_mask_image = getString(ini, "", "detection_mask_image", "");
+    
     analysis_count = getInt(ini, "", "analysis_count", 1);
     
     prewarp = getString(ini, "", "prewarp", "");

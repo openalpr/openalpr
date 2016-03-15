@@ -60,6 +60,8 @@ namespace alpr
       float contrastDetectionThreshold;
       
       bool skipDetection;
+      
+      std::string detection_mask_image;
 
       int analysis_count;
       

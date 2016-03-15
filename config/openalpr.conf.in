@@ -49,6 +49,11 @@ must_match_pattern = 0
 ; Bypasses plate detection.  If this is set to 1, the library assumes that each region provided is a likely plate area.
 skip_detection = 0
 
+; Specifies the full path to an image file that constrains the detection area.  Only the plate regions allowed through the mask 
+; will be analyzed.  The mask image must match the resolution of your image to be analyzed.  The mask is black and white.  
+; Black areas will be ignored, white areas will be searched.  An empty value means no mask (scan the entire image)
+detection_mask_image = 
+
 ; OpenALPR can scan the same image multiple times with different randomization.  Setting this to a value larger than
 ; 1 may increase accuracy, but will increase processing time linearly (e.g., analysis_count = 3 is 3x slower)
 analysis_count = 1
