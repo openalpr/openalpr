@@ -470,5 +470,12 @@ namespace alpr
       ini->SetValue("","prewarp", newprewarp.c_str());
       return ini->SaveFile(configFile.c_str());
   }
+  string Config::getPrewarp(string configFile)
+  {
+      CSimpleIniA iniObj;
+      iniObj.LoadFile(configFile.c_str());
+      CSimpleIniA* ini = &iniObj;
+      return prewarp = getString(ini, "", "prewarp", "");
+  }
 }
 

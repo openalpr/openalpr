@@ -153,6 +153,7 @@ namespace alpr
 
       bool setCountry(std::string country);
       bool updatePrewarp(std::string configFile, std::string newprewarp);
+      std::string getPrewarp(std::string configFile);
 
     private:
     

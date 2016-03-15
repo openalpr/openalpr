@@ -218,26 +218,29 @@ void StretchChange(int pos, void* userdata)
 
 
 int value;
+int valuex;
+int valuey;
+int valuez;
+int valuew;
+int valued;
 void create_window()
 {
   namedWindow(WINDOW_NAME, CV_WINDOW_AUTOSIZE | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
   
   
   value = 100;
-  panX = 0;
-  panY = 0;
 
-  XChange(100, NULL);
-  YChange(100, NULL);
-  ZChange(100, NULL);
-  DistChange(100, NULL);
-  
-  
-    createTrackbar( "X", WINDOW_NAME, &value, 200,  XChange);
-    createTrackbar( "Y", WINDOW_NAME, &value, 200,  YChange);
-    createTrackbar( "Z", WINDOW_NAME, &value, 200,  ZChange);
-    createTrackbar( "W", WINDOW_NAME, &value, 200,  StretchChange);
-    createTrackbar( "D", WINDOW_NAME, &value, 200,  DistChange);
+  valuex = (-(rotationx*20000.0)+100);
+  valuey = (rotationy*20000.0)+100;
+  valuez = -(rotationz*100.0)+100;
+  valuew = -(1-stretchX)*-200+100;
+  valued = (1-dist)*200+100;
+
+  createTrackbar( "X", WINDOW_NAME, &valuex, 200,  XChange);
+  createTrackbar( "Y", WINDOW_NAME, &valuey, 200,  YChange);
+  createTrackbar( "Z", WINDOW_NAME, &valuez, 200,  ZChange);
+  createTrackbar( "W", WINDOW_NAME, &valuew, 200,  StretchChange);
+  createTrackbar( "D", WINDOW_NAME, &valued, 200,  DistChange);
 
   
   setMouseCallback(WINDOW_NAME, mouse_callback, NULL);
@@ -260,7 +263,7 @@ int main(int argc, char** argv) {
 
   TCLAP::CmdLine cmd("OpenAlpr Perspective Utility", ' ', "0.1");
 
-  TCLAP::UnlabeledValueArg<std::string>  fileArg( "image_file", "Image containing license plates", true, "", "image_file_path"  );
+  TCLAP::UnlabeledValueArg<std::string>  fileArg( "image_file", "Image containing license plates", false, "", "image_file_path"  );
 
   TCLAP::ValueArg<std::string> countryCodeArg("c","country","Country code to identify (either us for USA or eu for Europe).  Default=us",false, "us" ,"country_code");
   
@@ -293,6 +296,9 @@ int main(int argc, char** argv) {
     translate_config = translateTestArg.getValue();
     max_width = maxWidthArg.getValue();
     max_height = maxHeightArg.getValue();
+    //debug
+    //filename="/opt/alpr/ejemplos/P5280049.jpg";
+    //config_path="/opt/alpr/etc/openalpr/openalpr.conf";
 
   }
   catch (TCLAP::ArgException &e)    // catch any exceptions
@@ -311,15 +317,12 @@ int main(int argc, char** argv) {
   }else{
       config = alpr::Config(country);
   }
-  cout << config.config_file_path <<endl;
-  
-
 
   panning = false;
   left_clicking = false;
 
-  
   imgOriginal = imread(filename);
+
   
   if (imgOriginal.cols > max_width)
   {
@@ -338,10 +341,10 @@ int main(int argc, char** argv) {
   
   w = imgOriginal.cols;
   h = imgOriginal.rows;
+
   
-  create_window();
   
-  
+  translate_config = config.getPrewarp(config.config_file_path);
   if (translate_config != "")
   {
     int first_comma = translate_config.find(",");
@@ -367,7 +370,7 @@ int main(int argc, char** argv) {
     ss >> panX;
     ss.ignore();  // Ignore comma
     ss >> panY;
-       
+
   }
 
   float width_ratio = w / ((float)imgOriginal.cols);
@@ -379,6 +382,7 @@ int main(int argc, char** argv) {
   panX /= width_ratio;
   panY /= height_ratio;
 
+  create_window();
   drawImage(imgOriginal);
 
   while (cvGetWindowHandle(WINDOW_NAME.c_str()) != 0)
