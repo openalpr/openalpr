@@ -20,12 +20,15 @@
 #ifndef OPENALPR_DETECTOR_TYPES_H
 #define	OPENALPR_DETECTOR_TYPES_H
 
-
+namespace alpr
+{
+  
   struct PlateRegion
   {
     cv::Rect rect;
     std::vector<PlateRegion> children;
   };
-
+  
+}
 #endif	/* OPENALPR_DETECTOR_TYPES_H */
 
