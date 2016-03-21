@@ -96,7 +96,7 @@ namespace alpr
     {
       cv::Rect warped_scan_area = prewarp->projectRect(scan_area, mask.cols, mask.rows, false);
 
-      Rect roi_intersection = roi & scan_area;
+      Rect roi_intersection = roi & warped_scan_area;
       return roi_intersection;
       
     }
