@@ -154,6 +154,8 @@ namespace alpr
       std::vector<std::string> loaded_countries;
 
       bool setCountry(std::string country);
+      bool updatePrewarp(std::string configFile, std::string newprewarp);
+      std::string getPrewarp(std::string configFile);
 
     private:
     

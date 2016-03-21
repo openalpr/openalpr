@@ -461,4 +461,23 @@ namespace alpr
     string val = string(pszValue);
     return val;
   }
+
+  //For Calibration utility
+
+  bool Config::updatePrewarp(string configFile, string newprewarp)
+  {
+      CSimpleIniA iniObj;
+      iniObj.LoadFile(configFile.c_str());
+      CSimpleIniA* ini = &iniObj;
+      ini->SetValue("","prewarp", newprewarp.c_str());
+      return ini->SaveFile(configFile.c_str());
+  }
+  string Config::getPrewarp(string configFile)
+  {
+      CSimpleIniA iniObj;
+      iniObj.LoadFile(configFile.c_str());
+      CSimpleIniA* ini = &iniObj;
+      return prewarp = getString(ini, "", "prewarp", "");
+  }
 }
+
