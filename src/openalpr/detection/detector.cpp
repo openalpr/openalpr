@@ -80,6 +80,14 @@ namespace alpr
     if (detector_mask.mask_loaded)
       frame_gray = detector_mask.apply_mask(frame_gray);
 
+    // Setup debug mask image
+    Mat mask_debug_img;
+    if (detector_mask.mask_loaded && config->debugDetector)
+    {
+      frame_gray.copyTo(mask_debug_img);
+      cvtColor(frame_gray, mask_debug_img, CV_GRAY2BGR);
+    }
+    
     vector<PlateRegion> detectedRegions;   
     for (int i = 0; i < regionsOfInterest.size(); i++)
     {
@@ -88,6 +96,10 @@ namespace alpr
       // Adjust the ROI to be inside the detection mask (if it exists)
       if (detector_mask.mask_loaded)
         roi = detector_mask.getRoiInsideMask(roi);
+
+      // Draw ROIs on debug mask image
+      if (detector_mask.mask_loaded && config->debugDetector)
+        rectangle(mask_debug_img, roi, Scalar(0,255,255), 3);
       
       // Sanity check.  If roi width or height is less than minimum possible plate size,
       // then skip it
@@ -136,7 +148,13 @@ namespace alpr
       for (int j = 0; j < orderedRegions.size(); j++)
         detectedRegions.push_back(orderedRegions[j]);
     }
-            
+
+    // Show debug mask image
+    if (detector_mask.mask_loaded && config->debugDetector && config->debugShowImages)
+    {
+      imshow("Detection Mask", mask_debug_img);
+    }
+    
     return detectedRegions;
   }
   
