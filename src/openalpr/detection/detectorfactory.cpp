@@ -14,7 +14,7 @@ namespace alpr
     else if (config->detector == DETECTOR_LBP_GPU)
     {
       #ifdef COMPILE_GPU
-      return new DetectorCUDA(config);
+      return new DetectorCUDA(config, prewarp);
       #else
       std::cerr << "Error: GPU detector requested, but GPU extensions are not compiled.  " <<
               "Add COMPILE_GPU=1 to the compiler definitions to enable GPU compilation." <<
@@ -28,7 +28,7 @@ namespace alpr
       return new DetectorOCL(config, prewarp);
       #else
       std::cerr << "Error: OpenCL acceleration requires OpenCV 3.0.  " << std::endl;
-      return new DetectorCPU(config);
+      return new DetectorCPU(config, prewarp);
       #endif
     }
     else if (config->detector == DETECTOR_MORPH_CPU)
