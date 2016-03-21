@@ -1,2 +1,3 @@
 etc/openalpr/alprd.conf
+usr/share/openalpr/config/alprd.defaults.conf
 usr/bin/alprd

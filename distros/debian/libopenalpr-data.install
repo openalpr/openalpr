@@ -1,2 +1,3 @@
 etc/openalpr/openalpr.conf
+usr/share/openalpr/config/openalpr.defaults.conf
 usr/share/openalpr/runtime_data
