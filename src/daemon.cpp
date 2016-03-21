@@ -6,10 +6,10 @@
 
 #include "daemon/beanstalk.hpp"
 #include "video/logging_videobuffer.h"
+#include "daemon/daemonconfig.h"
 
 #include "tclap/CmdLine.h"
 #include "alpr.h"
-#include "openalpr/simpleini/simpleini.h"
 #include "openalpr/cjson.h"
 #include "support/tinythread.h"
 #include <curl/curl.h>
@@ -167,73 +167,47 @@ int main( int argc, const char** argv )
     LOG4CPLUS_INFO(logger, "Running OpenALPR daemon in the foreground.");
   }
   
-  CSimpleIniA ini;
-  ini.SetMultiKey();
+  LOG4CPLUS_INFO(logger, "Using: " << daemonConfigFile << " for daemon configuration");
   
-  ini.LoadFile(daemonConfigFile.c_str());
-  
-  std::vector<std::string> stream_urls;
-  
-  
-  CSimpleIniA::TNamesDepend values;
-  ini.GetAllValues("daemon", "stream", values);
+  std::string daemon_defaults_file = INSTALL_PREFIX  "/share/openalpr/config/alprd.defaults.conf";
+  DaemonConfig daemon_config(daemonConfigFile, daemon_defaults_file);
 
-  // sort the values into the original load order
-  values.sort(CSimpleIniA::Entry::LoadOrder());
-
-  // output all of the items
-  CSimpleIniA::TNamesDepend::const_iterator i;
-  for (i = values.begin(); i != values.end(); ++i) { 
-      stream_urls.push_back(i->pItem);
-  }
   
-  
-  if (stream_urls.size() == 0)
+  if (daemon_config.stream_urls.size() == 0)
   {
     LOG4CPLUS_FATAL(logger, "No video streams defined in the configuration.");
     return 1;
   }
   
-  std::string country = ini.GetValue("daemon", "country", "us");
-  int topn = ini.GetLongValue("daemon", "topn", 20);
-  
-  bool storePlates = ini.GetBoolValue("daemon", "store_plates", false);
-  std::string imageFolder = ini.GetValue("daemon", "store_plates_location", "/tmp/");
-  bool uploadData = ini.GetBoolValue("daemon", "upload_data", false);
-  std::string upload_url = ini.GetValue("daemon", "upload_address", "");
-  std::string company_id = ini.GetValue("daemon", "company_id", "");
-  std::string site_id = ini.GetValue("daemon", "site_id", "");
-  
-  LOG4CPLUS_INFO(logger, "Using: " << daemonConfigFile << " for daemon configuration");
-  LOG4CPLUS_INFO(logger, "Using: " << imageFolder << " for storing valid plate images");
+  LOG4CPLUS_INFO(logger, "Using: " << daemon_config.imageFolder << " for storing valid plate images");
   
   pid_t pid;
   
-  for (int i = 0; i < stream_urls.size(); i++)
+  for (int i = 0; i < daemon_config.stream_urls.size(); i++)
   {
     pid = fork();
     if (pid == (pid_t) 0)
     {
       // This is the child process, kick off the capture data and upload threads
       CaptureThreadData* tdata = new CaptureThreadData();
-      tdata->stream_url = stream_urls[i];
+      tdata->stream_url = daemon_config.stream_urls[i];
       tdata->camera_id = i + 1;
       tdata->config_file = openAlprConfigFile;
-      tdata->output_images = storePlates;
-      tdata->output_image_folder = imageFolder;
-      tdata->country_code = country;
-      tdata->company_id = company_id;
-      tdata->site_id = site_id;
-      tdata->top_n = topn;
+      tdata->output_images = daemon_config.storePlates;
+      tdata->output_image_folder = daemon_config.imageFolder;
+      tdata->country_code = daemon_config.country;
+      tdata->company_id = daemon_config.company_id;
+      tdata->site_id = daemon_config.site_id;
+      tdata->top_n = daemon_config.topn;
       tdata->clock_on = clockOn;
       
       tthread::thread* thread_recognize = new tthread::thread(streamRecognitionThread, (void*) tdata);
       
-      if (uploadData)
+      if (daemon_config.uploadData)
       {
 	// Kick off the data upload thread
 	UploadThreadData* udata = new UploadThreadData();
-	udata->upload_url = upload_url;
+	udata->upload_url = daemon_config.upload_url;
 	tthread::thread* thread_upload = new tthread::thread(dataUploadThread, (void*) udata );
       }
       

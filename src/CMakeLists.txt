@@ -156,7 +156,12 @@ ENDIF()
 
 # Compile the alprd library on Unix-based OS
 IF (WITH_DAEMON)
-  ADD_EXECUTABLE( alprd  daemon.cpp daemon/beanstalk.c daemon/beanstalk.cc )
+  ADD_EXECUTABLE( alprd  
+    daemon.cpp 
+    daemon/daemonconfig.cpp 
+    daemon/beanstalk.c 
+    daemon/beanstalk.cc 
+)
 
   FIND_PACKAGE( log4cplus REQUIRED )
 
@@ -212,8 +217,13 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/../config/openalpr.conf.defaults ${CMAKE_CURR
 install (FILES      ${CMAKE_CURRENT_BINARY_DIR}/share/openalpr/config/openalpr.defaults.conf DESTINATION ${CMAKE_INSTALL_PREFIX}/share/openalpr/config      COMPONENT config)
 
 IF (WITH_DAEMON)
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/../config/alprd.conf.user ${CMAKE_CURRENT_BINARY_DIR}/config/alprd.conf)
+  install (FILES      ${CMAKE_CURRENT_BINARY_DIR}/config/alprd.conf DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/openalpr/      COMPONENT config)
+
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/../config/alprd.conf.defaults ${CMAKE_CURRENT_BINARY_DIR}/share/openalpr/config/alprd.defaults.conf)
+  install (FILES      ${CMAKE_CURRENT_BINARY_DIR}/share/openalpr/config/alprd.defaults.conf DESTINATION ${CMAKE_INSTALL_PREFIX}/share/openalpr/config      COMPONENT config)
+
   install (TARGETS    alprd DESTINATION  ${CMAKE_INSTALL_PREFIX}/bin)
-  install (FILES      ${CMAKE_SOURCE_DIR}/../config/alprd.conf DESTINATION    ${CMAKE_INSTALL_SYSCONFDIR}/openalpr      COMPONENT config)
 ENDIF()
 
 

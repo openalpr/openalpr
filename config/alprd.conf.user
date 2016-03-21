@@ -1,0 +1,4 @@
+; This configuration file overrides the default values specified 
+; in ${CMAKE_INSTALL_PREFIX}/share/openalpr/config/alprd.defaults.conf
+[daemon]
+
