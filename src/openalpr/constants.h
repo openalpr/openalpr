@@ -27,6 +27,11 @@
 #define CASCADE_DIR		"/region/"
 #define POSTPROCESS_DIR		"/postprocess"
 
+#define DEFAULT_SHARE_DIR   INSTALL_PREFIX "/share/openalpr"
+
+#define DEFAULT_RUNTIME_DATA_DIR 	    DEFAULT_SHARE_DIR "/runtime_data"
+#define CONFIG_FILE_TEMPLATE_LOCATION 	DEFAULT_SHARE_DIR "/config/openalpr.defaults.conf"
+
 #ifndef DEFAULT_CONFIG_FILE
   #define DEFAULT_CONFIG_FILE 	"/etc/openalpr/openalpr.conf"
 #endif

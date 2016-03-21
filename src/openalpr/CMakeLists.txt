@@ -5,6 +5,7 @@ set(lpr_source_files
  alpr.cpp
  alpr_impl.cpp
  config.cpp
+ config_helper.cpp
  detection/detector.cpp
  detection/detectorcpu.cpp
  detection/detectorcuda.cpp

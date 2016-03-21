@@ -15,6 +15,8 @@ add_definitions( -DOPENALPR_PATCH_VERSION=${OPENALPR_PATCH_VERSION})
 
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
 
+add_definitions( -DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
+
 # TODO: switch to http://www.cmake.org/cmake/help/v2.8.5/cmake.html#module:GNUInstallDirs ?
 IF (NOT CMAKE_INSTALL_SYSCONFDIR) 
   SET(CMAKE_INSTALL_SYSCONFDIR "/etc")
@@ -203,8 +205,11 @@ ENDIF()
 install (DIRECTORY  ${CMAKE_SOURCE_DIR}/../runtime_data DESTINATION         ${CMAKE_INSTALL_PREFIX}/share/openalpr)
 
 # set runtime_data to reflect the current CMAKE_INSTALL_PREFIX
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/../config/openalpr.conf.in ${CMAKE_CURRENT_BINARY_DIR}/config/openalpr.conf)
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/../config/openalpr.conf.user ${CMAKE_CURRENT_BINARY_DIR}/config/openalpr.conf)
 install (FILES      ${CMAKE_CURRENT_BINARY_DIR}/config/openalpr.conf DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/openalpr/      COMPONENT config)
+
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/../config/openalpr.conf.defaults ${CMAKE_CURRENT_BINARY_DIR}/share/openalpr/config/openalpr.defaults.conf)
+install (FILES      ${CMAKE_CURRENT_BINARY_DIR}/share/openalpr/config/openalpr.defaults.conf DESTINATION ${CMAKE_INSTALL_PREFIX}/share/openalpr/config      COMPONENT config)
 
 IF (WITH_DAEMON)
   install (TARGETS    alprd DESTINATION  ${CMAKE_INSTALL_PREFIX}/bin)
