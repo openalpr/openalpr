@@ -167,6 +167,11 @@ namespace alpr
     
     runtimeBaseDir = getString(ini,defaultIni, "", "runtime_dir", DEFAULT_RUNTIME_DATA_DIR);
    
+    // Special hack to allow config files to work if the package hasn't been installed
+    // Cmake will do this replacement on deploy, but this is useful in development
+    if (runtimeBaseDir.find("${CMAKE_INSTALL_PREFIX}") >= 0)
+      runtimeBaseDir = replaceAll(runtimeBaseDir, "${CMAKE_INSTALL_PREFIX}", INSTALL_PREFIX);
+    
     std::string detectorString = getString(ini, defaultIni, "", "detector", "lbpcpu");
     std::transform(detectorString.begin(), detectorString.end(), detectorString.begin(), ::tolower);
 

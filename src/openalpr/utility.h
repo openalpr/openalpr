@@ -115,6 +115,8 @@ namespace alpr
   std::string toString(float value);
   std::string toString(double value);
 
+  std::string replaceAll(std::string str, const std::string& from, const std::string& to);
+  
   std::string &ltrim(std::string &s);
   std::string &rtrim(std::string &s);
   std::string &trim(std::string &s);
