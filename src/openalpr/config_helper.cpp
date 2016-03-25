@@ -113,7 +113,7 @@ namespace alpr
 
   int getInt(CSimpleIniA* ini, CSimpleIniA* defaultIni, std::string section, std::string key, int defaultValue)
   {
-    if (hasValue(ini, section, key))
+    if (ini != NULL && hasValue(ini, section, key))
       return getInt(ini, section, key, defaultValue);
     
     if (defaultIni != NULL && hasValue(defaultIni, section, key))
@@ -125,7 +125,7 @@ namespace alpr
   }
   float getFloat(CSimpleIniA* ini, CSimpleIniA* defaultIni, std::string section, std::string key, float defaultValue)
   {
-    if (hasValue(ini, section, key))
+    if (ini != NULL && hasValue(ini, section, key))
       return getFloat(ini, section, key, defaultValue);
     
     if (defaultIni != NULL && hasValue(defaultIni, section, key))
@@ -137,7 +137,7 @@ namespace alpr
   }
   std::string getString(CSimpleIniA* ini, CSimpleIniA* defaultIni, std::string section, std::string key, std::string defaultValue)
   {
-     if (hasValue(ini, section, key))
+     if (ini != NULL && hasValue(ini, section, key))
       return getString(ini, section, key, defaultValue);
     
     if (defaultIni != NULL && hasValue(defaultIni, section, key))
@@ -148,7 +148,7 @@ namespace alpr
   }
   bool getBoolean(CSimpleIniA* ini, CSimpleIniA* defaultIni, std::string section, std::string key, bool defaultValue)
   {
-     if (hasValue(ini, section, key))
+     if (ini != NULL && hasValue(ini, section, key))
       return getBoolean(ini, section, key, defaultValue);
     
     if (defaultIni != NULL && hasValue(defaultIni, section, key))

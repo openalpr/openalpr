@@ -66,7 +66,7 @@ namespace alpr
     }
 
 
-    if (fileExists(config_file_path.c_str()) == false)
+    if (fileExists(config_file_path.c_str()) == false && fileExists(CONFIG_FILE_TEMPLATE_LOCATION) == false)
     {
       std::cerr << "--(!) Config file '" << config_file_path << "' does not exist!" << endl;
       std::cerr << "--(!)             You can specify the configuration file location via the command line " << endl;
