@@ -45,46 +45,13 @@ namespace alpr
     else
       this->mask = orig_mask;
     
-    // Threshold the mask so that the values are either 0 or 255 (no shades of gray))
-    threshold(this->mask, this->mask, 1, 255, cv::THRESH_BINARY);
-    
-    
-    // Calculate the biggest rectangle that covers all the whitespace
-    // Rather than using contours, go row by row, column by column until you hit
-    // a white pixel and stop.  Should be faster and a little simpler
-    unsigned int top_bound = 0, bottom_bound = 0, left_bound = 0, right_bound = 0;
-    
-    cout << mask.col(20).cols << " - " << mask.col(20).rows << endl;
-    for (top_bound = 0; top_bound < mask.rows; top_bound++)
-      if (countNonZero(mask.row(top_bound)) > 0) break;
-    for (bottom_bound = mask.rows - 1; bottom_bound >= 0; bottom_bound--)
-      if (countNonZero(mask.row(bottom_bound)) > 0) break;
-    
-    for (left_bound = 0; left_bound < mask.cols; left_bound++)
-      if (countNonZero(mask.col(left_bound)) > 0) break;
-    for (right_bound = mask.rows - 1; right_bound >= 0; right_bound--)
-      if (countNonZero(mask.col(right_bound)) > 0) break;
-    
-    if (left_bound >= right_bound || top_bound >= bottom_bound)
-    {
-      cerr << "Invalid mask" << endl;
-      return;
-    }
-    
-    scan_area.x = left_bound;
-    scan_area.y = top_bound;
-    scan_area.width = right_bound - left_bound;
-    scan_area.height = bottom_bound - top_bound;
-    
-//    Mat debug(this->mask.size(), mask.type());
-//    this->mask.copyTo(debug);
-//    cvtColor(debug, debug, CV_GRAY2BGR);
-//    rectangle(debug, scan_area, Scalar(0,255,0), 2);
-//    drawAndWait(debug);
+    resized_mask_loaded = false;
     mask_loaded = true;
   }
   
   cv::Size DetectorMask::mask_size() {
+    if (resized_mask_loaded)
+      return resized_mask.size();
     return mask.size();
   }
 
@@ -94,7 +61,7 @@ namespace alpr
     
     if (prewarp->valid)
     {
-      cv::Rect warped_scan_area = prewarp->projectRect(scan_area, mask.cols, mask.rows, false);
+      cv::Rect warped_scan_area = prewarp->projectRect(scan_area, resized_mask.cols, resized_mask.rows, false);
 
       Rect roi_intersection = roi & warped_scan_area;
       return roi_intersection;
@@ -128,33 +95,75 @@ namespace alpr
     return mean_value < MIN_WHITENESS;
   }
   
+  void DetectorMask::resize_mask(cv::Mat image) {
+    
+    resize(mask, resized_mask, image.size());
+
+    if (prewarp->valid) 
+    {
+      resized_mask = prewarp->warpImage(resized_mask);
+    }
+
+    // Threshold the mask so that the values are either 0 or 255 (no shades of gray))
+    // This can happen with jpeg compression
+    threshold(this->mask, this->mask, 55, 255, cv::THRESH_BINARY);
+     
+    // Calculate the biggest rectangle that covers all the whitespace
+    // Rather than using contours, go row by row, column by column until you hit
+    // a white pixel and stop.  Should be faster and a little simpler
+    int top_bound = 0, bottom_bound = 0, left_bound = 0, right_bound = 0;
+    
+    for (top_bound = 0; top_bound < resized_mask.rows; top_bound++)
+      if (countNonZero(resized_mask.row(top_bound)) > 0) break;
+    for (bottom_bound = resized_mask.rows - 1; bottom_bound >= 0; bottom_bound--)
+      if (countNonZero(resized_mask.row(bottom_bound)) > 0) break;
+    
+    for (left_bound = 0; left_bound < resized_mask.cols; left_bound++)
+      if (countNonZero(resized_mask.col(left_bound)) > 0) break;
+    for (right_bound = resized_mask.cols - 1; right_bound >= 0; right_bound--)
+      if (countNonZero(resized_mask.col(right_bound)) > 0) break;
+    
+    if (left_bound >= right_bound || top_bound >= bottom_bound)
+    {
+      // Invalid mask, set it to 0 width/height
+      scan_area.x = 0;
+      scan_area.y = 0;
+      scan_area.width = 0;
+      scan_area.height = 0;
+    }
+    else
+    {
+      scan_area.x = left_bound;
+      scan_area.y = top_bound;
+      scan_area.width = right_bound - left_bound;
+      scan_area.height = bottom_bound - top_bound;
+    }
+      
+    //cout << scan_area << endl;
   }
 
   Mat DetectorMask::apply_mask(Mat image) {
     if (!mask_loaded)
       return image;
-    
-    if (!resized_mask_loaded || last_prewarp_hash != prewarp->toString())
+       
+    if (!resized_mask_loaded || image.size() != resized_mask.size() || 
+            last_prewarp_hash != prewarp->toString())
     {
-      resize(mask, resized_mask, image.size());
-      
-      if (prewarp->valid)
-      {
-        resized_mask = prewarp->warpImage(resized_mask);
-      }
+      resize_mask(image);
       
       last_prewarp_hash = prewarp->toString();
       
       resized_mask_loaded = true;
     }
     
-    if (image.size() != resized_mask.size())
+    if (image.size() != resized_mask.size() && config->debugDetector)
     {
+      cout << "Mask does not match image size" << endl;
       return image;
     }
     
-    Mat response(image.size(), image.type());
-    image.copyTo(response, resized_mask);
+    Mat response = Mat::zeros(image.size(), image.type());
+    bitwise_and(image, resized_mask, response);
     
     return response;
   }

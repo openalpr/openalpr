@@ -48,6 +48,8 @@ namespace alpr
     
   private:
 
+    void resize_mask(cv::Mat image);
+    
     PreWarp* prewarp;
     std::string last_prewarp_hash;
     
