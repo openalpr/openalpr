@@ -58,20 +58,8 @@ namespace alpr
   // Provided a region of interest, truncate it if the mask cuts off a portion of it.
   // No reason to analyze extra content
   cv::Rect DetectorMask::getRoiInsideMask(cv::Rect roi) {
-    
-    if (prewarp->valid)
-    {
-      cv::Rect warped_scan_area = prewarp->projectRect(scan_area, resized_mask.cols, resized_mask.rows, false);
-
-      Rect roi_intersection = roi & warped_scan_area;
-      return roi_intersection;
-      
-    }
-    else
-    {
       Rect roi_intersection = roi & scan_area;
-      return roi_intersection;
-    }
+      return roi_intersection;  
   }
 
   
