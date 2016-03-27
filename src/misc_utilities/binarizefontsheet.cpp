@@ -246,16 +246,24 @@ int main(int argc, char** argv) {
       if (debug)
         show_debug_image(rectangles, thresholds[t]);
       
-      int text_content_length = utf8::distance(text_content.begin(), text_content.end());
-      if (rectangles.size() != text_content_length - 1)
+      vector<std::string> valid_characters;
+      
+      string::iterator utf_iterator = text_content.begin();
+      while (utf_iterator < text_content.end())
       {
-        cout << "Number of blobs (" << rectangles.size() << ") != number of characters (" << text_content_length - 1 << ")" << endl;
+        int cp = utf8::next(utf_iterator, text_content.end());
+        string utf_character = utf8chr(cp);
+        if (utf_character != "\n" && utf_character != " " && utf_character != " ")
+          valid_characters.push_back(utf_character);
+      }
+      
+      if (rectangles.size() != valid_characters.size())
+      {
+        cout << "Number of blobs (" << rectangles.size() << ") != number of characters (" << valid_characters.size() << ")" << endl;
         cout << "Skipping..." << endl;
         //return 1;
         continue;
       }
-      
-      string::iterator utf_iterator = text_content.begin();
       
       
       for (unsigned int i = 0; i < rectangles.size(); i++)
@@ -263,9 +271,8 @@ int main(int argc, char** argv) {
         Rect mr = rectangles[i];
         Mat croppedChar = thresholds[t](mr);
         
-        int cp = utf8::next(utf_iterator, text_content.end());
         stringstream ss;
-        ss << out_dir << "/" << utf8chr(cp) << "-" << font_sheet_index << "-" << t << "-" << i << ".png";
+        ss << out_dir << "/" << valid_characters[i] << "-" << font_sheet_index << "-" << t << "-" << i << ".png";
         
         imwrite(ss.str(), croppedChar);
         
