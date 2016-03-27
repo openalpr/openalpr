@@ -249,7 +249,7 @@ int main(int argc, char** argv) {
       int text_content_length = utf8::distance(text_content.begin(), text_content.end());
       if (rectangles.size() != text_content_length - 1)
       {
-        cout << "Number of blobs (" << rectangles.size() << ") != number of characters (" << text_content_length << ")" << endl;
+        cout << "Number of blobs (" << rectangles.size() << ") != number of characters (" << text_content_length - 1 << ")" << endl;
         cout << "Skipping..." << endl;
         //return 1;
         continue;
