@@ -88,8 +88,6 @@ namespace alpr
       AlprResults recognize( cv::Mat img );
       AlprResults recognize( cv::Mat img, std::vector<cv::Rect> regionsOfInterest );
 
-      void applyRegionTemplate(AlprPlateResult* result, std::string region);
-
       AlprFullDetails analyzeSingleCountry(cv::Mat colorImg, cv::Mat grayImg, std::vector<cv::Rect> regionsOfInterest);
 
       void setCountry(std::string country);
