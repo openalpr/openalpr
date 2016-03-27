@@ -140,8 +140,21 @@ namespace alpr
         allRegions[i].x = allRegions[i].x + offset_x;
         allRegions[i].y = allRegions[i].y + offset_y;
       }
-
-      vector<PlateRegion> orderedRegions = aggregateRegions(allRegions);
+      
+      // Check the rectangles and make sure that they're definitely not masked
+      vector<Rect> regions_not_masked;
+      for (unsigned int i = 0; i < allRegions.size(); i++)
+      {
+        if (detector_mask.mask_loaded)
+        {
+          if (!detector_mask.region_is_masked(allRegions[i]))
+            regions_not_masked.push_back(allRegions[i]);
+        }
+        else
+          regions_not_masked.push_back(allRegions[i]);
+      }
+      
+      vector<PlateRegion> orderedRegions = aggregateRegions(regions_not_masked);
 
       
 
