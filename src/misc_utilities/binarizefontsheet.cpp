@@ -96,6 +96,7 @@ int main(int argc, char** argv) {
   vector<string> font_sheet_files;
   string char_list_file;
   string out_dir;
+  bool debug;
   
 
   TCLAP::CmdLine cmd("OpenAlpr OCR Training Font Sheet Prep Utility", ' ', "1.0.0");
@@ -106,6 +107,7 @@ int main(int argc, char** argv) {
   
   TCLAP::ValueArg<std::string> outDirArg("","out_dir","Output directory to put the character images",true, "" ,"output_dir");
   
+  TCLAP::SwitchArg debugSwitch("","debug","Enable debug output.  Default=off", cmd, false);
   
   try
   {
@@ -123,6 +125,7 @@ int main(int argc, char** argv) {
     font_sheet_files = fontSheetArg.getValue();
     char_list_file = charListArg.getValue();
     out_dir = outDirArg.getValue();
+    debug = debugSwitch.getValue();
     
   }
   catch (TCLAP::ArgException &e)    // catch any exceptions
@@ -197,7 +200,9 @@ int main(int argc, char** argv) {
         }
       }
       resize(testImg, testImg, Size(700, 1000));
-      drawAndWait(&testImg);
+      
+      if (debug)
+        drawAndWait(&testImg);
       
       // Adjust the threshold w/ the morphology operation that OpenALPR uses
       Mat closureElement = getStructuringElement( 1,
@@ -238,7 +243,9 @@ int main(int argc, char** argv) {
         return 1;
       }
       
-      show_debug_image(rectangles, thresholds[t]);
+      if (debug)
+        show_debug_image(rectangles, thresholds[t]);
+      
       int text_content_length = utf8::distance(text_content.begin(), text_content.end());
       if (rectangles.size() != text_content_length - 1)
       {
