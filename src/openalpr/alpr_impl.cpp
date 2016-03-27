@@ -680,6 +680,25 @@ namespace alpr
     else
       prewarp->initialize(prewarp_config);
   }
+  
+  void AlprImpl::setMask(unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight) {
+
+    try
+    {
+      int arraySize = imgWidth * imgHeight * bytesPerPixel;
+      cv::Mat imgData = cv::Mat(arraySize, 1, CV_8U, pixelData);
+      cv::Mat mask = imgData.reshape(bytesPerPixel, imgHeight);
+
+      typedef std::map<std::string, AlprRecognizers>::iterator it_type;
+      for (it_type iterator = recognizers.begin(); iterator != recognizers.end(); iterator++)
+        iterator->second.plateDetector->setMask(mask);
+    }
+    catch (cv::Exception& e)
+    {
+      std::cerr << "Caught (and ignoring) error in setMask: " << e.msg << std::endl;
+    }
+  }
+
 
 
   void AlprImpl::setDetectRegion(bool detectRegion)

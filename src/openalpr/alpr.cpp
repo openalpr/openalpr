@@ -95,6 +95,10 @@ namespace alpr
     impl->setPrewarp(prewarp_config);
   }
 
+  void Alpr::setMask(unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight)
+  {
+    impl->setMask(pixelData, bytesPerPixel, imgWidth, imgHeight);
+  }
 
   void Alpr::setDetectRegion(bool detectRegion)
   {

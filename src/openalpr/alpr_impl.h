@@ -92,6 +92,7 @@ namespace alpr
 
       void setCountry(std::string country);
       void setPrewarp(std::string prewarp_config);
+      void setMask(unsigned char* pixelData, int bytesPerPixel, int imgWidth, int imgHeight);
       
       void setDetectRegion(bool detectRegion);
       void setTopN(int topn);
