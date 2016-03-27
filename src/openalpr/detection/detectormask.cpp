@@ -111,14 +111,23 @@ namespace alpr
   // Checks if the provided region is partially covered by the mask
   // If so, it is disqualified
   bool DetectorMask::region_is_masked(cv::Rect region) {
-    int MIN_WHITENESS = 253;
+    int MIN_WHITENESS = 248;
     
     // If the mean pixel value over the crop is very white (e.g., > 253 out of 255)
     // then this is in the white area of the mask and we'll use it
-    Mat mask_crop = mask(region);
+    
+    // Make sure the region doesn't extend beyond the bounds of our image
+    expandRect(region, 0, 0, resized_mask.cols, resized_mask.rows);
+    Mat mask_crop = resized_mask(region);
     double mean_value = mean(mask_crop)[0];
     
-    return mean_value >= MIN_WHITENESS;
+    if (config->debugDetector)
+    {
+      cout << "region_is_masked: Mean whiteness: " << mean_value << endl;
+    }
+    return mean_value < MIN_WHITENESS;
+  }
+  
   }
 
   Mat DetectorMask::apply_mask(Mat image) {
