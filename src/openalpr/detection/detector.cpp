@@ -145,7 +145,7 @@ namespace alpr
 
       
 
-      for (int j = 0; j < orderedRegions.size(); j++)
+      for (unsigned int j = 0; j < orderedRegions.size(); j++)
         detectedRegions.push_back(orderedRegions[j]);
     }
 
