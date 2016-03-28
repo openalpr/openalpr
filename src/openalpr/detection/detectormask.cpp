@@ -39,6 +39,13 @@ namespace alpr
   }
 
   void DetectorMask::setMask(Mat orig_mask) {
+    if (orig_mask.cols <= 0 || orig_mask.rows <= 0)
+    {
+      resized_mask_loaded = false;
+      mask_loaded = false;
+      return;
+    }
+      
     this->mask = orig_mask;
     if (orig_mask.channels() > 2)
       cvtColor( orig_mask, this->mask, CV_BGR2GRAY );
