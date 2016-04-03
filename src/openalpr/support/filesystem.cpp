@@ -113,8 +113,15 @@ namespace alpr
 
   std::string filenameWithoutExtension(std::string filename)
   {
+    int lastslash = filename.find_last_of("/");
+    if (lastslash >= filename.size())
+      lastslash = 0;
+    else
+      lastslash += 1;
+    
     int lastindex = filename.find_last_of(".");
-    return filename.substr(0, lastindex);
+    
+    return filename.substr(lastslash, lastindex - lastslash);
   }
   
   std::string get_filename_from_path(std::string file_path)
