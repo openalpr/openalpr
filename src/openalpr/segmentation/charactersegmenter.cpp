@@ -313,8 +313,6 @@ namespace alpr
       if (this->config->debugCharSegmenter)
         cout << "All Boxes size " << allBoxes.size() << endl;
 
-      if (allBoxes.size() < config->postProcessMinCharacters)
-        break;
 
       float rowScore = 0;
 
