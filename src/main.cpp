@@ -161,6 +161,31 @@ int main( int argc, const char** argv )
 
       }
     }
+    else if (startsWith(filename, "/dev/video"))
+    {
+      int webcamnumber = 0;
+      if(filename.length() > 10)
+      {
+        std::string webcam_str_num;
+        for(int a = 11; a <= filename.length(); a=a+1)
+        {
+          webcam_str_num.append(filename,a,1);
+        }
+        int webcamnumber = atoi(webcam_str_num.c_str());
+      }
+      else
+      {
+        std::cout << "Incorrect Webcam Address" << std::endl;
+        return 1;
+      }
+      int framenum = 0;
+      cv::VideoCapture cap(webcamnumber);
+      if (!cap.isOpened())
+      {
+        std::cout << "Error opening webcam" << std::endl;
+        return 1;
+      }
+    }
     else if (filename == "webcam")
     {
       int framenum = 0;
