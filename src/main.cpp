@@ -40,6 +40,7 @@ const std::string MAIN_WINDOW_NAME = "ALPR main window";
 
 const bool SAVE_LAST_VIDEO_STILL = false;
 const std::string LAST_VIDEO_STILL_LOCATION = "/tmp/laststill.jpg";
+const std::string WEBCAM_PREFIX = "/dev/video";
 MotionDetector motiondetector;
 bool do_motiondetection = true;
 
@@ -161,38 +162,21 @@ int main( int argc, const char** argv )
 
       }
     }
-    else if (startsWith(filename, "/dev/video"))
+    else if (filename == "webcam" || startsWith(filename, WEBCAM_PREFIX))
     {
       int webcamnumber = 0;
-      if(filename.length() > 10)
+      
+      // If they supplied "/dev/video[number]" parse the "number" here
+      if(startsWith(filename, WEBCAM_PREFIX) && filename.length() > WEBCAM_PREFIX.length())
       {
-        std::string webcam_str_num;
-        for(int a = 11; a <= filename.length(); a=a+1)
-        {
-          webcam_str_num.append(filename,a,1);
-        }
-        int webcamnumber = atoi(webcam_str_num.c_str());
+        webcamnumber = atoi(filename.substr(WEBCAM_PREFIX.length()).c_str());
       }
-      else
-      {
-        std::cout << "Incorrect Webcam Address" << std::endl;
-        return 1;
-      }
+      
       int framenum = 0;
       cv::VideoCapture cap(webcamnumber);
       if (!cap.isOpened())
       {
-        std::cout << "Error opening webcam" << std::endl;
-        return 1;
-      }
-    }
-    else if (filename == "webcam")
-    {
-      int framenum = 0;
-      cv::VideoCapture cap(0);
-      if (!cap.isOpened())
-      {
-        std::cout << "Error opening webcam" << std::endl;
+        std::cerr << "Error opening webcam" << std::endl;
         return 1;
       }
 
