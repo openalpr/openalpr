@@ -215,13 +215,9 @@ void StretchChange(int pos, void* userdata)
   drawImage(imgOriginal);
 }
 
-
 int value;
-void create_window()
+void initialize_variables()
 {
-  namedWindow(WINDOW_NAME, CV_WINDOW_AUTOSIZE | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
-  
-  
   value = 100;
   panX = 0;
   panY = 0;
@@ -230,14 +226,17 @@ void create_window()
   YChange(100, NULL);
   ZChange(100, NULL);
   DistChange(100, NULL);
-  
-  
-    createTrackbar( "X", WINDOW_NAME, &value, 200,  XChange);
-    createTrackbar( "Y", WINDOW_NAME, &value, 200,  YChange);
-    createTrackbar( "Z", WINDOW_NAME, &value, 200,  ZChange);
-    createTrackbar( "W", WINDOW_NAME, &value, 200,  StretchChange);
-    createTrackbar( "D", WINDOW_NAME, &value, 200,  DistChange);
+}
 
+void create_window()
+{
+  namedWindow(WINDOW_NAME, CV_WINDOW_AUTOSIZE | CV_WINDOW_KEEPRATIO | CV_GUI_EXPANDED);
+  
+  createTrackbar( "X", WINDOW_NAME, &value, 200,  XChange);
+  createTrackbar( "Y", WINDOW_NAME, &value, 200,  YChange);
+  createTrackbar( "Z", WINDOW_NAME, &value, 200,  ZChange);
+  createTrackbar( "W", WINDOW_NAME, &value, 200,  StretchChange);
+  createTrackbar( "D", WINDOW_NAME, &value, 200,  DistChange);
   
   setMouseCallback(WINDOW_NAME, mouse_callback, NULL);
 
@@ -254,6 +253,8 @@ int main(int argc, char** argv) {
   string country;
   string config_path;
   string translate_config;
+  string image_output_file;
+  
   int max_width;
   int max_height;
 
@@ -266,6 +267,7 @@ int main(int argc, char** argv) {
   TCLAP::ValueArg<std::string> configFileArg("","config","Path to the openalpr.conf file",false, "" ,"config_file");
   
   TCLAP::ValueArg<std::string> translateTestArg("t","test","Test an image using the provided translation config",false, "" ,"prewarp config");
+  TCLAP::ValueArg<std::string> imageOutputArg("","image_out","Write to an image file at the specified path, rather than showing a GUI.  Must be used in combination with 'test' option",false, "" ,"image_out");
   
   TCLAP::ValueArg<int> maxWidthArg("w", "maxwidth", "Max Width used for displaying image in this utility.  Default=1280",false, 1280 ,"max width");
   TCLAP::ValueArg<int> maxHeightArg("", "maxheight", "Max Height used for displaying image in this utility.  Default=1024",false, 1024 ,"max height");
@@ -276,6 +278,7 @@ int main(int argc, char** argv) {
     cmd.add( fileArg );
     cmd.add( countryCodeArg );
     cmd.add( translateTestArg );
+    cmd.add( imageOutputArg );
     cmd.add( maxWidthArg );
     cmd.add( maxHeightArg );
 
@@ -290,6 +293,7 @@ int main(int argc, char** argv) {
     country = countryCodeArg.getValue();
     config_path = configFileArg.getValue();
     translate_config = translateTestArg.getValue();
+    image_output_file = imageOutputArg.getValue();
     max_width = maxWidthArg.getValue();
     max_height = maxHeightArg.getValue();
 
@@ -331,8 +335,8 @@ int main(int argc, char** argv) {
   w = imgOriginal.cols;
   h = imgOriginal.rows;
   
-  create_window();
-  
+
+  initialize_variables();
   
   if (translate_config != "")
   {
@@ -361,7 +365,7 @@ int main(int argc, char** argv) {
     ss >> panY;
        
   }
-
+  
   float width_ratio = w / ((float)imgOriginal.cols);
   float height_ratio = h / ((float)imgOriginal.rows);
   w = imgOriginal.cols;
@@ -370,7 +374,22 @@ int main(int argc, char** argv) {
   rotationy *=width_ratio;
   panX /= width_ratio;
   panY /= height_ratio;
-
+  
+  
+  if (image_output_file.length() > 0 && translate_config.length() > 0)
+  {
+    config.prewarp = get_config();
+    alpr::PreWarp prewarp(&config);
+    Mat output_image = prewarp.warpImage(imgOriginal);
+    
+    cv::imwrite(image_output_file.c_str(), output_image);
+    
+    cout << "Exported file to: " << image_output_file << endl;
+    return 0;
+  }
+  
+  create_window();
+  
   drawImage(imgOriginal);
 
   while (cvGetWindowHandle(WINDOW_NAME.c_str()) != 0)
