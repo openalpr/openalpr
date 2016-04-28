@@ -195,7 +195,6 @@ int main( int argc, const char** argv )
           dimentions[0] = atoi(widthheight.substr(0, found).c_str());
           dimentions[1] = atoi(widthheight.substr(found + 1).c_str());
 
-          std::cout << "yes or no? " << " and " << found << std::endl;
           std::cout << "Setting video resolution " << dimentions[0] << "x" << dimentions[1] << std::endl;
           cap.set(3,dimentions[0]);
           cap.set(4,dimentions[1]);
