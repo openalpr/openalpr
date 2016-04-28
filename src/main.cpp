@@ -22,6 +22,7 @@
 #include <iostream>
 #include <iterator>
 #include <algorithm>
+#include <regex>
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -66,6 +67,8 @@ int main( int argc, const char** argv )
   int topn;
   bool debug_mode = false;
 
+  std::string widthheight = "0";
+
   TCLAP::CmdLine cmd("OpenAlpr Command Line Utility", ' ', Alpr::getVersion());
 
   TCLAP::UnlabeledMultiArg<std::string>  fileArg( "image_file", "Image containing license plates", true, "", "image_file_path"  );
@@ -76,6 +79,7 @@ int main( int argc, const char** argv )
   TCLAP::ValueArg<std::string> configFileArg("","config","Path to the openalpr.conf file",false, "" ,"config_file");
   TCLAP::ValueArg<std::string> templatePatternArg("p","pattern","Attempt to match the plate number against a plate pattern (e.g., md for Maryland, ca for California)",false, "" ,"pattern code");
   TCLAP::ValueArg<int> topNArg("n","topn","Max number of possible plate numbers to return.  Default=10",false, 10 ,"topN");
+  TCLAP::ValueArg<std::string> width_height("","widthheight","Input resolution width and height. Example 1280x720  Default: Camera Default",false, "0" ,"widthheight");
 
   TCLAP::SwitchArg jsonSwitch("j","json","Output recognition results in JSON format.  Default=off", cmd, false);
   TCLAP::SwitchArg debugSwitch("","debug","Enable debug output.  Default=off", cmd, false);
@@ -91,6 +95,7 @@ int main( int argc, const char** argv )
     cmd.add( configFileArg );
     cmd.add( fileArg );
     cmd.add( countryCodeArg );
+    cmd.add( width_height );
 
     
     if (cmd.parse( argc, argv ) == false)
@@ -111,6 +116,7 @@ int main( int argc, const char** argv )
     topn = topNArg.getValue();
     measureProcessingTime = clockSwitch.getValue();
 	do_motiondetection = motiondetect.getValue();
+	widthheight = width_height.getValue();
   }
   catch (TCLAP::ArgException &e)    // catch any exceptions
   {
@@ -174,6 +180,27 @@ int main( int argc, const char** argv )
       
       int framenum = 0;
       cv::VideoCapture cap(webcamnumber);
+
+      if(widthheight.compare("0") != 0)
+      {
+        std::regex rgx ("(\\d{3,4})([x])(\\d{3,4})");
+
+        if (std::regex_match(widthheight, rgx))
+        {
+
+          std::size_t found = widthheight.find("x");
+
+          int dimentions[2];
+
+          dimentions[0] = atoi(widthheight.substr(0, found).c_str());
+          dimentions[1] = atoi(widthheight.substr(found + 1).c_str());
+
+          std::cout << "yes or no? " << " and " << found << std::endl;
+          std::cout << "Setting video resolution " << dimentions[0] << "x" << dimentions[1] << std::endl;
+          cap.set(3,dimentions[0]);
+          cap.set(4,dimentions[1]);
+        }
+      }
       if (!cap.isOpened())
       {
         std::cerr << "Error opening webcam" << std::endl;
