@@ -53,6 +53,7 @@ DaemonConfig::DaemonConfig(std::string config_file, std::string config_defaults_
   upload_url = getString(&ini, &defaultIni, "daemon", "upload_address", "");
   company_id = getString(&ini, &defaultIni, "daemon", "company_id", "");
   site_id = getString(&ini, &defaultIni, "daemon", "site_id", "");
+  pattern = getString(&ini, &defaultIni, "daemon", "pattern", "");
 }
 
 DaemonConfig::~DaemonConfig() {
