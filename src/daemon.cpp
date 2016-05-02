@@ -233,8 +233,8 @@ void streamRecognitionThread(void* arg)
   CaptureThreadData* tdata = (CaptureThreadData*) arg;
   
   LOG4CPLUS_INFO(logger, "country: " << tdata->country_code << " -- config file: " << tdata->config_file );
+  LOG4CPLUS_INFO(logger, "pattern: " << tdata->pattern);
   LOG4CPLUS_INFO(logger, "Stream " << tdata->camera_id << ": " << tdata->stream_url);
-  LOG4CPLUS_INFO(logger, "Region " << tdata->pattern);
   
   Alpr alpr(tdata->country_code, tdata->config_file);
   alpr.setTopN(tdata->top_n);
