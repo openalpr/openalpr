@@ -22,6 +22,7 @@ public:
   std::string upload_url;
   std::string company_id;
   std::string site_id;
+  std::string pattern;
   
 private:
 

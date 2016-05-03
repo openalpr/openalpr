@@ -50,6 +50,7 @@ struct CaptureThreadData
   
   std::string config_file;
   std::string country_code;
+  std::string pattern;
   bool output_images;
   std::string output_image_folder;
   int top_n;
@@ -171,7 +172,6 @@ int main( int argc, const char** argv )
   
   std::string daemon_defaults_file = INSTALL_PREFIX  "/share/openalpr/config/alprd.defaults.conf";
   DaemonConfig daemon_config(daemonConfigFile, daemon_defaults_file);
-
   
   if (daemon_config.stream_urls.size() == 0)
   {
@@ -199,6 +199,7 @@ int main( int argc, const char** argv )
       tdata->company_id = daemon_config.company_id;
       tdata->site_id = daemon_config.site_id;
       tdata->top_n = daemon_config.topn;
+      tdata->pattern = daemon_config.pattern;
       tdata->clock_on = clockOn;
       
       tthread::thread* thread_recognize = new tthread::thread(streamRecognitionThread, (void*) tdata);
@@ -232,10 +233,12 @@ void streamRecognitionThread(void* arg)
   CaptureThreadData* tdata = (CaptureThreadData*) arg;
   
   LOG4CPLUS_INFO(logger, "country: " << tdata->country_code << " -- config file: " << tdata->config_file );
+  LOG4CPLUS_INFO(logger, "pattern: " << tdata->pattern);
   LOG4CPLUS_INFO(logger, "Stream " << tdata->camera_id << ": " << tdata->stream_url);
   
   Alpr alpr(tdata->country_code, tdata->config_file);
   alpr.setTopN(tdata->top_n);
+  alpr.setDefaultRegion(tdata->pattern);
   
   
   int framenum = 0;
