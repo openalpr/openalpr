@@ -304,7 +304,7 @@ namespace alpr
     float bestRowScore = 0;
     vector<Rect> bestBoxes;
 
-    for (int row = 0; row < histoImg.rows; row++)
+    for (int row = 0; row < histogram.histoImg.rows; row++)
     {
       vector<Rect> validBoxes;
       
