@@ -39,6 +39,7 @@ int main( int argc, const char** argv )
   string inDir;
   int tile_width;
   int tile_height;
+  int character_height;
 
   TCLAP::CmdLine cmd("OpenAlpr OCR Training Prep Utility", ' ', "1.0.0");
 
@@ -47,12 +48,14 @@ int main( int argc, const char** argv )
   
   TCLAP::ValueArg<int> tileWidthArg("","tile_width","Width (in pixels) for each character tile.  Default=50",false, 50 ,"tile_width_px");
   TCLAP::ValueArg<int> tileHeightArg("","tile_height","Height (in pixels) for each character tile.  Default=60",false, 60 ,"tile_height_px");
+  TCLAP::ValueArg<int> characterHeightArg("","character_height","Height (in pixels) the letter inside the character tile",false, 38 ,"character_height_px");
   
   try
   {
     cmd.add( inputDirArg );
     cmd.add( tileWidthArg );
     cmd.add( tileHeightArg );
+    cmd.add( characterHeightArg );
 
     
     if (cmd.parse( argc, argv ) == false)
@@ -64,6 +67,7 @@ int main( int argc, const char** argv )
     inDir = inputDirArg.getValue();
     tile_width = tileWidthArg.getValue();
     tile_height = tileHeightArg.getValue();
+    character_height = characterHeightArg.getValue();
     
   }
   catch (TCLAP::ArgException &e)    // catch any exceptions
@@ -143,6 +147,10 @@ int main( int argc, const char** argv )
 
       Mat characterImg = imread(fullpath);
 
+      // resize the tiles to a standard height
+      float size_ratio = ((float) character_height) / ((float)characterImg.rows);
+      int resized_width = round(((float)characterImg.cols) * size_ratio);
+      resize(characterImg, characterImg, Size(resized_width, character_height));
 
       Mat charImgCopy = Mat::zeros(Size(150, 150), characterImg.type());
       bitwise_not(charImgCopy, charImgCopy);
