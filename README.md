@@ -124,7 +124,7 @@ OpenALPR compiles and runs on Linux, Mac OSX and Windows.
 
 OpenALPR requires the following additional libraries:
 
-    - Tesseract OCR v3.0.3 (https://code.google.com/p/tesseract-ocr/)
+    - Tesseract OCR v3.0.3 (https://github.com/tesseract-ocr/tesseract)
     - OpenCV v2.4.8+ (http://opencv.org/)
 
 After cloning this GitHub repository, you should download and extract Tesseract and OpenCV source code into their own directories.  Compile both libraries.
