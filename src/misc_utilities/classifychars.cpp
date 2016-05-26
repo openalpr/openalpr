@@ -94,13 +94,13 @@ int main( int argc, const char** argv )
   {
     printf("Use:\n\t%s country indirectory outdirectory\n",argv[0]);
     printf("Ex: \n\t%s eu ./pics/ ./out\n",argv[0]);
-    return 0;
+    return 1;
   }
 
   if (DirectoryExists(outDir.c_str()) == false)
   {
     printf("Output dir does not exist\n");
-    return 0;
+    return 2;
   }
 
   cout << "Usage: " << endl;
