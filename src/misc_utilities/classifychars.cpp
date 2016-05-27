@@ -183,6 +183,11 @@ int main( int argc, const char** argv )
 
         while ((char) waitkey != 'n' && (char) waitkey != 'p')	 // Next image
         {
+          if (waitkey < 0)
+          {
+            waitkey = waitKey(50);
+            continue;
+          }
           if (waitkey == LEFT_ARROW_KEY) // left arrow key
           {
             if (curDashboardSelection > 0)
