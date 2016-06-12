@@ -22,23 +22,23 @@ Alprd can be used in two modes:
 
 ::
 
-    +------------------+                     +-------------+         
-    |                  |  MJPEG       POST   |             |         
-    |  Network Camera  | <---+      +------> | HTTP Server |         
-    |                  |     |      |        |             |         
-    +------------------+     |      |        +-------------+         
-                             |      |                                
-                             |      |                                
-                             |      |                                
-                     +-------+------+                                
-                     |              |                                
-                     | alprd server |                                
-                     |              |                                
-                     +---------+----+------------+                   
-                               |                 |                   
-                               | Beastalkd queue |                   
-                               |                 |                   
-                               +-----------------+                   
+    +------------------+                     +-------------+         
+    |                  |  MJPEG       POST   |             |         
+    |  Network Camera  | <---+      +------> | HTTP Server |         
+    |                  |     |      |        |             |         
+    +------------------+     |      |        +-------------+         
+                             |      |                                
+                             |      |                                
+                             |      |                                
+                     +-------+------+                                
+                     |              |                                
+                     | alprd server |                                
+                     |              |                                
+                     +---------+----+------------+                   
+                               |                 |                   
+                               | Beastalkd queue |                   
+                               |                 |                   
+                               +-----------------+                   
 
 
 The diagram above shows alprd being used to stream data to another HTTP server.  alprd is configured with a remote HTTP address.  As plates are identified, the server sends the JSON data to the remote HTTP server.  The beanstalkd queue and the alprd process are colocated on the same server.
@@ -250,7 +250,7 @@ Add the OpenALPR GPG key and setup the OpenALPR deb repository
     wget -O - http://deb.openalpr.com/openalpr.gpg.key | sudo apt-key add -
     echo "deb http://deb.openalpr.com/commercial/ trusty main" | sudo tee /etc/apt/sources.list.d/openalpr.list
 
-    sudo apt-get update && sudo apt-get -y install openalpr openalpr-daemon openalpr-daemonconfig
+    sudo apt-get update && sudo apt-get -y install openalpr openalpr-daemon 
 
 Edit the configuration file
 
@@ -287,6 +287,7 @@ The number of camera licenses corresponds to the maximum number of simultaneous 
 
 Each time you run this utility, it will transfer the requested number of licenses from our online registration server to your agent server. 
 
+.. _commercial_config_options:
 
 Commercial Configuration Options
 -----------------------------------
