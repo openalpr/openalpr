@@ -124,6 +124,10 @@ Point LineSegment::midpoint()
   return Point(midX, midY);
 }
 
+int round_int(double r) {
+	return (r > 0.0) ? (r + 0.5) : (r - 0.5);
+}
+
 LineSegment LineSegment::getParallelLine(float distance)
 {
   float diff_x = p2.x - p1.x;
@@ -132,8 +136,8 @@ LineSegment LineSegment::getParallelLine(float distance)
   float dist_x = distance * cos(angle);
   float dist_y = -distance * sin(angle);
 
-  int offsetX = (int)round(dist_x);
-  int offsetY = (int)round(dist_y);
+  int offsetX = (int)round_int(dist_x);
+  int offsetY = (int)round_int(dist_y);
 
   LineSegment result(p1.x + offsetX, p1.y + offsetY,
                      p2.x + offsetX, p2.y + offsetY);
