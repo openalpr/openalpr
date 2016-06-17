@@ -19,6 +19,7 @@
 
 #include "edgefinder.h"
 #include "textlinecollection.h"
+#include "support/timing.h"
 
 using namespace std;
 using namespace cv;
@@ -325,7 +326,7 @@ namespace alpr
     {
       for (unsigned int x = 0; x < crop.cols; x += stride)
       {
-        contrast += pow( ((crop.at<unsigned char>(y,x) / 255.0) - avg_intensity), 2.0f);
+        contrast += pow( ((crop.at<unsigned char>(y,x) / 255.0) - avg_intensity), 2.0);
       }
     }
     contrast /= ((float) rows) * ((float)cols);

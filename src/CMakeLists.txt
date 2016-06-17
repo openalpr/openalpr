@@ -62,6 +62,11 @@ IF (WIN32 AND WITH_DAEMON)
   SET(WITH_DAEMON OFF)
 ENDIF()
 
+IF (WIN32 AND WITH_TESTS) 
+  MESSAGE(WARNING "Skipping unit tests, as it is not supported in Windows.")
+  SET(WITH_TESTS OFF)
+ENDIF()
+
 IF(Tesseract_FRAMEWORK_PATH AND Leptonica_FRAMEWORK_PATH) 
   MESSAGE(STATUS "Using Tesseract iOS framework: ${Tesseract_FRAMEWORK_PATH}")
   MESSAGE(STATUS "Using Leptonica iOS framework: ${Leptonica_FRAMEWORK_PATH}")
