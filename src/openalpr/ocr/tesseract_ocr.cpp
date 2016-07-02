@@ -18,6 +18,7 @@
 */
 
 #include "tesseract_ocr.h"
+#include "config.h"
 
 using namespace std;
 using namespace cv;
@@ -31,6 +32,7 @@ namespace alpr
   {
     const string MINIMUM_TESSERACT_VERSION = "3.03";
 
+    this->postProcessor.setConfidenceThreshold(config->postProcessMinConfidence, config->postProcessConfidenceSkipLevel);
     
     if (cmpVersion(tesseract.Version(), MINIMUM_TESSERACT_VERSION.c_str()) < 0)
     {

@@ -77,6 +77,8 @@ namespace alpr
       
       std::vector<std::string> getPatterns();
       
+      void setConfidenceThreshold(float min_confidence, float skip_level);
+      
     private:
       Config* config;
 
@@ -94,6 +96,9 @@ namespace alpr
 
       std::vector<PPResult> allPossibilities;
       std::set<std::string> allPossibilitiesLetters;
+      
+      float min_confidence;
+      float skip_level;
   };
 
 }
