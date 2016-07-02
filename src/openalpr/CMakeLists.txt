@@ -21,10 +21,10 @@ set(lpr_source_files
  postprocess/postprocess.cpp
  postprocess/regexrule.cpp
  binarize_wolf.cpp
- segmentation/charactersegmenter.cpp
- segmentation/histogram.cpp
- segmentation/histogramvertical.cpp
- segmentation/histogramhorizontal.cpp
+ ocr/segmentation/charactersegmenter.cpp
+ ocr/segmentation/histogram.cpp
+ ocr/segmentation/histogramvertical.cpp
+ ocr/segmentation/histogramhorizontal.cpp
  edges/edgefinder.cpp
  edges/platecorners.cpp
  edges/platelines.cpp

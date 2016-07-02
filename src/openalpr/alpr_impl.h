@@ -36,7 +36,6 @@
 
 #include "licenseplatecandidate.h"
 #include "../statedetection/state_detector.h"
-#include "segmentation/charactersegmenter.h"
 #include "ocr/ocr.h"
 #include "ocr/ocrfactory.h"
 
