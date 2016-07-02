@@ -25,16 +25,26 @@
 
 namespace alpr
 {
+  struct OcrChar
+  {
+    std::string letter;
+    int char_index;
+    float confidence;
+  };
+  
   class OCR {
   public:
     OCR(Config* config);
     virtual ~OCR();
 
-    virtual void performOCR(PipelineData* pipeline_data)=0;
+    void performOCR(PipelineData* pipeline_data);
 
     PostProcess postProcessor;
 
   protected:
+    virtual std::vector<OcrChar> recognize_line(int line_index, PipelineData* pipeline_data)=0;
+    virtual void segment(PipelineData* pipeline_data)=0;
+    
     Config* config;
 
   };

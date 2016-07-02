@@ -30,4 +30,33 @@ namespace alpr
   OCR::~OCR() {
   }
 
+  
+  void OCR::performOCR(PipelineData* pipeline_data)
+  {
+    
+    timespec startTime;
+    getTimeMonotonic(&startTime);
+
+    segment(pipeline_data);
+    
+    postProcessor.clear();
+
+
+    int absolute_charpos = 0;
+    for (unsigned int line_idx = 0; line_idx < pipeline_data->charRegions.size(); line_idx++)
+    {
+      std::vector<OcrChar> chars = recognize_line(line_idx, pipeline_data);
+      
+      for (uint32_t i = 0; i < chars.size(); i++)
+        postProcessor.addLetter(chars[i].letter, line_idx, chars[i].char_index, chars[i].confidence);
+    }
+    
+
+    if (config->debugTiming)
+    {
+      timespec endTime;
+      getTimeMonotonic(&endTime);
+      std::cout << "OCR Time: " << diffclock(startTime, endTime) << "ms." << std::endl;
+    }
+  }
 }

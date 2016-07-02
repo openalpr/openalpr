@@ -45,11 +45,11 @@ namespace alpr
       TesseractOcr(Config* config);
       virtual ~TesseractOcr();
 
-      void performOCR(PipelineData* pipeline_data);
 
 
     private:
 
+      std::vector<OcrChar> recognize_line(int line_index, PipelineData* pipeline_data);
       void segment(PipelineData* pipeline_data);
     
       tesseract::TessBaseAPI tesseract;
