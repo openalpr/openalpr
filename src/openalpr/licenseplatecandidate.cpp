@@ -38,13 +38,11 @@ namespace alpr
 
   LicensePlateCandidate::~LicensePlateCandidate()
   {
-    delete charSegmenter;
   }
 
   // Must delete this pointer in parent class
   void LicensePlateCandidate::recognize()
   {
-    charSegmenter = NULL;
 
     pipeline_data->isMultiline = config->multiline;
 
@@ -136,7 +134,6 @@ namespace alpr
       cout << "deskew Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
 
-    charSegmenter = new CharacterSegmenter(pipeline_data);
 
 
   }

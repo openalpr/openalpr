@@ -32,7 +32,6 @@
 #include "edges/platelines.h"
 #include "transformation.h"
 #include "textdetection/characteranalysis.h"
-#include "segmentation/charactersegmenter.h"
 #include "edges/platecorners.h"
 #include "config.h"
 #include "pipeline_data.h"
@@ -55,7 +54,6 @@ namespace alpr
       PipelineData* pipeline_data;
       Config* config;
 
-      CharacterSegmenter* charSegmenter;
 
       cv::Mat filterByCharacterHue(std::vector<std::vector<cv::Point> > charRegionContours);
       std::vector<cv::Point> findPlateCorners(cv::Mat inputImage, PlateLines plateLines, CharacterAnalysis textAnalysis);	// top-left, top-right, bottom-right, bottom-left
