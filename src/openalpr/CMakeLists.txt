@@ -15,7 +15,9 @@ set(lpr_source_files
  detection/detectormask.cpp
  licenseplatecandidate.cpp
  utility.cpp
- ocr.cpp
+ ocr/tesseract_ocr.cpp
+ ocr/ocr.cpp
+ ocr/ocrfactory.cpp
  postprocess/postprocess.cpp
  postprocess/regexrule.cpp
  binarize_wolf.cpp

@@ -28,7 +28,8 @@
 #include "licenseplatecandidate.h"
 #include "utility.h"
 #include "support/filesystem.h"
-#include "ocr.h"
+#include "ocr/ocrfactory.h"
+#include "ocr/ocr.h"
 
 using namespace std;
 using namespace cv;
@@ -120,7 +121,7 @@ int main( int argc, const char** argv )
   config.debugGeneral = false;
   config.debugCharAnalysis = false;
   config.debugCharSegmenter = false;
-  OCR ocr(&config);
+  OCR* ocr = createOcr(&config);
 
   if (DirectoryExists(inDir.c_str()))
   {
@@ -162,9 +163,9 @@ int main( int argc, const char** argv )
 
         //ocr.cleanCharRegions(charSegmenter.thresholds, charSegmenter.characters);
 
-        ocr.performOCR(&pipeline_data);
-        ocr.postProcessor.analyze(statecodestr, 25);
-        cout << "OCR results: " << ocr.postProcessor.bestChars << endl;
+        ocr->performOCR(&pipeline_data);
+        ocr->postProcessor.analyze(statecodestr, 25);
+        cout << "OCR results: " << ocr->postProcessor.bestChars << endl;
 
         vector<bool> selectedBoxes(pipeline_data.thresholds.size());
         for (int z = 0; z < pipeline_data.thresholds.size(); z++)

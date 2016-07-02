@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ocr.h"
+#include "tesseract_ocr.h"
 
 using namespace std;
 using namespace cv;
@@ -26,12 +26,11 @@ using namespace tesseract;
 namespace alpr
 {
 
-  OCR::OCR(Config* config)
-  : postProcessor(config)
+  TesseractOcr::TesseractOcr(Config* config)
+  : OCR(config)
   {
     const string MINIMUM_TESSERACT_VERSION = "3.03";
 
-    this->config = config;
     
     if (cmpVersion(tesseract.Version(), MINIMUM_TESSERACT_VERSION.c_str()) < 0)
     {
@@ -46,12 +45,12 @@ namespace alpr
     tesseract.SetPageSegMode(PSM_SINGLE_CHAR);
   }
 
-  OCR::~OCR()
+  TesseractOcr::~TesseractOcr()
   {
     tesseract.End();
   }
 
-  void OCR::performOCR(PipelineData* pipeline_data)
+  void TesseractOcr::performOCR(PipelineData* pipeline_data)
   {
     const int SPACE_CHAR_CODE = 32;
     

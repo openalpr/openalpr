@@ -736,7 +736,7 @@ namespace alpr
         // Country training data has not already been loaded.  Load it.
         AlprRecognizers recognizer;
         recognizer.plateDetector = createDetector(config, prewarp);
-        recognizer.ocr = new OCR(config);
+        recognizer.ocr = createOcr(config);
 
         #ifndef SKIP_STATE_DETECTION
         recognizer.stateDetector = new StateDetector(this->config->country, this->config->config_file_path, this->config->runtimeBaseDir);

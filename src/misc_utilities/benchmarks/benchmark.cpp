@@ -31,6 +31,7 @@
 #include "endtoendtest.h"
 
 #include "detection/detectorfactory.h"
+#include "ocr/ocrfactory.h"
 #include "support/filesystem.h"
 
 using namespace std;
@@ -169,7 +170,7 @@ int main( int argc, const char** argv )
 
     PreWarp prewarp(&config);
     Detector* plateDetector = createDetector(&config, &prewarp);
-    OCR ocr(&config);
+    OCR* ocr = createOcr(&config);
 
     vector<double> endToEndTimes;
     vector<double> regionDetectionTimes;
@@ -230,14 +231,14 @@ int main( int argc, const char** argv )
             lpAnalysisPositiveTimes.push_back(analysisTime);
 
             getTimeMonotonic(&startTime);
-            ocr.performOCR(&pipeline_data);
+            ocr->performOCR(&pipeline_data);
             getTimeMonotonic(&endTime);
             double ocrTime = diffclock(startTime, endTime);
             cout << "\tRegion " << z << ": OCR time: " << ocrTime << "ms." << endl;
             ocrTimes.push_back(ocrTime);
 
             getTimeMonotonic(&startTime);
-            ocr.postProcessor.analyze("", 25);
+            ocr->postProcessor.analyze("", 25);
             getTimeMonotonic(&endTime);
             double postProcessTime = diffclock(startTime, endTime);
             cout << "\tRegion " << z << ": PostProcess time: " << postProcessTime << "ms." << endl;
