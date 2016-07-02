@@ -151,13 +151,10 @@ namespace alpr
         }
       }
     }
+  void TesseractOcr::segment(PipelineData* pipeline_data) {
 
-    if (config->debugTiming)
-    {
-      timespec endTime;
-      getTimeMonotonic(&endTime);
-      cout << "OCR Time: " << diffclock(startTime, endTime) << "ms." << endl;
-    }
+    CharacterSegmenter segmenter(pipeline_data);
   }
+
 
 }

@@ -50,6 +50,8 @@ namespace alpr
 
     private:
 
+      void segment(PipelineData* pipeline_data);
+    
       tesseract::TessBaseAPI tesseract;
 
   };

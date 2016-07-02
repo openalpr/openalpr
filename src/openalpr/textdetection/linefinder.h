@@ -26,7 +26,7 @@
 #include "textcontours.h"
 #include "textline.h"
 #include "pipeline_data.h"
-#include "segmentation/histogramhorizontal.h"
+#include "ocr/segmentation/histogramhorizontal.h"
 
 namespace alpr
 {
