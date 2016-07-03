@@ -48,6 +48,8 @@ namespace alpr
       CharacterSegmenter(PipelineData* pipeline_data);
       virtual ~CharacterSegmenter();
 
+      void segment();
+      
       int confidence;
 
 

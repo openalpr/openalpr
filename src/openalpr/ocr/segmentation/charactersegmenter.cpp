@@ -39,8 +39,6 @@ namespace alpr
 
     //CharacterRegion charRegion(img, debug);
 
-    timespec startTime;
-    getTimeMonotonic(&startTime);
 
     if (pipeline_data->plate_inverted)
       bitwise_not(pipeline_data->crop_gray, pipeline_data->crop_gray);
@@ -54,6 +52,13 @@ namespace alpr
       cout << "Segmenter: inverted: " << pipeline_data->plate_inverted << endl;
 
 
+  }
+  
+  void CharacterSegmenter::segment() {
+
+    timespec startTime;
+    getTimeMonotonic(&startTime);
+    
     if (this->config->debugCharSegmenter)
     {
       displayImage(config, "CharacterSegmenter  Thresholds", drawImageDashboard(pipeline_data->thresholds, CV_8U, 3));
@@ -208,6 +213,8 @@ namespace alpr
       cout << "Character Segmenter Time: " << diffclock(startTime, endTime) << "ms." << endl;
     }
   }
+
+  
 
   CharacterSegmenter::~CharacterSegmenter()
   {

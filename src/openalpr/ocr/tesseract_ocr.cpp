@@ -155,6 +155,7 @@ namespace alpr
   void TesseractOcr::segment(PipelineData* pipeline_data) {
 
     CharacterSegmenter segmenter(pipeline_data);
+    segmenter.segment();
   }
 
 
