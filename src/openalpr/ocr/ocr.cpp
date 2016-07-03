@@ -43,7 +43,7 @@ namespace alpr
 
 
     int absolute_charpos = 0;
-    for (unsigned int line_idx = 0; line_idx < pipeline_data->charRegions.size(); line_idx++)
+    for (unsigned int line_idx = 0; line_idx < pipeline_data->textLines.size(); line_idx++)
     {
       std::vector<OcrChar> chars = recognize_line(line_idx, pipeline_data);
       
