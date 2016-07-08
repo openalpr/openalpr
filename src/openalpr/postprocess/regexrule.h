@@ -37,7 +37,6 @@ namespace alpr
       virtual ~RegexRule();
 
       bool match(std::string text);
-      std::string filterSkips(std::string text);
 
     private:
       bool valid;
@@ -47,7 +46,6 @@ namespace alpr
       std::string original;
       std::string regex;
       std::string region;
-      std::vector<int> skipPositions;
   };
 }
 

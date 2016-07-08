@@ -387,7 +387,6 @@ namespace alpr
         possibility.matchesTemplate = regionRules[i]->match(possibility.letters);
         if (possibility.matchesTemplate)
         {
-          possibility.letters = regionRules[i]->filterSkips(possibility.letters);
           break;
         }
       }
