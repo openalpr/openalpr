@@ -20,6 +20,11 @@ manufacturers:
     mjpeg: 
       - "http://[username]:[password]@[ip_address]/mjpeg?res=full&x0=0&y0=0&x1=100%&y1=100%&quality=12&doublescan=0&fps=15&ver=HTTP/1.1"
       - "http://[username]:[password]@[ip_address]/image?res=half&x0=0&y0=0&x1=1600&y1=1200&quality=15&doublescan=0"
+  Avigilon:
+    mjpeg:
+      - "http://[username]:[password]@[ip_address]/media/still.jpg"
+    h264:
+      - "rtsp://[username]:[password]@[ip_address]/defaultPrimary?streamType=u"
   Aviosys: 
     mjpeg: 
       - "http://[username]:[password]@[ip_address]/GetData.cgi"
@@ -103,6 +108,9 @@ manufacturers:
   IQeye: 
     mjpeg: 
       - "http://[username]:[password]@[ip_address]/now.jpg?snap=spush"
+    h264:
+      - "rtsp://[username]:[password]@[ip_address]/stream1"
+      - "rtsp://[username]:[password]@[ip_address]/now.mp4&res=high"
   Intellinet: 
     mjpeg: 
       - "http://[username]:[password]@[ip_address]/jpg/image.jpg"
@@ -181,6 +189,8 @@ manufacturers:
       - "http://[username]:[password]@[ip_address]/image"
       - "http://[username]:[password]@[ip_address]/image?speed=0"
       - "http://[username]:[password]@[ip_address]/oneshotimage.jpg"
+    h264:
+      - "rtsp://[username]:[password]@[ip_address]/media/video1"
   Surecom: 
     mjpeg: 
       - "http://[username]:[password]@[ip_address]/mjpeg.cgi"
