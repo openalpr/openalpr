@@ -17,7 +17,7 @@
 		long   tv_nsec; // Nanoseconds - [0, 999999999]
 	};
 	#else
-	#define timespec timeval
+
 	#endif
 #else
     #include <sys/time.h>
