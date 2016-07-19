@@ -211,10 +211,10 @@ int main( int argc, const char** argv )
 	udata->upload_url = daemon_config.upload_url;
 	tthread::thread* thread_upload = new tthread::thread(dataUploadThread, (void*) udata );
       }
-      
+      delete(thread_upload);
       break;
     }
-
+    delete(thread_recognize);
     // Parent process will continue and spawn more children
   }
 
