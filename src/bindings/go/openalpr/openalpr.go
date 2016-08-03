@@ -22,7 +22,7 @@ type Alpr struct {
 
 type AlprResults struct {
 	EpochTime             int64                  `json:"epoch_time"`
-	ImgWidth              int                    `json:"img_witdh"`
+	ImgWidth              int                    `json:"img_width"`
 	ImgHeight             int                    `json:"img_height"`
 	TotalProcessingTimeMs float32                `json:"processing_time_ms"`
 	Plates                []AlprPlateResult      `json:"results"`
