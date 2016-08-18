@@ -183,6 +183,8 @@ int main( int argc, const char** argv )
   
   pid_t pid;
   
+  std::vector<tthread::thread*> threads;
+
   for (int i = 0; i < daemon_config.stream_urls.size(); i++)
   {
     pid = fork();
@@ -203,6 +205,7 @@ int main( int argc, const char** argv )
       tdata->clock_on = clockOn;
       
       tthread::thread* thread_recognize = new tthread::thread(streamRecognitionThread, (void*) tdata);
+      threads.push_back(thread_recognize);
       
       if (daemon_config.uploadData)
       {
@@ -210,21 +213,21 @@ int main( int argc, const char** argv )
 	UploadThreadData* udata = new UploadThreadData();
 	udata->upload_url = daemon_config.upload_url;
 	tthread::thread* thread_upload = new tthread::thread(dataUploadThread, (void*) udata );
-	delete(thread_upload);
+        threads.push_back(thread_upload);
       }
-      delete(thread_recognize);
+      
       break;
     }
     // Parent process will continue and spawn more children
   }
 
-
-
   while (daemon_active)
-  {
-    usleep(30000);
-  }
+    alpr::sleep_ms(30);
 
+  for (uint16_t i = 0; i < threads.size(); i++)
+    delete threads[i];
+  
+  return 0;
 }
 
 
