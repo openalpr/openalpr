@@ -42,10 +42,10 @@ namespace alpr
   {
     all_results.push_back(full_results);
   }
-  
+
 
   cv::Mat ResultAggregator::applyImperceptibleChange(cv::Mat image, int index) {
-    
+
     const float WIDTH_HEIGHT = 600;
     const float NO_MOVE_WIDTH_DIST = 1.0;
     const float NO_PAN_VAL = 0;
@@ -54,7 +54,7 @@ namespace alpr
     // Don't warp the first indexed image
     if (index == 0)
       return image;
-    
+
     // Use 3 bits to figure out which one is on.  Multiply by the modulus of 8
     // 000, 001, 010, 011, 100, 101, 110, 111
     // if 101, then x_rotation and z_rotation are on.
@@ -69,19 +69,19 @@ namespace alpr
     float x_rotation = ((bitwise_on & 1) == 1) * multiplier * step;
     float y_rotation = ((bitwise_on & 2) == 2) * multiplier * step;
     float z_rotation = ((bitwise_on & 4) == 4) * multiplier * step;
-    
+
     //cout << "Iteration: " << index << ": " << x_rotation << ", " << y_rotation << ", " << z_rotation << endl;
-    
-    prewarp->setTransform(WIDTH_HEIGHT, WIDTH_HEIGHT, x_rotation, y_rotation, z_rotation, 
+
+    prewarp->setTransform(WIDTH_HEIGHT, WIDTH_HEIGHT, x_rotation, y_rotation, z_rotation,
             NO_PAN_VAL, NO_PAN_VAL, NO_MOVE_WIDTH_DIST, NO_MOVE_WIDTH_DIST);
-    
+
     return prewarp->warpImage(image);
   }
 
   bool compareScore(const std::pair<float, ResultPlateScore>& firstElem, const std::pair<float, ResultPlateScore>& secondElem) {
     return firstElem.first > secondElem.first;
   }
-  
+
   AlprFullDetails ResultAggregator::getAggregateResults()
   {
     assert(all_results.size() > 0);
@@ -133,19 +133,19 @@ namespace alpr
     }
     else if (merge_strategy == MERGE_COMBINE)
     {
-      // Each cluster is the same plate, just analyzed from a slightly different 
+      // Each cluster is the same plate, just analyzed from a slightly different
       // perspective.  Merge them together and score them as if they are one
 
       const float MIN_CONFIDENCE = 75;
-      
+
 
       // Factor in the position of the plate in the topN list, the confidence, and the template match status
-      // First loop is for clusters of possible plates.  If they're in separate clusters, they don't get combined, 
+      // First loop is for clusters of possible plates.  If they're in separate clusters, they don't get combined,
       // since they are likely separate plates in the same image
       for (unsigned int unique_plate_idx = 0; unique_plate_idx < clusters.size(); unique_plate_idx++)
       {
         std::map<string, ResultPlateScore> score_hash;
-        
+
         // Second loop is for separate plate results for the same plate
         for (unsigned int i = 0; i < clusters[unique_plate_idx].size(); i++)
         {
@@ -153,7 +153,7 @@ namespace alpr
           for (unsigned int j = 0; j < clusters[unique_plate_idx][i].topNPlates.size() && j < topn; j++)
           {
             AlprPlate plateCandidate = clusters[unique_plate_idx][i].topNPlates[j];
-            
+
             if (plateCandidate.overall_confidence < MIN_CONFIDENCE)
               continue;
 
@@ -168,7 +168,7 @@ namespace alpr
             float position_score_max_bonus = 65;
             float frequency_modifier = ((float) position_score_max_bonus) / topn;
             score += position_score_max_bonus - (j * frequency_modifier);
-            
+
 
             if (score_hash.find(plateCandidate.characters) == score_hash.end())
             {
@@ -198,7 +198,7 @@ namespace alpr
         }
 
         std::sort(sorted_results.begin(), sorted_results.end(), compareScore);
-        
+
         // output the sorted list for debugging:
         if (config->debugGeneral)
         {
@@ -208,18 +208,18 @@ namespace alpr
               << std::setw(10) << "Count"
               << std::setw(10) << "Best conf (%)"
               << endl;
-          
+
           for (int r_idx = 0; r_idx < sorted_results.size(); r_idx++)
           {
             cout << "  " << std::setw(14) << sorted_results[r_idx].second.plate.characters
                     << std::setw(15) << sorted_results[r_idx].second.score_total
                     << std::setw(10) << sorted_results[r_idx].second.count
-                    << std::setw(10) << sorted_results[r_idx].second.plate.overall_confidence 
+                    << std::setw(10) << sorted_results[r_idx].second.plate.overall_confidence
                     << endl;
 
           }
         }
-        
+
         if (sorted_results.size() > 0)
         {
           // Figure out the best region for this cluster
@@ -243,7 +243,7 @@ namespace alpr
 
             copyResult.topNPlates.push_back(sorted_results[i].second.plate);
           }
-          
+
           response.results.plates.push_back(copyResult);
         }
 
@@ -252,28 +252,28 @@ namespace alpr
 
     return response;
   }
-  
+
   ResultRegionScore ResultAggregator::findBestRegion(std::vector<AlprPlateResult> cluster) {
 
     const float MIN_REGION_CONFIDENCE = 60;
-    
+
     std::map<std::string, float> score_hash;
     std::map<std::string, float> score_count;
     int max_topn = 10;
-    
+
     ResultRegionScore response;
     response.confidence = 0;
     response.region = "";
-    
+
     for (unsigned int i = 0; i < cluster.size(); i++)
     {
       AlprPlateResult plate = cluster[i];
-      
+
       if (plate.bestPlate.overall_confidence < MIN_REGION_CONFIDENCE )
         continue;
-      
+
       float score = (float) plate.regionConfidence;
-      
+
       if (score_hash.count(plate.region) == 0)
       {
         score_hash[plate.region] = 0;
@@ -283,7 +283,7 @@ namespace alpr
       score_hash[plate.region] = score_hash[plate.region] + score;
       score_count[plate.region] = score_count[plate.region] + 1;
     }
-    
+
     float best_score = -1;
     std::string best_score_val = "";
     // Now we have a hash that contains all the scores.  Iterate and find the best one and return it.
@@ -294,18 +294,18 @@ namespace alpr
         best_score_val = hash_iter->first;
       }
     }
-    
+
     if (best_score > 0)
     {
       response.confidence = best_score / score_count[best_score_val];
       response.region = best_score_val;
     }
-    
+
     return response;
-  
+
   }
 
-  
+
   // Searches all_plates to find overlapping plates
   // Returns an array containing "clusters" (overlapping plates)
   std::vector<std::vector<AlprPlateResult> > ResultAggregator::findClusters()

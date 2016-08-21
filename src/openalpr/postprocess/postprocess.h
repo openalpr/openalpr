@@ -29,6 +29,7 @@
 #include <queue>
 #include <vector>
 #include <set>
+#include <map>
 #include "config.h"
 
 
@@ -44,6 +45,7 @@ namespace alpr
     int charposition;
     float totalscore;
     int occurrences;
+    int fontindex;
   };
 
   struct PPResult
@@ -56,14 +58,14 @@ namespace alpr
 
   bool letterCompare( const Letter &left, const Letter &right );
 
-  
+
   class PostProcess
   {
     public:
       PostProcess(Config* config);
       ~PostProcess();
 
-      void addLetter(std::string letter, int line_index, int charposition, float score);
+      void addLetter(std::string letter, int line_index, int charposition, float score, int fontindex);
 
       void clear();
       void analyze(std::string templateregion, int topn);
@@ -74,19 +76,19 @@ namespace alpr
       const std::vector<PPResult> getResults();
 
       bool regionIsValid(std::string templateregion);
-      
+
       std::vector<std::string> getPatterns();
-      
+
       void setConfidenceThreshold(float min_confidence, float skip_level);
-      
+
     private:
       Config* config;
 
       void findAllPermutations(std::string templateregion, int topn);
       bool analyzePermutation(std::vector<int> letterIndices, std::string templateregion, int topn);
 
-      void insertLetter(std::string letter, int line_index, int charPosition, float score);
-
+      void insertLetter(std::string letter, int line_index, int charPosition, float score, int fontindex);
+      void addBonusScoreByFont();
       std::map<std::string, std::vector<RegexRule*> > rules;
 
       float calculateMaxConfidenceScore();
@@ -96,9 +98,10 @@ namespace alpr
 
       std::vector<PPResult> allPossibilities;
       std::set<std::string> allPossibilitiesLetters;
-      
+
       float min_confidence;
       float skip_level;
+      std::map<int, int> font_frequency;
   };
 
 }

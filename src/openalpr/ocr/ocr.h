@@ -30,8 +30,9 @@ namespace alpr
     std::string letter;
     int char_index;
     float confidence;
+    int fontindex;
   };
-  
+
   class OCR {
   public:
     OCR(Config* config);
@@ -44,11 +45,10 @@ namespace alpr
   protected:
     virtual std::vector<OcrChar> recognize_line(int line_index, PipelineData* pipeline_data)=0;
     virtual void segment(PipelineData* pipeline_data)=0;
-    
+
     Config* config;
 
   };
 }
 
 #endif	/* OPENALPR_OCR_H */
-

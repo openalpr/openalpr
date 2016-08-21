@@ -35,7 +35,7 @@ namespace alpr
     const string MINIMUM_TESSERACT_VERSION = "3.03";
 
     this->postProcessor.setConfidenceThreshold(config->postProcessMinConfidence, config->postProcessConfidenceSkipLevel);
-    
+
     if (cmpVersion(tesseract.Version(), MINIMUM_TESSERACT_VERSION.c_str()) < 0)
     {
       std::cerr << "Warning: You are running an unsupported version of Tesseract." << endl;
@@ -53,22 +53,22 @@ namespace alpr
   {
     tesseract.End();
   }
-  
+
   std::vector<OcrChar> TesseractOcr::recognize_line(int line_idx, PipelineData* pipeline_data) {
 
     const int SPACE_CHAR_CODE = 32;
-    
+
     std::vector<OcrChar> recognized_chars;
-    
+
     for (unsigned int i = 0; i < pipeline_data->thresholds.size(); i++)
     {
       // Make it black text on white background
       bitwise_not(pipeline_data->thresholds[i], pipeline_data->thresholds[i]);
-      tesseract.SetImage((uchar*) pipeline_data->thresholds[i].data, 
-                          pipeline_data->thresholds[i].size().width, pipeline_data->thresholds[i].size().height, 
+      tesseract.SetImage((uchar*) pipeline_data->thresholds[i].data,
+                          pipeline_data->thresholds[i].size().width, pipeline_data->thresholds[i].size().height,
                           pipeline_data->thresholds[i].channels(), pipeline_data->thresholds[i].step1());
 
- 
+
       int absolute_charpos = 0;
 
       for (unsigned int j = 0; j < pipeline_data->charRegions[line_idx].size(); j++)
@@ -97,6 +97,7 @@ namespace alpr
             c.char_index = absolute_charpos;
             c.confidence = conf;
             c.letter = string(symbol);
+            c.fontindex = fontindex;
             recognized_chars.push_back(c);
 
             if (this->config->debugOcr)
@@ -107,19 +108,19 @@ namespace alpr
             do
             {
               const char* choice = ci.GetUTF8Text();
-              
+
               OcrChar c2;
               c2.char_index = absolute_charpos;
               c2.confidence = ci.Confidence();
               c2.letter = string(choice);
-              
+
               //1/17/2016 adt adding check to avoid double adding same character if ci is same as symbol. Otherwise first choice from ResultsIterator will get added twice when choiceIterator run.
               if (string(symbol) != string(choice))
                 recognized_chars.push_back(c2);
               else
               {
                 // Explictly double-adding the first character.  This leads to higher accuracy right now, likely because other sections of code
-                // have expected it and compensated. 
+                // have expected it and compensated.
                 // TODO: Figure out how to remove this double-counting of the first letter without impacting accuracy
                 recognized_chars.push_back(c2);
               }
@@ -147,9 +148,9 @@ namespace alpr
 
         absolute_charpos++;
       }
-      
+
     }
-    
+
     return recognized_chars;
   }
   void TesseractOcr::segment(PipelineData* pipeline_data) {
