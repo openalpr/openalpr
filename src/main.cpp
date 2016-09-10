@@ -145,7 +145,27 @@ int main( int argc, const char** argv )
   {
     std::string filename = filenames[i];
 
-    if (filename == "stdin")
+    if (filename == "-")
+    {
+      std::vector<uchar> data;
+      int c;
+
+      while ((c = fgetc(stdin)) != EOF)
+      {
+        data.push_back((uchar) c);
+      }
+
+      frame = cv::imdecode(cv::Mat(data), 1);
+      if (!frame.empty())
+      {
+        detectandshow(&alpr, frame, "", outputJson);
+      }
+      else
+      {
+        std::cerr << "Image invalid: " << filename << std::endl;
+      }
+    }
+    else if (filename == "stdin")
     {
       std::string filename;
       while (std::getline(std::cin, filename))
