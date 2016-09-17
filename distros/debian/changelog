@@ -1,3 +1,12 @@
+openalpr (2.3.0-1) unstable; urgency=low
+
+  * Added plate detection mask and prewarp config changes via API
+  * Improved plate patterns
+  * Improved accuracy
+  * Upload sponsored by Petter Reinholdtsen
+
+ -- Matthew Hill <matthill@openalpr.com>  Sat, 17 Sep 2016 11:27:25 -0500
+
 openalpr (2.2.4-1) unstable; urgency=low
 
   * Added Python3 bindings (Closes: #815961)
