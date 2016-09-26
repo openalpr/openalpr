@@ -49,6 +49,14 @@ JNIEXPORT jstring JNICALL Java_com_openalpr_jni_Alpr_native_1recognize___3B
 
 /*
  * Class:     com_openalpr_jni_Alpr
+ * Method:    native_recognize
+ * Signature: (JIII)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_com_openalpr_jni_Alpr_native_1recognize__JIII
+  (JNIEnv *, jobject, jlong, jint, jint, jint);
+
+/*
+ * Class:     com_openalpr_jni_Alpr
  * Method:    set_default_region
  * Signature: (Ljava/lang/String;)V
  */

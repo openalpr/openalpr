@@ -88,6 +88,24 @@ JNIEXPORT jstring JNICALL Java_com_openalpr_jni_Alpr_native_1recognize___3B
     return env->NewStringUTF(json.c_str());
   }
 
+JNIEXPORT jstring JNICALL Java_com_openalpr_jni_Alpr_native_1recognize__JIII
+  (JNIEnv *env, jobject thisObj, jlong data, jint bytesPerPixel, jint width, jint height)
+  {
+    //printf("Recognize data pointer");
+
+    AlprResults results = nativeAlpr->recognize(
+            reinterpret_cast<unsigned char*>(data),
+            static_cast<int>(bytesPerPixel),
+            static_cast<int>(width),
+            static_cast<int>(height),
+            std::vector<AlprRegionOfInterest>());
+
+    std::string json = Alpr::toJson(results);
+
+    return env->NewStringUTF(json.c_str());
+  }
+
+
 JNIEXPORT void JNICALL Java_com_openalpr_jni_Alpr_set_1default_1region
   (JNIEnv *env, jobject thisObj, jstring jdefault_region)
   {
