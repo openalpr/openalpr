@@ -98,12 +98,9 @@ Binaries
 
 Pre-compiled Windows binaries can be downloaded on the [releases page] (https://github.com/openalpr/openalpr/releases)
 
-Install OpenALPR on Ubuntu 14.04 x64 with the following commands:
+Install OpenALPR on Ubuntu 16.04 with the following commands:
 
-    wget -O - http://deb.openalpr.com/openalpr.gpg.key | sudo apt-key add -
-    echo "deb http://deb.openalpr.com/master/ openalpr main" | sudo tee /etc/apt/sources.list.d/openalpr.list
-    sudo apt-get update
-    sudo apt-get install openalpr openalpr-daemon openalpr-utils libopenalpr-dev
+    sudo apt-get update && sudo apt-get install -y openalpr openalpr-daemon openalpr-utils libopenalpr-dev
 
 Documentation
 ---------------
