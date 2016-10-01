@@ -30,7 +30,7 @@ namespace alpr
 
     this->min_confidence = 0;
     this->skip_level = 0;
-    
+
     stringstream filename;
     filename << config->getPostProcessRuntimeDir() << "/" << config->country << ".patterns";
 
@@ -70,25 +70,26 @@ namespace alpr
         delete iter->second[i];
       }
     }
+    font_frequency.clear();
   }
-  
+
   void PostProcess::setConfidenceThreshold(float min_confidence, float skip_level) {
     this->min_confidence = min_confidence;
     this->skip_level = skip_level;
   }
 
 
-  void PostProcess::addLetter(string letter, int line_index, int charposition, float score)
+  void PostProcess::addLetter(string letter, int line_index, int charposition, float score, int fontindex)
   {
     if (score < min_confidence)
       return;
 
-    insertLetter(letter, line_index, charposition, score);
+    insertLetter(letter, line_index, charposition, score, fontindex);
 
     if (score < skip_level)
     {
       float adjustedScore = abs(skip_level - score) + min_confidence;
-      insertLetter(SKIP_CHAR, line_index, charposition, adjustedScore );
+      insertLetter(SKIP_CHAR, line_index, charposition, adjustedScore, fontindex);
     }
 
     //if (letter == '0')
@@ -97,7 +98,7 @@ namespace alpr
     //}
   }
 
-  void PostProcess::insertLetter(string letter, int line_index, int charposition, float score)
+  void PostProcess::insertLetter(string letter, int line_index, int charposition, float score, int fontindex)
   {
     score = score - min_confidence;
 
@@ -115,7 +116,8 @@ namespace alpr
     {
       if (letters[charposition][i].letter == letter &&
           letters[charposition][i].line_index == line_index &&
-          letters[charposition][i].charposition == charposition)
+          letters[charposition][i].charposition == charposition &&
+          letters[charposition][i].fontindex == fontindex)
       {
         existingIndex = i;
         break;
@@ -130,6 +132,7 @@ namespace alpr
       newLetter.letter = letter;
       newLetter.occurrences = 1;
       newLetter.totalscore = score;
+      newLetter.fontindex = fontindex;
       letters[charposition].push_back(newLetter);
     }
     else
@@ -137,6 +140,12 @@ namespace alpr
       letters[charposition][existingIndex].occurrences = letters[charposition][existingIndex].occurrences + 1;
       letters[charposition][existingIndex].totalscore = letters[charposition][existingIndex].totalscore + score;
     }
+
+    if(font_frequency.find(fontindex) == font_frequency.end())
+    {
+      font_frequency[fontindex] = 0;
+    }
+    font_frequency[fontindex] = font_frequency[fontindex] + 1;
   }
 
   void PostProcess::clear()
@@ -155,6 +164,44 @@ namespace alpr
 
     bestChars = "";
     matchesTemplate = false;
+
+    font_frequency.clear();
+  }
+
+  void PostProcess::addBonusScoreByFont()
+  {
+    int max_font_index;
+    int max_font_freq = 0;
+    int total_freq = 0;
+    for (std::map<int, int>::iterator it = font_frequency.begin(); it != font_frequency.end(); ++it)
+    {
+      total_freq = total_freq + it->second;
+      if(it->second > max_font_freq)
+      {
+        max_font_index = it->first;
+        max_font_freq = it->second;
+      }
+    }
+    // TODO: Migrate value to a config file
+    // If 50% or more are matched to the same font, add a bonus
+    if(max_font_freq > 0.5 * total_freq)
+    {
+      if(this->config->debugPostProcess)
+      {
+        cout << "Bonus added to font index " << max_font_index << endl;
+      }
+      for (int i = 0; i < letters.size(); i++)
+      {
+        if (letters[i].size() > 0)
+        {
+          for (int j = 0; j < letters[i].size(); j++)
+          {
+            if(letters[i][j].fontindex = max_font_index)
+              letters[i][j].totalscore = letters[i][j].totalscore * 1.25;
+          }
+        }
+      }
+    }
   }
 
   void PostProcess::analyze(string templateregion, int topn)
@@ -173,6 +220,8 @@ namespace alpr
 
     if (letters.size() == 0)
       return;
+
+    addBonusScoreByFont();
 
     // Sort the letters as they are
     for (int i = 0; i < letters.size(); i++)
@@ -254,7 +303,7 @@ namespace alpr
   {
     return rules.find(templateregion) != rules.end();
   }
-  
+
   float PostProcess::calculateMaxConfidenceScore()
   {
     // Take the best score for each char position and average it.
@@ -362,7 +411,7 @@ namespace alpr
         possibility.letters = possibility.letters + "\n";
       }
       last_line = letter.line_index;
-      
+
       if (letter.letter != SKIP_CHAR)
       {
         possibility.letters = possibility.letters + letter.letter;
@@ -396,16 +445,16 @@ namespace alpr
     if (allPossibilitiesLetters.end() != allPossibilitiesLetters.find(possibility.letters))
       return false;
 
-    // If mustMatchPattern is toggled in the config and a template is provided, 
+    // If mustMatchPattern is toggled in the config and a template is provided,
     // only include this result if there is a pattern match
-    if (!config->mustMatchPattern || templateregion.size() == 0 || 
+    if (!config->mustMatchPattern || templateregion.size() == 0 ||
         (config->mustMatchPattern && possibility.matchesTemplate))
     {
       allPossibilities.push_back(possibility);
       allPossibilitiesLetters.insert(possibility.letters);
       return true;
     }
-    
+
     return false;
   }
 
@@ -414,7 +463,7 @@ namespace alpr
     for(map<string,std::vector<RegexRule*> >::iterator it = rules.begin(); it != rules.end(); ++it) {
       v.push_back(it->first);
     }
-    
+
     return v;
   }
 
