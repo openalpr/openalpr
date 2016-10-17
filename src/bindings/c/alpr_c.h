@@ -22,7 +22,13 @@
 #define ALPR_C_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C" { 
+#endif
+
+#ifdef WIN32
+  #define OPENALPRC_DLL_EXPORT __declspec( dllexport )
+#else
+  #define OPENALPRC_DLL_EXPORT
 #endif
 
 typedef void OPENALPR;
