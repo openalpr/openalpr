@@ -65,6 +65,11 @@ char* openalpr_recognize_rawimage(OPENALPR* instance, unsigned char* pixelData, 
 // Recognizes the encoded (e.g., JPEG, PNG) image.  bytes are the raw bytes for the image data.
 char* openalpr_recognize_encodedimage(OPENALPR* instance, unsigned char* bytes, long long length, struct AlprCRegionOfInterest roi);
 
+// Frees a char* response that was provided from a recognition request.
+// This is required for interoperating with managed languages (e.g., C#) that can't free the memory themselves
+void openalpr_free_response_string(char* response);
+
+// Free the memory for the OpenALPR instance created with openalpr_init
 void openalpr_cleanup(OPENALPR* instance);
 
 

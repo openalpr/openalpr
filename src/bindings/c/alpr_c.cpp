@@ -21,7 +21,8 @@
 #include <alpr.h>
 #include <string.h>
 #include <vector>
-
+#include <stdlib.h>
+ 
 OPENALPRC_DLL_EXPORT OPENALPR* openalpr_init(const char* country, const char* configFile, const char* runtimeDir)
 {
   alpr::Alpr* alpr_inst = new alpr::Alpr(country, configFile, runtimeDir);
@@ -97,6 +98,12 @@ OPENALPRC_DLL_EXPORT char* openalpr_recognize_encodedimage(OPENALPR* instance, u
   char* result_obj = strdup(json_string.c_str());
   
   return result_obj;
+}
+
+
+OPENALPRC_DLL_EXPORT void openalpr_free_response_string(char* response)
+{
+  free(response);
 }
 
 OPENALPRC_DLL_EXPORT void openalpr_cleanup(OPENALPR* instance)
