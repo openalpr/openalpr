@@ -6,7 +6,7 @@
 
 extern "C" {
   
-#if defined(_MSC_VER)
+#if defined(WIN32)
     //  Microsoft 
     #define OPENALPR_EXPORT __declspec(dllexport)
 #else
