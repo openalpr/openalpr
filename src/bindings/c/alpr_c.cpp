@@ -30,7 +30,7 @@ OPENALPRC_DLL_EXPORT OPENALPR* openalpr_init(const char* country, const char* co
   return (OPENALPR*) alpr_inst;
 }
 
-OPENALPRC_DLL_EXPORT int is_loaded(OPENALPR* instance)
+OPENALPRC_DLL_EXPORT int openalpr_is_loaded(OPENALPR* instance)
 {
   return (int) ((alpr::Alpr*) instance)->isLoaded();
 }
