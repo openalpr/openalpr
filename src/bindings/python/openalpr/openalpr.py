@@ -100,6 +100,7 @@ class Alpr():
 
         self.alpr_pointer = self._initialize_func(country, config_file, runtime_dir)
 
+        self.loaded = True
 
     def unload(self):
         """
@@ -107,7 +108,10 @@ class Alpr():
 
         :return: None
         """
-        self._openalprpy_lib.dispose(self.alpr_pointer)
+
+        if self.loaded:
+            self.loaded = False
+            self._openalprpy_lib.dispose(self.alpr_pointer)
 
     def is_loaded(self):
         """
@@ -115,6 +119,9 @@ class Alpr():
 
         :return: A bool representing if OpenALPR is loaded or not
         """
+        if not self.loaded:
+            return False
+
         return self._is_loaded_func(self.alpr_pointer)
 
     def recognize_file(self, file_path):
