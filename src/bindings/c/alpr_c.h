@@ -44,6 +44,9 @@ struct AlprCRegionOfInterest
 // Initializes the openALPR library and returns a pointer to the OpenALPR instance
 OPENALPR* openalpr_init(const char* country, const char* configFile, const char* runtimeDir);
 
+// Returns 1 if the library was loaded successfully, 0 otherwise
+int is_loaded(OPENALPR* instance);
+
 // Set the country used for plate recognition
 void openalpr_set_country(OPENALPR* instance, const char* country);
 
