@@ -85,6 +85,7 @@ JNIEXPORT jstring JNICALL Java_com_openalpr_jni_Alpr_native_1recognize___3B
     AlprResults results = nativeAlpr->recognize(cvec);
     std::string json = Alpr::toJson(results);
 
+    delete buf;
     return env->NewStringUTF(json.c_str());
   }
 
