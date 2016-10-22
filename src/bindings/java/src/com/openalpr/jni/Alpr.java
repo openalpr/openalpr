@@ -15,6 +15,7 @@ public class Alpr {
     private native boolean is_loaded();
     private native String native_recognize(String imageFile);
     private native String native_recognize(byte[] imageBytes);
+    private native String native_recognize(long imageData, int bytesPerPixel, int imgWidth, int imgHeight);
 
     private native void set_default_region(String region);
     private native void detect_region(boolean detectRegion);
@@ -54,6 +55,18 @@ public class Alpr {
     {
         try {
             String json = native_recognize(imageBytes);
+            return new AlprResults(json);
+        } catch (JSONException e)
+        {
+            throw new AlprException("Unable to parse ALPR results");
+        }
+    }
+
+
+    public AlprResults recognize(long imageData, int bytesPerPixel, int imgWidth, int imgHeight) throws AlprException
+    {
+        try {
+            String json = native_recognize(imageData, bytesPerPixel, imgWidth, imgHeight);
             return new AlprResults(json);
         } catch (JSONException e)
         {

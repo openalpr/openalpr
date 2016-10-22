@@ -121,7 +121,7 @@ namespace alpr
     
       float maxWidth = ((float) w) * (config->maxPlateWidthPercent / 100.0f) * scale_factor;
       float maxHeight = ((float) h) * (config->maxPlateHeightPercent / 100.0f) * scale_factor;
-      Size minPlateSize(config->minPlateSizeWidthPx * scale_factor, config->minPlateSizeHeightPx * scale_factor);
+      Size minPlateSize(config->minPlateSizeWidthPx, config->minPlateSizeHeightPx);
       Size maxPlateSize(maxWidth, maxHeight);
     
       vector<Rect> allRegions = find_plates(cropped, minPlateSize, maxPlateSize);

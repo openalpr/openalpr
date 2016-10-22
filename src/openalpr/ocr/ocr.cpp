@@ -48,7 +48,12 @@ namespace alpr
       std::vector<OcrChar> chars = recognize_line(line_idx, pipeline_data);
       
       for (uint32_t i = 0; i < chars.size(); i++)
-        postProcessor.addLetter(chars[i].letter, line_idx, chars[i].char_index, chars[i].confidence);
+      {
+        // For multi-line plates, set the character indexes to sequential values based on the line number
+        int line_ordered_index = (line_idx * config->postProcessMaxCharacters) + chars[i].char_index;
+        postProcessor.addLetter(chars[i].letter, line_idx, line_ordered_index, chars[i].confidence);
+        absolute_charpos++;
+      }
     }
     
 

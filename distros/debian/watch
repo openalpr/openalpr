@@ -1,0 +1,2 @@
+  version=3
+  https://github.com/openalpr/openalpr/tags .*/v?(\d.*)\.(?:tgz|tbz2|tar\.(?:gz|bz2|xz))
