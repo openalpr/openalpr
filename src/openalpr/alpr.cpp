@@ -82,6 +82,10 @@ namespace alpr
   {
     return AlprImpl::toJson(results);
   }
+  std::string Alpr::toJson( AlprPlateResult result )
+  {
+    return AlprImpl::toJson(result);
+  }
 
   AlprResults Alpr::fromJson(std::string json) {
     return AlprImpl::fromJson(json);

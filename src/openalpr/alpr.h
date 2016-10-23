@@ -163,6 +163,7 @@ namespace alpr
 
 
       static std::string toJson(const AlprResults results);
+      static std::string toJson(const AlprPlateResult result);
       static AlprResults fromJson(std::string json);
 
       bool isLoaded();

@@ -542,6 +542,21 @@ namespace alpr
 
 
 
+  std::string AlprImpl::toJson( const AlprPlateResult result )
+  {
+    cJSON *resultObj = createJsonObj( &result );
+    
+    char *out;
+    out=cJSON_PrintUnformatted(resultObj);
+
+    cJSON_Delete(resultObj);
+
+    string response(out);
+
+    free(out);
+    
+    return response;
+  }
   cJSON* AlprImpl::createJsonObj(const AlprPlateResult* result)
   {
     cJSON *root, *coords, *candidates;
