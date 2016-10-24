@@ -79,6 +79,7 @@ namespace AlprNet
             try
             {
                 native_instance = openalpr_init(country, config_file, runtime_dir);
+                openalpr_set_detect_region(native_instance, 1);
             }
             catch (System.DllNotFoundException)
             {
