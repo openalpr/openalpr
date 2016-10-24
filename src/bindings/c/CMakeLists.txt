@@ -12,7 +12,7 @@ set(alprc_source
     
 add_library(openalprc SHARED ${alprc_source})
 
-#set_target_properties(openalprc PROPERTIES SOVERSION ${OPENALPR_MAJOR_VERSION})
+set_target_properties(openalprc PROPERTIES SOVERSION ${OPENALPR_MAJOR_VERSION})
 
 TARGET_LINK_LIBRARIES(openalprc openalpr)
 
