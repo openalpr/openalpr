@@ -167,10 +167,12 @@ manufacturers:
   Qnap: 
     mjpeg: 
       - "http://[username]:[password]@[ip_address]/cgi/mjpg/mjpeg.cgi"
-  Samsung_SNB: 
+  Samsung: 
     mjpeg: 
       - "http://[username]:[password]@[ip_address]/video?submenu=mjpg"
       - "http://[username]:[password]@[ip_address]/video?submenu=jpg"
+     h264: 
+      - "rtsp://[ip_address]/profile1/media.smp"
   Sanyo: 
     mjpeg: 
       - "http://[username]:[password]@[ip_address]/liveimg.cgi?serverpush=1"
