@@ -171,7 +171,7 @@ manufacturers:
     mjpeg: 
       - "http://[username]:[password]@[ip_address]/video?submenu=mjpg"
       - "http://[username]:[password]@[ip_address]/video?submenu=jpg"
-     h264: 
+    h264: 
       - "rtsp://[ip_address]/profile1/media.smp"
   Sanyo: 
     mjpeg: 
