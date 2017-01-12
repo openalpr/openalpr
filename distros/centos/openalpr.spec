@@ -87,6 +87,9 @@ rm -rf $RPM_BUILD_ROOT
    %exclude /usr/lib/pkgconfig/openalpr.pc
    %exclude /usr/include/openalprgo.h
    %exclude /usr/include/state_detector.h
+   %exclude /usr/share/openalpr/config/alprd.defaults.conf
+   %exclude /usr/share/openalpr/config/openalpr.defaults.conf
+
 
 
 %files utils
@@ -102,6 +105,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
   /usr/include/alpr.h
   /usr/lib/libopenalpr-static.a
+
+  %exclude /usr/include/alpr_c.h
 
 %files -n libopenalpr2-data
 %defattr(-,root,root,-)
