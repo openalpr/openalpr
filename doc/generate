@@ -1,5 +1,0 @@
-#!/bin/bash
-
-make -f makefile clean && make -f makefile html
-cp -R swagger/ build/html/api
-cp source/*.yaml build/html/api/specs/
