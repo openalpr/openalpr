@@ -148,6 +148,8 @@ int main( int argc, const char** argv )
 	PipelineData pipeline_data(frame, Rect(0, 0, frame.cols, frame.rows), &config);
 	cvtColor(frame, frame, CV_BGR2GRAY);
 	pipeline_data.crop_gray = Mat(frame, Rect(0, 0, frame.cols, frame.rows));
+    pipeline_data.thresholds = produceThresholds(pipeline_data.crop_gray, &config);
+    
         char statecode[3];
         statecode[0] = files[i][0];
         statecode[1] = files[i][1];
