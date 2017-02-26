@@ -137,6 +137,13 @@ Please follow these detailed compilation guides for your respective operating sy
 
 If all went well, there should be an executable named *alpr* along with *libopenalpr-static.a* and *libopenalpr.so* that can be linked into your project.
 
+React Native
+------------
+
+If you'd like to use OpenALPR with a React Native project, you can use one of the following packages:
+
+* [react-native-openalpr] (https://github.com/cardash/react-native-openalpr) (iOS only)
+
 Docker
 ------
 
