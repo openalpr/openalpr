@@ -118,37 +118,37 @@ namespace alpr
       lastslash = 0;
     else
       lastslash += 1;
-    
+
     int lastindex = filename.find_last_of(".");
-    
+
     return filename.substr(lastslash, lastindex - lastslash);
   }
-  
+
   std::string get_filename_from_path(std::string file_path)
   {
 
     size_t found;
     found=file_path.find_last_of("/\\");
-    
-    if (found >= 0)
+
+    if (found != std::string::npos)
       return file_path.substr(found+1);
-    
+
     return "";
-   
+
   }
 
   std::string get_directory_from_path(std::string file_path)
   {
     if (DirectoryExists(file_path.c_str()))
       return file_path;
-    
+
     size_t found;
-    
+
     found=file_path.find_last_of("/\\");
-    
-    if (found >= 0)
+
+    if (found != std::string::npos)
       return file_path.substr(0,found);
-    
+
     return "";
   }
 
@@ -163,9 +163,9 @@ namespace alpr
 	  std::replace(candidate_path.begin(), candidate_path.end(), '/', '\\');
 
 	  system(candidate_path.c_str());
-	  return true; 
+	  return true;
   }
-  FileInfo getFileInfo(std::string filename) { 
+  FileInfo getFileInfo(std::string filename) {
     FileInfo response;
     response.creation_time = 0;
     response.size = 0;
@@ -177,7 +177,7 @@ namespace alpr
   FileInfo getFileInfo(std::string filename)
   {
     FileInfo response;
-    
+
     struct stat stat_buf;
     int rc = stat(filename.c_str(), &stat_buf);
     //return rc == 0 ? stat_buf.st_size : -1;
@@ -198,7 +198,7 @@ namespace alpr
       response.creation_time = 0;
       response.size = 0;
     }
-    
+
     return response;
   }
 
