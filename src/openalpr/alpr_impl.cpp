@@ -148,6 +148,7 @@ namespace alpr
       sub_results.results.epoch_time = start_time;
       sub_results.results.img_width = img.cols;
       sub_results.results.img_height = img.rows;
+      sub_results.results.regionsOfInterest = response.results.regionsOfInterest;
       
       country_aggregator.addResults(sub_results);
     }
