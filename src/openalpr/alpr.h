@@ -155,7 +155,7 @@ namespace alpr
 	  // Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
 	  AlprResults recognize(std::vector<char> imageBytes);
 
-	  // Recognize from unsigned char * representing an image.
+      // Recognize from unsigned char * representing an image.
       AlprResults recognize(unsigned char *image, int width, int height, int depth);
 
 	  // Recognize from byte data representing an encoded image (e.g., BMP, PNG, JPG, GIF etc).
