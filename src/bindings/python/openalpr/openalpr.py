@@ -172,11 +172,11 @@ class Alpr():
         """
         This causes OpenALPR to attempt to recognize an image passed in as a numpy array.
 
-        :param img: This should be a 3d numpy array
+        :param img: This should be a 2d or 3d numpy array (gray scale or rgb image)
         :return: An OpenALPR analysis in the form of a response dictionary
         """
         img = img.astype(np.ubyte)
-        # deal with gray scale  and rgb images
+        # deal with gray scale and rgb images
         dims = 3 if len(img.shape) == 3 else 1
         ptr = self._recognize_image_func(self.alpr_pointer, img, img.shape[1], img.shape[0], dims)
         json_data = ctypes.cast(ptr, ctypes.c_char_p).value
