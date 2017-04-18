@@ -1,3 +1,4 @@
+import cv2
 from openalpr import Alpr
 from argparse import ArgumentParser
 
@@ -50,7 +51,43 @@ try:
 
                 print("  %s %12s%12f" % (prefix, candidate['plate'], candidate['confidence']))
 
+finally:
+    if alpr:
+        alpr.unload()
 
+
+try:
+    alpr = Alpr(options.country, options.config, options.runtime_data)
+
+    if not alpr.is_loaded():
+        print("Error loading OpenALPR")
+    else:
+        print("Using OpenALPR " + alpr.get_version())
+
+        alpr.set_top_n(7)
+        alpr.set_default_region("wa")
+        alpr.set_detect_region(False)
+        img = cv2.imread(options.plate_image)
+        results = alpr.recognize_image(img)
+
+        # Uncomment to see the full results structure
+        # import pprint
+        # pprint.pprint(results)
+
+        print("Image size: %dx%d" %(results['img_width'], results['img_height']))
+        print("Processing Time: %f" % results['processing_time_ms'])
+
+        i = 0
+        for plate in results['results']:
+            i += 1
+            print("Plate #%d" % i)
+            print("   %12s %12s" % ("Plate", "Confidence"))
+            for candidate in plate['candidates']:
+                prefix = "-"
+                if candidate['matches_template']:
+                    prefix = "*"
+
+                print("  %s %12s%12f" % (prefix, candidate['plate'], candidate['confidence']))
 
 finally:
     if alpr:
