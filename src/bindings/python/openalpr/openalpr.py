@@ -176,7 +176,9 @@ class Alpr():
         :return: An OpenALPR analysis in the form of a response dictionary
         """
         img = img.astype(np.ubyte)
-        ptr = self._recognize_image_func(self.alpr_pointer, img, img.shape[1], img.shape[0])
+        # deal with gray scale images
+        dims = 3 if len(img.shape) == 3 else 1
+        ptr = self._recognize_image_func(self.alpr_pointer, img, img.shape[1], img.shape[0], dims)
         json_data = ctypes.cast(ptr, ctypes.c_char_p).value
         json_data = _convert_from_charp(json_data)
         response_obj = json.loads(json_data)

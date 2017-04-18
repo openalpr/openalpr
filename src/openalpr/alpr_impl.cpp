@@ -420,11 +420,16 @@ namespace alpr
     }
   }
 
-  AlprResults AlprImpl::recognize( unsigned char *image, cv::Size size)
+  AlprResults AlprImpl::recognize( unsigned char *image, int width, int height, int depth)
     {
       try
       {
-        cv::Mat img = Mat(size, CV_8UC3, image);
+        cv::Mat img;
+        cv::Size size = cv::Size(width, height);
+        if(depth == 1)
+          img = Mat(size, CV_8UC1, image);
+        else if(depth == 3)
+          img = Mat(size, CV_8UC3, image);
         return this->recognize(img);
       }
       catch (cv::Exception& e)

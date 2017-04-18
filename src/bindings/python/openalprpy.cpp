@@ -96,7 +96,7 @@ extern "C" {
       return membuffer;
     }
 
-  OPENALPR_EXPORT char* recognizeImage(Alpr* nativeAlpr, unsigned char *buf, int width, int height)
+  OPENALPR_EXPORT char* recognizeImage(Alpr* nativeAlpr, unsigned char *buf, int width, int height, int depth)
       {
         //printf("Recognize byte array");
         //printf("buffer pointer: %p\n", buf);
@@ -104,7 +104,7 @@ extern "C" {
 
         //std::cout << "Using instance: " << nativeAlpr << std::endl;
 
-        AlprResults results = nativeAlpr->recognize(buf, width, height);
+        AlprResults results = nativeAlpr->recognize(buf, width, height, depth);
         std::string json = Alpr::toJson(results);
 
         int strsize = sizeof(char) * (strlen(json.c_str()) + 1);
