@@ -177,8 +177,8 @@ class Alpr():
         """
         img = img.astype(np.ubyte)
         # deal with gray scale and rgb images
-        dims = 3 if len(img.shape) == 3 else 1
-        ptr = self._recognize_image_func(self.alpr_pointer, img, img.shape[1], img.shape[0], dims)
+        depth = 3 if len(img.shape) == 3 else 1
+        ptr = self._recognize_image_func(self.alpr_pointer, img, img.shape[1], img.shape[0], depth)
         json_data = ctypes.cast(ptr, ctypes.c_char_p).value
         json_data = _convert_from_charp(json_data)
         response_obj = json.loads(json_data)
