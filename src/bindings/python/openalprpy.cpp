@@ -96,6 +96,18 @@ extern "C" {
       return membuffer;
     }
 
+  OPENALPR_EXPORT char* recognizeImage(Alpr* nativeAlpr, unsigned char *buf, int width, int height, int depth)
+      {
+        AlprResults results = nativeAlpr->recognize(buf, width, height, depth);
+        std::string json = Alpr::toJson(results);
+
+        int strsize = sizeof(char) * (strlen(json.c_str()) + 1);
+        char* membuffer = (char*)malloc(strsize);
+        strcpy(membuffer, json.c_str());
+
+        return membuffer;
+      }
+
   OPENALPR_EXPORT void setCountry(Alpr* nativeAlpr, char* ccountry)
     {
       // Convert strings from java to C++ and release resources

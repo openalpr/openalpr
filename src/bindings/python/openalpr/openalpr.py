@@ -1,6 +1,8 @@
 import ctypes
 import json
 import platform
+import numpy as np
+from numpy.ctypeslib import ndpointer
 
 # We need to do things slightly differently for Python 2 vs. 3
 # ... because the way str/unicode have changed to bytes/str
@@ -75,6 +77,15 @@ class Alpr():
         self._recognize_array_func = self._openalprpy_lib.recognizeArray
         self._recognize_array_func.restype = ctypes.c_void_p
         self._recognize_array_func.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ubyte), ctypes.c_uint]
+
+        self._recognize_image_func = self._openalprpy_lib.recognizeImage
+        self._recognize_image_func.restype = ctypes.c_void_p
+        self._recognize_image_func.argtypes = [
+            ctypes.c_void_p,
+            ndpointer(ctypes.c_ubyte, flags="CONTIGUOUS"),
+            ctypes.c_uint,
+            ctypes.c_uint
+        ]
 
         self._free_json_mem_func = self._openalprpy_lib.freeJsonMem
 
@@ -151,6 +162,23 @@ class Alpr():
             raise TypeError("Expected a byte array (string in Python 2, bytes in Python 3)")
         pb = ctypes.cast(byte_array, ctypes.POINTER(ctypes.c_ubyte))
         ptr = self._recognize_array_func(self.alpr_pointer, pb, len(byte_array))
+        json_data = ctypes.cast(ptr, ctypes.c_char_p).value
+        json_data = _convert_from_charp(json_data)
+        response_obj = json.loads(json_data)
+        self._free_json_mem_func(ctypes.c_void_p(ptr))
+        return response_obj
+
+    def recognize_image(self, img):
+        """
+        This causes OpenALPR to attempt to recognize an image passed in as a numpy array.
+
+        :param img: This should be a 2d or 3d numpy array (gray scale or rgb image)
+        :return: An OpenALPR analysis in the form of a response dictionary
+        """
+        img = img.astype(np.ubyte)
+        # deal with gray scale and rgb images
+        depth = 3 if len(img.shape) == 3 else 1
+        ptr = self._recognize_image_func(self.alpr_pointer, img, img.shape[1], img.shape[0], depth)
         json_data = ctypes.cast(ptr, ctypes.c_char_p).value
         json_data = _convert_from_charp(json_data)
         response_obj = json.loads(json_data)

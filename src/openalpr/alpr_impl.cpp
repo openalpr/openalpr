@@ -421,6 +421,26 @@ namespace alpr
     }
   }
 
+  AlprResults AlprImpl::recognize( unsigned char *image, int width, int height, int depth)
+    {
+      try
+      {
+        cv::Mat img;
+        cv::Size size = cv::Size(width, height);
+        if(depth == 1)
+          img = Mat(size, CV_8UC1, image);
+        else if(depth == 3)
+          img = Mat(size, CV_8UC3, image);
+        return this->recognize(img);
+      }
+      catch (cv::Exception& e)
+      {
+        std::cerr << "Caught exception in OpenALPR recognize: " << e.msg << std::endl;
+        AlprResults emptyresults;
+        return emptyresults;
+      }
+    }
+
   AlprResults AlprImpl::recognize(std::vector<char> imageBytes, std::vector<AlprRegionOfInterest> regionsOfInterest)
   {
     try
