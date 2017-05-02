@@ -5,9 +5,9 @@
 #include <alpr.h>
 
 extern "C" {
-  
+
 #if defined(WIN32)
-    //  Microsoft 
+    //  Microsoft
     #define OPENALPR_EXPORT __declspec(dllexport)
 #else
     //  do nothing
@@ -59,15 +59,15 @@ extern "C" {
       AlprResults results = nativeAlpr->recognize(imageFile);
 
       std::string json = Alpr::toJson(results);
-      
+
       int strsize = sizeof(char) * (strlen(json.c_str()) + 1);
       char* membuffer = (char*)malloc(strsize);
       strcpy(membuffer, json.c_str());
       //printf("allocated address: %p\n", membuffer);
-      
+
       return membuffer;
     }
-  
+
   OPENALPR_EXPORT void freeJsonMem(char* ptr)
   {
     //printf("freeing address: %p\n", ptr);
@@ -87,12 +87,35 @@ extern "C" {
 
       AlprResults results = nativeAlpr->recognize(cvec);
       std::string json = Alpr::toJson(results);
-      
+
       int strsize = sizeof(char) * (strlen(json.c_str()) + 1);
       char* membuffer = (char*)malloc(strsize);
       strcpy(membuffer, json.c_str());
       //printf("allocated address: %p\n", membuffer);
-      
+
+      return membuffer;
+    }
+
+  // AlprResults recognize(unsigned char* pixelData,
+  // int bytesPerPixel, int imgWidth, int imgHeight,
+  // std::vector<AlprRegionOfInterest> regionsOfInterest);
+  OPENALPR_EXPORT char* recognizeRawImage(Alpr* nativeAlpr, unsigned char* buf, int bytesPerPixel, int imgWidth, int imgHeight)
+    {
+      //printf("Recognize raw image");
+      //printf("buffer pointer: %p\n", buf);
+      //printf("buffer length: %d\n", len);
+
+      //std::cout << "Using instance: " << nativeAlpr << std::endl;
+
+      std::vector<AlprRegionOfInterest> regionsOfInterest;
+      AlprResults results = nativeAlpr->recognize(buf, bytesPerPixel, imgWidth, imgHeight, regionsOfInterest);
+      std::string json = Alpr::toJson(results);
+
+      int strsize = sizeof(char) * (strlen(json.c_str()) + 1);
+      char* membuffer = (char*)malloc(strsize);
+      strcpy(membuffer, json.c_str());
+      //printf("allocated address: %p\n", membuffer);
+
       return membuffer;
     }
 
@@ -103,7 +126,7 @@ extern "C" {
 
       nativeAlpr->setCountry(country);
     }
-  
+
   OPENALPR_EXPORT void setPrewarp(Alpr* nativeAlpr, char* cprewarp)
     {
       // Convert strings from java to C++ and release resources
@@ -111,7 +134,7 @@ extern "C" {
 
       nativeAlpr->setPrewarp(prewarp);
     }
-  
+
   OPENALPR_EXPORT void setDefaultRegion(Alpr* nativeAlpr, char* cdefault_region)
     {
       // Convert strings from java to C++ and release resources
@@ -138,7 +161,7 @@ extern "C" {
       char* membuffer = (char*)malloc(strsize);
       strcpy(membuffer, version.c_str());
       //printf("allocated address: %p\n", membuffer);
-      
+
       return membuffer;
     }
 

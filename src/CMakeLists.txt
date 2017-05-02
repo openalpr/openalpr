@@ -174,6 +174,7 @@ IF (WITH_DAEMON)
     daemon/beanstalk.cc 
 )
 
+  FIND_PACKAGE( CURL REQUIRED )
   FIND_PACKAGE( log4cplus REQUIRED )
 
   TARGET_LINK_LIBRARIES(alprd
