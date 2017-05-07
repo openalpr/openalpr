@@ -1,3 +1,4 @@
 usr/include/alpr.h
+usr/include/alpr_c.h
 usr/lib/lib*.a
 usr/lib/lib*so
