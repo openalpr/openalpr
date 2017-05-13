@@ -96,7 +96,7 @@ Where:
 Binaries
 ----------
 
-Pre-compiled Windows binaries can be downloaded on the [releases page] (https://github.com/openalpr/openalpr/releases)
+Pre-compiled Windows binaries can be downloaded on the [releases page](https://github.com/openalpr/openalpr/releases)
 
 Install OpenALPR on Ubuntu 16.04 with the following commands:
 
@@ -105,7 +105,7 @@ Install OpenALPR on Ubuntu 16.04 with the following commands:
 Documentation
 ---------------
 
-Detailed documentation is available at [doc.openalpr.com] (http://doc.openalpr.com/)
+Detailed documentation is available at [doc.openalpr.com](http://doc.openalpr.com/)
 
 Integrating the Library
 -----------------------
