@@ -96,7 +96,7 @@ Where:
 Binaries
 ----------
 
-Pre-compiled Windows binaries can be downloaded on the [releases page] (https://github.com/openalpr/openalpr/releases)
+Pre-compiled Windows binaries can be downloaded on the [releases page](https://github.com/openalpr/openalpr/releases)
 
 Install OpenALPR on Ubuntu 16.04 with the following commands:
 
@@ -105,7 +105,7 @@ Install OpenALPR on Ubuntu 16.04 with the following commands:
 Documentation
 ---------------
 
-Detailed documentation is available at [doc.openalpr.com] (http://doc.openalpr.com/)
+Detailed documentation is available at [doc.openalpr.com](http://doc.openalpr.com/)
 
 Integrating the Library
 -----------------------
@@ -128,13 +128,13 @@ After cloning this GitHub repository, you should download and extract Tesseract 
 
 Please follow these detailed compilation guides for your respective operating system:
 
-* [Windows] (https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(Windows))
-* [Ubuntu Linux] (https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(Ubuntu-Linux))
-* [OS X] (https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(OS-X))
-* [Android Library] (https://github.com/SandroMachado/openalpr-android)
-* [Android Application Sample] (https://github.com/sujaybhowmick/OpenAlprDroidApp)
-* [iOS] (https://github.com/twelve17/openalpr-ios)
-* [iOS React Native] (https://github.com/cardash/react-native-openalpr)
+* [Windows](https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(Windows))
+* [Ubuntu Linux](https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(Ubuntu-Linux))
+* [OS X](https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(OS-X))
+* [Android Library](https://github.com/SandroMachado/openalpr-android)
+* [Android Application Sample](https://github.com/sujaybhowmick/OpenAlprDroidApp)
+* [iOS](https://github.com/twelve17/openalpr-ios)
+* [iOS React Native](https://github.com/cardash/react-native-openalpr)
 
 If all went well, there should be an executable named *alpr* along with *libopenalpr-static.a* and *libopenalpr.so* that can be linked into your project.
 
