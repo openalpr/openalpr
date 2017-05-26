@@ -8,7 +8,9 @@
 # The options commented out show the default values.
 
 # Start the daemon if set to "yes"
-START_DAEMON="yes"
+# preset to "no" per default as it kills ssd's and flash memories with warn and info logs
+# without clear install time warnings send to user installing openalpr
+START_DAEMON="no"
 
 # Path to the log file
 #LOGFILE="/var/log/alpr.log"
