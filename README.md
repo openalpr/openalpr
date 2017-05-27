@@ -83,6 +83,10 @@ Where:
 
    -h,  --help
      Displays usage information and exits.
+     
+   --widthheight
+     Input resolution width and height. Example 1280x720  
+     Default: Camera Default.
 
    <image_file_path>
      Image containing license plates
