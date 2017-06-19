@@ -58,6 +58,9 @@ manufacturers:
   CNB:
     h264:
       - "rtsp://[username]:[password]@[ip_address]/"
+  Dahua:
+    h264:
+      - "rtsp://[username]:[password]@[ip_address]:554/cam/realmonitor?channel=1&subtype=1"
   D-Link: 
     mjpeg: 
       - "http://[username]:[password]@[ip_address]/video/mjpg.cgi"
