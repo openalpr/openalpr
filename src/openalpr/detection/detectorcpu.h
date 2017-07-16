@@ -20,8 +20,6 @@
 #ifndef OPENALPR_DETECTORCPU_H
 #define	OPENALPR_DETECTORCPU_H
 
-#include <stdio.h>
-#include <iostream>
 #include <vector>
 
 #include "opencv2/objdetect/objdetect.hpp"

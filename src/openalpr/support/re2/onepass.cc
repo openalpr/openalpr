@@ -476,8 +476,8 @@ bool Prog::IsOnePass() {
             }
           }
           if (ip->foldcase()) {
-            Rune lo = max<Rune>(ip->lo(), 'a') + 'A' - 'a';
-            Rune hi = min<Rune>(ip->hi(), 'z') + 'A' - 'a';
+            Rune lo = std::max<Rune>(ip->lo(), 'a') + 'A' - 'a';
+            Rune hi = std::min<Rune>(ip->hi(), 'z') + 'A' - 'a';
             for (int c = lo; c <= hi; c++) {
               int b = bytemap_[c];
               c = unbytemap_[b];  // last c in class

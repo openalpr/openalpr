@@ -19,6 +19,8 @@
 
 #include "detectorcpu.h"
 
+#include <stdio.h>
+
 using namespace cv;
 using namespace std;
 

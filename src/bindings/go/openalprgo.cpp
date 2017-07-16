@@ -1,6 +1,6 @@
-#include <stdlib.h>
-#include <stdio.h>
+#include <string>
 #include <string.h>
+#include <vector>
 
 #include <alpr.h>
 #include "openalprgo.h"

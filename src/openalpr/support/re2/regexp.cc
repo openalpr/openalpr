@@ -5,10 +5,16 @@
 // Regular expression representation.
 // Tested by parse_test.cc
 
+#include <vector>
+
 #include "util/util.h"
 #include "re2/regexp.h"
 #include "re2/stringpiece.h"
 #include "re2/walker-inl.h"
+
+using std::map;
+using std::string;
+using std::vector;
 
 namespace re2 {
 
@@ -712,13 +718,13 @@ bool CharClassBuilder::AddRange(Rune lo, Rune hi) {
   if (lo <= 'z' && hi >= 'A') {
     // Overlaps some alpha, maybe not all.
     // Update bitmaps telling which ASCII letters are in the set.
-    Rune lo1 = max<Rune>(lo, 'A');
-    Rune hi1 = min<Rune>(hi, 'Z');
+    Rune lo1 = std::max<Rune>(lo, 'A');
+    Rune hi1 = std::min<Rune>(hi, 'Z');
     if (lo1 <= hi1)
       upper_ |= ((1 << (hi1 - lo1 + 1)) - 1) << (lo1 - 'A');
 
-    lo1 = max<Rune>(lo, 'a');
-    hi1 = min<Rune>(hi, 'z');
+    lo1 = std::max<Rune>(lo, 'a');
+    hi1 = std::min<Rune>(hi, 'z');
     if (lo1 <= hi1)
       lower_ |= ((1 << (hi1 - lo1 + 1)) - 1) << (lo1 - 'a');
   }

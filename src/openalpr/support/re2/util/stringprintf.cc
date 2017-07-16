@@ -4,6 +4,10 @@
 
 #include "re2/util/util.h"
 
+#include <stdarg.h>
+
+using std::string;
+
 namespace re2 { 
 
 static void StringAppendV(string* dst, const char* format, va_list ap) {

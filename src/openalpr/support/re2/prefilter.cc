@@ -8,6 +8,9 @@
 #include "re2/unicode_casefold.h"
 #include "re2/walker-inl.h"
 
+using std::set;
+using std::vector;
+
 namespace re2 {
 
 static const int Trace = false;

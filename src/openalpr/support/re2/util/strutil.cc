@@ -6,6 +6,8 @@
 #include "re2/stringpiece.h"
 
 namespace re2 {
+    
+    using std::string;
 
 // ----------------------------------------------------------------------
 // CEscapeString()

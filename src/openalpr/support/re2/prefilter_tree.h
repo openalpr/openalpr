@@ -16,13 +16,16 @@
 #ifndef RE2_PREFILTER_TREE_H_
 #define RE2_PREFILTER_TREE_H_
 
+#include <map>
+#include <vector>
+
 #include "util/util.h"
 #include "util/sparse_array.h"
 
 namespace re2 {
 
 typedef SparseArray<int> IntMap;
-typedef map<int, int> StdIntMap;
+typedef std::map<int, int> StdIntMap;
 
 class Prefilter;
 
@@ -42,15 +45,15 @@ class PrefilterTree {
   // The caller should use the returned set of strings to do string matching.
   // Each time a string matches, the corresponding index then has to be
   // and passed to RegexpsGivenStrings below.
-  void Compile(vector<string>* atom_vec);
+  void Compile(std::vector<std::string>* atom_vec);
 
   // Given the indices of the atoms that matched, returns the indexes
   // of regexps that should be searched.  The matched_atoms should
   // contain all the ids of string atoms that were found to match the
   // content. The caller can use any string match engine to perform
   // this function. This function is thread safe.
-  void RegexpsGivenStrings(const vector<int>& matched_atoms,
-                           vector<int>* regexps) const;
+  void RegexpsGivenStrings(const std::vector<int>& matched_atoms,
+                           std::vector<int>* regexps) const;
 
   // Print debug prefilter. Also prints unique ids associated with
   // nodes of the prefilter of the regexp.
@@ -76,17 +79,17 @@ class PrefilterTree {
 
     // When this node is ready to trigger the parent, what are the
     // regexps that are triggered.
-    vector<int> regexps;
+    std::vector<int> regexps;
   };
 
  private:
   // This function assigns unique ids to various parts of the
   // prefilter, by looking at if these nodes are already in the
   // PrefilterTree.
-  void AssignUniqueIds(vector<string>* atom_vec);
+  void AssignUniqueIds(std::vector<std::string>* atom_vec);
 
   // Given the matching atoms, find the regexps to be triggered.
-  void PropagateMatch(const vector<int>& atom_ids,
+  void PropagateMatch(const std::vector<int>& atom_ids,
                       IntMap* regexps) const;
 
   // Returns the prefilter node that has the same NodeString as this
@@ -95,30 +98,30 @@ class PrefilterTree {
 
   // A string that uniquely identifies the node. Assumes that the
   // children of node has already been assigned unique ids.
-  string NodeString(Prefilter* node) const;
+  std::string NodeString(Prefilter* node) const;
 
   // Recursively constructs a readable prefilter string.
-  string DebugNodeString(Prefilter* node) const;
+  std::string DebugNodeString(Prefilter* node) const;
 
   // Used for debugging.
   void PrintDebugInfo();
 
   // These are all the nodes formed by Compile. Essentially, there is
   // one node for each unique atom and each unique AND/OR node.
-  vector<Entry> entries_;
+  std::vector<Entry> entries_;
 
   // Map node string to canonical Prefilter node.
-  map<string, Prefilter*> node_map_;
+  std::map<std::string, Prefilter*> node_map_;
 
   // indices of regexps that always pass through the filter (since we
   // found no required literals in these regexps).
-  vector<int> unfiltered_;
+  std::vector<int> unfiltered_;
 
   // vector of Prefilter for all regexps.
-  vector<Prefilter*> prefilter_vec_;
+  std::vector<Prefilter*> prefilter_vec_;
 
   // Atom index in returned strings to entry id mapping.
-  vector<int> atom_index_to_id_;
+  std::vector<int> atom_index_to_id_;
 
   // Has the prefilter tree been compiled.
   bool compiled_;

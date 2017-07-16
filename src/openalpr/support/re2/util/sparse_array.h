@@ -94,6 +94,10 @@
 
 #include "re2/util/util.h"
 
+#include <string.h>
+#include <vector>
+#include <utility>
+
 namespace re2 {
 
 template<typename Value>
@@ -107,8 +111,8 @@ class SparseArray {
   class IndexValue;
 
   typedef IndexValue value_type;
-  typedef typename vector<IndexValue>::iterator iterator;
-  typedef typename vector<IndexValue>::const_iterator const_iterator;
+  typedef typename std::vector<IndexValue>::iterator iterator;
+  typedef typename std::vector<IndexValue>::const_iterator const_iterator;
 
   inline const IndexValue& iv(int i) const;
 
@@ -160,7 +164,7 @@ class SparseArray {
   // Set the value at index i to v.
   inline iterator set(int i, Value v);
 
-  pair<iterator, bool> insert(const value_type& new_value);
+  std::pair<iterator, bool> insert(const value_type& new_value);
 
   // Returns the value at index i
   // or defaultv if index i is not initialized in the array.
@@ -223,7 +227,7 @@ class SparseArray {
   int size_;
   int max_size_;
   int* sparse_to_dense_;
-  vector<IndexValue> dense_;
+  std::vector<IndexValue> dense_;
   bool valgrind_;
 
   DISALLOW_COPY_AND_ASSIGN(SparseArray);
@@ -318,14 +322,14 @@ typename SparseArray<Value>::iterator SparseArray<Value>::set(int i, Value v) {
 }
 
 template<typename Value>
-pair<typename SparseArray<Value>::iterator, bool> SparseArray<Value>::insert(
+std::pair<typename SparseArray<Value>::iterator, bool> SparseArray<Value>::insert(
     const value_type& new_value) {
   DebugCheckInvariants();
-  pair<typename SparseArray<Value>::iterator, bool> p;
+  std::pair<typename SparseArray<Value>::iterator, bool> p;
   if (has_index(new_value.index_)) {
-    p = make_pair(dense_.begin() + sparse_to_dense_[new_value.index_], false);
+    p = std::make_pair(dense_.begin() + sparse_to_dense_[new_value.index_], false);
   } else {
-    p = make_pair(set_new(new_value.index_, new_value.second), true);
+    p = std::make_pair(set_new(new_value.index_, new_value.second), true);
   }
   DebugCheckInvariants();
   return p;

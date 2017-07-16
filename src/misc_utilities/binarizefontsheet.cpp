@@ -22,8 +22,8 @@
 
 #include <iostream>
 #include <fstream>
-#include <sstream>
-#include <stdio.h>
+#include <string>
+#include <vector>
 #include "../tclap/CmdLine.h"
 #include "utility.h"
 #include "support/utf8.h"

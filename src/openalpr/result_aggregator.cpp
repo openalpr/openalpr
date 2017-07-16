@@ -19,6 +19,8 @@
 
 #include "result_aggregator.h"
 
+#include <iomanip>
+
 using namespace std;
 using namespace cv;
 

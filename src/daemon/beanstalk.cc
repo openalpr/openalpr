@@ -1,7 +1,8 @@
 #include "beanstalk.hpp"
-#include <stdexcept>
 #include <sstream>
-#include <iostream>
+#include <stdexcept>
+#include <stdlib.h>
+#include <string.h>
 
 using namespace std;
 

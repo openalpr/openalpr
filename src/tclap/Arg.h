@@ -34,9 +34,6 @@
 #include <string>
 #include <vector>
 #include <list>
-#include <iostream>
-#include <iomanip>
-#include <cstdio>
 
 #if defined(HAVE_SSTREAM)
 #include <sstream>

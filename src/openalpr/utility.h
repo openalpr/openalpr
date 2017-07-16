@@ -20,9 +20,8 @@
 #ifndef OPENALPR_UTILITY_H
 #define OPENALPR_UTILITY_H
 
-#include <iostream>
-#include <stdio.h>
-#include <string.h>
+#include <string>
+#include <vector>
 
 #include "constants.h"
 #include "support/timing.h"
@@ -30,7 +29,6 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/core/core.hpp"
 #include "binarize_wolf.h"
-#include <vector>
 #include "config.h"
 
 namespace alpr

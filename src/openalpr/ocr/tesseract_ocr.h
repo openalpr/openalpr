@@ -20,8 +20,7 @@
 #ifndef OPENALPR_TESSERACTOCR_H
 #define OPENALPR_TESSERACTOCR_H
 
-#include <iostream>
-#include <stdio.h>
+#include <vector>
 
 #include "utility.h"
 #include "config.h"

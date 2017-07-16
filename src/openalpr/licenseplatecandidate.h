@@ -20,8 +20,6 @@
 #ifndef OPENALPR_LICENSEPLATECANDIDATE_H
 #define OPENALPR_LICENSEPLATECANDIDATE_H
 
-#include <iostream>
-#include <stdio.h>
 #include <vector>
 
 #include "opencv2/imgproc/imgproc.hpp"

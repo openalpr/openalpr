@@ -24,11 +24,8 @@
 
 #include "constants.h"
 
-#include <stdio.h>
-#include <iostream>
+#include <string>
 #include <vector>
-#include <stdlib.h>     /* getenv */
-#include <math.h>
 
 namespace alpr
 {

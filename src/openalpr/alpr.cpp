@@ -20,6 +20,8 @@
 #include "alpr.h"
 #include "alpr_impl.h"
 
+#include <fstream>
+
 namespace alpr
 {
 

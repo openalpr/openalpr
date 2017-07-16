@@ -24,6 +24,8 @@
 #include "re2/walker-inl.h"
 
 namespace re2 {
+    
+    using std::string;
 
 // Regular expression parse state.
 // The list of parsed regexps so far is maintained as a vector of
@@ -340,7 +342,7 @@ static void AddFoldedRange(CharClassBuilder* cc, Rune lo, Rune hi, int depth) {
     // Add in the result of folding the range lo - f->hi
     // and that range's fold, recursively.
     Rune lo1 = lo;
-    Rune hi1 = min<Rune>(hi, f->hi);
+    Rune hi1 = std::min<Rune>(hi, f->hi);
     switch (f->delta) {
       default:
         lo1 += f->delta;

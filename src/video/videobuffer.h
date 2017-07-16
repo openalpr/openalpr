@@ -2,8 +2,10 @@
 #define OPENALPR_VIDEOBUFFER_H
 
 #include <cstdio>
+#include <iostream>
 #include <stdexcept>
 #include <sstream>
+#include <vector>
 
 #include "opencv2/highgui/highgui.hpp"
 

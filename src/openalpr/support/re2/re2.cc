@@ -9,7 +9,6 @@
 
 #include "re2.h"
 
-#include <stdio.h>
 #include <string>
 #ifndef WIN32
 #include <pthread.h>

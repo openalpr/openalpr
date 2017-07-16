@@ -1,8 +1,6 @@
 #pragma once
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <sys/types.h>

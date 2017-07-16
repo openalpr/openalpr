@@ -20,10 +20,8 @@
 #ifndef OPENALPR_REGEXRULE_H
 #define	OPENALPR_REGEXRULE_H
 
-#include <iostream>
 #include <string>
-#include <cstring>
-#include <vector>
+
 #include "support/re2.h"
 #include "support/utf8.h"
 #include "support/tinythread.h"

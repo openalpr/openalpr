@@ -21,7 +21,6 @@
 #define OPENALPR_SEGMENTATIONGROUP_H
 
 #include <vector>
-#include <stdio.h>
 
 #include "opencv2/imgproc/imgproc.hpp"
 

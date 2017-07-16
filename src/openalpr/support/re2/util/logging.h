@@ -7,7 +7,11 @@
 #ifndef RE2_UTIL_LOGGING_H__
 #define RE2_UTIL_LOGGING_H__
 
+#include <assert.h>
+#include <ostream>
 #include <stdio.h>  /* for fwrite */
+#include <stdlib.h>
+#include <string>
 #include <sstream>
 
 // Debug-only checking.
@@ -53,7 +57,7 @@ class LogMessage {
   }
   void Flush() {
     stream() << "\n";
-    string s = str_.str();
+    std::string s = str_.str();
     size_t n = s.size();
     if (fwrite(s.data(), 1, n, stderr) < n) {}  // shut up gcc
     flushed_ = true;
@@ -63,7 +67,7 @@ class LogMessage {
       Flush();
     }
   }
-  ostream& stream() { return str_; }
+  std::ostream& stream() { return str_; }
 
  private:
   bool flushed_;
