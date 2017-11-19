@@ -16,6 +16,7 @@ public:
   std::string country;
   
   int topn;
+  int analysis_threads;
   bool storePlates;
   std::string imageFolder;
   bool uploadData;
