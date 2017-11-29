@@ -309,6 +309,7 @@ void processingThread(void* arg)
 
       writeToQueue(response);
     }
+    usleep(10000);
   }
 }
 
@@ -343,7 +344,7 @@ void streamRecognitionThread(void* arg)
     
     if (response != -1) {
       if (framesQueue.empty()) {
-        framesQueue.push(frame);
+        framesQueue.push(frame.clone());
       }
     }
     
