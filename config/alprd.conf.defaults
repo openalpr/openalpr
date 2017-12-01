@@ -16,6 +16,9 @@ country = us
 ;   stream = http://127.0.0.1/example_second_stream.mjpeg
 ;   stream = webcam
 
+; Number of threads to analyze frames.
+analysis_threads = 4
+
 ; topn is the number of possible plate character variations to report
 topn = 10
 
