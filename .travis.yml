@@ -1,6 +1,5 @@
 before_install:
   - sudo add-apt-repository ppa:yjwong/opencv2 -y
-  - sudo add-apt-repository ppa:lyrasis/precise-backports -y
   - sudo apt-get update -q
 
 install: sudo apt-get -y install libopencv-dev libtesseract-dev git cmake build-essential libleptonica-dev liblog4cplus-dev libcurl3-dev beanstalkd
