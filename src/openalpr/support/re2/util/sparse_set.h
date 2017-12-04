@@ -49,6 +49,8 @@
 
 #include "re2/util/util.h"
 
+#include <string.h>
+
 namespace re2 {
 
 static bool InitMemory() {

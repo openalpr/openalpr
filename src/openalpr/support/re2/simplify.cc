@@ -11,6 +11,8 @@
 #include "re2/walker-inl.h"
 
 namespace re2 {
+    
+    using std::string;
 
 // Parses the regexp src and then simplifies it and sets *dst to the
 // string representation of the simplified form.  Returns true on success.

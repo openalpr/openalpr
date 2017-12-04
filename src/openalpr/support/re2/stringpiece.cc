@@ -2,9 +2,12 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+#include <algorithm>
+
 #include "re2/stringpiece.h"
 #include "util/util.h"
 
+using std::string;
 using re2::StringPiece;
 
 std::ostream& operator<<(std::ostream& o, const StringPiece& piece) {
@@ -34,7 +37,7 @@ void StringPiece::CopyToString(string* target) const {
 }
 
 int StringPiece::copy(char* buf, size_type n, size_type pos) const {
-  int ret = min(length_ - pos, n);
+  int ret = std::min(length_ - pos, n);
   memcpy(buf, ptr_ + pos, ret);
   return ret;
 }
@@ -64,16 +67,16 @@ int StringPiece::find(char c, size_type pos) const {
 int StringPiece::rfind(const StringPiece& s, size_type pos) const {
   if (length_ < s.length_) return npos;
   const size_t ulen = length_;
-  if (s.length_ == 0) return min(ulen, pos);
+  if (s.length_ == 0) return std::min(ulen, pos);
 
-  const char* last = ptr_ + min(ulen - s.length_, pos) + s.length_;
+  const char* last = ptr_ + std::min(ulen - s.length_, pos) + s.length_;
   const char* result = std::find_end(ptr_, last, s.ptr_, s.ptr_ + s.length_);
   return result != last ? result - ptr_ : npos;
 }
 
 int StringPiece::rfind(char c, size_type pos) const {
   if (length_ <= 0) return npos;
-  for (int i = min(pos, static_cast<size_type>(length_ - 1));
+  for (int i = std::min(pos, static_cast<size_type>(length_ - 1));
        i >= 0; --i) {
     if (ptr_[i] == c) {
       return i;

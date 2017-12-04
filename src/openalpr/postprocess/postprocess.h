@@ -23,12 +23,9 @@
 #include "regexrule.h"
 #include "constants.h"
 #include "utility.h"
-#include <fstream>
-#include <iostream>
-#include <stdio.h>
-#include <queue>
-#include <vector>
 #include <set>
+#include <string>
+#include <vector>
 #include "config.h"
 
 

@@ -20,8 +20,6 @@
 #ifndef OPENALPR_DETECTOROPENCL_H
 #define	OPENALPR_DETECTOROPENCL_H
 
-#include <stdio.h>
-#include <iostream>
 #include <vector>
 
 #if OPENCV_MAJOR_VERSION == 3

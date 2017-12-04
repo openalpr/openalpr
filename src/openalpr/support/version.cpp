@@ -1,9 +1,7 @@
 #include "version.h"
 
-
 #include <stdio.h>
-#include <stdlib.h>
-#include <iostream>
+
 int cmpVersion(const char *v1, const char *v2)
 {
     int i;

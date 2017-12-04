@@ -27,6 +27,29 @@
 #include "util/flags.h"
 #include "util/sparse_set.h"
 
+#include <algorithm>
+#include <stdio.h>
+#include <vector>
+
+#if defined(__GNUC__) && !defined(USE_CXX0X) && !defined(_LIBCPP_ABI_VERSION)
+
+#include <tr1/unordered_set>
+using std::tr1::unordered_set;
+
+#else
+
+#include <unordered_set>
+#if defined(_WIN32)
+using std::tr1::unordered_set;
+#else
+using std::unordered_set;
+#endif
+
+#endif
+
+using std::swap;
+using std::vector;
+
 DEFINE_bool(re2_dfa_bail_when_slow, true,
             "Whether the RE2 DFA should bail out early "
             "if the NFA would be faster (for testing).");
@@ -167,6 +190,7 @@ class DFA {
     static const size_t min_buckets = 8;
 #endif  // STL_MSVC
   };
+
 
 #ifdef STL_MSVC
   typedef unordered_set<State*, StateHash> StateSet;
@@ -711,7 +735,7 @@ DFA::State* DFA::WorkqToCachedState(Workq* q, uint flag) {
       int* markp = ip;
       while (markp < ep && *markp != Mark)
         markp++;
-      sort(ip, markp);
+      std::sort(ip, markp);
       if (markp < ep)
         markp++;
       ip = markp;

@@ -1,6 +1,9 @@
 #ifndef OPENALPR_ENDTOENDTEST_H
 #define OPENALPR_ENDTOENDTEST_H
 
+#include <string>
+#include <vector>
+
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"

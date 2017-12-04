@@ -20,7 +20,7 @@
 #ifndef OPENALPR_DETECTORMASK_H
 #define	OPENALPR_DETECTORMASK_H
 
-#include <iostream>
+#include <string>
 #include "opencv2/imgproc/imgproc.hpp"
 #include "config.h"
 #include "prewarp.h"

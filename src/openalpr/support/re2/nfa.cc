@@ -29,6 +29,8 @@
 #include "util/sparse_array.h"
 #include "util/sparse_set.h"
 
+using std::swap;
+
 namespace re2 {
 
 class NFA {

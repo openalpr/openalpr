@@ -19,6 +19,10 @@
 
 #include "postprocess.h"
 
+#include <fstream>
+#include <queue>
+#include <utility>
+
 using namespace std;
 
 namespace alpr

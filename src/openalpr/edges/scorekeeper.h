@@ -21,8 +21,7 @@
 #define	OPENALPR_SCOREKEEPER_H
 
 #include <string>
-#include <iostream>
-#include <iomanip>
+#include <vector>
 
 namespace alpr
 {

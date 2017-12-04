@@ -6,60 +6,15 @@
 #define RE2_UTIL_UTIL_H__
 
 // C
-#include <stdio.h>
-#include <string.h>
 #include <stdint.h>
 #include <stddef.h>     // For size_t
-#include <assert.h>
-#include <stdarg.h>
-#include <time.h>       // For clock_gettime, CLOCK_REALTIME
-#include <ctype.h>      // For isdigit, isalpha
 
 #if !defined(_WIN32)
 #include <sys/time.h>   // For gettimeofday
 #endif
 
 // C++
-#include <ctime>
-#include <vector>
 #include <string>
-#include <algorithm>
-#include <iosfwd>
-#include <map>
-#include <stack>
-#include <ostream>
-#include <utility>
-#include <set>
-
-// Use std names.
-using std::set;
-using std::pair;
-using std::vector;
-using std::string;
-using std::min;
-using std::max;
-using std::ostream;
-using std::map;
-using std::stack;
-using std::sort;
-using std::swap;
-using std::make_pair;
-
-#if defined(__GNUC__) && !defined(USE_CXX0X) && !defined(_LIBCPP_ABI_VERSION)
-
-#include <tr1/unordered_set>
-using std::tr1::unordered_set;
-
-#else
-
-#include <unordered_set>
-#if defined(_WIN32)
-using std::tr1::unordered_set;
-#else
-using std::unordered_set;
-#endif
-
-#endif
 
 #ifdef _WIN32
 
@@ -120,13 +75,13 @@ template<bool> struct CompileAssert {};
 
 class StringPiece;
 
-string CEscape(const StringPiece& src);
+std::string CEscape(const StringPiece& src);
 int CEscapeString(const char* src, int src_len, char* dest, int dest_len);
 
-extern string StringPrintf(const char* format, ...);
-extern void SStringPrintf(string* dst, const char* format, ...);
-extern void StringAppendF(string* dst, const char* format, ...);
-extern string PrefixSuccessor(const StringPiece& prefix);
+extern std::string StringPrintf(const char* format, ...);
+extern void SStringPrintf(std::string* dst, const char* format, ...);
+extern void StringAppendF(std::string* dst, const char* format, ...);
+extern std::string PrefixSuccessor(const StringPiece& prefix);
 
 uint32 hashword(const uint32*, size_t, uint32);
 void hashword2(const uint32*, size_t, uint32*, uint32*);

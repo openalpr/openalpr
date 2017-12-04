@@ -20,9 +20,6 @@
 #ifndef OPENALPR_SEGMENT_H
 #define OPENALPR_SEGMENT_H
 
-#include <vector>
-#include <stdio.h>
-
 #include "opencv2/imgproc/imgproc.hpp"
 
 namespace alpr

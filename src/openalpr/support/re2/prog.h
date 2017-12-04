@@ -13,6 +13,8 @@
 #include "re2/util/sparse_array.h"
 #include "re2.h"
 
+#include <vector>
+
 namespace re2 {
 
 // Simple fixed-size bitmap.
@@ -273,7 +275,7 @@ class Prog {
   bool SearchDFA(const StringPiece& text, const StringPiece& context,
                  Anchor anchor, MatchKind kind,
                  StringPiece* match0, bool* failed,
-                 vector<int>* matches);
+                 std::vector<int>* matches);
 
   // Build the entire DFA for the given match kind.  FOR TESTING ONLY.
   // Usually the DFA is built out incrementally, as needed, which

@@ -21,8 +21,6 @@
 #define	OPENALPR_DETECTORCUDA_H
 
 
-#include <stdio.h>
-#include <iostream>
 #include <vector>
 
 #ifdef COMPILE_GPU

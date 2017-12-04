@@ -20,8 +20,8 @@
 #ifndef OPENALPR_REGIONDETECTOR_H
 #define OPENALPR_REGIONDETECTOR_H
 
-#include <iostream>
-#include <stdio.h>
+#include <string>
+#include <vector>
 
 
 #include "utility.h"

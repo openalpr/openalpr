@@ -20,8 +20,6 @@
 #ifndef OPENALPR_DETECTORMORPH_H
 #define	OPENALPR_DETECTORMORPH_H
 
-#include <stdio.h>
-#include <iostream>
 #include <vector>
 
 #include "opencv2/objdetect/objdetect.hpp"
