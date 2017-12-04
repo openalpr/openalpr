@@ -59,7 +59,7 @@ find_path(Tesseract_INCLUDE_CCUTIL_DIR
 
 # Finally the library itself
 find_library(Tesseract_LIB
-  NAMES tesseract tesseract-static libtesseract303-static
+  NAMES tesseract libtesseract tesseract-static libtesseract303-static
   HINTS "/usr/lib"
         "/usr/local/lib"
         "/opt/local/lib"
