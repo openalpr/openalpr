@@ -29,6 +29,10 @@ openalpr-*.asc
 openalpr-*.sig
 openalpr-*.tar.gz
 *.orig
+.DS_Store
+
+# vim editor files
+*.swp
 
 # Visual Studio files
 src.sln
