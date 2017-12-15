@@ -103,6 +103,8 @@ ENDIF()
 
 IF (${OpenCV_VERSION} VERSION_LESS 2.4.7)
 	MESSAGE(FATAL_ERROR "OpenCV version is not compatible : ${OpenCV_VERSION}")
+ELSEIF((${OpenCV_VERSION} VERSION_EQUAL 3.2.0) OR ({OpenCV_VERSION} VERSION_GREATER 3.2.0))
+    add_definitions(-DOPENCV32)
 ENDIF()
 
 include_directories(${OpenCV_INCLUDE_DIRS})

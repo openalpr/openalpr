@@ -29,7 +29,16 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/ml/ml.hpp"
+
+#ifndef OPENCV32
+
 #include "opencv2/gpu/gpu.hpp"
+
+#else
+
+#include "opencv2/cudaobjdetect.hpp"
+
+#endif
 
 #include "detector.h"
 #include "detectorcpu.h"
@@ -48,7 +57,15 @@ namespace alpr
 
   private:
 
+#ifndef OPENCV32
+
       cv::gpu::CascadeClassifier_GPU cuda_cascade;
+
+#else
+
+      cv::Ptr<cv::cuda::CascadeClassifier>  cuda_cascade;
+
+#endif
 
   };
 
