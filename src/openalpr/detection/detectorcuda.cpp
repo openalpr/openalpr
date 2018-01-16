@@ -31,8 +31,11 @@ namespace alpr
   DetectorCUDA::DetectorCUDA(Config* config, PreWarp* prewarp) : Detector(config, prewarp) {
 
 
-
+#if OPENCV_MAJOR_VERSION == 2
     if( this->cuda_cascade.load( get_detector_file() ) )
+#else
+    if( this->cuda_cascade->create( get_detector_file() ) )
+#endif
     {
       this->loaded = true;
       printf("--(!)Loaded CUDA classifier\n");
@@ -56,13 +59,28 @@ namespace alpr
     timespec startTime;
     getTimeMonotonic(&startTime);
 
+#if OPENCV_MAJOR_VERSION == 2
     gpu::GpuMat cudaFrame, plateregions_buffer;
+#else
+    cuda::GpuMat cudaFrame, plateregions_buffer;
+#endif
     Mat plateregions_downloaded;
 
     cudaFrame.upload(frame);
+#if OPENCV_MAJOR_VERSION == 2
     int numdetected = cuda_cascade.detectMultiScale(cudaFrame, plateregions_buffer, 
             (double) config->detection_iteration_increase, config->detectionStrictness, 
             min_plate_size);
+#else
+    cuda_cascade->setScaleFactor((double) config->detection_iteration_increase);
+    cuda_cascade->setMinNeighbors(config->detectionStrictness);
+    cuda_cascade->setMinObjectSize(min_plate_size);
+	cuda_cascade->detectMultiScale(cudaFrame,
+			plateregions_buffer);
+	std::vector<Rect> detected;
+	cuda_cascade->convert(plateregions_buffer, detected);
+	int numdetected = detected.size();
+#endif
     
     plateregions_buffer.colRange(0, numdetected).download(plateregions_downloaded);
 
