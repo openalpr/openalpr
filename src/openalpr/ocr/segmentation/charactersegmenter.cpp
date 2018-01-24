@@ -533,13 +533,13 @@ namespace alpr
     const float MIN_CONTOUR_HEIGHT_PERCENT = config->segmentationMinCharHeightPercent;
 
     vector<Rect> all_regions_combined;
-    for (unsigned int lidx = 0; lidx < charRegions.size(); lidx++)
-    {
-      for (unsigned int boxidx = 0; boxidx < charRegions[lidx].size(); boxidx++)
-        all_regions_combined.push_back(charRegions[lidx][boxidx]);
-    }
+    for (unsigned int lidx = 0; lidx < charRegions.size(); lidx++)
+    {
+      for (unsigned int boxidx = 0; boxidx < charRegions[lidx].size(); boxidx++)
+        all_regions_combined.push_back(charRegions[lidx][boxidx]);
+    }
 
-    Mat mask = getCharBoxMask(thresholds[0], all_regions_combined);
+    Mat mask = getCharBoxMask(thresholds[0], all_regions_combined);
 
     for (unsigned int i = 0; i < thresholds.size(); i++)
     {
@@ -560,82 +560,82 @@ namespace alpr
 
       vector<vector<Rect> >::iterator line_it = charRegions.begin();
       for (;line_it != charRegions.end(); ++line_it)
-      {
-        unsigned int j = 0;
-        for (vector<Rect>::iterator it = line_it->begin(); it != line_it->end();)
-        {
-          const float MIN_SPECKLE_HEIGHT = ((float) it->height) * MIN_SPECKLE_HEIGHT_PERCENT;
-          const float MIN_CONTOUR_AREA = ((float) it->area()) * MIN_CONTOUR_AREA_PERCENT;
+      {
+        unsigned int j = 0;
+        for (vector<Rect>::iterator it = line_it->begin(); it != line_it->end();)
+        {
+          const float MIN_SPECKLE_HEIGHT = ((float) it->height) * MIN_SPECKLE_HEIGHT_PERCENT;
+          const float MIN_CONTOUR_AREA = ((float) it->area()) * MIN_CONTOUR_AREA_PERCENT;
 
-          int tallestContourHeight = 0;
-          float totalArea = 0;
-          for (unsigned int c = 0; c < contours.size(); c++)
-          {
-            if (contours[c].size() == 0)
-              continue;
-            if (it->contains(contours[c][0]) == false)
-              continue;
+          int tallestContourHeight = 0;
+          float totalArea = 0;
+          for (unsigned int c = 0; c < contours.size(); c++)
+          {
+            if (contours[c].size() == 0)
+              continue;
+            if (it->contains(contours[c][0]) == false)
+              continue;
 
-            Rect r = boundingRect(contours[c]);
+            Rect r = boundingRect(contours[c]);
 
-            if (r.height <= MIN_SPECKLE_HEIGHT || r.width <= MIN_SPECKLE_WIDTH_PX)
-            {
-              // Erase this speckle
-              drawContours(thresholds[i], contours, c, Scalar(0,0,0), CV_FILLED);
+            if (r.height <= MIN_SPECKLE_HEIGHT || r.width <= MIN_SPECKLE_WIDTH_PX)
+            {
+              // Erase this speckle
+              drawContours(thresholds[i], contours, c, Scalar(0,0,0), CV_FILLED);
 
-              if (this->config->debugCharSegmenter)
-              {
-                drawContours(imgDbgCleanStages[i], contours, c, COLOR_DEBUG_SPECKLES, CV_FILLED);
-              }
-            }
-            else
-            {
-              if (r.height > tallestContourHeight)
-                tallestContourHeight = r.height;
+              if (this->config->debugCharSegmenter)
+              {
+                drawContours(imgDbgCleanStages[i], contours, c, COLOR_DEBUG_SPECKLES, CV_FILLED);
+              }
+            }
+            else
+            {
+              if (r.height > tallestContourHeight)
+                tallestContourHeight = r.height;
 
-              totalArea += contourArea(contours[c]);
-            }
-            //else if (r.height > tallestContourHeight)
-            //{
-            //  tallestContourIndex = c;
-            //  tallestContourHeight = h;
-            //}
-          }
+              totalArea += contourArea(contours[c]);
+            }
+            //else if (r.height > tallestContourHeight)
+            //{
+            //  tallestContourIndex = c;
+            //  tallestContourHeight = h;
+            //}
+          }
 
-          if (totalArea < MIN_CONTOUR_AREA)
-          {
-            // Character is not voluminous enough.  Erase it.
-            if (this->config->debugCharSegmenter)
-            {
-              cout << "Character CLEAN: (area) removing box " << j << " in threshold " << i << " -- Area " << totalArea << " < " << MIN_CONTOUR_AREA << endl;
+          if (totalArea < MIN_CONTOUR_AREA)
+          {
+            // Character is not voluminous enough.  Erase it.
+            if (this->config->debugCharSegmenter)
+            {
+              cout << "Character CLEAN: (area) removing box " << j << " in threshold " << i << " -- Area " << totalArea << " < " << MIN_CONTOUR_AREA << endl;
 
-              Rect boxTop(it->x, it->y - 10, it->width, 10);
-              rectangle(imgDbgCleanStages[i], boxTop, COLOR_DEBUG_MIN_AREA, -1);
-            }
+              Rect boxTop(it->x, it->y - 10, it->width, 10);
+              rectangle(imgDbgCleanStages[i], boxTop, COLOR_DEBUG_MIN_AREA, -1);
+            }
 
-            // rectangle(thresholds[i], charRegions[j], Scalar(0, 0, 0), -1);
-            it = line_it->erase(it);
-          }
-          else if (tallestContourHeight < ((float) it->height * MIN_CONTOUR_HEIGHT_PERCENT))
-          {
-            // This character is too short.  Black the whole thing out
-            if (this->config->debugCharSegmenter)
-            {
-              cout << "Character CLEAN: (height) removing box " << j << " in threshold " << i << " -- Height " << tallestContourHeight << " < " << ((float) it->height * MIN_CONTOUR_HEIGHT_PERCENT) << endl;
+            // rectangle(thresholds[i], charRegions[j], Scalar(0, 0, 0), -1);
+            it = line_it->erase(it);
+          }
+          else if (tallestContourHeight < ((float) it->height * MIN_CONTOUR_HEIGHT_PERCENT))
+          {
+            // This character is too short.  Black the whole thing out
+            if (this->config->debugCharSegmenter)
+            {
+              cout << "Character CLEAN: (height) removing box " << j << " in threshold " << i << " -- Height " << tallestContourHeight << " < " << ((float) it->height * MIN_CONTOUR_HEIGHT_PERCENT) << endl;
 
-              Rect boxBottom(it->x, it->y + it->height, it->width, 10);
-              rectangle(imgDbgCleanStages[i], boxBottom, COLOR_DEBUG_MIN_HEIGHT, -1);
-            }
-            // rectangle(thresholds[i], charRegions[j], Scalar(0, 0, 0), -1);
-            it = line_it->erase(it);
-          }
-          else
-          {
-            ++it;
-          }
-          ++j;
-        }
-      }
+              Rect boxBottom(it->x, it->y + it->height, it->width, 10);
+              rectangle(imgDbgCleanStages[i], boxBottom, COLOR_DEBUG_MIN_HEIGHT, -1);
+            }
+            // rectangle(thresholds[i], charRegions[j], Scalar(0, 0, 0), -1);
+            it = line_it->erase(it);
+          }
+          else
+          {
+            ++it;
+          }
+          ++j;
+        }
+      }
 
       int morph_size = 1;
       Mat closureElement = getStructuringElement( 2, // 0 Rect, 1 cross, 2 ellipse
@@ -651,13 +651,13 @@ namespace alpr
 
       // Lastly, draw a clipping line between each character boxes
       for (unsigned int lidx = 0; lidx < charRegions.size(); lidx++)
-      {
-        for (unsigned int boxidx = 0; boxidx < charRegions[lidx].size(); boxidx++)
-        {
-          line(thresholds[i], Point(charRegions[lidx][boxidx].x - 1, charRegions[lidx][boxidx].y), Point(charRegions[lidx][boxidx].x - 1, charRegions[lidx][boxidx].y + charRegions[lidx][boxidx].height), Scalar(0, 0, 0));
-          line(thresholds[i], Point(charRegions[lidx][boxidx].x + charRegions[lidx][boxidx].width + 1, charRegions[lidx][boxidx].y), Point(charRegions[lidx][boxidx].x + charRegions[lidx][boxidx].width + 1, charRegions[lidx][boxidx].y + charRegions[lidx][boxidx].height), Scalar(0, 0, 0));
-        }
-      }
+      {
+        for (unsigned int boxidx = 0; boxidx < charRegions[lidx].size(); boxidx++)
+        {
+          line(thresholds[i], Point(charRegions[lidx][boxidx].x - 1, charRegions[lidx][boxidx].y), Point(charRegions[lidx][boxidx].x - 1, charRegions[lidx][boxidx].y + charRegions[lidx][boxidx].height), Scalar(0, 0, 0));
+          line(thresholds[i], Point(charRegions[lidx][boxidx].x + charRegions[lidx][boxidx].width + 1, charRegions[lidx][boxidx].y), Point(charRegions[lidx][boxidx].x + charRegions[lidx][boxidx].width + 1, charRegions[lidx][boxidx].y + charRegions[lidx][boxidx].height), Scalar(0, 0, 0));
+        }
+      }
     }
   }
 
