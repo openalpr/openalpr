@@ -135,6 +135,7 @@ Please follow these detailed compilation guides for your respective operating sy
 * [Android Application Sample](https://github.com/sujaybhowmick/OpenAlprDroidApp)
 * [iOS](https://github.com/twelve17/openalpr-ios)
 * [iOS React Native](https://github.com/cardash/react-native-openalpr)
+* [Xamarin](https://github.com/kevinjpetersen/openalpr-xamarin)
 
 If all went well, there should be an executable named *alpr* along with *libopenalpr-static.a* and *libopenalpr.so* that can be linked into your project.
 
