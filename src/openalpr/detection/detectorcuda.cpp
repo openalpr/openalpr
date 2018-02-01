@@ -34,7 +34,8 @@ namespace alpr
 #if OPENCV_MAJOR_VERSION == 2
     if( this->cuda_cascade.load( get_detector_file() ) )
 #else
-    if( this->cuda_cascade->create( get_detector_file() ) )
+    cuda_cascade = cuda::CascadeClassifier::create(get_detector_file());
+    if( !this->cuda_cascade.get()->empty() )
 #endif
     {
       this->loaded = true;
