@@ -1,3 +1,10 @@
+openalpr (2.3.0-2) unstable; urgency=low
+
+  * Add python3-distutils to build requirements (Closes: #896793)
+  * Upload sponsored by Petter Reinholdtsen
+
+ -- Matthew Hill <matthill@openalpr.com>  Tue, 1 May 2018 11:22:25 -0500
+
 openalpr (2.3.0-1) unstable; urgency=low
 
   * Added plate detection mask and prewarp config changes via API
