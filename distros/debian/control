@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 9), cmake, quilt,
  libtesseract-dev, libleptonica-dev, liblog4cplus-dev,
  libcurl3-dev, libopencv-dev, default-jdk,
  python, python3, python3-distutils, dh-python
-Standards-Version: 3.9.6
+Standards-Version: 3.9.7
 Homepage: https://github.com/openalpr/openalpr
 Vcs-Browser: https://github.com/openalpr/openalpr
 Vcs-Git: https://github.com/openalpr/openalpr.git
