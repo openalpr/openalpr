@@ -29,7 +29,7 @@ TARBALL = ../$(PKG)_$(VER)$(DTYPE).orig.tar.xz
 
 # main packaging script based on dh7 syntax
 %:
-	dh $@ --sourcedirectory=src --parallel --with quilt,python2,python3
+	dh $@ --sourcedirectory=src --parallel --with python2,python3
 
 override_dh_auto_configure:
 	dh_auto_configure -- \

@@ -2,11 +2,11 @@ Source: openalpr
 Section: video
 Priority: optional
 Maintainer: Matthew Hill <matthill@openalpr.com>
-Build-Depends: debhelper (>= 9), cmake, quilt, 
+Build-Depends: debhelper (>= 9), cmake, quilt,
  libtesseract-dev, libleptonica-dev, liblog4cplus-dev,
  libcurl3-dev, libopencv-dev, default-jdk,
  python, python3, python3-distutils, dh-python
-Standards-Version: 3.9.7
+Standards-Version: 4.1.4
 Homepage: https://github.com/openalpr/openalpr
 Vcs-Browser: https://github.com/openalpr/openalpr
 Vcs-Git: https://github.com/openalpr/openalpr.git
@@ -45,7 +45,7 @@ Description: Runtime data for the OpenALPR library
  is the text representation of any license plate characters found in the image.
  .
  This package contains the runtime training data used by OpenALPR to recognize
- license plates from various countries. 
+ license plates from various countries.
 
 Package: openalpr
 Architecture: any
@@ -55,8 +55,8 @@ Description: Command line program to operate the OpenALPR library
  in C++. The library analyzes images and identifies license plates. The output
  is the text representation of any license plate characters found in the image.
  .
- This package contains a command-line program to analyze images for license 
- plates. 
+ This package contains a command-line program to analyze images for license
+ plates.
 
 Package: openalpr-daemon
 Architecture: any
@@ -83,7 +83,7 @@ Description: Utilities for the OpenALPR library
  in C++. The library analyzes images and identifies license plates. The output
  is the text representation of any license plate characters found in the image.
  .
- The OpenALPR utils package contains a collection of binaries that help with 
+ The OpenALPR utils package contains a collection of binaries that help with
  training new data.  The following binaries are included:
  .
  openalpr-utils-calibrate - Calibrates the software for cameras capturing plate
@@ -91,7 +91,7 @@ Description: Utilities for the OpenALPR library
  .
  openalpr-utils-benchmark - Benchmarks accuracy/speed against a testing dataset
  .
- openalpr-utils-tagplates - Utility to tag the location and plate number for 
+ openalpr-utils-tagplates - Utility to tag the location and plate number for
  testing and training
  .
  openalpr-utils-classifychars - Extracts character images from cropped plate
@@ -103,25 +103,25 @@ Description: Utilities for the OpenALPR library
 Package: python-openalpr
 Section: python
 Architecture: all
-Depends: libopenalpr-dev (>= ${binary:Version}), 
+Depends: libopenalpr-dev (>= ${binary:Version}),
  ${python:Depends}, ${misc:Depends}
 Description: Python binding for OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
  in C++. The library analyzes images and identifies license plates. The output
  is the text representation of any license plate characters found in the image.
  .
- The Python package allows Python code to interface with OpenALPR directly via 
+ The Python package allows Python code to interface with OpenALPR directly via
  native Python bindings.
 
 Package: python3-openalpr
 Section: python
 Architecture: all
-Depends: libopenalpr-dev (>= ${source:Version}), 
+Depends: libopenalpr-dev (>= ${source:Version}),
  ${python3:Depends}, ${misc:Depends}
 Description: Python 3 binding for OpenALPR library
  OpenALPR is an open source Automatic License Plate Recognition library written
  in C++. The library analyzes images and identifies license plates. The output
  is the text representation of any license plate characters found in the image.
  .
- The Python 3 package allows Python 3 code to interface with OpenALPR directly 
+ The Python 3 package allows Python 3 code to interface with OpenALPR directly
  via native Python 3 bindings.
