@@ -1,4 +1,4 @@
-from ubuntu:14.04
+from ubuntu:18.04
 
 # Install prerequisites
 run apt-get update && apt-get install -y \
