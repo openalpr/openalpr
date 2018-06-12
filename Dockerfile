@@ -1,6 +1,7 @@
 from ubuntu:18.04
 
 # Install prerequisites
+env DEBIAN_FRONTEND=noninteractive
 run apt-get update && apt-get install -y \
     build-essential \
     cmake \
