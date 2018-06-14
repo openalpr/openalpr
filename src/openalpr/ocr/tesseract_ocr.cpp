@@ -42,8 +42,12 @@ namespace alpr
       std::cerr << "Expecting at least " << MINIMUM_TESSERACT_VERSION << ", your version is: " << tesseract.Version() << endl;
     }
 
+    string TessdataPrefix = config->getTessdataPrefix();
+    if (cmpVersion(tesseract.Version(), "4.0.0") >= 0)
+      TessdataPrefix += "tessdata/";    
+
     // Tesseract requires the prefix directory to be set as an env variable
-    tesseract.Init(config->getTessdataPrefix().c_str(), config->ocrLanguage.c_str() 	);
+    tesseract.Init(TessdataPrefix.c_str(), config->ocrLanguage.c_str() 	);
     tesseract.SetVariable("save_blob_choices", "T");
     tesseract.SetVariable("debug_file", "/dev/null");
     tesseract.SetPageSegMode(PSM_SINGLE_CHAR);
