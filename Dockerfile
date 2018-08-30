@@ -27,4 +27,4 @@ run cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc 
 
 workdir /data
 
-entrypoint ["alpr_video"]
+entrypoint ["alpr"]
