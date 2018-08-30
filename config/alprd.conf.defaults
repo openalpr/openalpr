@@ -6,13 +6,13 @@ country = us
 ;pattern = ca
 
 ; text name identifier for this location
-   site_id = "sabanatech"
+site_id = sabanatech
 
 ; Declare each stream on a separate line
 ; each unique stream should be defined as stream = [url]
 
 ; Example stream config:
-   stream = http://127.0.0.1/
+stream = http://127.0.0.1/
 ;   stream = http://127.0.0.1/example_second_stream.mjpeg
 ;   stream = webcam
 
