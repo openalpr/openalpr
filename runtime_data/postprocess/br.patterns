@@ -1,1 +1,241 @@
-br	@@@####
+ac MZ[N-Z]####
+ac NA[A-G]####
+ac NX[R-T]####
+ac OVG####
+ac OXP####
+ac QL[U-Z]####
+
+al MU@####
+al MV[A-K]####
+al NL[V-Z]####
+al NM[A-O]####
+al OH[B-K]####
+al OR[D-M]####
+al OXN####
+al QL[A-M]####
+
+ap JW[F-Z]####
+ap JX[A-Y]####
+ap QL[N-T]####
+
+ba JK[S-Z]####
+ba J[L-S]@####
+ba NT[D-W]####
+ba NY[H-Z]####
+ba NZ@####
+ba OK[I-Z]####
+ba OL[A-G]####
+ba OU[F-Z]####
+ba OV[A-D]####
+ba OZ[C-V]####
+ba P[J-L]@####
+
+ce HT[X-Z]####
+ce H[U-Y]@####
+ce HZA####
+ce NQ[L-Z]####
+ce NR[A-E]####
+ce NU[M-Z]####
+ce NV[A-F]####
+ce OC[B-U]####
+ce OH[X-Z]####
+ce OI[A-Q]####
+ce OR[N-Z]####
+ce OS[A-V]####
+ce OZA####
+ce P[M-O]@####
+
+df JD[P-Z]####
+df J[E-J]@####
+df JK[A-R]####
+df OV[M-V]####
+df OZ[W-Z]####
+df P[A-B]@####
+
+es MO[X-Z]####
+es M[P-T]@####
+es OC[V-Z]####
+es OD[A-T]####
+es OV[EFH-L]####
+es OY[D-K]####
+es PP@####
+
+go KA[V-Z]####
+go K[B-E]@####
+go KF[A-C]####
+go NF[C-Z]####
+go NG@####
+go NJ[X-Z]####
+go NK@####
+go NL[A-U]####
+go NV[O-Z]####
+go NW[A-R]####
+go OG[H-Z]####
+go OHA####
+go OM[I-Z]####
+go ON@####
+go OO[A-F]####
+go P[QR]@####
+go QR[C-Z]####
+go QS@####
+go QT[A-X]####
+
+ma HO[L-Z]####
+ma HP@####
+ma HQ[A-E]####
+ma NH[A-T]####
+ma NM[P-Z]####
+ma NN[A-I]####
+ma NW[S-Z]####
+ma NX[A-Q]####
+ma OI[R-Z]####
+ma OJ[A-Q]####
+ma OX[Q-Z]####
+ma P[ST]@####
+
+mt JXZ####
+mt J[YZ]@####
+mt KA[A-U]####
+mt NI[YZ]####
+mt NJ[A-W]####
+mt NP[C-Q]####
+mt NT[X-Z]####
+mt NU[A-G]####
+mt OA[A-P]####
+mt OB[A-S]####
+mt Q[BC]@####
+
+ms HQ[F-Z]####
+ms H[RS]@####
+ms HT[A-W]####
+ms NR[F-Z]####
+ms NS[A-D]####
+ms OO[G-U]####
+ms QA@####
+
+mg GK[J-Z]####
+mg G[L-Z]@####
+mg H[A-N]@####
+mg HO[A-K]####
+mg NX[X-Z]####
+mg NY[A-G]####
+mg OL[O-Z]####
+mg OM[A-G]####
+mg OO[V-Z]####
+mg OR[A-C]####
+mg OW[H-Z]####
+mg OX[A-K]####
+mg P[U-Z]@####
+mg QM[Q-Z]####
+mg Q[N-Q]@####
+
+pa J[T-V]@####
+pa JW[A-E]####
+pa NS[E-Z]####
+pa NT[A-C]####
+pa OB[T-Z]####
+pa OCA####
+pa OF[I-W]####
+pa OS[W-Z]####
+pa OTZ####
+pa Q[DE]@####
+pa R[LM]@####
+
+pb MM[N-Z]####
+pb MN@####
+pb MO[A-W]####
+pb NP[R-Z]####
+pb NQ[A-K]####
+pb OE[T-Z]####
+pb OF[A-H]####
+pb OF[X-Z]####
+pb OG[A-G]####
+pb OXO####
+pb QF@####
+pb 
+
+pr A@@####
+pr B[A-E]@####
+
+pe KF[D-Z]####
+pe K[G-L]@####
+pe KM[A-E]####
+pe NX[U-W]####
+pe PE[E-Z]####
+pe PF[A-Q]####
+pe PF[R-Z]####
+pe PG@####
+pe OY[L-Z]####
+
+pi LV[F-Z]####
+pi LW[A-Q]####
+pi NH[U-Z]####
+pi NI[A-X]####
+pi OD[I-Z]####
+pi OE[A-I]####
+pi OU[A-E]####
+pi OV[W-Y]####
+pi PI@####
+
+rj KM[F-Z]####
+rj K[N-Z]@####
+rj L[A-U]@####
+rj LV[A-E]####
+rj RI[O-Z]####
+rj R[JK]@####
+
+rn MX[H-Z]####
+rn MY@####
+rn MZ[A-M]####
+rn NN[J-Z]####
+rn NO[A-H]####
+rn OJ[R-Z]####
+rn OK[A-C]####
+rn OVZ####
+rn OW[A-G]####
+rn QG@####
+
+rs IA[Q-Z]####
+rs I[B-Z]@####
+rs J[A-C]@####
+rs JD[A-O]####
+
+ro NB[B-Z]####
+ro N[CD]@####
+ro NE[A-H]####
+ro OH[L-W]####
+ro OXL####
+ro QRA####
+
+rr NA[H-Z]####
+rr NBA####
+rr NU[H-L]####
+rr QRB####
+
+sc LW[R-Z]####
+sc L[X-Z]@####
+sc M[A-L]@####
+sc MM[A-M]####
+sc OK[D-H]
+sc Q[H-J]@####
+
+sp B[F-Z]@####
+sp [C-F]@@####
+sp G[A-J]@####
+sp GK[A-I]####
+sp SAV####
+
+se HZ[B-Z]####
+se IA[A-P]####
+se NV[G-N]####
+se OE[J-S]####
+se OZB####
+se QK[N-Z]####
+se QM[A-P]####
+
+to MV[L-Z]####
+to MW@####
+to MX[A-G]####
+to OL[H-N]####
+to OY[A-C]####
+to QK[A-M]####
