@@ -141,7 +141,7 @@ If all went well, there should be an executable named *alpr* along with *libopen
 
 Docker
 ------
-
+Install git and follow the steps below to build the image and test it:
 ``` shell
 # Build docker image
 docker build -t openalpr https://github.com/openalpr/openalpr.git
@@ -150,7 +150,9 @@ wget http://plates.openalpr.com/h786poj.jpg
 # Run alpr on image
 docker run -it --rm -v $(pwd):/data:ro openalpr -c eu h786poj.jpg
 ```
+for windows use %cd% instead of $pwd:
 
+    docker run -it --rm -v %cd%:/data:ro openalpr -c eu h786poj.jpg
 Questions
 ---------
 Please post questions or comments to the Google group list: https://groups.google.com/forum/#!forum/openalpr
