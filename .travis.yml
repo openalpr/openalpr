@@ -13,6 +13,8 @@ script:
   - make openalpr-utils-classifychars openalpr-utils-tagplates openalpr-utils-benchmark openalpr-utils-prepcharsfortraining
   - sudo make install
   - ./tests/unittests
+  - wget http://plates.openalpr.com/h786poj.jpg && alpr -c eu h786poj.jpg
+  - wget http://plates.openalpr.com/ea7the.jpg && alpr -c us ea7the.jpg
 
 
 
