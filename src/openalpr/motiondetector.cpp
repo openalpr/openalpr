@@ -51,7 +51,7 @@ cv::Rect MotionDetector::MotionDetect(cv::Mat* frame)
 	//Remove noise
 	cv::erode(fgMaskMOG2, fgMaskMOG2, getStructuringElement(cv::MORPH_RECT, cv::Size(6, 6)));
 	// Find the contours of motion areas in the image
-	findContours(fgMaskMOG2, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+	findContours(fgMaskMOG2, contours, hierarchy, RETR_LIST, CHAIN_APPROX_SIMPLE);
 	// Find the bounding rectangles of the areas of motion
 	if (contours.size() > 0)
 	{

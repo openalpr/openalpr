@@ -44,7 +44,7 @@ namespace alpr
 
     vector<vector<Point> > linesFound;
 
-    cvtColor(image, image, CV_GRAY2BGR);
+    cvtColor(image, image, COLOR_GRAY2BGR);
 
     vector<CharPointInfo> charPoints;
 
@@ -258,7 +258,7 @@ namespace alpr
       
       Mat debugImg(pipeline_data->thresholds[1].size(), pipeline_data->thresholds[1].type());
       pipeline_data->thresholds[1].copyTo(debugImg);
-      cvtColor(debugImg, debugImg, CV_GRAY2BGR);
+      cvtColor(debugImg, debugImg, COLOR_GRAY2BGR);
       
       LineSegment orig_top_line(bestLine[0], bestLine[1]);
       LineSegment secondline_top = orig_top_line.getParallelLine(best_secondline_top_pixel_offset_from_bestline_top + 1);
@@ -403,7 +403,7 @@ namespace alpr
       // Draw the winning line segment
 
       Mat tempImg = Mat::zeros(Size(contours.width, contours.height), CV_8U);
-      cvtColor(tempImg, tempImg, CV_GRAY2BGR);
+      cvtColor(tempImg, tempImg, COLOR_GRAY2BGR);
 
       cv::line(tempImg, topLines[bestScoreIndex].p1, topLines[bestScoreIndex].p2, Scalar(0, 0, 255), 2);
       cv::line(tempImg, bottomLines[bestScoreIndex].p1, bottomLines[bestScoreIndex].p2, Scalar(0, 0, 255), 2);

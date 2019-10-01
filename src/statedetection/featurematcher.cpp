@@ -256,7 +256,7 @@ namespace alpr
         Mat img = imread( fullpath );
 
         // convert to gray and resize to the size of the templates
-        cvtColor(img, img, CV_BGR2GRAY);
+        cvtColor(img, img, COLOR_BGR2GRAY);
 
         if( img.empty() )
         {

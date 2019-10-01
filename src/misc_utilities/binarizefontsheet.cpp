@@ -71,7 +71,7 @@ bool sort_lined_rectangles(Rect i, Rect j) {
 void show_debug_image(vector<Rect> rectangles, Mat img)
 {
     Mat debugImg;
-    cvtColor(img, debugImg, CV_GRAY2BGR);
+    cvtColor(img, debugImg, COLOR_GRAY2BGR);
     for (unsigned int i = 0; i < rectangles.size(); i++)
     {
       Rect mr = rectangles[i];
@@ -172,7 +172,7 @@ int main(int argc, char** argv) {
 
     Config config("us");
     
-    cvtColor(frame, frame, CV_BGR2GRAY);
+    cvtColor(frame, frame, COLOR_BGR2GRAY);
     vector<Mat> thresholds = produceThresholds(frame, &config);
     
     
@@ -186,7 +186,7 @@ int main(int argc, char** argv) {
       
       vector<vector<Point> > speckle_contours;
       vector<Vec4i> speckle_hierarchy;
-      findContours(speckle_copy, speckle_contours, speckle_hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+      findContours(speckle_copy, speckle_contours, speckle_hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
       Mat testImg = Mat::zeros(thresholds[t].size(), thresholds[t].type());
       
       for (unsigned int i = 0; i < speckle_contours.size(); i++)
@@ -195,8 +195,8 @@ int main(int argc, char** argv) {
 
         if (speckleRect.area() < MIN_SPECKLE_AREA_PIXELS)
         {
-          drawContours(thresholds[t], speckle_contours, i, Scalar(0,0,0), CV_FILLED);
-          drawContours(testImg, speckle_contours, i, Scalar(255,255,255), CV_FILLED);
+          drawContours(thresholds[t], speckle_contours, i, Scalar(0,0,0), FILLED);
+          drawContours(testImg, speckle_contours, i, Scalar(255,255,255), FILLED);
         }
       }
       resize(testImg, testImg, Size(700, 1000));
@@ -220,7 +220,7 @@ int main(int argc, char** argv) {
       
       vector<vector<Point> > contours;
       vector<Vec4i> hierarchy;
-      findContours(blobby, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+      findContours(blobby, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
       bitwise_not(thresholds[t], thresholds[t]);
 
