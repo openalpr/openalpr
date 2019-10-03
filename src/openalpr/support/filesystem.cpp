@@ -5,6 +5,9 @@
 #include <fstream>
 #include <string.h>
 
+#ifdef WINDOWS
+#include <sstream>
+#endif
 
 
 namespace alpr
