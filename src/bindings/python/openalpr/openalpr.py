@@ -33,7 +33,7 @@ def _convert_from_charp(charp):
 
 
 class Alpr:
-    def __init__(self, country, config_file, runtime_dir):
+    def __init__(self, country, config_file, runtime_dir, library_path):
         """
         Initializes an OpenALPR instance in memory.
 
@@ -48,16 +48,19 @@ class Alpr:
         try:
             # Load the .dll for Windows and the .so for Unix-based
             if platform.system().lower().find("windows") != -1:
-                self._openalprpy_lib = ctypes.cdll.LoadLibrary("libopenalprpy.dll")
+                #self._openalprpy_lib = ctypes.cdll.LoadLibrary("openalprpy.dll")
+                self._openalprpy_lib = ctypes.cdll.LoadLibrary(library_path)
             elif platform.system().lower().find("darwin") != -1:
-                self._openalprpy_lib = ctypes.cdll.LoadLibrary("libopenalprpy.dylib")
+                #self._openalprpy_lib = ctypes.cdll.LoadLibrary("libopenalprpy.dylib")
+                self._openalprpy_lib = ctypes.cdll.LoadLibrary(library_path)
             else:
-                self._openalprpy_lib = ctypes.cdll.LoadLibrary("libopenalprpy.so")
+                #self._openalprpy_lib = ctypes.cdll.LoadLibrary("libopenalprpy.so")
+                self._openalprpy_lib = ctypes.cdll.LoadLibrary(library_path)
         except OSError as e:
             nex = OSError("Unable to locate the OpenALPR library. Please make sure that OpenALPR is properly "
                           "installed on your system and that the libraries are in the appropriate paths.")
             if _PYTHON_3:
-                nex.__cause__ = e;
+                nex.__cause__ = e
             raise nex
 
         self._initialize_func = self._openalprpy_lib.initialize
