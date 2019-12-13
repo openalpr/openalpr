@@ -16,9 +16,13 @@ parser.add_argument('plate_image', help='License plate image file')
 
 options = parser.parse_args()
 
+#lib_path = "/path/to/openalpr/openalprpy.so"
+#lib_path = "/path/to/openalpr/openalprpy.dylib"
+lib_path = "drive_letter:\\path\\to\\openalpr\\openalprpy.dll"
+
 alpr = None
 try:
-    alpr = Alpr(options.country, options.config, options.runtime_data)
+    alpr = Alpr(options.country, options.config, options.runtime_data, library_path = lib_path)
 
     if not alpr.is_loaded():
         print("Error loading OpenALPR")

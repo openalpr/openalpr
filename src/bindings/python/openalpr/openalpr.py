@@ -45,6 +45,7 @@ class Alpr:
         country = _convert_to_charp(country)
         config_file = _convert_to_charp(config_file)
         runtime_dir = _convert_to_charp(runtime_dir)
+        # library_path = _convert_to_charp(library_path)
         try:
             # Load the .dll for Windows and the .so for Unix-based
             if platform.system().lower().find("windows") != -1:
