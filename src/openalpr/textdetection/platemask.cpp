@@ -118,7 +118,7 @@ namespace alpr
       drawContours(mask, contours[winningIndex].contours,
                    winningParentId, // draw this contour
                    cv::Scalar(255,255,255), // in
-                   CV_FILLED,
+                   FILLED,
                    8,
                    contours[winningIndex].hierarchy,
                    0
@@ -141,7 +141,7 @@ namespace alpr
 
       vector<vector<Point> > contoursSecondRound;
 
-      findContours(mask, contoursSecondRound, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+      findContours(mask, contoursSecondRound, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
       int biggestContourIndex = -1;
       double largestArea = 0;
       for (unsigned int c = 0; c < contoursSecondRound.size(); c++)
@@ -167,7 +167,7 @@ namespace alpr
         drawContours(mask, tempvec,
                      0, // draw this contour
                      cv::Scalar(255,255,255), // in
-                     CV_FILLED,
+                     FILLED,
                      8,
                      contours[winningIndex].hierarchy,
                      0

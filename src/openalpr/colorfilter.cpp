@@ -41,7 +41,7 @@ namespace alpr
       cout << "ColorFilter: isGrayscale = " << grayscale << endl;
 
     this->hsv = Mat(image.size(), image.type());
-    cvtColor( image, this->hsv, CV_BGR2HSV );
+    cvtColor( image, this->hsv, COLOR_BGR2HSV );
     preprocessImage();
 
     this->charMask = characterMask;
@@ -118,7 +118,7 @@ namespace alpr
 
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
-    findContours(erodedCharMask, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
+    findContours(erodedCharMask, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
 
     vector<float> hMeans, sMeans, vMeans;
     vector<float> hStdDevs, sStdDevs, vStdDevs;
@@ -133,7 +133,7 @@ namespace alpr
       drawContours(singleCharMask, contours,
                    i, // draw this contour
                    cv::Scalar(255,255,255), // in
-                   CV_FILLED,
+                   FILLED,
                    8,
                    hierarchy
                   );
@@ -355,7 +355,7 @@ namespace alpr
       //displayImage(config, "COLOR filter Mask", colorMask);
       debugImagesSet.push_back(addLabel(imgDebug, "Color filter Debug"));
 
-      cvtColor(imgDebugHueOnly, imgDebugHueOnly, CV_HSV2BGR);
+      cvtColor(imgDebugHueOnly, imgDebugHueOnly, COLOR_HSV2BGR);
       debugImagesSet.push_back(addLabel(imgDebugHueOnly, "Color Filter Hue"));
 
       equalizeHist(imgDistanceFromCenter, imgDistanceFromCenter);

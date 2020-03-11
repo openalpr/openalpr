@@ -62,7 +62,7 @@ namespace alpr
     equalizeHist( frame, frame );
     
     plate_cascade.detectMultiScale( frame, plates, config->detection_iteration_increase, config->detectionStrictness,
-                                      CV_HAAR_DO_CANNY_PRUNING,
+                                      CASCADE_DO_CANNY_PRUNING,
                                       //0|CV_HAAR_SCALE_IMAGE,
                                       min_plate_size, max_plate_size );
 

@@ -151,7 +151,7 @@ namespace alpr
           Mat boxMask = getCharBoxMask(pipeline_data->thresholds[i], candidateBoxes);
           pipeline_data->thresholds[i].copyTo(cleanImg);
           bitwise_and(cleanImg, boxMask, cleanImg);
-          cvtColor(cleanImg, cleanImg, CV_GRAY2BGR);
+          cvtColor(cleanImg, cleanImg, COLOR_GRAY2BGR);
 
           for (unsigned int c = 0; c < candidateBoxes.size(); c++)
             rectangle(cleanImg, candidateBoxes[c], Scalar(0, 255, 0), 1);
@@ -376,12 +376,12 @@ namespace alpr
 
     if (this->config->debugCharSegmenter)
     {
-      cvtColor(histoImg, histoImg, CV_GRAY2BGR);
+      cvtColor(histoImg, histoImg, COLOR_GRAY2BGR);
       line(histoImg, Point(0, histoImg.rows - 1 - bestRowIndex), Point(histoImg.cols, histoImg.rows - 1 - bestRowIndex), Scalar(0, 255, 0));
 
       Mat imgBestBoxes(img.size(), img.type());
       img.copyTo(imgBestBoxes);
-      cvtColor(imgBestBoxes, imgBestBoxes, CV_GRAY2BGR);
+      cvtColor(imgBestBoxes, imgBestBoxes, COLOR_GRAY2BGR);
       for (unsigned int i = 0; i < bestBoxes.size(); i++)
         rectangle(imgBestBoxes, bestBoxes[i], Scalar(0, 255, 0));
 
@@ -408,7 +408,7 @@ namespace alpr
       Mat thresholdsCopy = Mat::zeros(thresholds[i].size(), thresholds[i].type());
 
       thresholds[i].copyTo(thresholdsCopy, textLineMask);
-      findContours(thresholdsCopy, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE);
+      findContours(thresholdsCopy, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
 
       for (unsigned int c = 0; c < contours.size(); c++)
       {
@@ -549,7 +549,7 @@ namespace alpr
       //morphologyEx(thresholds[i], tempImg, MORPH_CLOSE, element);
       //drawAndWait(&tempImg);
 
-      findContours(tempImg, contours, RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+      findContours(tempImg, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
       for (unsigned int j = 0; j < charRegions.size(); j++)
       {
@@ -570,11 +570,11 @@ namespace alpr
           if (r.height <= MIN_SPECKLE_HEIGHT || r.width <= MIN_SPECKLE_WIDTH_PX)
           {
             // Erase this speckle
-            drawContours(thresholds[i], contours, c, Scalar(0,0,0), CV_FILLED);
+            drawContours(thresholds[i], contours, c, Scalar(0,0,0), FILLED);
 
             if (this->config->debugCharSegmenter)
             {
-              drawContours(imgDbgCleanStages[i], contours, c, COLOR_DEBUG_SPECKLES, CV_FILLED);
+              drawContours(imgDbgCleanStages[i], contours, c, COLOR_DEBUG_SPECKLES, FILLED);
             }
           }
           else
@@ -650,7 +650,7 @@ namespace alpr
       for (unsigned int j = 0; j < charRegions.size(); j++)
       {
         Mat boxChar = Mat::zeros(thresholds[i].size(), CV_8U);
-        rectangle(boxChar, charRegions[j], Scalar(255,255,255), CV_FILLED);
+        rectangle(boxChar, charRegions[j], Scalar(255,255,255), FILLED);
 
         bitwise_and(thresholds[i], boxChar, boxChar);
 
@@ -663,7 +663,7 @@ namespace alpr
 
         if (meanAfter < meanBefore * (1-MIN_PERCENT_CHUNK_REMOVED))
         {
-          rectangle(thresholds[i], charRegions[j], Scalar(0,0,0), CV_FILLED);
+          rectangle(thresholds[i], charRegions[j], Scalar(0,0,0), FILLED);
 
           if (this->config->debugCharSegmenter)
           {
@@ -684,7 +684,7 @@ namespace alpr
             cout << "Segmentation Filter Clean by Color: before=" << meanBefore << " after=" << meanAfter  << endl;
 
             Point topLeft(charRegions[j].x, charRegions[j].y);
-            circle(imgDbgCleanStages[i], topLeft, 5, COLOR_DEBUG_COLORFILTER, CV_FILLED);
+            circle(imgDbgCleanStages[i], topLeft, 5, COLOR_DEBUG_COLORFILTER, FILLED);
           }
         }
       }
@@ -713,11 +713,11 @@ namespace alpr
         //float minArea = charRegions[j].area() * MIN_AREA_PERCENT;
 
         Mat tempImg = Mat::zeros(thresholds[i].size(), thresholds[i].type());
-        rectangle(tempImg, charRegions[j], Scalar(255,255,255), CV_FILLED);
+        rectangle(tempImg, charRegions[j], Scalar(255,255,255), FILLED);
         bitwise_and(thresholds[i], tempImg, tempImg);
 
         vector<vector<Point> > contours;
-        findContours(tempImg, contours, RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+        findContours(tempImg, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
         vector<Point> allPointsInBox;
         for (unsigned int c = 0; c < contours.size(); c++)
@@ -1026,7 +1026,7 @@ namespace alpr
       bitwise_and(tempImg, boxMask, tempImg);
 
       vector<vector<Point> > subContours;
-      findContours(tempImg, subContours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+      findContours(tempImg, subContours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
       int tallestContourIdx = -1;
       int tallestContourHeight = 0;
       int tallestContourWidth = 0;

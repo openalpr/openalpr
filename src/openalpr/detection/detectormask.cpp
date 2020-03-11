@@ -48,7 +48,7 @@ namespace alpr
       
     this->mask = orig_mask;
     if (orig_mask.channels() > 2)
-      cvtColor( orig_mask, this->mask, CV_BGR2GRAY );
+      cvtColor( orig_mask, this->mask, COLOR_BGR2GRAY );
     else
       this->mask = orig_mask;
     

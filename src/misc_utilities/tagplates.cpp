@@ -223,7 +223,7 @@ int main( int argc, const char** argv )
       frame.copyTo(tmpFrame);
       rectangle(tmpFrame, Point(xPos1, yPos1), Point(xPos2, yPos2), Scalar(0, 0, 255), 2);
       
-      rectangle(tmpFrame, Point(xPos1, yPos1 - 35), Point(xPos1 + 175, yPos1 - 5), Scalar(255, 255, 255), CV_FILLED);
+      rectangle(tmpFrame, Point(xPos1, yPos1 - 35), Point(xPos1 + 175, yPos1 - 5), Scalar(255, 255, 255), FILLED);
       putText(tmpFrame, curplatetag, Point(xPos1 + 2, yPos1 - 10), FONT_HERSHEY_PLAIN, 1.5, Scalar(100,50,0), 2);
       
       imshow("Input image", tmpFrame);

@@ -69,7 +69,7 @@ namespace alpr
     
     if (frame.channels() > 2)
     {
-      cvtColor( frame, frame_gray, CV_BGR2GRAY );
+      cvtColor( frame, frame_gray, COLOR_BGR2GRAY );
     }
     else
     {
@@ -85,7 +85,7 @@ namespace alpr
     if (detector_mask.mask_loaded && config->debugDetector)
     {
       frame_gray.copyTo(mask_debug_img);
-      cvtColor(frame_gray, mask_debug_img, CV_GRAY2BGR);
+      cvtColor(frame_gray, mask_debug_img, COLOR_GRAY2BGR);
     }
     
     vector<PlateRegion> detectedRegions;   

@@ -146,7 +146,7 @@ int main( int argc, const char** argv )
         imshow ("Original", frame);
 
 	PipelineData pipeline_data(frame, Rect(0, 0, frame.cols, frame.rows), &config);
-	cvtColor(frame, frame, CV_BGR2GRAY);
+	cvtColor(frame, frame, COLOR_BGR2GRAY);
 	pipeline_data.crop_gray = Mat(frame, Rect(0, 0, frame.cols, frame.rows));
     pipeline_data.thresholds = produceThresholds(pipeline_data.crop_gray, &config);
     
@@ -311,7 +311,7 @@ void showDashboard(vector<Mat> images, vector<bool> selectedImages, int selected
   {
     Mat imgCopy(images[i].size(), images[i].type());
     images[i].copyTo(imgCopy);
-    cvtColor(imgCopy, imgCopy, CV_GRAY2BGR);
+    cvtColor(imgCopy, imgCopy, COLOR_GRAY2BGR);
     if (i == selectedIndex)
     {
       rectangle(imgCopy, Point(1,1), Point(imgCopy.size().width - 1, imgCopy.size().height -1), Scalar(0, 255, 0), 1);
@@ -344,7 +344,7 @@ vector<string> showCharSelection(Mat image, vector<Rect> charRegions, string sta
   {
     Mat imgCopy(image.size(), image.type());
     image.copyTo(imgCopy);
-    cvtColor(imgCopy, imgCopy, CV_GRAY2BGR);
+    cvtColor(imgCopy, imgCopy, COLOR_GRAY2BGR);
 
     rectangle(imgCopy, charRegions[curCharIdx], Scalar(0, 255, 0), 1);
 
