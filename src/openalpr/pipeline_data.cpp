@@ -12,7 +12,7 @@ namespace alpr
 
     if (colorImage.channels() > 2)
     {
-      cvtColor(colorImage, grayImage, CV_BGR2GRAY);
+      cvtColor(colorImage, grayImage, COLOR_BGR2GRAY);
     }
     else
     {

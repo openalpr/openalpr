@@ -115,7 +115,7 @@ namespace alpr
     // Convert image to grayscale if required
     Mat grayImg = img;
     if (img.channels() > 2)
-      cvtColor( img, grayImg, CV_BGR2GRAY );
+      cvtColor( img, grayImg, COLOR_BGR2GRAY );
     
     // Prewarp the image and ROIs if configured]
     std::vector<cv::Rect> warpedRegionsOfInterest = regionsOfInterest;

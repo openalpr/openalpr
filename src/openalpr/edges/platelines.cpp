@@ -99,17 +99,17 @@ namespace alpr
       Mat debugImgVert(edges.size(), edges.type());
       edges.copyTo(debugImgHoriz);
       edges.copyTo(debugImgVert);
-      cvtColor(debugImgHoriz,debugImgHoriz,CV_GRAY2BGR);
-      cvtColor(debugImgVert,debugImgVert,CV_GRAY2BGR);
+      cvtColor(debugImgHoriz,debugImgHoriz,COLOR_GRAY2BGR);
+      cvtColor(debugImgVert,debugImgVert,COLOR_GRAY2BGR);
 
       for( size_t i = 0; i < this->horizontalLines.size(); i++ )
       {
-        line( debugImgHoriz, this->horizontalLines[i].line.p1, this->horizontalLines[i].line.p2, Scalar(0,0,255), 1, CV_AA);
+        line( debugImgHoriz, this->horizontalLines[i].line.p1, this->horizontalLines[i].line.p2, Scalar(0,0,255), 1, LINE_AA);
       }
 
       for( size_t i = 0; i < this->verticalLines.size(); i++ )
       {
-        line( debugImgVert, this->verticalLines[i].line.p1, this->verticalLines[i].line.p2, Scalar(0,0,255), 1, CV_AA);
+        line( debugImgVert, this->verticalLines[i].line.p1, this->verticalLines[i].line.p2, Scalar(0,0,255), 1, LINE_AA);
       }
 
       vector<Mat> images;
@@ -220,7 +220,7 @@ namespace alpr
   Mat PlateLines::customGrayscaleConversion(Mat src)
   {
     Mat img_hsv;
-    cvtColor(src,img_hsv,CV_BGR2HSV);
+    cvtColor(src,img_hsv,COLOR_BGR2HSV);
 
     Mat grayscale = Mat(img_hsv.size(), CV_8U );
     Mat hue(img_hsv.size(), CV_8U );

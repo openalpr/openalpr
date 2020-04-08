@@ -58,7 +58,7 @@ namespace alpr {
     
     Mat img_open, img_result;
     Mat element = getStructuringElement(MORPH_RECT, Size(30, 4));
-    morphologyEx(frame_gray, img_open, CV_MOP_OPEN, element, cv::Point(-1, -1));
+    morphologyEx(frame_gray, img_open, MORPH_OPEN, element, cv::Point(-1, -1));
 
     img_result = frame_gray - img_open;
 
@@ -68,7 +68,7 @@ namespace alpr {
 
     //threshold image using otsu thresholding
     Mat img_threshold, img_open2;
-    threshold(img_result, img_threshold, 0, 255, CV_THRESH_OTSU + CV_THRESH_BINARY);
+    threshold(img_result, img_threshold, 0, 255, THRESH_OTSU + THRESH_BINARY);
 
     if (config->debugDetector && config->debugShowImages) {
       imshow("Threshold Detector", img_threshold);
@@ -89,9 +89,9 @@ namespace alpr {
       diamond.at<uchar>(0, 3) = 0;
       diamond.at<uchar>(1, 4) = 0;
 
-    morphologyEx(img_threshold, img_open2, CV_MOP_OPEN, diamond, cv::Point(-1, -1));
+    morphologyEx(img_threshold, img_open2, MORPH_OPEN, diamond, cv::Point(-1, -1));
     Mat rectElement = getStructuringElement(cv::MORPH_RECT, Size(13, 4));
-    morphologyEx(img_open2, img_threshold, CV_MOP_CLOSE, rectElement, cv::Point(-1, -1));
+    morphologyEx(img_open2, img_threshold, MORPH_CLOSE, rectElement, cv::Point(-1, -1));
 
     if (config->debugDetector && config->debugShowImages) {
       imshow("Close", img_threshold);
@@ -102,8 +102,8 @@ namespace alpr {
     vector< vector< Point> > contours;
     findContours(img_threshold,
             contours, // a vector of contours
-            CV_RETR_EXTERNAL, // retrieve the external contours
-            CV_CHAIN_APPROX_NONE); // all pixels of each contours
+            RETR_EXTERNAL, // retrieve the external contours
+            CHAIN_APPROX_NONE); // all pixels of each contours
 
     //Start to iterate to each contour founded
     vector<vector<Point> >::iterator itc = contours.begin();
@@ -159,13 +159,13 @@ namespace alpr {
 
               findContours(img_crop_th,
                       plateBlobs, // a vector of contours
-                      CV_RETR_LIST, // retrieve the contour list
-                      CV_CHAIN_APPROX_NONE); // all pixels of each contours
+                      RETR_LIST, // retrieve the contour list
+                      CHAIN_APPROX_NONE); // all pixels of each contours
 
               findContours(img_crop_th_inv,
                       plateBlobsInv, // a vector of contours
-                      CV_RETR_LIST, // retrieve the contour list
-                      CV_CHAIN_APPROX_NONE); // all pixels of each contours
+                      RETR_LIST, // retrieve the contour list
+                      CHAIN_APPROX_NONE); // all pixels of each contours
 
               int numBlobs = plateBlobs.size();
               int numBlobsInv = plateBlobsInv.size();

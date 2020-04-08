@@ -257,7 +257,12 @@ SET (CPACK_PACKAGE_CONTACT "Matt Hill <matt@ndu.com>")
 SET (CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_ARCHITECTURE}")
 
 SET (CPACK_COMPONENTS_ALL Libraries ApplicationData)
-
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set (CMAKE_CXX_STANDARD 11)
+cmake_minimum_required(VERSION 3.1)
+# Enable C++11
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 INCLUDE(CPack)
 
 # ----------------------------------------------------------------------------
@@ -270,3 +275,4 @@ CONFIGURE_FILE(
   @ONLY)
 
 ADD_CUSTOM_TARGET(uninstall COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+

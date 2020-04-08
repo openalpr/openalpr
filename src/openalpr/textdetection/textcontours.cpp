@@ -47,8 +47,8 @@ namespace alpr
     findContours(tempThreshold,
                  contours, // a vector of contours
                  hierarchy,
-                 CV_RETR_TREE, // retrieve all contours
-                 CV_CHAIN_APPROX_SIMPLE ); // all pixels of each contours
+                 RETR_TREE, // retrieve all contours
+                 CHAIN_APPROX_SIMPLE ); // all pixels of each contours
 
     for (unsigned int i = 0; i < contours.size(); i++)
       goodIndices.push_back(true);
@@ -113,7 +113,7 @@ namespace alpr
       Mat img_contours(baseImage.size(), CV_8U);
       baseImage.copyTo(img_contours);
 
-      cvtColor(img_contours, img_contours, CV_GRAY2RGB);
+      cvtColor(img_contours, img_contours, COLOR_GRAY2RGB);
 
       vector<vector<Point> > allowedContours;
       for (unsigned int i = 0; i < this->contours.size(); i++)

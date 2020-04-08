@@ -90,7 +90,7 @@ namespace alpr
     if (pipeline_data->color_deskewed.channels() > 2)
     {
       // Make a grayscale copy as well for faster processing downstream
-      cv::cvtColor(pipeline_data->color_deskewed, pipeline_data->crop_gray, CV_BGR2GRAY);
+      cv::cvtColor(pipeline_data->color_deskewed, pipeline_data->crop_gray, COLOR_BGR2GRAY);
     }
     else
     {

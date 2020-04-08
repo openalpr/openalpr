@@ -86,7 +86,7 @@ namespace alpr
 
       Mat imgCorners = Mat(inputImage.size(), inputImage.type());
       inputImage.copyTo(imgCorners);
-      cvtColor(imgCorners, imgCorners, CV_GRAY2BGR);
+      cvtColor(imgCorners, imgCorners, COLOR_GRAY2BGR);
 
       for (unsigned int linenum = 0; linenum < textLines.size(); linenum++)
       {
@@ -94,10 +94,10 @@ namespace alpr
           circle(imgCorners, textLines[linenum].textArea[i], 2, Scalar(0, 0, 0));
       }
 
-      line(imgCorners, this->bestTop.p1, this->bestTop.p2, Scalar(255, 0, 0), 1, CV_AA);
-      line(imgCorners, this->bestRight.p1, this->bestRight.p2, Scalar(0, 0, 255), 1, CV_AA);
-      line(imgCorners, this->bestBottom.p1, this->bestBottom.p2, Scalar(0, 0, 255), 1, CV_AA);
-      line(imgCorners, this->bestLeft.p1, this->bestLeft.p2, Scalar(255, 0, 0), 1, CV_AA);
+      line(imgCorners, this->bestTop.p1, this->bestTop.p2, Scalar(255, 0, 0), 1, LINE_AA);
+      line(imgCorners, this->bestRight.p1, this->bestRight.p2, Scalar(0, 0, 255), 1, LINE_AA);
+      line(imgCorners, this->bestBottom.p1, this->bestBottom.p2, Scalar(0, 0, 255), 1, LINE_AA);
+      line(imgCorners, this->bestLeft.p1, this->bestLeft.p2, Scalar(255, 0, 0), 1, LINE_AA);
 
       displayImage(pipelineData->config, "Winning top/bottom Boundaries", imgCorners);
     }
@@ -337,7 +337,7 @@ namespace alpr
       scoreKeeper.printDebugScores();
       Mat debugImg(this->inputImage.size(), this->inputImage.type());
       this->inputImage.copyTo(debugImg);
-      cvtColor(debugImg, debugImg, CV_GRAY2BGR);
+      cvtColor(debugImg, debugImg, COLOR_GRAY2BGR);
       line(debugImg, top.p1, top.p2, Scalar(0,0,255), 2);
       line(debugImg, bottom.p1, bottom.p2, Scalar(0,0,255), 2);
       //drawAndWait(&debugImg);

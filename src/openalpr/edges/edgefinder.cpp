@@ -211,7 +211,7 @@ namespace alpr
     threshold(newCrop, thresholded_crop, 80, 255, cv::THRESH_OTSU);
 
     vector<vector<Point> > contours;
-    findContours(thresholded_crop, contours, RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE );
+    findContours(thresholded_crop, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE );
 
     float MIN_AREA = 0.05 * newCrop.cols * newCrop.rows;
     for (unsigned int i = 0; i < contours.size(); i++)
