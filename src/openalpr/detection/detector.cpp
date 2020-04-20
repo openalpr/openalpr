@@ -37,6 +37,8 @@ namespace alpr
         cout << "Loading detector mask: " << config->detection_mask_image << endl;
       Mat newMask = cv::imread(config->detection_mask_image);
 
+      newMask = prewarp->warpImage(newMask);
+
       setMask(newMask);
     }
   }
