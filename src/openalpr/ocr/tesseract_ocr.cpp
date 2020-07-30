@@ -86,6 +86,8 @@ namespace alpr
         tesseract::PageIteratorLevel level = tesseract::RIL_SYMBOL;
         do
         {
+          if (ri->Empty(level)) continue;
+          
           const char* symbol = ri->GetUTF8Text(level);
           float conf = ri->Confidence(level);
 
