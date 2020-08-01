@@ -14,8 +14,16 @@ al OR[D-M]####
 al OXN####
 al QL[A-M]####
 
-ap JW[F-Z]####
-ap JX[A-Y]####
+am JW[F-Z]####
+am JX[A-Y]####
+am NO[I-Z]####
+am NP[A-B]####
+am OA[A-O]####
+am OXM####
+am PH@####
+
+ap NE[I-Z]####
+ap NF[A-B]####
 ap QL[N-T]####
 
 ba JK[S-Z]####
@@ -59,6 +67,7 @@ es OD[A-T]####
 es OV[EFH-L]####
 es OY[D-K]####
 es PP@####
+es QR[B-Z]####
 
 go KA[V-Z]####
 go K[B-E]@####
@@ -76,9 +85,6 @@ go OM[I-Z]####
 go ON@####
 go OO[A-F]####
 go P[QR]@####
-go QR[C-Z]####
-go QS@####
-go QT[A-X]####
 
 ma HO[L-Z]####
 ma HP@####
@@ -139,7 +145,6 @@ pa OF[I-W]####
 pa OS[W-Z]####
 pa OTZ####
 pa Q[DE]@####
-pa R[LM]@####
 
 pb MM[N-Z]####
 pb MN@####
@@ -152,7 +157,7 @@ pb OF[X-Z]####
 pb OG[A-G]####
 pb OXO####
 pb QF@####
-pb 
+pb QS@####
 
 pr A@@####
 pr B[A-E]@####
@@ -161,6 +166,8 @@ pe KF[D-Z]####
 pe K[G-L]@####
 pe KM[A-E]####
 pe NX[U-W]####
+pe P[C-D]@####
+pe PE[A-D]####
 pe PE[E-Z]####
 pe PF[A-Q]####
 pe PF[R-Z]####
@@ -181,8 +188,7 @@ rj KM[F-Z]####
 rj K[N-Z]@####
 rj L[A-U]@####
 rj LV[A-E]####
-rj RI[O-Z]####
-rj R[JK]@####
+rj RIO####
 
 rn MX[H-Z]####
 rn MY@####
@@ -206,11 +212,11 @@ ro NE[A-H]####
 ro OH[L-W]####
 ro OXL####
 ro QRA####
+ro QT[A-B]####
 
 rr NA[H-Z]####
 rr NBA####
 rr NU[H-L]####
-rr QRB####
 
 sc LW[R-Z]####
 sc L[X-Z]@####
@@ -239,3 +245,14 @@ to MX[A-G]####
 to OL[H-N]####
 to OY[A-C]####
 to QK[A-M]####
+
+br QT[A-Z]####
+br Q[U-Z]@####
+br R[A-H]@####
+br RI[A-N]####
+br RL@####
+br R[M-Z]@####
+br SA[A-U]####
+br SA[W-Z]####
+br S[B-Z]@####
+br [T-Z]@@####
