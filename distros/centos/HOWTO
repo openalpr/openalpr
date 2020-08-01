@@ -1,0 +1,7 @@
+## Instruction to compile openalpr RPM ##
+1. cd ../openalpr
+-- This will be 1 step down from the openalpr git checkout directory
+2. mkdir -p {RPMS,SRPMS,SOURCES,BUILD,SPCES}
+3. cp openalpr/distros/centos/openalpr.spec SPECS/.
+4. tar -cvzf SOURCES/openalpr.tar.gz --exclude=*.git* openalpr
+5. rpmbuild -ba --define "_topdir `pwd`" SPECS/openalpr.spec
