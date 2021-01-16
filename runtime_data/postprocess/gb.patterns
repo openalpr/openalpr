@@ -1,1 +1,39 @@
-gb	@@##@@@
+gb	[A-HK-PR-TV-Y][A-HJ-PRSTV-Y]##[A-HJ-PR-Z][A-HJ-PR-Z][A-HJ-PR-Z]
+
+gb	[A-HJ-NP-TV-Y]#[A-HJ-PRSTV-Y][A-HJ-PRSTV-Y][A-HJ-PRSTV-Y]
+gb	[A-HJ-NP-TV-Y]##[A-HJ-PRSTV-Y][A-HJ-PRSTV-Y][A-HJ-PRSTV-Y]
+gb	[A-HJ-NP-TV-Y]###[A-HJ-PRSTV-Y][A-HJ-PRSTV-Y][A-HJ-PRSTV-Y]
+
+gb	[A-HJ-PRSTV-Y][A-HJ-PRSTV-Y][A-HJ-PRSTV-Y]#[A-HJ-NP-TV-Y]
+gb	[A-HJ-PRSTV-Y][A-HJ-PRSTV-Y][A-HJ-PRSTV-Y]#[A-HJ-NP-TV-Y]
+gb	[A-HJ-PRSTV-Y][A-HJ-PRSTV-Y][A-HJ-PRSTV-Y]#[A-HJ-NP-TV-Y]
+
+gb	###[A-PR-Z][A-PR-Z][A-PR-Z]
+gb	##[A-PR-Z][A-PR-Z][A-PR-Z]
+gb	#[A-PR-Z][A-PR-Z][A-PR-Z]
+gb	####[A-PR-Z][A-PR-Z]
+gb	###[A-PR-Z][A-PR-Z]
+gb	##[A-PR-Z][A-PR-Z]
+gb	#[A-PR-Z][A-PR-Z]
+gb	####[A-PR-Z]
+gb	###[A-PR-Z]
+gb	##[A-PR-Z]
+gb	#[A-PR-Z]
+
+gb	[A-HJ-PR-Y][A-HJ-PR-Y]####
+gb	[A-HJ-PR-Y][A-HJ-PR-Y]###
+gb	[A-HJ-PR-Y][A-HJ-PR-Y]##
+gb	[A-HJ-PR-Y][A-HJ-PR-Y]#
+gb	[A-HJ-PR-Y]####
+gb	[A-HJ-PR-Y]###
+gb	[A-HJ-PR-Y]##
+gb	[A-HJ-PR-Y]#
+gb	[A-PR-Y][A-PR-Y][A-PR-Z]#### 
+gb	[A-PR-Y][A-PR-Y][A-PR-Z]###
+gb	[A-PR-Y][A-PR-Y][A-PR-Z]##
+gb	[A-PR-Y][A-PR-Y][A-PR-Z]#
+gb	[QNI]####
+gb	[QNI]###
+gb	[QNI]##
+gb	[QNI]#
+
