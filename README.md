@@ -101,6 +101,8 @@ Pre-compiled Windows binaries can be downloaded on the [releases page](https://g
 Install OpenALPR on Ubuntu 16.04 with the following commands:
 
     sudo apt-get update && sudo apt-get install -y openalpr openalpr-daemon openalpr-utils libopenalpr-dev
+    
+on Ubuntu 18.04 and above, try building manually from here [Compilation Instructions](https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(Ubuntu-Linux)
 
 Documentation
 ---------------
