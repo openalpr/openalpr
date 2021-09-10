@@ -3,7 +3,10 @@ project(src)
 set(CMAKE_BUILD_TYPE RelWithDebugInfo)
 #set(CMAKE_BUILD_TYPE Debug)
 
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8.12)
+
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
 
 # Set the OpenALPR version in cmake, and also add it as a DEFINE for the code to access
 SET(OPENALPR_MAJOR_VERSION "2")
@@ -20,10 +23,10 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
 add_definitions( -DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
 
 # TODO: switch to http://www.cmake.org/cmake/help/v2.8.5/cmake.html#module:GNUInstallDirs ?
-IF (NOT CMAKE_INSTALL_SYSCONFDIR) 
+IF (NOT CMAKE_INSTALL_SYSCONFDIR)
   SET(CMAKE_INSTALL_SYSCONFDIR "/etc")
 ENDIF()
-IF (NOT CMAKE_INSTALL_VARDIR) 
+IF (NOT CMAKE_INSTALL_VARDIR)
   SET(CMAKE_INSTALL_VARDIR "${CMAKE_INSTALL_PREFIX}/var")
 ENDIF()
 
@@ -47,7 +50,7 @@ if ( NOT DEFINED WITH_BINDING_JAVA )
   SET(WITH_BINDING_JAVA ON)
 ENDIF()
 
-          
+
 if ( NOT DEFINED WITH_BINDING_PYTHON )
   SET(WITH_BINDING_PYTHON ON)
 ENDIF()
@@ -60,54 +63,15 @@ if ( NOT DEFINED WITH_UTILITIES )
   SET(WITH_UTILITIES ON)
 ENDIF()
 
-IF (WIN32 AND WITH_DAEMON) 
+IF (WIN32 AND WITH_DAEMON)
   MESSAGE(WARNING "Skipping alprd daemon installation, as it is not supported in Windows.")
   SET(WITH_DAEMON OFF)
 ENDIF()
 
-IF (WIN32 AND WITH_TESTS) 
+IF (WIN32 AND WITH_TESTS)
   MESSAGE(WARNING "Skipping unit tests, as it is not supported in Windows.")
   SET(WITH_TESTS OFF)
 ENDIF()
-
-IF(Tesseract_FRAMEWORK_PATH AND Leptonica_FRAMEWORK_PATH) 
-  MESSAGE(STATUS "Using Tesseract iOS framework: ${Tesseract_FRAMEWORK_PATH}")
-  MESSAGE(STATUS "Using Leptonica iOS framework: ${Leptonica_FRAMEWORK_PATH}")
-  # http://www.vtk.org/Wiki/CMake:HowToUseExistingOSXFrameworks
-  SET(Tesseract_LIBRARIES "${Tesseract_FRAMEWORK_PATH};${Leptonica_FRAMEWORK_PATH}")
-  SET(Tesseract_INCLUDE_DIRS "${Tesseract_FRAMEWORK_PATH}/Headers")
-ELSE()
-  FIND_PACKAGE( Tesseract REQUIRED )
-ENDIF()
-
-include_directories(${Tesseract_INCLUDE_DIRS})
-
-IF(OpenCV_FRAMEWORK_PATH)
-  MESSAGE(STATUS "Using OpenCV iOS framework: ${OpenCV_FRAMEWORK_PATH}")
-  SET(OpenCV_INCLUDE_DIRS "${OpenCV_FRAMEWORK_PATH}/Headers")
-  SET(OpenCV_LIBS ${OpenCV_FRAMEWORK_PATH})
-
-  # OpenCV's released framework has this disabled, so we must too.
-  # http://stackoverflow.com/a/32710441/868173
-  SET(CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE NO)
-ELSE()
-  # Discover OpenCV directory automatically
-  find_path(OpenCV_DIR
-    NAMES OpenCVConfig.cmake
-    HINTS ${CMAKE_SOURCE_DIR}/../libraries/opencv/
-    /storage/projects/alpr/libraries/opencv/
-    )
-  # Opencv Package
-  FIND_PACKAGE( OpenCV REQUIRED )
-ENDIF()
-
-IF (${OpenCV_VERSION} VERSION_LESS 2.4.7)
-	MESSAGE(FATAL_ERROR "OpenCV version is not compatible : ${OpenCV_VERSION}")
-ENDIF()
-
-include_directories(${OpenCV_INCLUDE_DIRS})
-
-add_definitions( -DOPENCV_MAJOR_VERSION=${OpenCV_VERSION_MAJOR})
 
 
 include_directories(./openalpr )
@@ -135,7 +99,7 @@ if (NOT IOS)
   ADD_EXECUTABLE( alpr  main.cpp )
 ENDIF()
 
-if (WIN32) 
+if (WIN32)
    SET(OPENALPR_LIB openalpr-static)
 ELSE()
    SET(OPENALPR_LIB openalpr)
@@ -164,15 +128,12 @@ ENDIF()
 
 # Compile the alprd library on Unix-based OS
 IF (WITH_DAEMON)
-  ADD_EXECUTABLE( alprd  
-    daemon.cpp 
-    daemon/daemonconfig.cpp 
-    daemon/beanstalk.c 
-    daemon/beanstalk.cc 
+  ADD_EXECUTABLE( alprd
+    daemon.cpp
+    daemon/daemonconfig.cpp
+    daemon/beanstalk.c
+    daemon/beanstalk.cc
 )
-
-  FIND_PACKAGE( CURL REQUIRED )
-  FIND_PACKAGE( log4cplus REQUIRED )
 
   TARGET_LINK_LIBRARIES(alprd
       ${OPENALPR_LIB}
@@ -184,28 +145,28 @@ IF (WITH_DAEMON)
 	  ${log4cplus_LIBRARIES}
       ${Extra_LIBS}
     )
-	
+
 ENDIF()
 
 if(WITH_UTILITIES)
 add_subdirectory(misc_utilities)
 ENDIF()
 
-if (WITH_TESTS)  
+if (WITH_TESTS)
 add_subdirectory(tests)
 ENDIF()
 
 add_subdirectory(openalpr)
 add_subdirectory(video)
 
-if (WITH_BINDING_JAVA) 
-add_subdirectory(bindings/java)
-ENDIF()
+#if (WITH_BINDING_JAVA)
+#add_subdirectory(bindings/java)
+#ENDIF()
 
 if (WITH_BINDING_PYTHON)
 add_subdirectory(bindings/python)
 ENDIF()
-        
+
 
 if (WITH_BINDING_GO)
     set(OPENALPR_LIB_GO openalprgo)
@@ -257,7 +218,7 @@ SET (CPACK_PACKAGE_CONTACT "Matt Hill <matt@ndu.com>")
 SET (CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${CPACK_PACKAGE_VERSION}_${CPACK_DEBIAN_ARCHITECTURE}")
 
 SET (CPACK_COMPONENTS_ALL Libraries ApplicationData)
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 set (CMAKE_CXX_STANDARD 11)
 cmake_minimum_required(VERSION 3.1)
 # Enable C++11

@@ -9,12 +9,12 @@
 class LoggingVideoDispatcher : public VideoDispatcher
 {
   public:
-    LoggingVideoDispatcher(std::string mjpeg_url, int fps, log4cplus::Logger logger) : 
+    LoggingVideoDispatcher(std::string mjpeg_url, int fps, log4cplus::Logger logger) :
       VideoDispatcher(mjpeg_url, fps)
       {
 	this->logger = logger;
       }
-    
+
   virtual void log_info(std::string message)
   {
     LOG4CPLUS_INFO(logger, message);
@@ -23,7 +23,7 @@ class LoggingVideoDispatcher : public VideoDispatcher
   {
     LOG4CPLUS_WARN(logger, error );
   }
-    
+
   private:
     log4cplus::Logger logger;
 };
@@ -36,14 +36,14 @@ class LoggingVideoBuffer : public VideoBuffer
     {
       this->logger = logger;
     }
-  
+
   protected:
-    
+
     virtual VideoDispatcher* createDispatcher(std::string mjpeg_url, int fps)
     {
       return new LoggingVideoDispatcher(mjpeg_url, fps, logger);
     }
-  
+
   private:
     log4cplus::Logger logger;
 };

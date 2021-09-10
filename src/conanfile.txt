@@ -1,0 +1,8 @@
+[requires]
+tesseract/4.1.1
+opencv/3.4.12
+log4cplus/2.0.5
+libcurl/7.78.0
+
+[generators]
+cmake
