@@ -42,6 +42,7 @@ class Alpr:
         :param runtime_dir: The path to the OpenALPR runtime data directory
         :return: An OpenALPR instance
         """
+        self.loaded = False  # Will be set to True at the end of this method.
         country = _convert_to_charp(country)
         config_file = _convert_to_charp(config_file)
         runtime_dir = _convert_to_charp(runtime_dir)
