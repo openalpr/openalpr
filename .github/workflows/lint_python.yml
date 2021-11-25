@@ -12,9 +12,8 @@ jobs:
       - run: bandit --recursive .
       - run: black --check . || true
       - run: codespell --ignore-words-list="smoot" --skip="*.patterns" || true
-      - run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-      - run: flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88
-                      --show-source --statistics
+      - run: flake8 . --count --ignore=E124,E128,E202,E225,E303,E703,F401,W292,W391
+                      --max-complexity=10 --max-line-length=188 --show-source --statistics
       - run: isort --check-only --profile black . || true
       - run: pip install -r requirements.txt || pip install --editable . || true
       - run: mkdir --parents --verbose .mypy_cache
