@@ -79,16 +79,16 @@ class Alpr:
         self._recognize_array_func.restype = ctypes.c_void_p
         self._recognize_array_func.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ubyte), ctypes.c_uint]
 
-        try:
-            import numpy as np
-            import numpy.ctypeslib as npct
-            self._recognize_raw_image_func = self._openalprpy_lib.recognizeRawImage
-            self._recognize_raw_image_func.restype = ctypes.c_void_p
-            array_1_uint8 = npct.ndpointer(dtype=np.uint8, ndim=1, flags='CONTIGUOUS')
-            self._recognize_raw_image_func.argtypes = [
-                ctypes.c_void_p, array_1_uint8, ctypes.c_uint, ctypes.c_uint, ctypes.c_uint]
-        except ImportError:
-            self._recognize_raw_image_func = None
+        #try:
+        #    import numpy as np
+        #    import numpy.ctypeslib as npct
+        #    self._recognize_raw_image_func = self._openalprpy_lib.recognizeRawImage
+        #    self._recognize_raw_image_func.restype = ctypes.c_void_p
+        #    array_1_uint8 = npct.ndpointer(dtype=np.uint8, ndim=1, flags='CONTIGUOUS')
+        #    self._recognize_raw_image_func.argtypes = [
+        #        ctypes.c_void_p, array_1_uint8, ctypes.c_uint, ctypes.c_uint, ctypes.c_uint]
+        #except ImportError:
+        #    self._recognize_raw_image_func = None
 
         self._free_json_mem_func = self._openalprpy_lib.freeJsonMem
 
