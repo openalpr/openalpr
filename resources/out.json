@@ -1,0 +1,292 @@
+{
+ "rx": 23,  "ry": 7, "rw": 290, "rh":73, "thresholds": 
+[
+  {"threshold": 0, "regions":
+    [
+      {"region": 0, "x": 5, "y": 9, "height": 38, "width": 23,  "ocr_dectections":
+        [
+        ]
+      }
+      ,
+      {"region": 1, "x": 50, "y": 9, "height": 38, "width": 25,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"belgium", "fontindex":3, "pointsize":12, "symbols":
+            [
+              {"symbol":"S", "conf":85.284683 }
+              ,
+              {"symbol":"5", "conf":80.964569 }
+              ,
+              {"symbol":"B", "conf":71.181503 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 2, "x": 81, "y": 9, "height": 38, "width": 20,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"germany", "fontindex":0, "pointsize":11, "symbols":
+            [
+              {"symbol":"T", "conf":84.856247 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 3, "x": 106, "y": 9, "height": 38, "width": 25,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"netherlands", "fontindex":1, "pointsize":12, "symbols":
+            [
+              {"symbol":"H", "conf":98.370071 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 4, "x": 136, "y": 9, "height": 38, "width": 17,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"netherlands", "fontindex":1, "pointsize":12, "symbols":
+            [
+              {"symbol":"B", "conf":75.150444 }
+              ,
+              {"symbol":"E", "conf":74.629166 }
+              ,
+              {"symbol":"8", "conf":71.025131 }
+              ,
+              {"symbol":"G", "conf":66.242615 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 5, "x": 158, "y": 9, "height": 38, "width": 20,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"netherlands", "fontindex":1, "pointsize":12, "symbols":
+            [
+              {"symbol":"5", "conf":94.824341 }
+              ,
+              {"symbol":"S", "conf":84.195969 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 6, "x": 184, "y": 9, "height": 38, "width": 20,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"belgium", "fontindex":3, "pointsize":11, "symbols":
+            [
+              {"symbol":"6", "conf":89.419708 }
+              ,
+              {"symbol":"G", "conf":81.491791 }
+              ,
+              {"symbol":"B", "conf":78.187057 }
+              ,
+              {"symbol":"S", "conf":75.598450 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 7, "x": 209, "y": 9, "height": 38, "width": 10,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"belgium", "fontindex":3, "pointsize":12, "symbols":
+            [
+              {"symbol":"1", "conf":97.565880 }
+            ]
+            }}
+        ]
+      }
+    ]
+  }
+  ,
+  {"threshold": 1, "regions":
+    [
+      {"region": 0, "x": 5, "y": 9, "height": 38, "width": 23,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"serbia", "fontindex":2, "pointsize":12, "symbols":
+            [
+              {"symbol":"D", "conf":70.268738 }
+              ,
+              {"symbol":"0", "conf":68.826927 }
+              ,
+              {"symbol":"G", "conf":65.987991 }
+              ,
+              {"symbol":"O", "conf":64.720299 }
+              ,
+              {"symbol":"Q", "conf":63.455372 }
+              ,
+              {"symbol":"B", "conf":60.956848 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 1, "x": 50, "y": 9, "height": 38, "width": 25,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"belgium", "fontindex":3, "pointsize":12, "symbols":
+            [
+              {"symbol":"S", "conf":88.504982 }
+              ,
+              {"symbol":"5", "conf":82.619095 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 2, "x": 81, "y": 9, "height": 38, "width": 20,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"germany", "fontindex":0, "pointsize":11, "symbols":
+            [
+              {"symbol":"T", "conf":84.744820 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 3, "x": 106, "y": 9, "height": 38, "width": 25,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"netherlands", "fontindex":1, "pointsize":12, "symbols":
+            [
+              {"symbol":"H", "conf":98.414055 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 4, "x": 136, "y": 9, "height": 38, "width": 17,  "ocr_dectections":
+        [
+        ]
+      }
+      ,
+      {"region": 5, "x": 158, "y": 9, "height": 38, "width": 20,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"netherlands", "fontindex":1, "pointsize":12, "symbols":
+            [
+              {"symbol":"5", "conf":93.756104 }
+              ,
+              {"symbol":"S", "conf":83.382629 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 6, "x": 184, "y": 9, "height": 38, "width": 20,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"belgium", "fontindex":3, "pointsize":12, "symbols":
+            [
+              {"symbol":"6", "conf":91.612640 }
+              ,
+              {"symbol":"G", "conf":82.654655 }
+              ,
+              {"symbol":"S", "conf":78.605492 }
+              ,
+              {"symbol":"B", "conf":78.311798 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 7, "x": 209, "y": 9, "height": 38, "width": 10,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"belgium", "fontindex":3, "pointsize":12, "symbols":
+            [
+              {"symbol":"1", "conf":97.565880 }
+            ]
+            }}
+        ]
+      }
+    ]
+  }
+  ,
+  {"threshold": 2, "regions":
+    [
+      {"region": 0, "x": 5, "y": 9, "height": 38, "width": 23,  "ocr_dectections":
+        [
+        ]
+      }
+      ,
+      {"region": 1, "x": 50, "y": 9, "height": 38, "width": 25,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"belgium", "fontindex":3, "pointsize":12, "symbols":
+            [
+              {"symbol":"S", "conf":83.551178 }
+              ,
+              {"symbol":"5", "conf":78.592590 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 2, "x": 81, "y": 9, "height": 38, "width": 20,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"germany", "fontindex":0, "pointsize":11, "symbols":
+            [
+              {"symbol":"T", "conf":83.217186 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 3, "x": 106, "y": 9, "height": 38, "width": 25,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"netherlands", "fontindex":1, "pointsize":12, "symbols":
+            [
+              {"symbol":"H", "conf":98.542023 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 4, "x": 136, "y": 9, "height": 38, "width": 17,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"serbia", "fontindex":2, "pointsize":11, "symbols":
+            [
+              {"symbol":"5", "conf":68.587196 }
+              ,
+              {"symbol":"B", "conf":64.054276 }
+              ,
+              {"symbol":"S", "conf":62.027908 }
+              ,
+              {"symbol":"G", "conf":61.140285 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 5, "x": 158, "y": 9, "height": 38, "width": 20,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"belgium", "fontindex":3, "pointsize":12, "symbols":
+            [
+              {"symbol":"5", "conf":95.226402 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 6, "x": 184, "y": 9, "height": 38, "width": 20,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"belgium", "fontindex":3, "pointsize":11, "symbols":
+            [
+              {"symbol":"6", "conf":90.578369 }
+              ,
+              {"symbol":"G", "conf":83.911530 }
+              ,
+              {"symbol":"B", "conf":79.239288 }
+              ,
+              {"symbol":"S", "conf":78.688629 }
+            ]
+            }}
+        ]
+      }
+      ,
+      {"region": 7, "x": 209, "y": 9, "height": 38, "width": 10,  "ocr_dectections":
+        [
+          {"font_info" : {"fontName":"belgium", "fontindex":3, "pointsize":12, "symbols":
+            [
+              {"symbol":"1", "conf":96.354210 }
+            ]
+            }}
+        ]
+      }
+    ]
+  }
+]}
