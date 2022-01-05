@@ -63,30 +63,37 @@ namespace alpr
     const int SPACE_CHAR_CODE = 32;
 
     std::vector<OcrChar> recognized_chars;
-    //printf("\nJSON: line_idx: %d, info: [\n", line_idx);
-    printf("\nJSON:["); //7
+    if (this->config->debugOcr) printf("\nJSON:["); //7
     int mc4 = 0;
     for (unsigned int i = 0; i < pipeline_data->thresholds.size(); i++)
     {
       mc4 ++;
-      if (mc4 > 1) {printf("\nJSON:  ,\n") ;}
+      if (this->config->debugOcr)
+      {
+        if (mc4 > 1) { printf("\nJSON:  ,\n") ;}
+      }
       // Make it black text on white background
       bitwise_not(pipeline_data->thresholds[i], pipeline_data->thresholds[i]);
       tesseract.SetImage((uchar*) pipeline_data->thresholds[i].data, 
                           pipeline_data->thresholds[i].size().width, pipeline_data->thresholds[i].size().height, 
                           pipeline_data->thresholds[i].channels(), pipeline_data->thresholds[i].step1());
 
-
-      printf("\nJSON:  {\"threshold\": %d, \"regions\":\n", i); //6
-      printf("\nJSON:    [\n"); //5
+      if (this->config->debugOcr)
+      {
+        printf("\nJSON:  {\"threshold\": %d, \"regions\":\n", i); //6
+        printf("\nJSON:    [\n"); //5
+      }
       int absolute_charpos = 0;
       int mc3 = 0 ;
       for (unsigned int j = 0; j < pipeline_data->charRegions[line_idx].size(); j++)
       {
         mc3 ++;
-        if (mc3 > 1) {printf("\nJSON:      ,\n") ;}
-        printf("\nJSON:      {\"region\": %d, \"ocr_dectections\":\n", j); //6
-        printf("\nJSON:        [\n"); //8
+        if (this->config->debugOcr)
+        {
+          if (mc3 > 1) { printf("\nJSON:      ,\n") ;}
+          printf("\nJSON:      {\"region\": %d, \"ocr_dectections\":\n", j); //6
+          printf("\nJSON:        [\n"); //8
+        }
         Rect expandedRegion = expandRect( pipeline_data->charRegions[line_idx][j], 2, 2, pipeline_data->thresholds[i].cols, pipeline_data->thresholds[i].rows) ;
 
         tesseract.SetRectangle(expandedRegion.x, expandedRegion.y, expandedRegion.width, expandedRegion.height);
@@ -98,7 +105,11 @@ namespace alpr
         do
         {
           mc2 ++ ;
-          if (mc2 > 1) {printf("\nJSON: *2*\n") ;}
+          if (this->config->debugOcr)
+          {
+            if (mc2 > 1) {printf("\nJSON: ,\n") ;}
+          }
+
           if (ri->Empty(level)) continue;
           
           const char* symbol = ri->GetUTF8Text(level);
@@ -131,7 +142,10 @@ namespace alpr
             do
             {
               mc1++ ;
-              if (mc1 > 1) {printf("\nJSON:              ,\n") ;}
+              if (this->config->debugOcr)
+              {
+                if (mc1 > 1) {printf("\nJSON:              ,\n") ;}
+              }
               const char* choice = ci.GetUTF8Text();
 
               OcrChar c2;
@@ -160,26 +174,41 @@ namespace alpr
               indent = true;
             }
             while(ci.Next());
-            printf("\nJSON:            ]\n"); //1
-            printf("\nJSON:            }}\n"); //2
+            if (this->config->debugOcr)
+            {
+            if (mc1 > 1)
+              {
+                printf("\nJSON:            ]\n"); //1
+                printf("\nJSON:            }}\n"); //2
+              }
+            }
           }
-          if (this->config->debugOcr)
-            printf("---------------------------------------------\n");
 
           delete[] symbol;
         }
         while((ri->Next(level)));
-        printf("\nJSON:        ]\n"); //3
-        printf("\nJSON:      }\n"); //4
+        if (this->config->debugOcr)
+        {
+          printf("\nJSON:        ]\n"); //3
+          printf("\nJSON:      }\n"); //4
+        }
+
 
         delete ri;
 
         absolute_charpos++;
       }
-    printf("\nJSON:    ]\n"); //5
-    printf("\nJSON:  }\n"); //6
+    if (this->config->debugOcr)
+    {
+      printf("\nJSON:    ]\n"); //5
+      printf("\nJSON:  }\n"); //6
     }
-    printf("\nJSON:]"); //7
+
+    }
+    if (this->config->debugOcr)
+    {
+      printf("\nJSON:]"); //7
+    }
     return recognized_chars;
   }
   void TesseractOcr::segment(PipelineData* pipeline_data) {
