@@ -1,7 +1,7 @@
 openalpr++
 ========
 
-OpenALPR++ is fork of OpenALPR (*Automatic License Plate Recognition*) library. In addition to basic functionality provided by openalpr, openalpr++ provides few more internal and intermediate information as a simple json file.
+OpenALPR++ is fork of OpenALPR (*Automatic License Plate Recognition*) library. In addition to basic functionality provided by openalpr, openalpr++ provides few more internal and intermediate information as a json file.
 
 
 User Guide
@@ -14,7 +14,7 @@ sed -e s/JSON://g -i resources/out.json
 firefox resources/out.json
 ```
 
-Sample [JSON output](reousrces/out.json) for the following license plate from [wikipedia](https://en.wikipedia.org/wiki/Vehicle_registration_plates_of_Europe):
+Sample [JSON output](resources/out.json) for the following license plate from [wikipedia](https://en.wikipedia.org/wiki/Vehicle_registration_plates_of_Europe):
 
 ![This is an image](resources/eu-sweden-licenseplate.png)
 
