@@ -9,12 +9,13 @@ User Guide
 Please check [OpenALPR](https://github.com/openalpr/openalpr) repository for complete user manual.
 
 ```
-alpr resources/eu-sweden-licenseplate.png -c eu --debug --config config/openalprplusplus.conf | grep JSON > resources/out.json
+alpr resources/eu-sweden-licenseplate.png -c eu --debug --config config/openalpr-plusplus.conf | grep JSON > resources/out.json
 sed -e s/JSON://g -i resources/out.json
 firefox resources/out.json
 ```
 
-Sample [JSON output](reousrces/out.json) for the following image:
+Sample [JSON output](reousrces/out.json) for the following license plate from [wikipedia](https://en.wikipedia.org/wiki/Vehicle_registration_plates_of_Europe):
+
 ![This is an image](resources/eu-sweden-licenseplate.png)
 
 #### Compiling
@@ -35,7 +36,7 @@ sudo apt-get install -y \
     libtesseract-dev \
     wget
 
-git clone https://github.com/ebadi/openalpr.git
+git clone https://github.com/ebadi/openalpr-plusplus.git
 cd openalpr/src
 mkdir build
 cd build
