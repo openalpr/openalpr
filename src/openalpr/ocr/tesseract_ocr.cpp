@@ -35,7 +35,7 @@ namespace alpr
     const string MINIMUM_TESSERACT_VERSION = "3.03";
 
     this->postProcessor.setConfidenceThreshold(config->postProcessMinConfidence, config->postProcessConfidenceSkipLevel);
-    
+
     if (cmpVersion(tesseract.Version(), MINIMUM_TESSERACT_VERSION.c_str()) < 0)
     {
       std::cerr << "Warning: You are running an unsupported version of Tesseract." << endl;
@@ -44,7 +44,7 @@ namespace alpr
 
     string TessdataPrefix = config->getTessdataPrefix();
     if (cmpVersion(tesseract.Version(), "4.0.0") >= 0)
-      TessdataPrefix += "tessdata/";    
+      TessdataPrefix += "tessdata/";
 
     // Tesseract requires the prefix directory to be set as an env variable
     tesseract.Init(TessdataPrefix.c_str(), config->ocrLanguage.c_str() 	);
@@ -57,13 +57,37 @@ namespace alpr
   {
     tesseract.End();
   }
-  
+
   std::vector<OcrChar> TesseractOcr::recognize_line(int line_idx, PipelineData* pipeline_data) {
 
     const int SPACE_CHAR_CODE = 32;
 
     std::vector<OcrChar> recognized_chars;
-    if (this->config->debugOcr) printf("\nJSON:["); //7
+    if (this->config->debugOcr)
+    {
+      printf("\nJSON:{"); //7
+      /*
+      printf("\nJSON: \"p0x\": %d, \"p0y\":%d, \"p1x\":%d, \"p1y\": %d, \"p2x\": %d, \"p2y\": %d, \"p3x\": %d, \"p3y\": %d, ",
+        pipeline_data->plate_corners[0].x,
+        pipeline_data->plate_corners[0].y,
+        pipeline_data->plate_corners[1].x,
+        pipeline_data->plate_corners[1].y,
+        pipeline_data->plate_corners[2].x,
+        pipeline_data->plate_corners[2].y,
+        pipeline_data->plate_corners[3].x,
+        pipeline_data->plate_corners[3].y
+      );
+      */
+      printf("\nJSON: \"rx\": %d,  \"ry\": %d, \"rw\": %d, \"rh\":%d, \"thresholds\": ",
+        pipeline_data->regionOfInterest.x,
+        pipeline_data->regionOfInterest.y,
+        pipeline_data->regionOfInterest.width,
+        pipeline_data->regionOfInterest.height
+      );
+      printf("\nJSON:["); //7
+    }
+
+
     int mc4 = 0;
     for (unsigned int i = 0; i < pipeline_data->thresholds.size(); i++)
     {
@@ -74,8 +98,8 @@ namespace alpr
       }
       // Make it black text on white background
       bitwise_not(pipeline_data->thresholds[i], pipeline_data->thresholds[i]);
-      tesseract.SetImage((uchar*) pipeline_data->thresholds[i].data, 
-                          pipeline_data->thresholds[i].size().width, pipeline_data->thresholds[i].size().height, 
+      tesseract.SetImage((uchar*) pipeline_data->thresholds[i].data,
+                          pipeline_data->thresholds[i].size().width, pipeline_data->thresholds[i].size().height,
                           pipeline_data->thresholds[i].channels(), pipeline_data->thresholds[i].step1());
 
       if (this->config->debugOcr)
@@ -91,11 +115,14 @@ namespace alpr
         if (this->config->debugOcr)
         {
           if (mc3 > 1) { printf("\nJSON:      ,\n") ;}
-          printf("\nJSON:      {\"region\": %d, \"ocr_dectections\":\n", j); //6
+          printf("\nJSON:      {\"region\": %d, \"x\": %d, \"y\": %d, \"height\": %d, \"width\": %d,  \"ocr_dectections\":\n", j,
+              pipeline_data->charRegions[line_idx][j].x,
+              pipeline_data->charRegions[line_idx][j].y,
+              pipeline_data->charRegions[line_idx][j].height,
+              pipeline_data->charRegions[line_idx][j].width); //6
           printf("\nJSON:        [\n"); //8
         }
         Rect expandedRegion = expandRect( pipeline_data->charRegions[line_idx][j], 2, 2, pipeline_data->thresholds[i].cols, pipeline_data->thresholds[i].rows) ;
-
         tesseract.SetRectangle(expandedRegion.x, expandedRegion.y, expandedRegion.width, expandedRegion.height);
         tesseract.Recognize(NULL);
 
@@ -111,7 +138,7 @@ namespace alpr
           }
 
           if (ri->Empty(level)) continue;
-          
+
           const char* symbol = ri->GetUTF8Text(level);
           float conf = ri->Confidence(level);
 
@@ -152,14 +179,14 @@ namespace alpr
               c2.char_index = absolute_charpos;
               c2.confidence = ci.Confidence();
               c2.letter = string(choice);
-              
+
               //1/17/2016 adt adding check to avoid double adding same character if ci is same as symbol. Otherwise first choice from ResultsIterator will get added twice when choiceIterator run.
               if (string(symbol) != string(choice))
                 recognized_chars.push_back(c2);
               else
               {
                 // Explictly double-adding the first character.  This leads to higher accuracy right now, likely because other sections of code
-                // have expected it and compensated. 
+                // have expected it and compensated.
                 // TODO: Figure out how to remove this double-counting of the first letter without impacting accuracy
                 recognized_chars.push_back(c2);
               }
@@ -176,11 +203,8 @@ namespace alpr
             while(ci.Next());
             if (this->config->debugOcr)
             {
-            if (mc1 > 1)
-              {
-                printf("\nJSON:            ]\n"); //1
-                printf("\nJSON:            }}\n"); //2
-              }
+              printf("\nJSON:            ]\n"); //1
+              printf("\nJSON:            }}\n"); //2
             }
           }
 
@@ -207,7 +231,7 @@ namespace alpr
     }
     if (this->config->debugOcr)
     {
-      printf("\nJSON:]"); //7
+      printf("\nJSON:]}\n"); //7
     }
     return recognized_chars;
   }
