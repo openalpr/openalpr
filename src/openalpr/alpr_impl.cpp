@@ -216,7 +216,7 @@ namespace alpr
           line(img, Point(details.corners[2].x, details.corners[2].y), Point(details.corners[3].x, details.corners[3].y), Scalar(0,255,0), 1);
           line(img, Point(details.corners[3].x, details.corners[3].y), Point(details.corners[0].x, details.corners[0].y), Scalar(0,255,0), 1);
           if (q > 0) printf(",");
-          printf("\nDEBUG1_JSON:{\"id\": %d, \"p1x\": %d, \"p1y\":%d, \"p2x\": %d, \"p2y\":%d, \"p3x\": %d, \"p3y\":%d, \"p4x\": %d, \"p4y\":%d}" ,q ,details.corners[0].x, details.corners[0].y ,details.corners[1].x, details.corners[1].y ,details.corners[2].x, details.corners[2].y ,details.corners[3].x, details.corners[3].y);
+          printf("\nDEBUG1_JSON:{\"id\": %d, \"character\":\"%s\", \"p1x\": %d, \"p1y\":%d, \"p2x\": %d, \"p2y\":%d, \"p3x\": %d, \"p3y\":%d, \"p4x\": %d, \"p4y\":%d}", q, details.character.c_str(), details.corners[0].x, details.corners[0].y ,details.corners[1].x, details.corners[1].y ,details.corners[2].x, details.corners[2].y ,details.corners[3].x, details.corners[3].y);
         }
         printf("\nDEBUG1_JSON:  ]"); // best
 	printf("\nDEBUG1_JSON: }") ; // AAA

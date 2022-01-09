@@ -1,5 +1,5 @@
 DEBUG2_JSON:{
-DEBUG2_JSON: "p0x": 0, "p0y":0, "p1x":0, "p1y": 1121572224, "p2x": 0, "p2y": 0, "p3x": 1073741824, "p3y": -1610612736, 
+DEBUG2_JSON: "p0x": 0, "p0y":0, "p1x":0, "p1y": 1506325888, "p2x": 0, "p2y": 0, "p3x": 1073741824, "p3y": -1610612736, 
 DEBUG2_JSON: "rx": 23,  "ry": 7, "rw": 290, "rh":73, "thresholds": 
 DEBUG2_JSON:[
 DEBUG2_JSON:  {"threshold": 0, "regions":
@@ -306,12 +306,12 @@ DEBUG1_JSON:{"id": 3, "x": 0, "y":81}
 DEBUG1_JSON:  ]
 DEBUG1_JSON:  ,"best" :
 DEBUG1_JSON:  [
-DEBUG1_JSON:{"id": 0, "p1x": 71, "p1y":15, "p2x": 107, "p2y":15, "p3x": 107, "p3y":69, "p4x": 71, "p4y":69},
-DEBUG1_JSON:{"id": 1, "p1x": 115, "p1y":15, "p2x": 144, "p2y":15, "p3x": 144, "p3y":69, "p4x": 115, "p4y":69},
-DEBUG1_JSON:{"id": 2, "p1x": 151, "p1y":15, "p2x": 187, "p2y":15, "p3x": 187, "p3y":69, "p4x": 151, "p4y":69},
-DEBUG1_JSON:{"id": 3, "p1x": 225, "p1y":15, "p2x": 254, "p2y":15, "p3x": 254, "p3y":69, "p4x": 225, "p4y":69},
-DEBUG1_JSON:{"id": 4, "p1x": 262, "p1y":15, "p2x": 291, "p2y":15, "p3x": 291, "p3y":69, "p4x": 262, "p4y":69},
-DEBUG1_JSON:{"id": 5, "p1x": 298, "p1y":15, "p2x": 312, "p2y":15, "p3x": 312, "p3y":69, "p4x": 298, "p4y":69}
+DEBUG1_JSON:{"id": 0, "character":"S", "p1x": 71, "p1y":15, "p2x": 107, "p2y":15, "p3x": 107, "p3y":69, "p4x": 71, "p4y":69},
+DEBUG1_JSON:{"id": 1, "character":"T", "p1x": 115, "p1y":15, "p2x": 144, "p2y":15, "p3x": 144, "p3y":69, "p4x": 115, "p4y":69},
+DEBUG1_JSON:{"id": 2, "character":"H", "p1x": 151, "p1y":15, "p2x": 187, "p2y":15, "p3x": 187, "p3y":69, "p4x": 151, "p4y":69},
+DEBUG1_JSON:{"id": 3, "character":"5", "p1x": 225, "p1y":15, "p2x": 254, "p2y":15, "p3x": 254, "p3y":69, "p4x": 225, "p4y":69},
+DEBUG1_JSON:{"id": 4, "character":"6", "p1x": 262, "p1y":15, "p2x": 291, "p2y":15, "p3x": 291, "p3y":69, "p4x": 262, "p4y":69},
+DEBUG1_JSON:{"id": 5, "character":"1", "p1x": 298, "p1y":15, "p2x": 312, "p2y":15, "p3x": 312, "p3y":69, "p4x": 298, "p4y":69}
 DEBUG1_JSON:  ]
 DEBUG1_JSON: }
 DEBUG1_JSON:]
