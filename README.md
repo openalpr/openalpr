@@ -9,12 +9,16 @@ User Guide
 Please check [OpenALPR](https://github.com/openalpr/openalpr) repository for complete user manual.
 
 ```
-alpr resources/eu-sweden-licenseplate.png -c eu --debug --config config/openalpr-plusplus.conf | grep JSON > resources/out.json
-sed -e s/JSON://g -i resources/out.json
-firefox resources/out.json
+alpr resources/eu-sweden-licenseplate.png -c eu --debug --config config/openalpr-plusplus.conf | grep JSON > resources/out.json 
+cat resources/out.json | grep DEBUG1 > resources/1.json 
+cat resources/out.json | grep DEBUG2 > resources/2.json 
+sed -e s/DEBUG1_JSON://g -i resources/1.json
+sed -e s/DEBUG2_JSON://g -i resources/2.json
+firefox resources/1.json resources/2.json
+
 ```
 
-Sample [JSON output](resources/out.json) for the following license plate from [wikipedia](https://en.wikipedia.org/wiki/Vehicle_registration_plates_of_Europe):
+Sample JSON outputs [1](resources/1.json),[2](resources/2.json) for the following license plate from [wikipedia](https://en.wikipedia.org/wiki/Vehicle_registration_plates_of_Europe):
 
 ![This is an image](resources/eu-sweden-licenseplate.png)
 

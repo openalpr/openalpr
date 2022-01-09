@@ -65,9 +65,9 @@ namespace alpr
     std::vector<OcrChar> recognized_chars;
     if (this->config->debugOcr)
     {
-      printf("\nJSON:{"); //7
-      /*
-      printf("\nJSON: \"p0x\": %d, \"p0y\":%d, \"p1x\":%d, \"p1y\": %d, \"p2x\": %d, \"p2y\": %d, \"p3x\": %d, \"p3y\": %d, ",
+      printf("\nDEBUG2_JSON:{"); //7
+      
+      printf("\nDEBUG2_JSON: \"p0x\": %d, \"p0y\":%d, \"p1x\":%d, \"p1y\": %d, \"p2x\": %d, \"p2y\": %d, \"p3x\": %d, \"p3y\": %d, ",
         pipeline_data->plate_corners[0].x,
         pipeline_data->plate_corners[0].y,
         pipeline_data->plate_corners[1].x,
@@ -77,14 +77,14 @@ namespace alpr
         pipeline_data->plate_corners[3].x,
         pipeline_data->plate_corners[3].y
       );
-      */
-      printf("\nJSON: \"rx\": %d,  \"ry\": %d, \"rw\": %d, \"rh\":%d, \"thresholds\": ",
+      
+      printf("\nDEBUG2_JSON: \"rx\": %d,  \"ry\": %d, \"rw\": %d, \"rh\":%d, \"thresholds\": ",
         pipeline_data->regionOfInterest.x,
         pipeline_data->regionOfInterest.y,
         pipeline_data->regionOfInterest.width,
         pipeline_data->regionOfInterest.height
       );
-      printf("\nJSON:["); //7
+      printf("\nDEBUG2_JSON:["); //7
     }
 
 
@@ -94,7 +94,7 @@ namespace alpr
       mc4 ++;
       if (this->config->debugOcr)
       {
-        if (mc4 > 1) { printf("\nJSON:  ,\n") ;}
+        if (mc4 > 1) { printf("\nDEBUG2_JSON:  ,\n") ;}
       }
       // Make it black text on white background
       bitwise_not(pipeline_data->thresholds[i], pipeline_data->thresholds[i]);
@@ -104,27 +104,33 @@ namespace alpr
 
       if (this->config->debugOcr)
       {
-        printf("\nJSON:  {\"threshold\": %d, \"regions\":\n", i); //6
-        printf("\nJSON:    [\n"); //5
+        printf("\nDEBUG2_JSON:  {\"threshold\": %d, \"regions\":\n", i); //6
+        printf("\nDEBUG2_JSON:    [\n"); //5
       }
       int absolute_charpos = 0;
       int mc3 = 0 ;
       for (unsigned int j = 0; j < pipeline_data->charRegions[line_idx].size(); j++)
       {
         mc3 ++;
-        if (this->config->debugOcr)
-        {
-          if (mc3 > 1) { printf("\nJSON:      ,\n") ;}
-          printf("\nJSON:      {\"region\": %d, \"x\": %d, \"y\": %d, \"height\": %d, \"width\": %d,  \"ocr_dectections\":\n", j,
-              pipeline_data->charRegions[line_idx][j].x,
-              pipeline_data->charRegions[line_idx][j].y,
-              pipeline_data->charRegions[line_idx][j].height,
-              pipeline_data->charRegions[line_idx][j].width); //6
-          printf("\nJSON:        [\n"); //8
-        }
+
         Rect expandedRegion = expandRect( pipeline_data->charRegions[line_idx][j], 2, 2, pipeline_data->thresholds[i].cols, pipeline_data->thresholds[i].rows) ;
         tesseract.SetRectangle(expandedRegion.x, expandedRegion.y, expandedRegion.width, expandedRegion.height);
         tesseract.Recognize(NULL);
+
+        if (this->config->debugOcr)
+        {
+          if (mc3 > 1) { printf("\nDEBUG2_JSON:      ,\n") ;}
+          printf("\nDEBUG2_JSON:      {\"region\": %d, \"x\": %d, \"y\": %d, \"height\": %d, \"width\": %d,  \"x1\": %d, \"y1\": %d, \"height1\": %d, \"width1\": %d,   \"ocr_detections\":\n", j,
+              pipeline_data->charRegions[line_idx][j].x,
+              pipeline_data->charRegions[line_idx][j].y,
+              pipeline_data->charRegions[line_idx][j].height,
+              pipeline_data->charRegions[line_idx][j].width,
+              expandedRegion.x,
+              expandedRegion.y,
+              expandedRegion.height,
+              expandedRegion.width); //6
+          printf("\nDEBUG2_JSON:        [\n"); //8
+        }
 
         tesseract::ResultIterator* ri = tesseract.GetIterator();
         tesseract::PageIteratorLevel level = tesseract::RIL_SYMBOL;
@@ -134,7 +140,7 @@ namespace alpr
           mc2 ++ ;
           if (this->config->debugOcr)
           {
-            if (mc2 > 1) {printf("\nJSON: ,\n") ;}
+            if (mc2 > 1) {printf("\nDEBUG2_JSON: ,\n") ;}
           }
 
           if (ri->Empty(level)) continue;
@@ -160,8 +166,8 @@ namespace alpr
             if (this->config->debugOcr)
             {
               printf("charpos%d line%d: threshold %d:  symbol %s, conf: %f font: %s (index %d) size %dpx", absolute_charpos, line_idx, i, symbol, conf, fontName, fontindex, pointsize);
-              printf("\nJSON:          {\"font_info\" : {\"fontName\":\"%s\", \"fontindex\":%d, \"pointsize\":%d, \"symbols\":\n", fontName, fontindex, pointsize); //2
-              printf("\nJSON:            [\n"); //1
+              printf("\nDEBUG2_JSON:          {\"font_info\" : {\"fontName\":\"%s\", \"fontindex\":%d, \"pointsize\":%d, \"symbols\":\n", fontName, fontindex, pointsize); //2
+              printf("\nDEBUG2_JSON:            [\n"); //1
             }
             bool indent = false;
             tesseract::ChoiceIterator ci(*ri);
@@ -171,7 +177,7 @@ namespace alpr
               mc1++ ;
               if (this->config->debugOcr)
               {
-                if (mc1 > 1) {printf("\nJSON:              ,\n") ;}
+                if (mc1 > 1) {printf("\nDEBUG2_JSON:              ,\n") ;}
               }
               const char* choice = ci.GetUTF8Text();
 
@@ -195,16 +201,17 @@ namespace alpr
                 if (indent) printf("\t\t ");
                 printf("\t- ");
                 printf("%s conf: %f\n", choice, ci.Confidence());
-                printf("\nJSON:              {\"symbol\":\"%s\", \"conf\":%f }\n", choice, ci.Confidence());
+                printf("\nDEBUG2_JSON:              {\"symbol\":\"%s\", \"conf\":%f }\n", choice, ci.Confidence());
               }
 
               indent = true;
             }
             while(ci.Next());
+
             if (this->config->debugOcr)
             {
-              printf("\nJSON:            ]\n"); //1
-              printf("\nJSON:            }}\n"); //2
+              printf("\nDEBUG2_JSON:            ]\n"); //1
+              printf("\nDEBUG2_JSON:            }}\n"); //2
             }
           }
 
@@ -213,8 +220,8 @@ namespace alpr
         while((ri->Next(level)));
         if (this->config->debugOcr)
         {
-          printf("\nJSON:        ]\n"); //3
-          printf("\nJSON:      }\n"); //4
+          printf("\nDEBUG2_JSON:        ]\n"); //3
+          printf("\nDEBUG2_JSON:      }\n"); //4
         }
 
 
@@ -224,14 +231,14 @@ namespace alpr
       }
     if (this->config->debugOcr)
     {
-      printf("\nJSON:    ]\n"); //5
-      printf("\nJSON:  }\n"); //6
+      printf("\nDEBUG2_JSON:    ]\n"); //5
+      printf("\nDEBUG2_JSON:  }\n"); //6
     }
 
     }
     if (this->config->debugOcr)
     {
-      printf("\nJSON:]}\n"); //7
+      printf("\nDEBUG2_JSON:]}\n"); //7
     }
     return recognized_chars;
   }

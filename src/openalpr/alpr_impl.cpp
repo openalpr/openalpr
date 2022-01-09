@@ -163,18 +163,35 @@ namespace alpr
 
     if (config->debugGeneral && config->debugShowImages)
     {
+      printf("\nDEBUG1_JSON:{");
+
+      printf("\nDEBUG1_JSON: \"regionsOfInterest\" : [");
       for (unsigned int i = 0; i < regionsOfInterest.size(); i++)
       {
+        if (i > 0) printf(",");
+        printf("{\"x\": %d, \"y\":%d, \"w\":%d, \"h\":%d}", regionsOfInterest[i].x, regionsOfInterest[i].y, regionsOfInterest[i].width, regionsOfInterest[i].height );
         rectangle(img, regionsOfInterest[i], Scalar(0,255,0), 2);
       }
+      printf("],"); //regionsOfInterest
 
+      printf("\nDEBUG1_JSON: \"plateRegions\" : [");
       for (unsigned int i = 0; i < response.plateRegions.size(); i++)
       {
+        if (i > 0) printf(",");
+        printf("{\"x\": %d, \"y\":%d, \"w\":%d, \"h\":%d}", response.plateRegions[i].rect.x, response.plateRegions[i].rect.y,response.plateRegions[i].rect.width,response.plateRegions[i].rect.height );
         rectangle(img, response.plateRegions[i].rect, Scalar(0, 0, 255), 2);
       }
+      printf("],"); //plateRegions
 
+
+      printf("\nDEBUG1_JSON: \"resultplates\" :");
+      printf("\nDEBUG1_JSON:["); //plates
       for (unsigned int i = 0; i < response.results.plates.size(); i++)
       {
+	if (i > 0) printf(",");
+	printf("\nDEBUG1_JSON: {") ; // AAA
+        printf("\nDEBUG1_JSON:  \"id\":%d,  \"coords\" :", i);
+        printf("\nDEBUG1_JSON:  [");
         // Draw a box around the license plate 
         for (int z = 0; z < 4; z++)
         {
@@ -182,8 +199,14 @@ namespace alpr
           Point p1(coords[z].x, coords[z].y);
           Point p2(coords[(z + 1) % 4].x, coords[(z + 1) % 4].y);
           line(img, p1, p2, Scalar(255,0,255), 2);
+          if (z > 0) printf(",");
+          printf("\nDEBUG1_JSON:{\"id\": %d, \"x\": %d, \"y\":%d}", z, coords[z].x, coords[z].y );
+
         }
-        
+        printf("\nDEBUG1_JSON:  ]"); // coords
+
+        printf("\nDEBUG1_JSON:  ,\"best\" :");
+        printf("\nDEBUG1_JSON:  [");
         // Draw the individual character boxes
         for (int q = 0; q < response.results.plates[i].bestPlate.character_details.size(); q++)
         {
@@ -192,8 +215,14 @@ namespace alpr
           line(img, Point(details.corners[1].x, details.corners[1].y), Point(details.corners[2].x, details.corners[2].y), Scalar(0,255,0), 1);
           line(img, Point(details.corners[2].x, details.corners[2].y), Point(details.corners[3].x, details.corners[3].y), Scalar(0,255,0), 1);
           line(img, Point(details.corners[3].x, details.corners[3].y), Point(details.corners[0].x, details.corners[0].y), Scalar(0,255,0), 1);
+          if (q > 0) printf(",");
+          printf("\nDEBUG1_JSON:{\"id\": %d, \"p1x\": %d, \"p1y\":%d, \"p2x\": %d, \"p2y\":%d, \"p3x\": %d, \"p3y\":%d, \"p4x\": %d, \"p4y\":%d}" ,q ,details.corners[0].x, details.corners[0].y ,details.corners[1].x, details.corners[1].y ,details.corners[2].x, details.corners[2].y ,details.corners[3].x, details.corners[3].y);
         }
+        printf("\nDEBUG1_JSON:  ]"); // best
+	printf("\nDEBUG1_JSON: }") ; // AAA
       }
+      printf("\nDEBUG1_JSON:]"); //plates
+    printf("\nDEBUG1_JSON:}\n");
 
 
       displayImage(config, "Main Image", img);
@@ -207,8 +236,8 @@ namespace alpr
     if (config->debugPauseOnFrame)
     {
       // Pause indefinitely until they press a key
-      while ((char) cv::waitKey(50) == -1)
-      {}
+      //while ((char) cv::waitKey(50) == -1)
+      //{}
     }
 
     return response;
