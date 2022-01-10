@@ -219,6 +219,35 @@ namespace alpr
           printf("\nDEBUG1_JSON:{\"id\": %d, \"character\":\"%s\", \"p1x\": %d, \"p1y\":%d, \"p2x\": %d, \"p2y\":%d, \"p3x\": %d, \"p3y\":%d, \"p4x\": %d, \"p4y\":%d}", q, details.character.c_str(), details.corners[0].x, details.corners[0].y ,details.corners[1].x, details.corners[1].y ,details.corners[2].x, details.corners[2].y ,details.corners[3].x, details.corners[3].y);
         }
         printf("\nDEBUG1_JSON:  ]"); // best
+
+
+
+
+
+        printf("\nDEBUG1_JSON:  ,\"candidates\" :");
+        printf("\nDEBUG1_JSON:  [");
+	for (int n = 0; n < response.results.plates[i].topNPlates.size(); n++)
+	{
+		if (n > 0) printf(",");
+		printf("\nDEBUG1_JSON:    {\"id\":%d, \"license\": [", n);
+		for (int q = 0; q < response.results.plates[i].topNPlates[n].character_details.size(); q++)
+		{
+		  AlprChar details = response.results.plates[i].topNPlates[n].character_details[q];
+		  line(img, Point(details.corners[0].x, details.corners[0].y), Point(details.corners[1].x, details.corners[1].y), Scalar(0,255,0), 1);
+		  line(img, Point(details.corners[1].x, details.corners[1].y), Point(details.corners[2].x, details.corners[2].y), Scalar(0,255,0), 1);
+		  line(img, Point(details.corners[2].x, details.corners[2].y), Point(details.corners[3].x, details.corners[3].y), Scalar(0,255,0), 1);
+		  line(img, Point(details.corners[3].x, details.corners[3].y), Point(details.corners[0].x, details.corners[0].y), Scalar(0,255,0), 1);
+		  if (q > 0) printf(",");
+		  printf("\nDEBUG1_JSON:            {\"id\": %d, \"character\":\"%s\", \"p1x\": %d, \"p1y\":%d, \"p2x\": %d, \"p2y\":%d, \"p3x\": %d, \"p3y\":%d, \"p4x\": %d, \"p4y\":%d}", q, details.character.c_str(), details.corners[0].x, details.corners[0].y ,details.corners[1].x, details.corners[1].y ,details.corners[2].x, details.corners[2].y ,details.corners[3].x, details.corners[3].y);
+		}
+		printf("\nDEBUG1_JSON:    ]}");
+	}
+        printf("\nDEBUG1_JSON:  ]"); // best
+
+
+
+
+
 	printf("\nDEBUG1_JSON: }") ; // AAA
       }
       printf("\nDEBUG1_JSON:]"); //plates
