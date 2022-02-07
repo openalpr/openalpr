@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <!-- jQuery first, then Popper.js, Bootstrap JS, Knockout -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+
+  <!-- -------------------- Configure some CSS styles ---------------------  -->
+  <!-- scale images when using the image tag -->
+  <style>
+    img.resize {
+      max-width: 35%;
+      max-height: 35%;
+    }
+  </style>
+
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0px;
+      border: 0;
+      /* overflow: hidden; */
+      /*  Disable scrollbars */
+      display: block;
+      /* No floating content on sides */
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!--
+    By default, we assume Ajax uploads are not supported.
+    Later we'll detect support and change this message if found.
+  -->
+  <p id="support-notice">Your browser does not support Ajax uploads :-(</p>
+  See the code at <a href="https://github.com/stevefielding/tensorflow-anpr">tensorflow-anpr github project</a><br>
+
+
+  <!-- Create the main division, that will be referenced by knockout, and which will contain bound variables -->
+  <div id="main" class="container">
+
+    <!-- The form starts -->
+    <form action="/classify" method="POST" enctype="multipart/form-data" id="form-id">
+
+      <!-- The file to upload -->
+      <p><input id="file-id" type="file" name="file" onchange="readURL(this);" /></p>
+
+      <!-- Submit button -->
+      <p><input type="submit" value="Submit" id="submit-button" /></p>
+
+      <!-- Display upload status here -->
+      <p id="upload-status"></p>
+
+      <!-- Show the number of plates found -->
+      <span id="num-plates-ind" <p>Found <span data-bind="text: numPlates()"></span> plate(s)</p> </span>
+
+      <!-- Show the number of images processed -->
+      <span id="num-images-ind" <p> in <span data-bind="text: numImages()"></span> images(s)</p> </span>
+
+      <!-- Show the processing time -->
+      <span id="time-to-process" <p>processed in <span data-bind="text: processingTime()"></span> seconds</p> </span>
+
+      <!-- The original uploaded image -->
+      <!-- Image resize dimensions are defined in style sheet -->
+      <img class="resize" id="car" src="#" alt="no image available" /><br>
+
+      <!-- The annotated image -->
+      <!-- Create a canvas that can be used to display the annotated image -->
+      <!-- The canvas will display the original image, overlayed with boxes for the license plate(s), and the license plate text -->
+      <canvas id="myCanvas" style="border:1px solid #d3d3d3;">
+        <!-- <canvas id="myCanvas" style='position:absolute; left:0px; top:0px;'> -->
+        Your browser does not support the HTML5 canvas tag.
+      </canvas>
+
+      <!-- Display a table showing the plate text, plate box positions, and plate text box positions -->
+      <table class="table table-striped">
+        <!--- Column header --->
+        <tr>
+          <td style="width: 1px;"><b>Image File Name</b></td>
+          <td><b>Plate</b></td>
+          <td><b>Plate Box</b></td>
+          <td><b>Text Boxes</b></td>
+        </tr>
+        <!-- ko foreach: images -->
+        <!-- ko foreach: imageResults  -->
+        <!-- Seems that the enclosing <tr> is required, otherwise the terminating /ko cannot be found
+          this seems to be something to do with, the ko block being in one tree branch. The <td> elements create 
+          separate tree branches, so the enclosing <tr> is required -->
+        <tr>
+          <td><b data-bind="text: imageName"></b></td>
+          <td><b data-bind="text: plateText"></b></td>
+          <td><b data-bind="text: plateBox"></b></td>
+          <td><b data-bind="text: textBoxes"></b></td>
+        </tr>
+        <!-- /ko -->
+        <!-- /ko -->
+      </table>
+  </div>
+
+  <script>
+
+    // View Model
+    var AppViewModel = function () {
+      var self = this;
+      self.images = ko.observableArray();
+      self.numPlates = ko.observable();
+      self.numPlates(0);
+      self.numImages = ko.observable();
+      self.numImages(0);
+      self.processingTime = ko.observable();
+      self.processingTime(0);
+      document.getElementById("num-plates-ind").style.display = "none";
+      document.getElementById("num-images-ind").style.display = "none";
+      document.getElementById("time-to-process").style.display = "none";
+
+      self.displayImageInCanvas = function () {
+        var c = document.getElementById("myCanvas");
+        var ctx = c.getContext("2d");
+        var img = document.getElementById("car");
+        c.width = img.offsetWidth;
+        c.height = img.offsetHeight;
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+      }
+
+
+      self.drawRectangle = function (startX, startY, extentX, extentY) {
+        var c = document.getElementById("myCanvas");
+        var ctx = c.getContext("2d");
+        ctx.beginPath();
+        ctx.rect(startX * c.width, startY * c.height, extentX * c.width, extentY * c.height);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'red';
+        ctx.stroke();
+      }
+
+      // Add plate and text boxes to myCanvas
+      self.addPlatesToVM = function (response) {
+        self.displayImageInCanvas();
+        self.numImages(response.numImages);
+        self.numPlates(response.numPlates);
+        self.processingTime(response.processingTime.toFixed(2));
+        self.images([]);
+        console.log(response.images.length);
+        console.log(response);
+        for (var i = 0; i < response.images.length; i++) {
+          var imageResults = [];
+          for (var j = 0; j < response.images[i].imageResults.length; j++) {
+            imageResults.push({
+              imageName: ko.observable(response.images[i].imagePath),
+              plateText: ko.observable(response.images[i].imageResults[j].plateText),
+              plateBox: ko.observable(response.images[i].imageResults[j].plateBoxLoc),
+              textBoxes: ko.observable(response.images[i].imageResults[j].charBoxLocs)
+            });
+            // predict_images coordinate system (startY, startX, endY, endX)
+            // TFOD coordinate system [ymin, xmin, ymax, xmax] 
+            // HTML canvas coordinate system (startX, startY, xExtents, yExtents)
+            startY = response.images[i].imageResults[j].plateBoxLoc[0]
+            startX = response.images[i].imageResults[j].plateBoxLoc[1]
+            endY = response.images[i].imageResults[j].plateBoxLoc[2]
+            endX = response.images[i].imageResults[j].plateBoxLoc[3]
+            // If this is the first image, then annotate the image with boxes for plates and plate chars
+            if (i == 0) {
+              self.drawRectangle(startX, startY, endX - startX, endY - startY);
+              for (var k = 0; k < response.images[i].imageResults[j].charBoxLocs.length; k++) {
+                startY = response.images[i].imageResults[j].charBoxLocs[k][0]
+                startX = response.images[i].imageResults[j].charBoxLocs[k][1]
+                endY = response.images[i].imageResults[j].charBoxLocs[k][2]
+                endX = response.images[i].imageResults[j].charBoxLocs[k][3]
+                self.drawRectangle(startX, startY, endX - startX, endY - startY);
+              }
+            }
+          }
+          //console.log(imageResults);
+          self.images.push({ "imageResults": imageResults });
+          console.log("addPlatesToVM: .imageResults");
+          console.log(imageResults);
+        }
+      }
+
+
+      // Once the FormData instance is ready and we know
+      // where to send the data, the code is the same
+      // for both variants of this technique
+      self.sendXHRequest = function (formData, uri) {
+        // Get an XMLHttpRequest instance
+        var xhr = new XMLHttpRequest();
+        // Set up events
+        xhr.upload.addEventListener('loadstart', onloadstartHandler, false);
+        xhr.upload.addEventListener('load', onloadHandler, false);
+        // Set up request
+        xhr.open('POST', uri, true);
+        // Set json response type
+        xhr.responseType = 'json';
+        // Fire!
+        xhr.send(formData);
+        // Disable the submit button to prevent new submissions whilst processing the curent image
+        document.getElementById("submit-button").disabled = true;
+        // Display the response. This is a call back function, that will be called when the image processing is complete
+        xhr.onload = function () {
+          console.log(xhr.responseURL);
+          let responseObj = xhr.response;
+          console.log(responseObj);
+          // Annotate the canvas with plate and text boxes
+          self.addPlatesToVM(responseObj);
+
+          // Show that the processing is complete
+          var status = document.getElementById('upload-status');
+          status.innerHTML = 'Processing complete!';
+
+          // enable the display of the "number of plates found"
+          document.getElementById("num-plates-ind").style.display = "block";
+
+          // enable the display of the "number of images found"
+          document.getElementById("num-images-ind").style.display = "block";
+
+          // enable the display of the "processing time"
+          document.getElementById("time-to-process").style.display = "block";
+
+          // re-enable the submit button
+          document.getElementById("submit-button").disabled = false;
+
+        };
+      }
+
+      // Function that will allow us to know if Ajax uploads are supported
+      self.supportAjaxUploadWithProgress = function () {
+        return supportFileAPI() && supportAjaxUploadProgressEvents() && supportFormData();
+        // Is the File API supported?
+        function supportFileAPI() {
+          var fi = document.createElement('INPUT');
+          fi.type = 'file';
+          return 'files' in fi;
+        };
+        // Are progress events supported?
+        function supportAjaxUploadProgressEvents() {
+          var xhr = new XMLHttpRequest();
+          return !!(xhr && ('upload' in xhr) && ('onprogress' in xhr.upload));
+        };
+        // Is FormData supported?
+        function supportFormData() {
+          return !!window.FormData;
+        }
+      }
+
+      self.initFullFormAjaxUpload = function () {
+        var form = document.getElementById('form-id');
+        form.onsubmit = function () {
+          // FormData receives the whole form
+          var formData = new FormData(form);
+
+          // Display the values
+          console.log("initFullFormAjaxUpload: formData.values()");
+          for (var value of formData.values()) {
+            console.log(value);
+          }
+
+          // We send the data where the form wanted
+          var action = form.getAttribute('action');
+          // Code common to both variants
+          self.sendXHRequest(formData, action);
+          // Avoid normal form submission by returning false
+          return false;
+        }
+      }
+
+
+
+      // Actually confirm support
+      if (self.supportAjaxUploadWithProgress()) {
+        // Ajax uploads are supported!
+        // Change the support message and enable the upload button
+        var notice = document.getElementById('support-notice');
+        //var uploadBtn = document.getElementById('upload-button-id');
+        notice.innerHTML = "Automatic Number Plate Recognition";
+        //uploadBtn.removeAttribute('disabled');
+        // Init the Ajax form submission
+        self.initFullFormAjaxUpload();
+      }
+
+
+      // Handle the start of the transmission
+      function onloadstartHandler(evt) {
+        var div = document.getElementById('upload-status');
+        div.innerHTML = 'Uploading image...';
+      }
+
+      // Handle the end of the transmission
+      function onloadHandler(evt) {
+        var div = document.getElementById('upload-status');
+        div.innerHTML = 'File uploaded. Waiting for server to process the image...';
+      }
+
+    }; // end of AppViewModel function
+
+    // Create an instance of AppViewModel and bind it to html section "main"
+    var appViewModel = new AppViewModel()
+    ko.applyBindings(appViewModel, document.getElementById("main"));
+
+
+    // Callback for   <p><input id="file-id" type="file" name="file" onchange="readURL(event);"/>
+    // Make the image available for viewing
+    function readURL(input) {
+      console.log(input.files[0])
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          $('#car')
+            .attr('src', e.target.result);
+        };
+        reader.readAsDataURL(input.files[0]);
+
+        // Prompt the user to submit the image for processing
+        var status = document.getElementById('upload-status');
+        status.innerHTML = 'Click the submit button to process the image';
+
+        // disable the display of the "number of plates found"
+        document.getElementById("num-plates-ind").style.display = "none";
+
+        // disable the display of the "processingTime"
+        document.getElementById("time-to-process").style.display = "none";
+
+        // disable the display of the "number of images found"
+        document.getElementById("num-images-ind").style.display = "none";
+
+        // clear the canvas
+        var c = document.getElementById("myCanvas");
+        var ctx = c.getContext("2d");
+        ctx.clearRect(0, 0, c.width, c.height);
+      }
+    }
+
+  </script>
+
+
+  </form>
+</body>
+
+</html>
