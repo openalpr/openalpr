@@ -1,3 +1,5 @@
 /venv/
 Dockerfile
-/client/
+/client/node_modules
+/__pycache__
+/server/build
