@@ -11,6 +11,8 @@ run apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     liblog4cplus-dev \
     libopencv-dev \
     libtesseract-dev \
+    python3.8 \
+    python3-pip \
     wget
 
 # Copy all data
@@ -25,6 +27,4 @@ run cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc 
     make -j2 && \
     make install
 
-workdir /data
-
-entrypoint ["alpr"]
+workdir /srv/openalpr/web

@@ -1,0 +1,33 @@
+.App {
+  text-align: center;
+  background-color: #282c34;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  margin-top: 5vh;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.container {
+  margin-top: 5vh;
+  max-width: 90vw;
+  max-height: 90vh;
+  margin: auto;
+  position: relative;
+}
+
+.webcam {
+  max-height: 90vh;
+  max-width: 90vw;
+}
+
+.canvas {
+  top:0px;
+  left:0px;
+  max-width: 90vw;
+  max-height: 90vh;
+  margin: auto;
+  position: absolute;
+}
