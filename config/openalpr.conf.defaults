@@ -40,14 +40,14 @@ max_detection_input_height = 720
 ; lbpgpu    - LBP-based detector that uses Nvidia GPU to increase recognition speed.
 ; lbpopencl - LBP-based detector that uses OpenCL GPU to increase recognition speed.  Requires OpenCV 3.0
 ; morphcpu  - Experimental detector that detects white rectangles in an image.  Does not require training.
-detector = lbpcpu
+detector = lbpgpu
 
 ; If set to true, all results must match a postprocess text pattern if a pattern is available.  
 ; If not, the result is disqualified. 
 must_match_pattern = 0
 
 ; Bypasses plate detection.  If this is set to 1, the library assumes that each region provided is a likely plate area.
-skip_detection = 0
+skip_detection = 1
 
 ; Specifies the full path to an image file that constrains the detection area.  Only the plate regions allowed through the mask 
 ; will be analyzed.  The mask image must match the resolution of your image to be analyzed.  The mask is black and white.  
@@ -56,7 +56,7 @@ detection_mask_image =
 
 ; OpenALPR can scan the same image multiple times with different randomization.  Setting this to a value larger than
 ; 1 may increase accuracy, but will increase processing time linearly (e.g., analysis_count = 3 is 3x slower)
-analysis_count = 1
+analysis_count = 2
 
 ; OpenALPR detects high-contrast plate crops and uses an alternative edge detection technique.  Setting this to 0.0 
 ; would classify  ALL images as high-contrast, setting it to 1.0 would classify no images as high-contrast. 

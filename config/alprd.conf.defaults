@@ -2,8 +2,8 @@
 
 ; country determines the training dataset used for recognizing plates.  
 ; Valid values are: us, eu, au, auwide, gb, kr, mx, sg
-country = us
-;pattern = ca
+country = br
+;pattern = gn
 
 ; text name identifier for this location
 ;   site_id = your-unique-sitename
