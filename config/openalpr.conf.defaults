@@ -14,14 +14,14 @@ prewarp =
 ; detection will ignore plates that are too large.  This is a good efficiency technique to use if the 
 ; plates are going to be a fixed distance away from the camera (e.g., you will never see plates that fill 
 ; up the entire image
-max_plate_width_percent = 100
-max_plate_height_percent = 100
+max_plate_width_percent = 90
+max_plate_height_percent = 90
 
 ; detection_iteration_increase is the percentage that the LBP frame increases each iteration.
 ; It must be greater than 1.0.  A value of 1.01 means increase by 1%, 1.10 increases it by 10% each time. 
 ; So a 1% increase would be ~10x slower than 10% to process, but it has a higher chance of landing 
 ; directly on the plate and getting a strong detection
-detection_iteration_increase = 1.1
+detection_iteration_increase = 1.3
 
 ; The minimum detection strength determines how sure the detection algorithm must be before signaling that 
 ; a plate region exists.  Technically this corresponds to LBP nearest neighbors (e.g., how many detections 
@@ -40,14 +40,14 @@ max_detection_input_height = 720
 ; lbpgpu    - LBP-based detector that uses Nvidia GPU to increase recognition speed.
 ; lbpopencl - LBP-based detector that uses OpenCL GPU to increase recognition speed.  Requires OpenCV 3.0
 ; morphcpu  - Experimental detector that detects white rectangles in an image.  Does not require training.
-detector = lbpgpu
+detector = lbpcpu
 
 ; If set to true, all results must match a postprocess text pattern if a pattern is available.  
 ; If not, the result is disqualified. 
 must_match_pattern = 0
 
 ; Bypasses plate detection.  If this is set to 1, the library assumes that each region provided is a likely plate area.
-skip_detection = 1
+skip_detection = 0
 
 ; Specifies the full path to an image file that constrains the detection area.  Only the plate regions allowed through the mask 
 ; will be analyzed.  The mask image must match the resolution of your image to be analyzed.  The mask is black and white.  
@@ -56,22 +56,22 @@ detection_mask_image =
 
 ; OpenALPR can scan the same image multiple times with different randomization.  Setting this to a value larger than
 ; 1 may increase accuracy, but will increase processing time linearly (e.g., analysis_count = 3 is 3x slower)
-analysis_count = 2
+analysis_count = 25
 
 ; OpenALPR detects high-contrast plate crops and uses an alternative edge detection technique.  Setting this to 0.0 
 ; would classify  ALL images as high-contrast, setting it to 1.0 would classify no images as high-contrast. 
 contrast_detection_threshold = 0.3
 
-max_plate_angle_degrees = 15
+max_plate_angle_degrees = 20
 
-ocr_min_font_point = 6
+ocr_min_font_point = 4
 
 ; Minimum OCR confidence percent to consider.
 postprocess_min_confidence = 65
 
 ; Any OCR character lower than this will also add an equally likely
 ; chance that the character is incorrect and will be skipped.  Value is a confidence percent
-postprocess_confidence_skip_level = 80
+postprocess_confidence_skip_level = 75
 
 
 debug_general         = 0
