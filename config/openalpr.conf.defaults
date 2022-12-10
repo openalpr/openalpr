@@ -88,7 +88,3 @@ debug_ocr             = 0
 debug_postprocess     = 0
 debug_show_images     = 0
 debug_pause_on_frame  = 0
-
-
-
-
