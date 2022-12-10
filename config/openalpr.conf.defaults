@@ -73,7 +73,6 @@ postprocess_min_confidence = 65
 ; chance that the character is incorrect and will be skipped.  Value is a confidence percent
 postprocess_confidence_skip_level = 75
 
-
 debug_general         = 0
 debug_timing          = 0
 debug_detector        = 0
