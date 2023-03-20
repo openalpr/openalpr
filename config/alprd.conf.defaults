@@ -24,8 +24,8 @@ topn = 5
 
 ; Determines whether images that contain plates should be stored to disk
 store_plates = 0
-store_plates_location = /var/lib/openalpr/plateimages/
+store_plates_location = data/output/
 
 ; upload address is the destination to POST to
-upload_data = 1
-upload_address = json_server:80/plate_pred
+upload_data = 0
+upload_address = localhost:8081/plate_pred

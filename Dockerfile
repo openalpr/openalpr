@@ -1,4 +1,4 @@
-from ubuntu:18.04
+from python:slim
 
 # Install prerequisites
 run apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -11,8 +11,8 @@ run apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     liblog4cplus-dev \
     libopencv-dev \
     libtesseract-dev \
-    wget
-
+    wget\
+    inotify-tools
 # Copy all data
 copy . /srv/openalpr
 
@@ -27,4 +27,5 @@ run cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc 
 
 workdir /data
 
-entrypoint ["alpr"]
+ENTRYPOINT ["python", "persist_folder_predict.py"]
+
