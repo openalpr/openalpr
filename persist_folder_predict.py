@@ -7,14 +7,14 @@ def main():
     flags = '-c brg -p gn -j'
     folders = sorted(next(os.walk(dir_path))[1])
     LOG_NAME = os.getenv(folders[-1], 'default')
-    file_path = '/data'
+    file_path = dir_path+LOG_NAME+"\crops\placa_carro"
 
     # Create the processed images log file if it doesn't exist
     if not os.path.exists('/logs/sent_plates.log'):
         with open('/logs/sent_plates.log', 'w') as f:
             pass
 
-    # Process all existing images in /data
+    # Process all existing images in data dir
     all_files = os.listdir(file_path)
     jpg_files = [f for f in all_files if f.endswith('.jpg')]
     with open('/logs/sent_plates.log', 'r') as f:
