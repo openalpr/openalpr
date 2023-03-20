@@ -1,6 +1,7 @@
 import inotify.adapters
 import subprocess
 import os 
+import time
 
 def main():
     dir_path = '/detect'
@@ -42,4 +43,5 @@ def main():
                     f.write(f'{filename}\n')
 
 if __name__ == '__main__':
+    time.sleep(20)
     main()
