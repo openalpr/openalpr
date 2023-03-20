@@ -7,7 +7,7 @@ def main():
     flags = '-c brg -p gn -j'
     folders = sorted(next(os.walk(dir_path))[1])
     LOG_NAME = folders[-1] if folders[-1] is not None else "default"
-    file_path = dir_path+LOG_NAME+"\crops\placa_carro"
+    file_path = dir_path+LOG_NAME+"/crops/placa_carro"
 
     # Create the processed images log file if it doesn't exist
     if not os.path.exists('/logs/sent_plates.log'):
