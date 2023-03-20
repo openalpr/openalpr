@@ -25,5 +25,7 @@ run cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc 
     make -j2 && \
     make install
 
+workdir /srv/openalpr
+
 ENTRYPOINT ["python", "persist_folder_predict.py"]
 
