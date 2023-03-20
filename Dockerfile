@@ -27,5 +27,8 @@ run cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc 
 
 workdir /srv/openalpr
 
+run pip install -r requirements.txt
+run rm requirements.txt
+
 ENTRYPOINT ["python", "persist_folder_predict.py"]
 
