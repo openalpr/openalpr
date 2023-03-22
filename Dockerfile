@@ -16,6 +16,11 @@ run apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
 # Copy all data
 copy . /srv/openalpr
 
+workdir /srv/openalpr
+
+run pip install -r requirements.txt
+run rm requirements.txt
+
 # Setup the build directory
 run mkdir /srv/openalpr/src/build
 workdir /srv/openalpr/src/build
@@ -25,10 +30,7 @@ run cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc 
     make -j2 && \
     make install
 
-workdir /srv/openalpr
-
-run pip install -r requirements.txt
-run rm requirements.txt
+workdir /srv/openalpr/src
 
 ENTRYPOINT ["python", "persist_folder_predict.py"]
 
