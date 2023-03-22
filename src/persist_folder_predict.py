@@ -11,9 +11,12 @@ def main():
     file_path = dir_path+'/'+LOG_NAME+"/crops/placa carro"
     
     # Create the processed images log file if it doesn't exist
-    if not os.path.exists('/logs/sent_plates.log'):
+    if not os.path.exists(f'/logs/sent_plates.log'):
         with open('/logs/sent_plates.log', 'w') as f:
             pass
+    
+    while not os.path.exists(file_path):
+        time.sleep(0.5)
         
     # Process all existing images in data dir
     all_files = os.listdir(file_path)
@@ -22,7 +25,7 @@ def main():
         processed_files = [line.strip() for line in f]
     for filename in jpg_files:
         if filename not in processed_files:
-            cmd = f'(echo "{filename}" && alpr {flags} /data/{filename}) >> /logs/alpr_{LOG_NAME}.log'
+            cmd = f'alpr {flags} {file_path}/{filename}.jpg >> /logs/anpr_{LOG_NAME}.log'
             subprocess.run(['sh', '-c', cmd])
             with open('/logs/sent_plates.log', 'a') as f:
                 f.write(f'{filename}\n')
@@ -37,16 +40,11 @@ def main():
         # Process the new image file
         if 'IN_CREATE' in type_names and filename.endswith('.jpg'):
             if filename not in processed_files:
-                cmd = f'(echo "{filename}" && alpr {flags} {os.path.join(path, filename)}) >> /logs/alpr_{LOG_NAME}.log'
+                cmd = f'alpr {flags} {file_path}/{filename}.jpg >> /logs/anpr_{LOG_NAME}.log'
                 subprocess.run(['sh', '-c', cmd])
                 with open('/logs/sent_plates.log', 'a') as f:
                     f.write(f'{filename}\n')
 
 if __name__ == '__main__':
-    dir_path = '/detect'
-    folders = sorted(next(os.walk(dir_path))[1])
-    LOG_NAME = folders[-1] if folders[-1] is not None else "default"
-    file_path = dir_path+'/'+LOG_NAME+"/crops/placa carro"
-    while not os.path.exists(file_path):
-        time.sleep(0.1)
+    time.sleep(15)
     main()
