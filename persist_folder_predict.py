@@ -8,13 +8,13 @@ def main():
     flags = '-c brg -p gn -j'
     folders = sorted(next(os.walk(dir_path))[1])
     LOG_NAME = folders[-1] if folders[-1] is not None else "default"
-    file_path = dir_path+LOG_NAME+"/crops/placa_carro"
-
+    file_path = dir_path+'/'+LOG_NAME+"/crops/placa carro"
+    
     # Create the processed images log file if it doesn't exist
     if not os.path.exists('/logs/sent_plates.log'):
         with open('/logs/sent_plates.log', 'w') as f:
             pass
-
+        
     # Process all existing images in data dir
     all_files = os.listdir(file_path)
     jpg_files = [f for f in all_files if f.endswith('.jpg')]
@@ -43,5 +43,10 @@ def main():
                     f.write(f'{filename}\n')
 
 if __name__ == '__main__':
-    time.sleep(20)
+    dir_path = '/detect'
+    folders = sorted(next(os.walk(dir_path))[1])
+    LOG_NAME = folders[-1] if folders[-1] is not None else "default"
+    file_path = dir_path+'/'+LOG_NAME+"/crops/placa carro"
+    while not os.path.exists(file_path):
+        time.sleep(0.1)
     main()
