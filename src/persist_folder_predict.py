@@ -11,8 +11,8 @@ def main():
     file_path = dir_path+'/'+LOG_NAME+"/crops/placa carro"
     
     # Create the processed images log file if it doesn't exist
-    if not os.path.exists(f'/logs/sent_plates.log'):
-        with open('/logs/sent_plates.log', 'w') as f:
+    if not os.path.exists(f'/logs/sent_plates_{LOG_NAME}.log'):
+        with open(f'/logs/sent_plates_{LOG_NAME}.log', 'w') as f:
             pass
     
     while not os.path.exists(file_path):
@@ -42,7 +42,7 @@ def main():
         if 'IN_CREATE' in type_names and filename.endswith('.jpg'):
             cmd = f'alpr {flags} "{file_path}/{filename}" >> /logs/anpr_{LOG_NAME}.log'
             subprocess.run(['sh', '-c', cmd])
-            with open('/logs/sent_plates.log', 'a') as f:
+            with open(f'/logs/sent_plates_{LOG_NAME}.log', 'a') as f:
                 f.write(f'{filename}\n')
 
 if __name__ == '__main__':
