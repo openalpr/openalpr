@@ -17,10 +17,7 @@ def main():
     
     while not os.path.exists(file_path):
         time.sleep(0.5)
-        
-    while not os.listdir(file_path):
-        time.sleep(0.5)
-        
+      
     # # Process all existing images in data dir
     # all_files = os.listdir(file_path)
     # jpg_files = [f for f in all_files if f.endswith('.jpg')]
