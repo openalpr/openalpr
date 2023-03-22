@@ -15,21 +15,13 @@ def main():
         with open(f'/logs/sent_plates_{LOG_NAME}.log', 'w') as f:
             pass
     
-    while not os.path.exists(file_path):
-        time.sleep(0.5)
-      
-    # # Process all existing images in data dir
-    # all_files = os.listdir(file_path)
-    # jpg_files = [f for f in all_files if f.endswith('.jpg')]
-    # with open('/logs/sent_plates.log', 'r') as f:
-    #     processed_files = [line.strip() for line in f]
-    # for filename in sorted(jpg_files):
-    #     if filename not in processed_files:
-    #         print(f'alpr {flags} "{file_path}/{filename}" >> /logs/anpr_{LOG_NAME}.log')
-    #         cmd = f'alpr {flags} "{file_path}/{filename}" >> /logs/anpr_{LOG_NAME}.log'
-    #         subprocess.run(['sh', '-c', cmd])
-    #         with open('/logs/sent_plates.log', 'a') as f:
-    #             f.write(f'{filename}\n')
+    # Process existing files in the directory
+    for filename in os.listdir(file_path):
+        if filename.endswith('.jpg'):
+            cmd = f'alpr {flags} "{file_path}/{filename}" >> /logs/anpr_{LOG_NAME}.log'
+            subprocess.run(['sh', '-c', cmd])
+            with open(f'/logs/sent_plates_{LOG_NAME}.log', 'a') as f:
+                f.write(f'{filename}\n')
 
     # Watch for new images in /data using inotify
     i = inotify.adapters.Inotify()
