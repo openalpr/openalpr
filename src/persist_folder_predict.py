@@ -1,13 +1,15 @@
 import os
 import time
 import shutil
+import subprocess
 from datetime import datetime
 
 def main():
     detect_dir = '/detect'
     sent_plates_log_dir = '/logs/sent_plates'
     processed_plates_log_dir = '/logs/processed_plates'
-
+    flags = '-c brg -p gn -j'
+    
     # Check if /detect is not empty
     while not os.path.exists(detect_dir):
         time.sleep(0.5)
@@ -26,11 +28,9 @@ def main():
         with open(os.path.join(processed_plates_log_dir, latest_folder + '.log'), 'w'):
             pass
         
-    if not os.path.exists(os.path.join(processed_plates_log_dir, latest_folder + '.log')):
-        with open(os.path.join(processed_plates_log_dir, latest_folder + '.log'), 'w'):
+    if not os.path.exists(os.path.join(sent_plates_file_dir, latest_folder + '.log')):
+        with open(os.path.join(sent_plates_file_dir, latest_folder + '.log'), 'w'):
             pass
-    
-    os.makedirs(sent_plates_file_dir, exist_ok=True)
     i=0
     # Process each image in order
     while True:
@@ -39,19 +39,20 @@ def main():
         files.sort()
 
         for filename in files:
-
+            
+            now = str(datetime.now())+" "
+            processed_plates_log_name = os.path.join(processed_plates_log_dir, latest_folder)
+            
             # Send file to OpenALPR and log sent file name
             sent_log_filename = os.path.join(sent_plates_log_dir, latest_folder + '.log')
             with open(sent_log_filename, 'a') as f:
-                f.write(str(datetime.now())+ " " + filename + '\n')
+                f.write(now+ filename + '\n')
 
             # Process image with OpenALPR and log processing result
             # Assuming OpenALPR script is called 'alpr'
-            alpr_output = os.popen('alpr -c brg -p gn -j ' + '"' + os.path.join(crops_dir,filename)+ '"').read()
-            processed_log_filename = os.path.join(processed_plates_log_dir, latest_folder + '.log')
-            with open(processed_log_filename, 'a') as f:
-                f.write(filename + '\n' + alpr_output + '\n')
-            shutil.move(os.path.join(crops_dir, filename), os.path.join(sent_plates_file_dir, (str(datetime.now())+filename)))
+            cmd = f'echo {now+filename} >> {processed_plates_log_name}.log && alpr {flags} "{os.path.join(crops_dir,filename)}" >> {processed_plates_log_name}.log'
+            subprocess.run(['sh', '-c', cmd])
+            shutil.move(os.path.join(crops_dir, filename), os.path.join(sent_plates_file_dir, (now+filename)))
 
 if __name__ == '__main__':
     time.sleep(5)
