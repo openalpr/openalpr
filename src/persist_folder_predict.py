@@ -23,9 +23,11 @@ def main():
     if not os.path.exists(os.path.join(processed_plates_dir, latest_folder + '.log')):
         with open(os.path.join(processed_plates_dir, latest_folder + '.log'), 'w'):
             pass
+        
     if not os.path.exists(os.path.join(processed_plates_dir, latest_folder + '.log')):
         with open(os.path.join(processed_plates_dir, latest_folder + '.log'), 'w'):
             pass
+        
     # Process each image in order
     processed_files = set()
     while True:
@@ -46,10 +48,10 @@ def main():
 
             # Process image with OpenALPR and log processing result
             # Assuming OpenALPR script is called 'alpr'
-            alpr_output = os.popen('alpr -c brg -p gn -j ' + os.path.join(crops_dir,sent_filename)).read()
+            alpr_output = os.popen('alpr -c brg -p gn -j ' + '"' + os.path.join(crops_dir,sent_filename)+ '"').read()
             processed_log_filename = os.path.join(processed_plates_dir, latest_folder + '.log')
             with open(processed_log_filename, 'a') as f:
-                f.write(os.path.join(crops_dir,sent_filename) + '\n' + alpr_output + '\n')
+                f.write(filename + '\n' + alpr_output + '\n')
 
             # Add filename to processed set
             processed_files.add(filename)
