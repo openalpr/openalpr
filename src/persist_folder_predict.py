@@ -28,9 +28,11 @@ def main():
         with open(os.path.join(processed_plates_log_dir, latest_folder + '.log'), 'w'):
             pass
         
-    if not os.path.exists(os.path.join(sent_plates_file_dir, latest_folder + '.log')):
-        with open(os.path.join(sent_plates_file_dir, latest_folder + '.log'), 'w'):
+    if not os.path.exists(os.path.join(sent_plates_log_dir, latest_folder + '.log')):
+        with open(os.path.join(sent_plates_log_dir, latest_folder + '.log'), 'w'):
             pass
+
+    os.makedirs(sent_plates_file_dir, exist_ok=True)
 
     # Process each image in order
     while True:
