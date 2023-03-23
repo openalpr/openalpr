@@ -1,7 +1,7 @@
-from python:slim
+FROM python:slim
 
 # Install prerequisites
-run apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     build-essential \
     cmake \
     curl \
@@ -11,26 +11,26 @@ run apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     liblog4cplus-dev \
     libopencv-dev \
     libtesseract-dev \
-    wget\
-    inotify-tools
+    wget
+
 # Copy all data
-copy . /srv/openalpr
+COPY . /srv/openalpr
 
-workdir /srv/openalpr
+WORKDIR /srv/openalpr
 
-run pip install -r requirements.txt
-run rm requirements.txt
+RUN pip install -r requirements.txt
+RUN rm requirements.txt
 
 # Setup the build directory
-run mkdir /srv/openalpr/src/build
-workdir /srv/openalpr/src/build
+RUN mkdir /srv/openalpr/src/build
+WORKDIR /srv/openalpr/src/build
 
 # Setup the compile environment
-run cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && \
+RUN cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && \
     make -j2 && \
     make install
 
-workdir /srv/openalpr/src
+WORKDIR /srv/openalpr/src
 
 ENTRYPOINT ["python", "persist_folder_predict.py"]
 

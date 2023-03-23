@@ -3,7 +3,6 @@ import time
 import shutil
 import subprocess
 from datetime import datetime
-import logging
 
 def main():
     detect_dir = '/detect'
