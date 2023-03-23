@@ -29,7 +29,7 @@ def main():
         with open(os.path.join(processed_plates_log_dir, latest_folder + '.log'), 'w'):
             pass
     
-    os.mkdir(sent_plates_file_dir, exist_ok=True)
+    os.makedirs(sent_plates_file_dir, exist_ok=True)
         
     # Process each image in order
     while True:
