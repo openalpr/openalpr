@@ -25,6 +25,10 @@ def main():
     while not os.path.exists(crops_dir):
         time.sleep(0.5)
         
+    os.makedirs(sent_plates_file_dir, exist_ok=True)
+    os.makedirs(os.path.join(processed_plates_log_dir, latest_folder,category), exist_ok=True)
+    os.makedirs(os.path.join(sent_plates_log_dir, latest_folder,category), exist_ok=True)
+        
     if not os.path.exists(os.path.join(processed_plates_log_dir, latest_folder,category,'processed_plates.log')):
         with open(os.path.join(processed_plates_log_dir, latest_folder,category, 'processed_plates.log'), 'w'):
             pass
@@ -35,8 +39,6 @@ def main():
         
     sent_plates_log = os.path.join(sent_plates_log_dir, latest_folder, category, 'sent_plates.log')
     processed_plates_log = os.path.join(processed_plates_log_dir, latest_folder,category, 'processed_plates.log')
-    
-    os.makedirs(sent_plates_file_dir, exist_ok=True)
     
     # Process each image in order
     while True:
