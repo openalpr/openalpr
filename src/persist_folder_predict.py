@@ -43,7 +43,7 @@ def main():
             # Send file to OpenALPR and log sent file name
             sent_log_filename = os.path.join(sent_plates_log_dir, latest_folder + '.log')
             with open(sent_log_filename, 'a') as f:
-                f.write(datetime.now() + filename + '\n')
+                f.write(str(datetime.now()) + filename + '\n')
 
             # Process image with OpenALPR and log processing result
             # Assuming OpenALPR script is called 'alpr'
