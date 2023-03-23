@@ -46,11 +46,10 @@ def main():
 
             # Process image with OpenALPR and log processing result
             # Assuming OpenALPR script is called 'alpr'
-            logging.info('alpr -c brg -p gn -j ' + os.path.join(crops_dir,sent_filename))
             alpr_output = os.popen('alpr -c brg -p gn -j ' + os.path.join(crops_dir,sent_filename)).read()
-            processes_log_filename = os.path.join(processed_plates_dir, latest_folder + '.log')
-            with open(processes_log_filename, 'a') as f:
-                f.write(filename + '\n' + alpr_output + '\n')
+            processed_log_filename = os.path.join(processed_plates_dir, latest_folder + '.log')
+            with open(processed_log_filename, 'a') as f:
+                f.write(os.path.join(crops_dir,sent_filename) + '\n' + alpr_output + '\n')
 
             # Add filename to processed set
             processed_files.add(filename)
