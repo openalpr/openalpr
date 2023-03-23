@@ -1,6 +1,7 @@
 import os
 import time
 import shutil
+from datetime import datetime
 
 def main():
     detect_dir = '/detect'
@@ -30,7 +31,7 @@ def main():
             pass
     
     os.makedirs(sent_plates_file_dir, exist_ok=True)
-        
+    i=0
     # Process each image in order
     while True:
         # Get list of files in /crops/placa_carro
@@ -42,7 +43,7 @@ def main():
             # Send file to OpenALPR and log sent file name
             sent_log_filename = os.path.join(sent_plates_log_dir, latest_folder + '.log')
             with open(sent_log_filename, 'a') as f:
-                f.write(filename + '\n')
+                f.write(datetime.now() + filename + '\n')
 
             # Process image with OpenALPR and log processing result
             # Assuming OpenALPR script is called 'alpr'
@@ -50,7 +51,7 @@ def main():
             processed_log_filename = os.path.join(processed_plates_log_dir, latest_folder + '.log')
             with open(processed_log_filename, 'a') as f:
                 f.write(filename + '\n' + alpr_output + '\n')
-            shutil.move(os.path.join(crops_dir, filename), sent_plates_file_dir)
+            shutil.move(os.path.join(crops_dir, filename), (sent_plates_file_dir, str(datetime.now())+filename))
 
 if __name__ == '__main__':
     time.sleep(5)
