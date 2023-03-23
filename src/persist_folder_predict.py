@@ -31,7 +31,7 @@ def main():
     if not os.path.exists(os.path.join(sent_plates_file_dir, latest_folder + '.log')):
         with open(os.path.join(sent_plates_file_dir, latest_folder + '.log'), 'w'):
             pass
-    i=0
+
     # Process each image in order
     while True:
         # Get list of files in /crops/placa_carro
@@ -41,7 +41,7 @@ def main():
         for filename in files:
             
             now = str(datetime.now())+" "
-            processed_plates_log_name = os.path.join(processed_plates_log_dir, latest_folder)
+            processed_plates_log = os.path.join(processed_plates_log_dir, latest_folder+'.log')
             
             # Send file to OpenALPR and log sent file name
             sent_log_filename = os.path.join(sent_plates_log_dir, latest_folder + '.log')
@@ -50,7 +50,7 @@ def main():
 
             # Process image with OpenALPR and log processing result
             # Assuming OpenALPR script is called 'alpr'
-            cmd = f'echo {now+filename} >> {processed_plates_log_name}.log && alpr {flags} "{os.path.join(crops_dir,filename)}" >> {processed_plates_log_name}.log'
+            cmd = f'echo {now+filename} >> {processed_plates_log} && alpr {flags} "{os.path.join(crops_dir,filename)}" >> {processed_plates_log}'
             subprocess.run(['sh', '-c', cmd])
             shutil.move(os.path.join(crops_dir, filename), os.path.join(sent_plates_file_dir, (now+filename)))
 
