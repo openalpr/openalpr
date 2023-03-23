@@ -3,6 +3,7 @@ import time
 import shutil
 import subprocess
 from datetime import datetime
+import logging
 
 def main():
     detect_dir = '/detect'
@@ -38,6 +39,7 @@ def main():
     while True:
         # Get list of files in /crops/placa_carro
         files = os.listdir(crops_dir)
+        logging.warning(files)
         files.sort()
 
         for filename in files:
