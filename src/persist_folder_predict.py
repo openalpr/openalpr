@@ -8,7 +8,7 @@ def main():
     detect_dir = '/detect'
     sent_plates_log_dir = '/logs/sent_plates'
     processed_plates_log_dir = '/logs/processed_plates'
-    flags = '-c brg -p gn -j'
+    flags = '-c brg -p gn -j '
     
     # Check if /detect is not empty
     while not os.path.exists(detect_dir):
