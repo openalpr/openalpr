@@ -6,6 +6,10 @@ import time
 def main():
     dir_path = '/detect'
     flags = '-c brg -p gn -j'
+    
+    while not os.listdir(dir_path):
+        time.sleep(0.5)
+    
     folders = sorted(next(os.walk(dir_path))[1])
     LOG_NAME = folders[-1] if folders[-1] is not None else "default"
     file_path = dir_path+'/'+LOG_NAME+"/crops/placa carro"
