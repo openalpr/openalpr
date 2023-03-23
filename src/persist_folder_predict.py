@@ -8,17 +8,22 @@ def main():
     processes_plates_dir = '/logs/processes_plates'
 
     # Check if /detect is not empty
-    while not os.listdir(detect_dir):
+    while not os.path.exists(detect_dir):
         time.sleep(0.5)
-
+        
     # Get the latest folder in /detect
-    latest_folder = max(os.listdir(detect_dir), key=os.path.getctime)
+    folders = sorted(next(os.walk(detect_dir))[1])
+    latest_folder = folders[-1] if folders[-1] is not None else "default"
     crops_dir = os.path.join(detect_dir, latest_folder, 'crops', 'placa carro')
 
     # Wait for /crops/placa carro to exist
     while not os.path.exists(crops_dir):
         time.sleep(0.5)
-
+        
+    if not os.path.exists(os.path.join(processes_plates_dir, latest_folder + '.log')):
+        with open(os.path.join(processes_plates_dir, latest_folder + '.log'), 'w'):
+            pass
+        
     # Process each image in order
     processed_files = set()
     while True:
