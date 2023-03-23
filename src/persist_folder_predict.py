@@ -34,7 +34,7 @@ def main():
             pass
         
     if not os.path.exists(os.path.join(sent_plates_log_dir, latest_folder, category, 'sent_plates.log')):
-        with open(os.path.join(sent_plates_log_dir, latest_folder, category,'sent_plates.log', 'w')):
+        with open(os.path.join(sent_plates_log_dir, latest_folder, category, 'sent_plates.log'), 'w'):
             pass
         
     sent_plates_log = os.path.join(sent_plates_log_dir, latest_folder, category, 'sent_plates.log')
