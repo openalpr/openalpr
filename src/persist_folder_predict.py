@@ -5,7 +5,7 @@ import logging
 def main():
     detect_dir = '/detect'
     sent_plates_dir = '/logs/sent_plates'
-    processes_plates_dir = '/logs/processes_plates'
+    processed_plates_dir = '/logs/processeD_plates'
 
     # Check if /detect is not empty
     while not os.path.exists(detect_dir):
@@ -20,10 +20,12 @@ def main():
     while not os.path.exists(crops_dir):
         time.sleep(0.5)
         
-    if not os.path.exists(os.path.join(processes_plates_dir, latest_folder + '.log')):
-        with open(os.path.join(processes_plates_dir, latest_folder + '.log'), 'w'):
+    if not os.path.exists(os.path.join(processed_plates_dir, latest_folder + '.log')):
+        with open(os.path.join(processed_plates_dir, latest_folder + '.log'), 'w'):
             pass
-        
+    if not os.path.exists(os.path.join(processed_plates_dir, latest_folder + '.log')):
+        with open(os.path.join(processed_plates_dir, latest_folder + '.log'), 'w'):
+            pass
     # Process each image in order
     processed_files = set()
     while True:
@@ -44,8 +46,8 @@ def main():
 
             # Process image with OpenALPR and log processing result
             # Assuming OpenALPR script is called 'alpr'
-            alpr_output = os.popen('alpr -c brg -p gn -j' + os.path.join(crops_dir,sent_filename)).read()
-            processes_log_filename = os.path.join(processes_plates_dir, latest_folder + '.log')
+            alpr_output = os.popen('alpr -c brg -p gn -j ' + os.path.join(crops_dir,sent_filename)).read()
+            processes_log_filename = os.path.join(processed_plates_dir, latest_folder + '.log')
             with open(processes_log_filename, 'a') as f:
                 f.write(filename + '\n' + alpr_output + '\n')
 
