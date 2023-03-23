@@ -19,7 +19,7 @@ class PlateProcessor(FileSystemEventHandler):
 
         # Process the new image file
         filename = os.path.basename(event.src_path)
-        cmd = f'echo {filename} >> /logs/sent_plates/{self.log_name}.log && alpr {self.flags} "{event.src_path}" >> /logs/processed_plates/{self.log_name}.log'
+        cmd = f'echo {filename} >> /logs/processed_plates/{self.log_name}.log && alpr {self.flags} "{event.src_path}" >> /logs/processed_plates/{self.log_name}.log'
         subprocess.run(['sh', '-c', cmd])
         with open(f'/logs/sent_plates/{self.log_name}.log', 'a') as f:
             f.write(f'{os.path.basename(event.src_path)}\n')
@@ -45,7 +45,7 @@ def main():
     # Process existing files in the directory
     for filename in sorted(os.listdir(file_path)):
         if filename.endswith('.jpg'):
-            cmd = f'echo {filename} >> /logs/sent_plates/{log_name}.log && alpr {flags} "{file_path}/{filename}" >> /logs/processed_plates/{log_name}.log'
+            cmd = f'echo {filename} >> /logs/processed_plates/{log_name}.log && alpr {flags} "{file_path}/{filename}" >> /logs/processed_plates/{log_name}.log'
             subprocess.run(['sh', '-c', cmd])
             with open(f'/logs/sent_plates/{log_name}.log', 'a') as f:
                 f.write(f'{filename}\n')
