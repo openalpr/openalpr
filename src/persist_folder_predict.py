@@ -39,14 +39,12 @@ def main():
     while True:
         # Get list of files in /crops/placa_carro
         files = os.listdir(crops_dir)
-        for filename in files:
-            logging.warn("fiiiilleeesssssss \n"+str(filename))
         files.sort()
 
         for filename in files:
             
             if not filename.endswith('.jpg'):
-                pass
+                continue
             
             now = str(datetime.now())+" "
             processed_plates_log = os.path.join(processed_plates_log_dir, latest_folder+'.log')
