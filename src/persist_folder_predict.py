@@ -25,16 +25,16 @@ def main():
     while not os.path.exists(crops_dir):
         time.sleep(0.5)
         
-    if not os.path.exists(os.path.join(processed_plates_log_dir, latest_folder, category + '.log')):
-        with open(os.path.join(processed_plates_log_dir, latest_folder, category + '.log'), 'w'):
+    if not os.path.exists(os.path.join(processed_plates_log_dir, latest_folder,category) + 'processed_plates.log'):
+        with open(os.path.join(processed_plates_log_dir, latest_folder,category) + 'processed_plates.log', 'w'):
             pass
         
-    if not os.path.exists(os.path.join(sent_plates_log_dir, latest_folder, category + '.log')):
-        with open(os.path.join(sent_plates_log_dir, latest_folder, category + '.log'), 'w'):
+    if not os.path.exists(os.path.join(sent_plates_log_dir, latest_folder, category) + 'sent_plates.log'):
+        with open(os.path.join(sent_plates_log_dir, latest_folder, category) + 'sent_plates.log', 'w'):
             pass
         
-    sent_plates_log = os.path.join(sent_plates_log_dir, latest_folder, category + '.log')
-    processed_plates_log = os.path.join(processed_plates_log_dir, latest_folder, category + '.log')
+    sent_plates_log = os.path.join(sent_plates_log_dir, latest_folder, category) + 'sent_plates.log'
+    processed_plates_log = os.path.join(processed_plates_log_dir, latest_folder,category) + 'processed_plates.log'
     
     os.makedirs(sent_plates_file_dir, exist_ok=True)
     
