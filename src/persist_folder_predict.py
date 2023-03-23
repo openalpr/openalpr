@@ -14,7 +14,10 @@ def main():
     if not os.path.exists(f'/logs/sent_plates_{LOG_NAME}.log'):
         with open(f'/logs/sent_plates_{LOG_NAME}.log', 'w') as f:
             pass
-    
+        
+    while not os.path.exists(file_path):
+        time.sleep(0.5)
+        
     # Process existing files in the directory
     for filename in os.listdir(file_path):
         if filename.endswith('.jpg'):
