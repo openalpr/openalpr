@@ -41,7 +41,6 @@ def main():
     sent_plates_log = os.path.join(sent_plates_log_dir, category, 'sent_plates.log')
     processed_plates_log = os.path.join(processed_plates_log_dir,category, 'processed_plates.log')
     
-    i=0
     
     # Process each image in order
     while True:
@@ -59,13 +58,13 @@ def main():
             # Send file to OpenALPR and log sent file name
             
             with open(sent_plates_log, 'a') as f:
-                f.write(id + f'frame_{i}' + '\n')
+                f.write(id + '\n')
 
             # Process image with OpenALPR and log processing result
             # Assuming OpenALPR script is called 'alpr'
-            cmd = f'echo {id + "frame_"+i} >> {processed_plates_log} && alpr {flags} "{os.path.join(crops_dir,filename)}" >> {processed_plates_log}'
+            cmd = f'echo {id} >> {processed_plates_log} && alpr {flags} "{os.path.join(crops_dir,filename)}" >> {processed_plates_log}'
             subprocess.run(['sh', '-c', cmd])
-            shutil.move(os.path.join(crops_dir, filename), os.path.join(sent_plates_file_dir, (id + f'frame_{i}')))
+            shutil.move(os.path.join(crops_dir, filename), os.path.join(sent_plates_file_dir, (id)))
 
 if __name__ == '__main__':
     time.sleep(5)
