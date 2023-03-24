@@ -1,73 +1,61 @@
-import os
-import time
-import shutil
 import subprocess
+import shutil
+#import logging
+from pathlib import Path
 from datetime import datetime
-import logging
+import time
+
+#logging.basicConfig(level=logging.INFO)
+
+def process_image(image_path: Path, category: str, sent_plates_file_dir: Path, sent_plates_log_file: Path, processed_plates_log_file: Path, flags: str):
+    id = str(datetime.now()).replace(" ","").replace(":","").replace(".","").replace("-","")
+    with sent_plates_log_file.open('a') as f:
+        f.write(id + '\n')
+    cmd = f'echo {id} >> {processed_plates_log_file} && alpr {flags} {image_path} >> {processed_plates_log_file}'
+    subprocess.run(['sh', '-c', cmd])
+    shutil.move(image_path, sent_plates_file_dir / (id+'.jpg'))
+    #logging.info(f"Processed {image_path.name} for category {category} with ID {id}")
 
 def main():
-    detect_dir = '/detect'
+    detect_dir = Path('/detect')
     flags = '-c brg -p gn -j '
-    
-    # Check if /detect is not empty
-    while not os.path.exists(detect_dir):
-        time.sleep(0.5)
-        
-    # Get the latest folder in /detect
-    folders = sorted(next(os.walk(detect_dir))[1])
-    latest_folder = folders[-1] if folders[-1] is not None else "default"
     category = 'placa_carro'
-    crops_dir = os.path.join(detect_dir, latest_folder, 'crops', category)
-    sent_plates_file_dir = os.path.join(crops_dir, 'sent_plates')
-    
-    sent_plates_log_dir = os.path.join('/logs',latest_folder, 'sent_plates')
-    processed_plates_log_dir = os.path.join('/logs',latest_folder, 'processed_plates')
 
-    # Wait for /crops/placa carro to exist
-    while not os.path.exists(crops_dir):
+    while not detect_dir.exists():
         time.sleep(0.5)
-        
-    os.makedirs(sent_plates_file_dir, exist_ok=True)
-    os.makedirs(os.path.join(processed_plates_log_dir,category), exist_ok=True)
-    os.makedirs(os.path.join(sent_plates_log_dir,category), exist_ok=True)
 
-        
-    if not os.path.exists(os.path.join(processed_plates_log_dir,category,'processed_plates.log')):
-        with open(os.path.join(processed_plates_log_dir,category,'processed_plates.log'), 'w'):
-            pass
-        
-    if not os.path.exists(os.path.join(sent_plates_log_dir, category,'sent_plates.log')):
-        with open(os.path.join(sent_plates_log_dir, category,'sent_plates.log'), 'w'):
-            pass
-        
-    sent_plates_log = os.path.join(sent_plates_log_dir, category, 'sent_plates.log')
-    processed_plates_log = os.path.join(processed_plates_log_dir,category, 'processed_plates.log')
-    
-    
-    # Process each image in order
+    latest_folder = sorted(detect_dir.glob('*'), key=lambda x: x.stat().st_mtime, reverse=True)[0].name
+    crops_dir = detect_dir / latest_folder / 'crops' / category
+    sent_plates_file_dir = crops_dir / 'sent_plates'
+    sent_plates_log_dir = Path('/logs') / latest_folder / 'sent_plates' / category
+    processed_plates_log_dir = Path('/logs') / latest_folder / 'processed_plates' / category
+
+    crops_dir.mkdir(parents=True, exist_ok=True)
+    sent_plates_file_dir.mkdir(exist_ok=True)
+    sent_plates_log_dir.mkdir(parents=True, exist_ok=True)
+    processed_plates_log_dir.mkdir(parents=True, exist_ok=True)
+
+    sent_plates_log_file = sent_plates_log_dir / 'sent_plates.log'
+    processed_plates_log_file = processed_plates_log_dir / 'processed_plates.log'
+    if not sent_plates_log_file.exists():
+        sent_plates_log_file.touch()
+    if not processed_plates_log_file.exists():
+        processed_plates_log_file.touch()
+
     while True:
-        # Get list of files in /crops/placa_carro
-        files = os.listdir(crops_dir)
-        files.sort()
-
-        for filename in files:
+        files = sorted(crops_dir.glob('*.jpg'))
+        for file in files:
+            process_image(file, category, sent_plates_file_dir, sent_plates_log_file, processed_plates_log_file, flags)
+        else:
+            #logging.info(f"Finished processing all images in {crops_dir}")
             
-            if not filename.endswith('.jpg'):
-                continue
+        # Check for new files and process them
+        time.sleep(1)  # Wait for 1 second before checking again
+        new_files = sorted(crops_dir.glob('*.jpg'))
+        if new_files != files:
+            #logging.info("New files detected. Processing...")
+            files = new_files
             
-            id = str(datetime.now()).replace(" ","").replace(":","").replace(".","").replace("-","")
-            
-            # Send file to OpenALPR and log sent file name
-            
-            with open(sent_plates_log, 'a') as f:
-                f.write(id + '\n')
-
-            # Process image with OpenALPR and log processing result
-            # Assuming OpenALPR script is called 'alpr'
-            cmd = f'echo {id} >> {processed_plates_log} && alpr {flags} {os.path.join(crops_dir,filename)} >> {processed_plates_log}'
-            subprocess.run(['sh', '-c', cmd])
-            shutil.move(os.path.join(crops_dir, filename), os.path.join(sent_plates_file_dir, (id+'.jpg')))
-
 if __name__ == '__main__':
     time.sleep(5)
-    main() 
+    main()
