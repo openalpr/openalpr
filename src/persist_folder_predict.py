@@ -7,11 +7,11 @@ import time
 
 #logging.basicConfig(level=logging.INFO)
 
-def process_image(image_path: Path, category: str, sent_plates_file_dir: Path, sent_plates_log_file: Path, processed_plates_log_file: Path, flags: str):
+def process_image(image_path: Path, sent_plates_file_dir: Path, sent_plates_log_file: Path, processed_plates_log_dir: Path, flags: str):
     id = str(datetime.now()).replace(" ","").replace(":","").replace(".","").replace("-","")
     with sent_plates_log_file.open('a') as f:
         f.write(id + '\n')
-    cmd = f'echo {id} >> {processed_plates_log_file} && alpr {flags} {image_path} >> {processed_plates_log_file}'
+    cmd = f'alpr {flags} {image_path} >> {processed_plates_log_dir / id}.log'
     subprocess.run(['sh', '-c', cmd])
     shutil.move(image_path, sent_plates_file_dir / (id+'.jpg'))
     #logging.info(f"Processed {image_path.name} for category {category} with ID {id}")
@@ -36,16 +36,13 @@ def main():
     processed_plates_log_dir.mkdir(parents=True, exist_ok=True)
 
     sent_plates_log_file = sent_plates_log_dir / 'sent_plates.log'
-    processed_plates_log_file = processed_plates_log_dir / 'processed_plates.log'
     if not sent_plates_log_file.exists():
         sent_plates_log_file.touch()
-    if not processed_plates_log_file.exists():
-        processed_plates_log_file.touch()
 
     while True:
         files = sorted(crops_dir.glob('*.jpg'))
         for file in files:
-            process_image(file, category, sent_plates_file_dir, sent_plates_log_file, processed_plates_log_file, flags)
+            process_image(file, sent_plates_file_dir, sent_plates_log_file, processed_plates_log_dir, flags)
         else:
             #logging.info(f"Finished processing all images in {crops_dir}")
             
