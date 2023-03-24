@@ -49,12 +49,12 @@ def main():
         else:
             #logging.info(f"Finished processing all images in {crops_dir}")
             
-        # Check for new files and process them
-        time.sleep(1)  # Wait for 1 second before checking again
-        new_files = sorted(crops_dir.glob('*.jpg'))
-        if new_files != files:
-            #logging.info("New files detected. Processing...")
-            files = new_files
+            # Check for new files and process them
+            time.sleep(1)  # Wait for 1 second before checking again
+            new_files = sorted(crops_dir.glob('*.jpg'))
+            if new_files != files:
+                #logging.info("New files detected. Processing...")
+                files = new_files
             
 if __name__ == '__main__':
     time.sleep(5)
