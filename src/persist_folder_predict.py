@@ -1,11 +1,11 @@
 import subprocess
 import shutil
-#import logging
+import logging
 from pathlib import Path
 from datetime import datetime
 import time
 
-#logging.basicConfig(level=logging.INFO)
+category = 'placa_carro'
 
 def process_image(image_path: Path, sent_plates_file_dir: Path, sent_plates_log_file: Path, processed_plates_log_dir: Path, flags: str):
     id = str(datetime.now()).replace(" ","").replace(":","").replace(".","").replace("-","")
@@ -19,7 +19,6 @@ def process_image(image_path: Path, sent_plates_file_dir: Path, sent_plates_log_
 def main():
     detect_dir = Path('/detect')
     flags = '-c brg -p gn -j '
-    category = 'placa_carro'
 
     while not detect_dir.exists():
         time.sleep(0.5)
@@ -54,5 +53,5 @@ def main():
                 files = new_files
             
 if __name__ == '__main__':
-    time.sleep(5)
+    time.sleep(10)
     main()
