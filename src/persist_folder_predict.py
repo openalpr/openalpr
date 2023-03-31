@@ -4,15 +4,17 @@ import logging
 from pathlib import Path
 from datetime import datetime
 import time
+import os
 
 category = 'placa_carro'
 
 def clean_det_dir():
     detect_dir = Path('/detect')
-    items = detect_dir.glob('*')
+    dest_dir = detect_dir / 'old'
+    items = [item for item in detect_dir.glob('*') if not os.path.samefile(item, dest_dir) and not os.path.commonpath([item, dest_dir]) == dest_dir]
     if items:
         for item in items:
-            shutil.move(item, detect_dir / 'old')
+            shutil.move(item, dest_dir)
 
 def process_image(image_path: Path, sent_plates_file_dir: Path, sent_plates_log_file: Path, processed_plates_log_dir: Path, flags: str):
     id = str(datetime.now()).replace(" ","").replace(":","").replace(".","").replace("-","")
@@ -25,12 +27,13 @@ def process_image(image_path: Path, sent_plates_file_dir: Path, sent_plates_log_
 
 def main():
     detect_dir = Path('/detect')
+    dest_dir = detect_dir / 'old'
     flags = '-c brg -p gn -j '
 
-    while not detect_dir.exists():
+    while not [item for item in detect_dir.glob('*') if not os.path.samefile(item, dest_dir) and not os.path.commonpath([item, dest_dir]) == dest_dir]:
         time.sleep(0.5)
 
-    latest_folder = sorted(detect_dir.glob('*'), key=lambda x: x.stat().st_mtime, reverse=True)[0].name
+    latest_folder = sorted([item for item in detect_dir.glob('*') if not os.path.samefile(item, dest_dir) and not os.path.commonpath([item, dest_dir]) == dest_dir], key=lambda x: x.stat().st_mtime, reverse=True)[0].name
     crops_dir = detect_dir / latest_folder / 'crops' / category
     sent_plates_file_dir = crops_dir / 'sent_plates'
     sent_plates_log_dir = Path('/logs') / latest_folder / 'sent_plates' / category
@@ -61,5 +64,4 @@ def main():
             
 if __name__ == '__main__':
     clean_det_dir()
-    time.sleep(10)
     main()
