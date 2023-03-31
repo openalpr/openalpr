@@ -7,6 +7,13 @@ import time
 
 category = 'placa_carro'
 
+def clean_det_dir():
+    detect_dir = Path('/detect')
+    items = detect_dir.glob('*')
+    if items:
+        for item in items:
+            shutil.move(item, detect_dir / 'old')
+
 def process_image(image_path: Path, sent_plates_file_dir: Path, sent_plates_log_file: Path, processed_plates_log_dir: Path, flags: str):
     id = str(datetime.now()).replace(" ","").replace(":","").replace(".","").replace("-","")
     with sent_plates_log_file.open('a') as f:
@@ -53,5 +60,6 @@ def main():
                 files = new_files
             
 if __name__ == '__main__':
+    clean_det_dir()
     time.sleep(10)
     main()
