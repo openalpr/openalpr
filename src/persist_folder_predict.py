@@ -133,8 +133,7 @@ def main():
                     sent_plates_file_dir_dict[category],
                     sent_plates_log_file_dict[category],
                     processed_plates_log_dir_dict[category],
-                    flags_dict[category],
-                    category,
+                    flags_dict[category]
                 )
 
 
