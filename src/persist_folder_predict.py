@@ -28,7 +28,7 @@ def process_image(image_path: Path, sent_plates_file_dir: Path, sent_plates_log_
 def main():
     detect_dir = Path('/detect')
     dest_dir = detect_dir / 'old'
-    flags = '-c brg -p gn -j '
+    flags = '-c brg -p gn -j'
 
     while not [item for item in detect_dir.glob('*') if not os.path.samefile(item, dest_dir) and not os.path.commonpath([item, dest_dir]) == dest_dir]:
         time.sleep(0.5)
