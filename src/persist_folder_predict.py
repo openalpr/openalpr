@@ -56,8 +56,8 @@ def main():
     flags_dict = {
         categories[0]: ["-c brg -p gn -j"],
         categories[1]: ["-c brms -p ms -j"],
-        categories[2]: ["-c brg2 -p gn -j"],
-        categories[3]: ["-c brg2 -p ms -j"],
+        categories[2]: ["-c brmt -p gn -j"],
+        categories[3]: ["-c brmtms -p ms -j"],
     }
 
     while not [
