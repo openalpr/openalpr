@@ -86,11 +86,11 @@ def main():
         categories[3]: [],
     }
 
-    crops_dir_dict = empty_cat_dict
-    sent_plates_file_dir_dict = empty_cat_dict
-    sent_plates_log_dir_dict = empty_cat_dict
-    processed_plates_log_dir_dict = empty_cat_dict
-    sent_plates_log_file_dict = empty_cat_dict
+    crops_dir_dict = empty_cat_dict.copy()
+    sent_plates_file_dir_dict = empty_cat_dict.copy()
+    sent_plates_log_dir_dict = empty_cat_dict.copy()
+    processed_plates_log_dir_dict = empty_cat_dict.copy()
+    sent_plates_log_file_dict = empty_cat_dict.copy()
 
     for category in categories:
         crops_dir_dict[category] = detect_dir / latest_folder / "crops" / category
@@ -113,7 +113,7 @@ def main():
 
     while True:
 
-        files_cat_dict = empty_cat_dict
+        files_cat_dict = empty_cat_dict.copy()
 
         for category in categories:
             files_cat_dict[category] = sorted(crops_dir_dict[category].glob("*.jpg"))
