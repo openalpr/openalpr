@@ -26,8 +26,7 @@ def process_image(
     sent_plates_file_dir: Path,
     sent_plates_log_file: Path,
     processed_plates_log_dir: Path,
-    flags: str,
-    category: str,
+    flags: str
 ):
     id = (
         str(datetime.now())
@@ -39,6 +38,10 @@ def process_image(
     with sent_plates_log_file.open("a") as f:
         f.write(id + "\n")
     cmd = f"alpr {flags} {image_path} >> {processed_plates_log_dir / id}.log"
+    print(flags)
+    print(image_path)
+    print(processed_plates_log_dir)
+    print(id)
     print(cmd)
     subprocess.run(["sh", "-c", cmd])
     shutil.move(image_path, sent_plates_file_dir / (id + ".jpg"))
