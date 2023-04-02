@@ -38,11 +38,6 @@ def process_image(
     with sent_plates_log_file.open("a") as f:
         f.write(id + "\n")
     cmd = f"alpr {flags} {image_path} >> {processed_plates_log_dir / id}.log"
-    print(flags)
-    print(image_path)
-    print(processed_plates_log_dir)
-    print(id)
-    print(cmd)
     subprocess.run(["sh", "-c", cmd])
     shutil.move(image_path, sent_plates_file_dir / (id + ".jpg"))
     # logging.info(f"Processed {image_path.name} for category {category} with ID {id}")
@@ -58,10 +53,10 @@ def main():
     detect_dir = Path("/detect")
     dest_dir = detect_dir / "old"
     flags_dict = {
-        categories[0]: ["-c brg -p gn -j "],
-        categories[1]: ["-c brms -p ms -j "],
-        categories[2]: ["-c brmt -p gn -j "],
-        categories[3]: ["-c brmtms -p ms -j "],
+        categories[0]: "-c brg -p gn -j",
+        categories[1]: "-c brms -p ms -j",
+        categories[2]: "-c brmt -p gn -j",
+        categories[3]: "-c brmtms -p ms -j",
     }
 
     while not [
