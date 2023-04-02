@@ -122,7 +122,7 @@ def main():
             time.sleep(0.5)
             continue
 
-        for category, file_list in files_cat_dict:
+        for category, file_list in files_cat_dict.item():
             for file in file_list:
                 process_image(
                     file,
