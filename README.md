@@ -9,28 +9,27 @@ User Guide
 -----------
 
 
-OpenALPR includes a command line utility.  Simply typing "alpr [image file path]" is enough to get started recognizing license plate images.
+OpenALPR includes a command line utility.  Simply typing `alpr [image file path]` is enough to get started recognizing license plate images.
 
 For example, the following output is created by analyzing this image:
-![Plate Image](http://www.openalpr.com/images/demoscreenshots/plate3.png "Input image")
 
-
+<img src="https://images.cdn.circlesix.co/image/1/640/0/uploads/posts/2021/07/b22c2b504ab94949ea0df2a8789d0727.jpg" width="200">
 
 ```
-user@linux:~/openalpr$ alpr ./samplecar.png
+user@linux:~/openalpr$ wget https://images.cdn.circlesix.co/image/1/640/0/uploads/posts/2021/07/b22c2b504ab94949ea0df2a8789d0727.jpg
+user@linux:~/openalpr$ alpr -c gb ./b22c2b504ab94949ea0df2a8789d0727.jpg
 
-plate0: top 10 results -- Processing Time = 58.1879ms.
-    - PE3R2X     confidence: 88.9371
-    - PE32X      confidence: 78.1385
-    - PE3R2      confidence: 77.5444
-    - PE3R2Y     confidence: 76.1448
-    - P63R2X     confidence: 72.9016
-    - FE3R2X     confidence: 72.1147
-    - PE32       confidence: 66.7458
-    - PE32Y      confidence: 65.3462
-    - P632X      confidence: 62.1031
-    - P63R2      confidence: 61.5089
-
+plate0: 10 results
+  - DH05PLH   confidence: 90.4896
+  - DHO5PLH   confidence: 83.3287
+  - DHD5PLH   confidence: 82.5504
+  - 0H05PLH   confidence: 81.9928
+  - BH05PLH   confidence: 79.4239
+  - DHG5PLH   confidence: 79.0606
+  - DM05PLH   confidence: 79.0074
+  - DH05PLM   confidence: 78.603
+  - H05PLH    confidence: 78.3127
+  - DH5PLH    confidence: 77.0984
 ```
 
 Detailed command line usage:
