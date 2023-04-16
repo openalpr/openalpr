@@ -7,11 +7,11 @@ Check out a live online demo here: http://www.openalpr.com/demo-image.html
 ## Installation
 
 * [Pre-compiled Windows binaries](https://github.com/openalpr/openalpr/releases/latest)
-* [Build for Windows](https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(Windows))
-* [Build for Ubuntu Linux](https://github.com/openalpr/openalpr/wiki/Build-instructions-(Ubuntu-Linux))
-* [Build for Fedora](https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(Fedora-Linux))
-* [Build for Android](https://github.com/openalpr/openalpr/wiki/Android-compilation)
-* [Build for OS X](https://github.com/openalpr/openalpr/wiki/Compilation-instructions-(OS-X))
+* [Build for Windows](https://github.com/openalpr/openalpr/wiki/Build-instructions-for-Windows)
+* [Build for Ubuntu Linux](https://github.com/openalpr/openalpr/wiki/Build-instructions-for-Ubuntu-Linux)
+* [Build for Fedora](https://github.com/openalpr/openalpr/wiki/Build-instructions-for-Fedora-Linux)
+* [Build for Android](https://github.com/openalpr/openalpr/wiki/Build-instructions-for-Android)
+* [Build for OS X](https://github.com/openalpr/openalpr/wiki/Build-instructions-for-OS-X)
 
 If all went well, there should be an executable named **alpr** along with **libopenalpr-static.a** and **libopenalpr.so** that can be linked into your project.
 
