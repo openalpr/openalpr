@@ -13,7 +13,7 @@ prewarp =
 
 ; detection will ignore plates that are too large.  This is a good efficiency technique to use if the 
 ; plates are going to be a fixed distance away from the camera (e.g., you will never see plates that fill 
-; up the entire image
+; up the entire image)
 max_plate_width_percent = 99
 max_plate_height_percent = 99
 
@@ -21,12 +21,12 @@ max_plate_height_percent = 99
 ; It must be greater than 1.0.  A value of 1.01 means increase by 1%, 1.10 increases it by 10% each time. 
 ; So a 1% increase would be ~10x slower than 10% to process, but it has a higher chance of landing 
 ; directly on the plate and getting a strong detection
-detection_iteration_increase = 1.8
+detection_iteration_increase = 2.5
 
 ; The minimum detection strength determines how sure the detection algorithm must be before signaling that 
 ; a plate region exists.  Technically this corresponds to LBP nearest neighbors (e.g., how many detections 
 ; are clustered around the same area).  For example, 2 = very lenient, 9 = very strict.
-detection_strictness = 1
+detection_strictness = 0
 
 ; The detection doesn't necessarily need an extremely high resolution image in order to detect plates
 ; Using a smaller input image should still find the plates and will do it faster
@@ -56,22 +56,22 @@ detection_mask_image =
 
 ; OpenALPR can scan the same image multiple times with different randomization.  Setting this to a value larger than
 ; 1 may increase accuracy, but will increase processing time linearly (e.g., analysis_count = 3 is 3x slower)
-analysis_count = 50
+analysis_count = 40
 
 ; OpenALPR detects high-contrast plate crops and uses an alternative edge detection technique.  Setting this to 0.0 
 ; would classify  ALL images as high-contrast, setting it to 1.0 would classify no images as high-contrast. 
 contrast_detection_threshold = 0.5
 
-max_plate_angle_degrees = 50
+max_plate_angle_degrees = 20
 
 ocr_min_font_point = 1
 
 ; Minimum OCR confidence percent to consider.
-postprocess_min_confidence = 10
+postprocess_min_confidence = 1
 
 ; Any OCR character lower than this will also add an equally likely
 ; chance that the character is incorrect and will be skipped.  Value is a confidence percent
-postprocess_confidence_skip_level = 10
+postprocess_confidence_skip_level = 1
 
 debug_general         = 0
 debug_timing          = 0

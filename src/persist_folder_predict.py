@@ -26,7 +26,7 @@ def process_image(
     sent_plates_file_dir: Path,
     sent_plates_log_file: Path,
     processed_plates_log_dir: Path,
-    flags: str
+    flags: str,
 ):
     id = (
         str(datetime.now())
@@ -92,7 +92,8 @@ def main():
     sent_plates_log_file_dict = empty_cat_dict.copy()
 
     for category in categories:
-        crops_dir_dict[category] = detect_dir / latest_folder / "crops" / category
+        crops_dir_dict[category] = detect_dir / \
+            latest_folder / "crops" / category
         sent_plates_file_dir_dict[category] = crops_dir_dict[category] / "sent_plates"
         sent_plates_log_dir_dict[category] = (
             Path("/logs") / latest_folder / "sent_plates" / category
@@ -103,7 +104,8 @@ def main():
         crops_dir_dict[category].mkdir(parents=True, exist_ok=True)
         sent_plates_file_dir_dict[category].mkdir(exist_ok=True)
         sent_plates_log_dir_dict[category].mkdir(parents=True, exist_ok=True)
-        processed_plates_log_dir_dict[category].mkdir(parents=True, exist_ok=True)
+        processed_plates_log_dir_dict[category].mkdir(
+            parents=True, exist_ok=True)
         sent_plates_log_file_dict[category] = (
             sent_plates_log_dir_dict[category] / "sent_plates.log"
         )
@@ -115,7 +117,8 @@ def main():
         files_cat_dict = empty_cat_dict.copy()
 
         for category in categories:
-            files_cat_dict[category] = sorted(crops_dir_dict[category].glob("*.jpg"))
+            files_cat_dict[category] = sorted(
+                crops_dir_dict[category].glob("*.jpg"))
 
         if not any(files_cat_dict.values()):
             time.sleep(0.5)
@@ -128,7 +131,7 @@ def main():
                     sent_plates_file_dir_dict[category],
                     sent_plates_log_file_dict[category],
                     processed_plates_log_dir_dict[category],
-                    flags_dict[category]
+                    flags_dict[category],
                 )
 
 
