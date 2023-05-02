@@ -3,7 +3,7 @@
 ; country determines the training dataset used for recognizing plates.  
 ; Valid values are: us, eu, au, auwide, gb, kr, mx, sg
 country = br
-;pattern = gn
+pattern = gn
 
 ; text name identifier for this location
 ;   site_id = your-unique-sitename
@@ -17,7 +17,7 @@ country = br
 ;   stream = webcam
 
 ; Number of threads to analyze frames.
-analysis_threads = 50
+analysis_threads = 15
 
 ; topn is the number of possible plate character variations to report
 topn = 5
