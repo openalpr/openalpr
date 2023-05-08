@@ -45,6 +45,7 @@ src.sln
 *.ipch
 Debug/
 Release/
+openalpr.iml
 
 # JetBrains IDEA / PyCharm
 .idea/
