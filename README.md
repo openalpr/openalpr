@@ -144,7 +144,8 @@ Docker
 
 ``` shell
 # Build docker image
-# docker build -t openalpr https://github.com/openalpr/openalpr.git
+# docker build -t openalpr https://github.com/openalpr/openalpr.git 
+docker build -t openalpr https://github.com/langzi0/openalpr/tree/dev
 docker build -t openalpr https://github.com/langzi0/openalpr.git
 # sample:  docker run -it --name mycent  --entrypoint /bin/sh  centos
 

@@ -1,0 +1,525 @@
+swagger: '2.0'
+
+info:
+  version: "3.0.1"
+  title: Rekor CarCheck API
+  description: |
+    The Rekor CarCheck API allows you to send images to the cloud for processing. 
+    The image will be analyzed for license plates and vehicle make/models.  The results 
+    are returned in JSON format
+
+host: api.openalpr.com
+basePath: /v3
+schemes:
+  - https
+produces:
+  - application/json
+
+paths:
+  # Send an image to OpenALPR and get the analyzed results
+  /recognize:
+    post:
+      operationId: recognizeFile
+      description: |
+        Send an image for Rekor to analyze and provide metadata back
+        The image is sent as a file using a form data POST
+      consumes: 
+        - "multipart/form-data"
+      produces:
+        - application/json
+      parameters:
+        -
+          name: image
+          in: formData
+          description: |
+            The image file that you wish to analyze
+          required: true
+          type: file
+        -
+          $ref: "#/parameters/secret_key"
+        -
+          $ref: "#/parameters/recognize_vehicle"
+        -
+          $ref: "#/parameters/country"
+        -
+          $ref: "#/parameters/return_image"
+        -
+          $ref: "#/parameters/topn"
+        -
+          $ref: "#/parameters/is_cropped"
+          
+      # Expected responses for this operation:
+      responses:
+        200:
+          $ref: '#/responses/api_200'
+
+        400:
+          $ref: '#/responses/api_400'
+        401:
+          $ref: '#/responses/api_401'
+        402:
+          $ref: '#/responses/api_402'
+        403:
+          $ref: '#/responses/api_403'
+
+  /recognize_url:
+    post:
+      operationId: recognizeUrl
+      description: |
+        Send an image for Rekor to analyze and provide metadata back
+        The image is sent as a URL.  The Rekor service will download the image 
+        and process it
+      consumes: 
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        -
+          name: image_url
+          in: query
+          description: |
+            A URL to an image that you wish to analyze
+          required: true
+          type: string
+        -
+          $ref: "#/parameters/secret_key"
+        -
+          $ref: "#/parameters/recognize_vehicle"
+        -
+          $ref: "#/parameters/country"
+        -
+          $ref: "#/parameters/return_image"
+        -
+          $ref: "#/parameters/topn"
+          
+      # Expected responses for this operation:
+      responses:
+        200:
+          $ref: '#/responses/api_200'
+
+        400:
+          $ref: '#/responses/api_400'
+        401:
+          $ref: '#/responses/api_401'
+        402:
+          $ref: '#/responses/api_402'
+        403:
+          $ref: '#/responses/api_403'
+
+  /recognize_bytes:
+    post:
+      operationId: recognizeBytes
+      description: |
+        Send an image for Rekor to analyze and provide metadata back
+        The image is sent as base64 encoded bytes.
+      consumes: 
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        -
+          name: image_bytes
+          in: body
+          description: |
+            The image file that you wish to analyze encoded in base64
+          required: true
+          schema:
+            type: string
+          
+        -
+          $ref: "#/parameters/secret_key"
+        -
+          $ref: "#/parameters/recognize_vehicle"
+        -
+          $ref: "#/parameters/country"
+        -
+          $ref: "#/parameters/return_image"
+        -
+          $ref: "#/parameters/topn"
+          
+      # Expected responses for this operation:
+      responses:
+        200:
+          $ref: '#/responses/api_200'
+
+        400:
+          $ref: '#/responses/api_400'
+        401:
+          $ref: '#/responses/api_401'
+        402:
+          $ref: '#/responses/api_402'
+        403:
+          $ref: '#/responses/api_403'
+
+  # Send an image to OpenALPR and get the analyzed results
+  /config:
+    get:
+      operationId: getConfig
+      description: |
+        Get a list of available results for plate and vehicle recognition
+      produces:
+        - application/json
+          
+      # Expected responses for this operation:
+      responses:
+        200:
+          description: ok
+          schema:
+            properties:
+              vehicle_labels:
+                type: object
+                properties:
+                  bodytype:
+                    type: array
+                    items: 
+                      type: string
+                      example: sedan-compact
+
+                  orientation:
+                    type: array
+                    items: 
+                      type: string
+                      example: 45
+
+                  color:
+                    type: array
+                    items: 
+                      type: string
+                      example: blue
+
+                  make:
+                    type: array
+                    items: 
+                      type: string
+                      example: volvo
+                    
+                  makemodel:
+                    type: array
+                    items: 
+                      type: string
+                      example: volvo_v40
+                    
+                  year:
+                    type: array
+                    items: 
+                      type: string
+                      example: 2000-2004
+                      
+              countries:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                      example: "us"
+                    name:
+                      type: string
+                      example: "North America"
+                  
+          
+parameters:
+  is_cropped:
+    name: is_cropped
+    in: query
+    description: |
+      When providing a plate or vehicle that is already cropped,  
+      this performs a recognition against the full crop and does not 
+      attempt to localize the plate/vehicle
+    required: false
+    default: 0
+    type: integer
+    enum: [0, 1]
+    
+  topn:
+    name: topn
+    in: query
+    description: |
+      The number of results you would like to be returned for plate 
+      candidates and vehicle classifications
+    required: false
+    type: integer
+    default: 10
+    minimum: 1
+    maximum: 1000
+    
+  return_image:
+    name: return_image
+    in: query
+    description: |
+      If set to 1, the image you uploaded will be encoded in base64 and 
+      sent back along with the response
+    required: false
+    default: 0
+    type: integer
+    enum: [0, 1]
+
+  country:
+    name: country
+    in: query
+    description: |
+      Defines the training data used by Rekor.  "us" analyzes 
+      North-American style plates.  "eu" analyzes European-style plates.
+      
+      This field is required if using the "plate" task
+      
+    required: true
+    type: string
+
+  recognize_vehicle:
+    name: recognize_vehicle
+    in: query
+    description: |
+      If set to 1, the vehicle will also be recognized in the image
+      This requires an additional credit per request
+    required: false
+    type: integer
+    default: 0
+    enum: [0, 1]
+          
+    
+  secret_key:
+    name: secret_key
+    in: query
+    description: |
+      The secret key used to authenticate your account.  You can view your 
+      secret key by visiting 
+      https://cloud.openalpr.com/
+    required: true
+    type: string
+
+
+responses:
+
+  api_200:
+    description: OK
+    headers:
+      X-RateLimit-Limit:
+        description: Maximum number of requests allowed from your IP in a period
+        type: integer
+      X-Ratelimit-Remaining:
+        description: Number of remaining requests allowed during this period
+        type: integer
+      X-Ratelimit-Reset:
+        description: Epoch time when the next period begins
+        type: integer
+    schema:
+      properties:
+        processing_time:
+          type: object
+          properties:
+            total:
+              type: number
+              description: Time spent processing all tasks (in milliseconds)
+            plates:
+              type: number
+              description: Time spent performing license plate recognition (in milliseconds)
+            vehicles:
+              type: number
+              description: Time spent performing vehicle recognition (in milliseconds)
+              
+        img_width:
+          type: integer
+          description: Width of the uploaded image in pixels
+        img_height:
+          type: integer
+          description: Height of the input image in pixels
+        credit_cost:
+          type: integer
+          description: The number of API credits that were used to process this image
+        credits_monthly_used:
+          type: integer
+          description: The number of API credits used this month
+        credits_monthly_total:
+          type: integer
+          description: The maximum number of API credits available this month according to your plan
+          
+        results:
+          type: array
+          items:
+            $ref: '#/definitions/plate_details'
+        regions_of_interest:
+          type: array
+          description: Describes the areas analyzed in the input image
+          items:
+            $ref: '#/definitions/region_of_interest'
+        vehicles:
+          type: array
+          description: Describes all vehicles found in the input image
+          items:
+            $ref: '#/definitions/vehicles'
+        epoch_time:
+          # This is actually an integer, but setting to number to avoid issues with overflow
+          type: number
+          description: Epoch time that the image was processed in milliseconds
+        version:
+          type: integer
+          description: API format version
+        data_type:
+          type: string
+          enum: ["alpr_results", "alpr_group", "heartbeat"]
+          description: Specifies the type of data in this response
+
+
+
+  api_400:
+    description: Parameter is invalid
+    schema:
+      properties:
+        error:
+          type: string
+          description: Text error message describing the invalid input
+  api_401:
+    description: User not authorized or invalid secret_key
+    schema:
+      properties:
+        error:
+          type: string
+          description: Text error message describing the invalid input
+    
+  api_402:
+    description: Monthly usage limit exceeded
+    schema:
+      properties:
+        error:
+          type: string
+          description: Text error message describing the invalid input
+  api_403:
+    description: Temporary rate-limit exceeded
+    schema:
+      properties:
+        error:
+          type: string
+          description: Text error message describing the invalid input
+
+
+
+definitions:
+
+  coordinate:
+    type: object
+    properties:
+      x:
+        type: integer
+      y:
+        type: integer
+        
+  region_of_interest:
+    type: object
+    properties:
+      x:
+        type: integer
+      y:
+        type: integer
+      width:
+        type: integer
+      height:
+        type: integer
+        
+  plate_candidate:
+    type: object
+    properties:
+      plate:
+        type: string
+        description: Plate number
+      confidence:
+        type: number
+        description: Confidence percentage that the plate number is correct
+      matches_template:
+        type: integer
+        description: Indicates whether the plate matched a regional text pattern
+        
+  vehicle_candidate:
+    type: object
+    properties:
+      name: 
+        type: string
+        description: name of value
+      confidence:
+        type: number
+        description: confidence of value (percent)
+  
+  vehicles:
+    type: object
+    properties:
+      x:
+        type: integer
+      y:
+        type: integer
+      width:
+        type: integer
+      height:
+        type: integer
+      details:
+        $ref: '#/definitions/vehicle_details'
+
+  vehicle_details:
+    type: object
+    properties:
+      color:
+        type: array
+        items:
+          $ref: '#/definitions/vehicle_candidate'
+      make:
+        type: array
+        items:
+          $ref: '#/definitions/vehicle_candidate'
+      make_model:
+        type: array
+        items:
+          $ref: '#/definitions/vehicle_candidate'
+      body_type:
+        type: array
+        items:
+          $ref: '#/definitions/vehicle_candidate'
+      orientation:
+        type: array
+        items:
+          $ref: '#/definitions/vehicle_candidate'
+      year:
+        type: array
+        items:
+          $ref: '#/definitions/vehicle_candidate'
+        
+  plate_details:
+    type: object
+    properties:
+      plate:
+        type: string
+        description: Best plate number for this plate
+      matches_template:
+        type: integer
+        description: Indicates whether the plate matched a regional text pattern
+      requested_topn:
+        type: integer
+        description: The max number of results requested
+      processing_time_ms:
+        type: number
+        description: Number of milliseconds to process the license plate
+      confidence:
+        type: number
+        description: Confidence percentage that the plate number is correct
+      region:
+        type: string
+        description: Specified or detected region (e.g., tx for Texas)
+      region_confidence:
+        type: number
+        description: Confidence percentage that the plate region is correct
+      coordinates:
+        type: array
+        description: |
+          The X/Y coordinates of the license plate in the image
+          Four coordinates are provided that form a polygon starting
+          from the top-left and moving clockwise ending in the bottom left
+        items:
+          $ref: '#/definitions/coordinate'
+      candidates:
+        type: array
+        description: All the top N candidates that could be the correct plate number
+        items:
+          $ref: '#/definitions/plate_candidate'
+      vehicle_region:
+        $ref: '#/definitions/region_of_interest'
+      vehicle:
+        $ref: '#/definitions/vehicle_details'
+          
