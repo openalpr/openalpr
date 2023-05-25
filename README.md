@@ -144,7 +144,23 @@ Docker
 
 ``` shell
 # Build docker image
-docker build -t openalpr https://github.com/openalpr/openalpr.git
+# docker build -t openalpr https://github.com/openalpr/openalpr.git
+docker build -t openalpr https://github.com/langzi0/openalpr.git
+# sample:  docker run -it --name mycent  --entrypoint /bin/sh  centos
+
+cd ~/study/openalp/samplePic
+docker run -it -v $(pwd):/data:ro --name myplate  --entrypoint /bin/sh  openalpr
+it will enter into the /data folder which is mapped from "~/study/openalp/samplePic"
+now run "alpr  -c eu h786poj.jpg"
+
+docker stop myplate
+docker rm myplate
+
+
+it will run into /usr/share
+/usr/bin/alpr 
+h786poj.jpg
+
 # Download test image
 wget http://plates.openalpr.com/h786poj.jpg
 # Run alpr on image

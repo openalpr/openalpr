@@ -6,6 +6,7 @@ run apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     cmake \
     curl \
     git \
+    bash-completion \
     libcurl3-dev \
     libleptonica-dev \
     liblog4cplus-dev \
