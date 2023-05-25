@@ -11,6 +11,7 @@ run apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     liblog4cplus-dev \
     libopencv-dev \
     libtesseract-dev \
+    bash-completion \
     wget
 
 # Copy all data
