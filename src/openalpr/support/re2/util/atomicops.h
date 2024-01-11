@@ -96,6 +96,12 @@ inline void WriteMemoryBarrier() {
   __asm__ __volatile__("sync" : : : "memory");
 }
 
+#elif defined(__loongarch__)
+
+inline void WriteMemoryBarrier() {
+  __asm__ __volatile__("dbar 0" : : : "memory");
+}
+
 #else
 
 #include "util/mutex.h"
@@ -147,6 +153,12 @@ static inline void ReadMemoryBarrier() {
 
 inline void ReadMemoryBarrier() {
   __asm__ __volatile__("sync" : : : "memory");
+}
+
+#elif defined(__loongarch__)
+
+inline void WriteMemoryBarrier() {
+  __asm__ __volatile__("dbar 0" : : : "memory");
 }
 
 #else
