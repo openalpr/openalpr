@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  alpr-server:
+    container_name: alpr-server
+    image: alpr-server:latest
+    restart: unless-stopped
+    ports:
+      - "8000:8000"

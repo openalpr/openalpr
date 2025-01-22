@@ -1,0 +1,1 @@
+curl -X POST http://localhost:8000/detect -F "image=@test_image.jpg"
