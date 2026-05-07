@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import beanstalkc
 
@@ -8,6 +8,6 @@ beanstalk.watch('alpr')
 
 job = beanstalk.reserve()
 
-print job.body
+print(job.body)
 
 job.delete()

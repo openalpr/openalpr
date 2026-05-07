@@ -18,6 +18,6 @@ TARGET_LINK_LIBRARIES(openalprpy openalpr)
 
 
 install (TARGETS    openalprpy       DESTINATION     ${CMAKE_INSTALL_PREFIX}/lib)
-install (DIRECTORY  openalpr  DESTINATION     ${CMAKE_INSTALL_PREFIX}/lib/python2.7/dist-packages
+install (DIRECTORY  openalpr  DESTINATION     ${CMAKE_INSTALL_PREFIX}/lib/python3/dist-packages
     USE_SOURCE_PERMISSIONS
 )

@@ -1,30 +1,32 @@
-from ubuntu:18.04
+FROM ubuntu:22.04
 
 # Install prerequisites
-run apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
     curl \
     git \
-    libcurl3-dev \
+    libcurl4-openssl-dev \
     libleptonica-dev \
     liblog4cplus-dev \
     libopencv-dev \
     libtesseract-dev \
-    wget
+    wget && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy all data
-copy . /srv/openalpr
+COPY . /srv/openalpr
 
 # Setup the build directory
-run mkdir /srv/openalpr/src/build
-workdir /srv/openalpr/src/build
+RUN mkdir /srv/openalpr/src/build
+WORKDIR /srv/openalpr/src/build
 
 # Setup the compile environment
-run cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && \
+RUN cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc .. && \
     make -j2 && \
     make install
 
-workdir /data
+WORKDIR /data
 
-entrypoint ["alpr"]
+ENTRYPOINT ["alpr"]
