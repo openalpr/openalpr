@@ -105,6 +105,8 @@ Install OpenALPR on Ubuntu 16.04 with the following commands:
 Documentation
 ---------------
 
+For a Spanish-language developer handoff, regional data inventory, training workflow, and maintenance checklist, see [memoria/README.md](memoria/README.md).
+
 Detailed documentation is available at [doc.openalpr.com](http://doc.openalpr.com/)
 
 Integrating the Library
